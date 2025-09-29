@@ -15,10 +15,15 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.Column;
+import org.eclipse.daanse.rolap.mapping.model.ColumnType;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,21 +40,23 @@ class AggregationOverAggTableTest extends AggTableTestCase {
 	//## TableName:  agg_c_avg_sales_fact_1997
 	//## ColumnNames:  the_year,quarter,month_of_year,gender,unit_sales,fact_count
 	//## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),INTEGER:NULL,INTEGER
-    PhysicalColumnMappingImpl theYearAggCAvgSalesFact1997 = PhysicalColumnMappingImpl.builder().withName("the_year").withDataType(ColumnDataType.INTEGER).build();
-    PhysicalColumnMappingImpl quarterAggCAvgSalesFact1997 = PhysicalColumnMappingImpl.builder().withName("quarter").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    PhysicalColumnMappingImpl monthOfYearAggCAvgSalesFact1997 = PhysicalColumnMappingImpl.builder().withName("month_of_year").withDataType(ColumnDataType.INTEGER).build();
-    PhysicalColumnMappingImpl genderAggCAvgSalesFact1997 = PhysicalColumnMappingImpl.builder().withName("gender").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    PhysicalColumnMappingImpl unitSalesAggCAvgSalesFact1997 = PhysicalColumnMappingImpl.builder().withName("unit_sales").withDataType(ColumnDataType.INTEGER).withNullable(true).build();
-    PhysicalColumnMappingImpl factCountAggCAvgSalesFact1997 = PhysicalColumnMappingImpl.builder().withName("fact_count").withDataType(ColumnDataType.INTEGER).build();
-    PhysicalTableMappingImpl aggCAvgSalesFact1997 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_c_avg_sales_fact_1997")
-            .withColumns(List.of(
-                theYearAggCAvgSalesFact1997,
-                quarterAggCAvgSalesFact1997,
-                monthOfYearAggCAvgSalesFact1997,
-                genderAggCAvgSalesFact1997,
-                unitSalesAggCAvgSalesFact1997,
-                factCountAggCAvgSalesFact1997
-            ))).build();
+    private static PhysicalColumn theYearAggCAvgSalesFact1997 = createColumn("the_year", ColumnType.INTEGER, null, null, null);
+    private static PhysicalColumn quarterAggCAvgSalesFact1997 = createColumn("quarter", ColumnType.VARCHAR, 30, null, null);
+    private static PhysicalColumn monthOfYearAggCAvgSalesFact1997 = createColumn("month_of_year", ColumnType.INTEGER, null, null, null);
+    private static PhysicalColumn genderAggCAvgSalesFact1997 = createColumn("gender", ColumnType.VARCHAR, 30, null, null);
+    private static PhysicalColumn unitSalesAggCAvgSalesFact1997 = createColumn("unit_sales", ColumnType.INTEGER, null, null, null);
+    private static PhysicalColumn factCountAggCAvgSalesFact1997 = createColumn("fact_count", ColumnType.INTEGER, null, null, null);
+
+    private static PhysicalTable aggCAvgSalesFact1997 = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+    static {
+        aggCAvgSalesFact1997.setName("agg_c_avg_sales_fact_1997");
+        aggCAvgSalesFact1997.getColumns().add(theYearAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getColumns().add(quarterAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getColumns().add(monthOfYearAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getColumns().add(genderAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getColumns().add(unitSalesAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getColumns().add(factCountAggCAvgSalesFact1997);
+    }
 
 
     @Override
@@ -77,11 +84,15 @@ class AggregationOverAggTableTest extends AggTableTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        ExplicitRecognizerTest.setupMultiColDimCube(context,
+        Catalog catalogMapping = new CatalogSupplier().get();
+        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
+        Catalog catalog = (Catalog) copier.get(catalogMapping);
+
+        ExplicitRecognizerTest.setupMultiColDimCube(catalog, copier, context,
             List.of(),
-            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
-            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
-            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null, null, null,
+            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
+            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
+            (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null, null, null,
             List.of(), List.of(aggCAvgSalesFact1997));
 
         String query =
@@ -124,5 +135,24 @@ class AggregationOverAggTableTest extends AggTableTestCase {
                 + "and\n"
                 + "    `agg_c_avg_sales_fact_1997`.`gender` = 'M'"),
             false, false, true);
+    }
+
+    private static PhysicalColumn createColumn(String name, ColumnType dataType, Integer charOctetLength, Integer columnSize, Integer decimalDigits) {
+        PhysicalColumn column = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        column.setName(name);
+
+        column.setType(dataType);
+
+        if (charOctetLength != null) {
+            column.setCharOctetLength(charOctetLength);
+        }
+        if (columnSize != null) {
+            column.setColumnSize(columnSize);
+        }
+        if (decimalDigits != null) {
+            column.setDecimalDigits(decimalDigits);
+        }
+
+        return column;
     }
 }

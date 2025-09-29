@@ -12,22 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.List;
-
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapDimension;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.HideMemberIf;
+import org.eclipse.daanse.rolap.mapping.model.Level;
+import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.Query;
+import org.eclipse.daanse.rolap.mapping.model.RelationalQuery;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -40,9 +38,9 @@ class RolapDimensionTest {
 
   private RolapCatalog schema;
   private RolapCube cube;
-  private DimensionMappingImpl xmlDimension;
-  private DimensionConnectorMappingImpl xmlCubeDimension;
-  private ExplicitHierarchyMappingImpl hierarchy;
+  private Dimension xmlDimension;
+  private DimensionConnector xmlCubeDimension;
+  private ExplicitHierarchy hierarchy;
 
 
   @BeforeEach
@@ -50,31 +48,30 @@ class RolapDimensionTest {
 
     schema = Mockito.mock(RolapCatalog.class);
     cube = Mockito.mock(RolapCube.class);
-    RelationalQueryMapping fact = Mockito.mock(RelationalQueryMapping.class);
+    RelationalQuery fact = Mockito.mock(RelationalQuery.class);
 
     Mockito.when(cube.getCatalog()).thenReturn(schema);
     Mockito.when(cube.getFact()).thenReturn(fact);
 
-    xmlDimension = StandardDimensionMappingImpl.builder().build();
-    hierarchy = ExplicitHierarchyMappingImpl.builder().build();
-    LevelMappingImpl level = LevelMappingImpl.builder()
-    	    .withVisible(true)
-            .withMemberProperties(List.of())
-            .withUniqueMembers(true)
-            .withType(InternalDataType.STRING)
-            .withHideMemberIfType(HideMemberIfType.NEVER)
-            .withLevelType(LevelType.REGULAR)
-    		.build();
-    xmlCubeDimension = DimensionConnectorMappingImpl.builder().build();
+    xmlDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+    hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+    Level level = RolapMappingFactory.eINSTANCE.createLevel();
+    level.setVisible(true);
+    level.setUniqueMembers(true);
+    level.setColumnType(ColumnInternalDataType.STRING);
+    level.setHideMemberIf(HideMemberIf.NEVER);
+    level.setType(LevelDefinition.REGULAR);
+
+    xmlCubeDimension = RolapMappingFactory.eINSTANCE.createDimensionConnector();
 
     xmlDimension.setName("dimensionName");
     xmlDimension.setVisible(true);
-    xmlDimension.setHierarchies(List.of(hierarchy));
+    xmlDimension.getHierarchies().add(hierarchy);
 
 
     hierarchy.setVisible(true);
     hierarchy.setHasAll(false);
-    hierarchy.setLevels(List.of(level));
+    hierarchy.getLevels().add(level);
 
   }
 
@@ -86,8 +83,8 @@ class RolapDimensionTest {
   @Disabled("disabled for CI build") //disabled for CI build
   @Test
   void testHierarchyRelation() {
-	  QueryMappingImpl hierarchyTable = (QueryMappingImpl) Mockito
-            .mock(RelationalQueryMapping.class);
+	  Query hierarchyTable = (Query) Mockito
+            .mock(RelationalQuery.class);
     hierarchy.setQuery(hierarchyTable);
 
     new RolapDimension(schema, cube, xmlDimension, xmlCubeDimension);

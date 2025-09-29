@@ -16,33 +16,158 @@ package org.eclipse.daanse.olap.function.def.member.defaultmember;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.executeSingletonAxis;
-import static org.opencube.junit5.TestUtil.withSchema;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.Column;
+import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.Cube;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.Level;
+import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.Table;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 class DefaultMemberFunDefTest {
+
+    /**
+     * EMF version of TestDefaultMemberModifier
+     * Creates Time2 dimension with two hierarchies, where Weekly hierarchy has explicit defaultMember
+     */
+    public static class TestDefaultMemberModifierEmf implements CatalogMappingSupplier {
+
+        private CatalogImpl catalog;
+
+        public TestDefaultMemberModifierEmf(Catalog cat) {
+            // Copy catalog using EcoreUtil
+            EcoreUtil.Copier copier  = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
+            catalog = (CatalogImpl) copier.get(cat);
+
+            // Find Sales cube
+            PhysicalCube salesCube = null;
+            for (Cube cube : catalog.getCubes()) {
+                if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
+                    salesCube = (PhysicalCube) cube;
+                    break;
+                }
+            }
+
+            if (salesCube != null) {
+                // Create first hierarchy (no hasAll) using RolapMappingFactory
+                Level yearLevel1 =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                yearLevel1.setName("Year");
+                yearLevel1.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY));
+                yearLevel1.setColumnType(ColumnInternalDataType.NUMERIC);
+                yearLevel1.setUniqueMembers(true);
+                yearLevel1.setType(LevelDefinition.TIME_YEARS);
+
+                Level quarterLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                quarterLevel.setName("Quarter");
+                quarterLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY));
+                quarterLevel.setUniqueMembers(false);
+                quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
+
+                Level monthLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                monthLevel.setName("Month");
+                monthLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY));
+                monthLevel.setUniqueMembers(false);
+                monthLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+                monthLevel.setType(LevelDefinition.TIME_MONTHS);
+
+                TableQuery tableQuery1 =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery1.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY));
+
+                ExplicitHierarchy hierarchy1 =
+                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy1.setHasAll(false);
+                hierarchy1.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
+                hierarchy1.setQuery(tableQuery1);
+                hierarchy1.getLevels().add(yearLevel1);
+                hierarchy1.getLevels().add(quarterLevel);
+                hierarchy1.getLevels().add(monthLevel);
+
+                // Create second hierarchy (Weekly with defaultMember) using RolapMappingFactory
+                Level yearLevel2 =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                yearLevel2.setName("Year");
+                yearLevel2.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY));
+                yearLevel2.setColumnType(ColumnInternalDataType.NUMERIC);
+                yearLevel2.setUniqueMembers(true);
+                yearLevel2.setType(LevelDefinition.TIME_YEARS);
+
+                Level weekLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                weekLevel.setName("Week");
+                weekLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WEEK_OF_YEAR_TIME_BY_DAY));
+                weekLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+                weekLevel.setUniqueMembers(false);
+                weekLevel.setType(LevelDefinition.TIME_WEEKS);
+
+                Level dayLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                dayLevel.setName("Day");
+                dayLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_DAY_OF_MONTH_TIME_BY_DAY));
+                dayLevel.setUniqueMembers(false);
+                dayLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+                dayLevel.setType(LevelDefinition.TIME_DAYS);
+
+                TableQuery tableQuery2 =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery2.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY));
+
+                ExplicitHierarchy hierarchy2 =
+                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy2.setName("Weekly");
+                hierarchy2.setHasAll(true);
+                hierarchy2.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
+                hierarchy2.setDefaultMember("[Time2].[Weekly].[1997].[23]"); // Set explicit default member
+                hierarchy2.setQuery(tableQuery2);
+                hierarchy2.getLevels().add(yearLevel2);
+                hierarchy2.getLevels().add(weekLevel);
+                hierarchy2.getLevels().add(dayLevel);
+
+                // Create Time2 dimension using RolapMappingFactory
+                TimeDimension timeDimension =
+                    RolapMappingFactory.eINSTANCE.createTimeDimension();
+                timeDimension.setName("Time2");
+                timeDimension.getHierarchies().add(hierarchy1);
+                timeDimension.getHierarchies().add(hierarchy2);
+
+                // Create dimension connector using RolapMappingFactory
+                DimensionConnector dimConnector =
+                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                dimConnector.setOverrideDimensionName("Time2");
+                dimConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
+                dimConnector.setDimension(timeDimension);
+
+                // Add dimension connector to Sales cube
+                salesCube.getDimensionConnectors().add(dimConnector);
+            }
+        }
+
+        @Override
+        public Catalog get() {
+            return catalog;
+        }
+    }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -93,6 +218,7 @@ class DefaultMemberFunDefTest {
         + "    </Hierarchy>\n"
         + "  </Dimension>" ));
       */
+        /*
         class TestDefaultMemberModifier extends PojoMappingModifier {
 
             public TestDefaultMemberModifier(CatalogMapping catalogMapping) {
@@ -176,7 +302,9 @@ class DefaultMemberFunDefTest {
                 return result;
             }
         }
-        withSchema(context, TestDefaultMemberModifier::new);
+        */
+
+        withSchemaEmf(context, TestDefaultMemberModifierEmf::new);
 
         // In this variant of the schema, Time2.Weekly has an explicit default
         // member.

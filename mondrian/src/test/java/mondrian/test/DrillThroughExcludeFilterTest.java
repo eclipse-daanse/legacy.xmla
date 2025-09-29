@@ -10,17 +10,17 @@ package mondrian.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 class DrillThroughExcludeFilterTest {
 
@@ -74,7 +74,7 @@ class DrillThroughExcludeFilterTest {
         int expectedDrillThroughCountForCell0 = 3773;
         int expectedDrillThroughCountForCell1 = 78120;
 
-        withSchema(context, SchemaModifiers.DrillThroughExcludeFilterTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.DrillThroughExcludeFilterTestModifier::new);
 
         Connection connection = context.getConnectionWithDefaultRole();
         Result result = executeQuery(connection,

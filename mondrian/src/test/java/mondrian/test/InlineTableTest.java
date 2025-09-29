@@ -12,36 +12,35 @@ package mondrian.test;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.Column;
+import org.eclipse.daanse.rolap.mapping.model.ColumnType;
+import org.eclipse.daanse.rolap.mapping.model.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.InlineTable;
+import org.eclipse.daanse.rolap.mapping.model.InlineTableQuery;
+import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
+import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.Level;
+import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.Row;
+import org.eclipse.daanse.rolap.mapping.model.RowValue;
+import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.Table;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -61,6 +60,7 @@ class InlineTableTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testInlineTable(Context<?> context) {
         final String cubeName = "Sales_inline";
+        /*
         class TestInlineTableModifier extends PojoMappingModifier {
 
             public TestInlineTableModifier(CatalogMapping catalog) {
@@ -142,6 +142,142 @@ class InlineTableTest {
                 return result;
             }
         }
+        */
+        /**
+         * EMF version of TestInlineTableModifier
+         * Creates a test cube with inline table dimension
+         */
+        class TestInlineTableModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+
+            public TestInlineTableModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+                // Create columns for inline table
+                PhysicalColumn promoIdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                promoIdColumn.setName("promo_id");
+                promoIdColumn.setType(ColumnType.INTEGER);
+
+                PhysicalColumn promoNameColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                promoNameColumn.setName("promo_name");
+                promoNameColumn.setType(ColumnType.VARCHAR);
+                promoNameColumn.setCharOctetLength(20);
+
+                // Create inline table
+                InlineTable inlineTable = RolapMappingFactory.eINSTANCE.createInlineTable();
+                inlineTable.setName("alt_promotion");
+                inlineTable.getColumns().add(promoIdColumn);
+                inlineTable.getColumns().add(promoNameColumn);
+
+                // Create first row: promo_id=0, promo_name=Promo0
+                RowValue rowValue1Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue1Col1.setColumn(promoIdColumn);
+                rowValue1Col1.setValue("0");
+
+                RowValue rowValue1Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue1Col2.setColumn(promoNameColumn);
+                rowValue1Col2.setValue("Promo0");
+
+                Row row1 = RolapMappingFactory.eINSTANCE.createRow();
+                row1.getRowValues().add(rowValue1Col1);
+                row1.getRowValues().add(rowValue1Col2);
+
+                // Create second row: promo_id=1, promo_name=Promo1
+                RowValue rowValue2Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue2Col1.setColumn(promoIdColumn);
+                rowValue2Col1.setValue("1");
+
+                RowValue rowValue2Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue2Col2.setColumn(promoNameColumn);
+                rowValue2Col2.setValue("Promo1");
+
+                Row row2 = RolapMappingFactory.eINSTANCE.createRow();
+                row2.getRowValues().add(rowValue2Col1);
+                row2.getRowValues().add(rowValue2Col2);
+
+                inlineTable.getRows().add(row1);
+                inlineTable.getRows().add(row2);
+
+                // Create inline table query
+                InlineTableQuery inlineTableQuery = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                inlineTableQuery.setAlias("alt_promotion");
+                inlineTableQuery.setTable(inlineTable);
+
+                // Create level for Alternative Promotion
+                Level altPromoLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                altPromoLevel.setName("Alternative Promotion");
+                altPromoLevel.setColumn(promoIdColumn);
+                altPromoLevel.setNameColumn(promoNameColumn);
+                altPromoLevel.setUniqueMembers(true);
+
+                // Create hierarchy
+                ExplicitHierarchy altPromoHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                altPromoHierarchy.setHasAll(true);
+                altPromoHierarchy.setPrimaryKey(promoIdColumn);
+                altPromoHierarchy.setQuery(inlineTableQuery);
+                altPromoHierarchy.getLevels().add(altPromoLevel);
+
+                // Create dimension
+                StandardDimension altPromoDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                altPromoDimension.setName("Alternative Promotion");
+                altPromoDimension.getHierarchies().add(altPromoHierarchy);
+
+                // Create cube
+                PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                cube.setName(cubeName);
+
+                // Set up query
+                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
+                cube.setQuery(tableQuery);
+
+                // Create dimension connector for Time
+                DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                timeDimConnector.setOverrideDimensionName("Time");
+                timeDimConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
+                timeDimConnector.setDimension(CatalogSupplier.DIMENSION_TIME);
+
+                // Create dimension connector for Alternative Promotion
+                DimensionConnector altPromoDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                altPromoDimConnector.setOverrideDimensionName("Alternative Promotion");
+                altPromoDimConnector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
+                altPromoDimConnector.setDimension(altPromoDimension);
+
+                cube.getDimensionConnectors().add(timeDimConnector);
+                cube.getDimensionConnectors().add(altPromoDimConnector);
+
+                // Create measures
+                SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                unitSalesMeasure.setName("Unit Sales");
+                unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+                unitSalesMeasure.setFormatString("Standard");
+                unitSalesMeasure.setVisible(true);
+
+                SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                storeSalesMeasure.setName("Store Sales");
+                storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
+                storeSalesMeasure.setFormatString("#,###.00");
+
+                // Create measure group
+                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(unitSalesMeasure);
+                measureGroup.getMeasures().add(storeSalesMeasure);
+
+                cube.getMeasureGroups().add(measureGroup);
+
+                // Add the new cube to the catalog
+                catalog.getCubes().add(cube);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
+
 
         /*
         String baseSchema = TestUtil.getRawSchema(context);
@@ -182,7 +318,7 @@ class InlineTableTest {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, TestInlineTableModifier::new);
+        withSchemaEmf(context, TestInlineTableModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Alternative Promotion].[All Alternative Promotions].children} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
@@ -199,7 +335,7 @@ class InlineTableTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testInlineTableInSharedDim(Context<?> context) {
         final String cubeName = "Sales_inline_shared";
-
+        /*
         class TestInlineTableInSharedDimModifier extends PojoMappingModifier {
 
             public TestInlineTableInSharedDimModifier(CatalogMapping catalog) {
@@ -282,6 +418,148 @@ class InlineTableTest {
             }
 
             }
+        */
+        /**
+         * EMF version of TestInlineTableInSharedDimModifier
+         * Creates a test cube with shared inline table dimension
+         */
+        class TestInlineTableInSharedDimModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestInlineTableInSharedDimModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
+
+
+                // Static shared dimension with inline table
+                PhysicalColumn PROMO_ID_COLUMN;
+                PhysicalColumn PROMO_NAME_COLUMN;
+                InlineTable SHARED_INLINE_TABLE;
+                StandardDimension SHARED_DIMENSION;
+
+                // Create columns for inline table
+                PROMO_ID_COLUMN = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                PROMO_ID_COLUMN.setName("promo_id");
+                PROMO_ID_COLUMN.setType(ColumnType.INTEGER);
+
+                PROMO_NAME_COLUMN = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                PROMO_NAME_COLUMN.setName("promo_name");
+                PROMO_NAME_COLUMN.setType(ColumnType.VARCHAR);
+                PROMO_NAME_COLUMN.setCharOctetLength(20);
+
+                // Create inline table
+                SHARED_INLINE_TABLE = RolapMappingFactory.eINSTANCE.createInlineTable();
+                SHARED_INLINE_TABLE.setName("alt_promotion");
+                SHARED_INLINE_TABLE.getColumns().add(PROMO_ID_COLUMN);
+                SHARED_INLINE_TABLE.getColumns().add(PROMO_NAME_COLUMN);
+
+                // Create first row: promo_id=0, promo_name=First promo
+                RowValue rowValue1Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue1Col1.setColumn(PROMO_ID_COLUMN);
+                rowValue1Col1.setValue("0");
+
+                RowValue rowValue1Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue1Col2.setColumn(PROMO_NAME_COLUMN);
+                rowValue1Col2.setValue("First promo");
+
+                Row row1 = RolapMappingFactory.eINSTANCE.createRow();
+                row1.getRowValues().add(rowValue1Col1);
+                row1.getRowValues().add(rowValue1Col2);
+
+                // Create second row: promo_id=1, promo_name=Second promo
+                RowValue rowValue2Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue2Col1.setColumn(PROMO_ID_COLUMN);
+                rowValue2Col1.setValue("1");
+
+                RowValue rowValue2Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                rowValue2Col2.setColumn(PROMO_NAME_COLUMN);
+                rowValue2Col2.setValue("Second promo");
+
+                Row row2 = RolapMappingFactory.eINSTANCE.createRow();
+                row2.getRowValues().add(rowValue2Col1);
+                row2.getRowValues().add(rowValue2Col2);
+
+                SHARED_INLINE_TABLE.getRows().add(row1);
+                SHARED_INLINE_TABLE.getRows().add(row2);
+
+                // Create inline table query
+                InlineTableQuery inlineTableQuery = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                inlineTableQuery.setAlias("alt_promotion");
+                inlineTableQuery.setTable(SHARED_INLINE_TABLE);
+
+                // Create level for Alternative Promotion
+                Level altPromoLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                altPromoLevel.setName("Alternative Promotion");
+                altPromoLevel.setColumn(PROMO_ID_COLUMN);
+                altPromoLevel.setNameColumn(PROMO_NAME_COLUMN);
+                altPromoLevel.setUniqueMembers(true);
+
+                // Create hierarchy
+                ExplicitHierarchy altPromoHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                altPromoHierarchy.setHasAll(true);
+                altPromoHierarchy.setPrimaryKey(PROMO_ID_COLUMN);
+                altPromoHierarchy.setQuery(inlineTableQuery);
+                altPromoHierarchy.getLevels().add(altPromoLevel);
+
+                // Create shared dimension
+                SHARED_DIMENSION = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                SHARED_DIMENSION.setName("Shared Alternative Promotion");
+                SHARED_DIMENSION.getHierarchies().add(altPromoHierarchy);
+
+                // Create cube
+                PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                cube.setName(cubeName);
+                // Set up query
+                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
+                cube.setQuery(tableQuery);
+
+                // Create dimension connector for Time
+                DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                timeDimConnector.setOverrideDimensionName("Time");
+                timeDimConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
+                timeDimConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+
+                // Create dimension connector for Shared Alternative Promotion
+                DimensionConnector sharedPromoDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                sharedPromoDimConnector.setOverrideDimensionName("Shared Alternative Promotion");
+                sharedPromoDimConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
+                sharedPromoDimConnector.setDimension(SHARED_DIMENSION);
+
+                cube.getDimensionConnectors().add(timeDimConnector);
+                cube.getDimensionConnectors().add(sharedPromoDimConnector);
+
+                // Create measures
+                SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                unitSalesMeasure.setName("Unit Sales");
+                unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
+                unitSalesMeasure.setFormatString("Standard");
+                unitSalesMeasure.setVisible(false);
+
+                SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                storeSalesMeasure.setName("Store Sales");
+                storeSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT));
+                storeSalesMeasure.setFormatString("#,###.00");
+
+                // Create measure group
+                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(unitSalesMeasure);
+                measureGroup.getMeasures().add(storeSalesMeasure);
+
+                cube.getMeasureGroups().add(measureGroup);
+
+                // Add the new cube to the catalog
+                catalog.getCubes().add(cube);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
+
 
        /*
         String baseSchema = TestUtil.getRawSchema(context);
@@ -325,7 +603,7 @@ class InlineTableTest {
             null);
         withSchema(context, schema);
         */
-        withSchema(context, TestInlineTableInSharedDimModifier::new);
+        withSchemaEmf(context, TestInlineTableInSharedDimModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Shared Alternative Promotion].[All Shared Alternative Promotions].children} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
@@ -350,6 +628,7 @@ class InlineTableTest {
             return;
         }
         final String cubeName = "Sales_inline_snowflake";
+        /*
         class TestInlineTableSnowflakeModifier extends PojoMappingModifier {
 
             public TestInlineTableSnowflakeModifier(CatalogMapping catalog) {
@@ -459,6 +738,186 @@ class InlineTableTest {
             }
 
         }
+        */
+        /**
+         * EMF version of TestInlineTableSnowflakeModifier
+         * Creates a test cube with snowflake schema using inline table
+         */
+        class TestInlineTableSnowflakeModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestInlineTableSnowflakeModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+                // Create columns for nation inline table
+                PhysicalColumn nationNameColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                nationNameColumn.setName("nation_name");
+                nationNameColumn.setType(ColumnType.VARCHAR);
+                nationNameColumn.setCharOctetLength(20);
+
+                PhysicalColumn nationShortcodeColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                nationShortcodeColumn.setName("nation_shortcode");
+                nationShortcodeColumn.setType(ColumnType.VARCHAR);
+                nationShortcodeColumn.setCharOctetLength(20);
+
+                // Create nation inline table
+                InlineTable nationInlineTable = RolapMappingFactory.eINSTANCE.createInlineTable();
+                nationInlineTable.setName("nation");
+                nationInlineTable.getColumns().add(nationNameColumn);
+                nationInlineTable.getColumns().add(nationShortcodeColumn);
+
+                // Create rows for nation table
+                // Row 1: USA, US
+                RowValue row1Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row1Col1.setColumn(nationNameColumn);
+                row1Col1.setValue("USA");
+                RowValue row1Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row1Col2.setColumn(nationShortcodeColumn);
+                row1Col2.setValue("US");
+                Row row1 = RolapMappingFactory.eINSTANCE.createRow();
+                row1.getRowValues().add(row1Col1);
+                row1.getRowValues().add(row1Col2);
+
+                // Row 2: Mexico, MX
+                RowValue row2Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row2Col1.setColumn(nationNameColumn);
+                row2Col1.setValue("Mexico");
+                RowValue row2Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row2Col2.setColumn(nationShortcodeColumn);
+                row2Col2.setValue("MX");
+                Row row2 = RolapMappingFactory.eINSTANCE.createRow();
+                row2.getRowValues().add(row2Col1);
+                row2.getRowValues().add(row2Col2);
+
+                // Row 3: Canada, CA
+                RowValue row3Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row3Col1.setColumn(nationNameColumn);
+                row3Col1.setValue("Canada");
+                RowValue row3Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row3Col2.setColumn(nationShortcodeColumn);
+                row3Col2.setValue("CA");
+                Row row3 = RolapMappingFactory.eINSTANCE.createRow();
+                row3.getRowValues().add(row3Col1);
+                row3.getRowValues().add(row3Col2);
+
+                nationInlineTable.getRows().add(row1);
+                nationInlineTable.getRows().add(row2);
+                nationInlineTable.getRows().add(row3);
+
+                // Create inline table query for nation
+                InlineTableQuery nationInlineTableQuery = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                nationInlineTableQuery.setAlias("nation");
+                nationInlineTableQuery.setTable(nationInlineTable);
+
+                // Create store table query
+                TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
+
+                // Create join: store LEFT JOIN nation
+                JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                leftJoin.setKey(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
+                leftJoin.setQuery(storeTableQuery);
+
+                JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                rightJoin.setKey(nationNameColumn);
+                rightJoin.setQuery(nationInlineTableQuery);
+
+                JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                joinQuery.setLeft(leftJoin);
+                joinQuery.setRight(rightJoin);
+
+                // Create levels for Store hierarchy
+                Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                storeCountryLevel.setName("Store Country");
+                storeCountryLevel.setColumn(nationNameColumn);
+                storeCountryLevel.setNameColumn(nationShortcodeColumn);
+                storeCountryLevel.setUniqueMembers(true);
+
+                Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                storeStateLevel.setName("Store State");
+                storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
+                storeStateLevel.setUniqueMembers(true);
+
+                Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                storeCityLevel.setName("Store City");
+                storeCityLevel.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
+                storeCityLevel.setUniqueMembers(false);
+
+                Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                storeNameLevel.setName("Store Name");
+                storeNameLevel.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
+                storeNameLevel.setUniqueMembers(true);
+
+                // Create hierarchy for Store
+                ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                storeHierarchy.setHasAll(true);
+                storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
+                storeHierarchy.setQuery(joinQuery);
+                storeHierarchy.getLevels().add(storeCountryLevel);
+                storeHierarchy.getLevels().add(storeStateLevel);
+                storeHierarchy.getLevels().add(storeCityLevel);
+                storeHierarchy.getLevels().add(storeNameLevel);
+
+                // Create Store dimension
+                StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                storeDimension.setName("Store");
+                storeDimension.getHierarchies().add(storeHierarchy);
+
+                // Create cube
+                PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                cube.setName(cubeName);
+
+                // Set up query for cube (sales_fact_1997)
+                TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
+                cube.setQuery(cubeTableQuery);
+
+                // Create dimension connector for Time
+                DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                timeDimConnector.setOverrideDimensionName("Time");
+                timeDimConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
+                timeDimConnector.setDimension(CatalogSupplier.DIMENSION_TIME);
+
+                // Create dimension connector for Store
+                DimensionConnector storeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                storeDimConnector.setOverrideDimensionName("Store");
+                storeDimConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
+                storeDimConnector.setDimension(storeDimension);
+
+                cube.getDimensionConnectors().add(timeDimConnector);
+                cube.getDimensionConnectors().add(storeDimConnector);
+
+                // Create measures
+                SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                unitSalesMeasure.setName("Unit Sales");
+                unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+                unitSalesMeasure.setFormatString("Standard");
+                unitSalesMeasure.setVisible(false);
+
+                SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                storeSalesMeasure.setName("Store Sales");
+                storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
+                storeSalesMeasure.setFormatString("#,###.00");
+
+                // Create measure group
+                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(unitSalesMeasure);
+                measureGroup.getMeasures().add(storeSalesMeasure);
+
+                cube.getMeasureGroups().add(measureGroup);
+
+                // Add the new cube to the catalog
+                catalog.getCubes().add(cube);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
+
 
         /*
         String baseSchema = TestUtil.getRawSchema(context);
@@ -509,7 +968,7 @@ class InlineTableTest {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, TestInlineTableSnowflakeModifier::new);
+        withSchemaEmf(context, TestInlineTableSnowflakeModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Store].children} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
@@ -528,6 +987,7 @@ class InlineTableTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testInlineTableDate(Context<?> context) {
         final String cubeName = "Sales_Inline_Date";
+        /*
         class TestInlineTableDateModifier extends PojoMappingModifier {
 
             public TestInlineTableDateModifier(CatalogMapping catalog) {
@@ -639,6 +1099,139 @@ class InlineTableTest {
 
             }
         }
+        */
+        /**
+         * EMF version of TestInlineTableDateModifier
+         * Creates a test cube with inline table dimension containing date columns
+         */
+        class TestInlineTableDateModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestInlineTableDateModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+                // Create columns for inline promo table
+                PhysicalColumn idColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                idColumn.setName("id");
+                idColumn.setType(ColumnType.INTEGER);
+
+                PhysicalColumn dateColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                dateColumn.setName("date");
+                dateColumn.setType(ColumnType.DATE);
+
+                // Create inline table
+                InlineTable inlinePromoTable = RolapMappingFactory.eINSTANCE.createInlineTable();
+                inlinePromoTable.setName("inline_promo");
+                inlinePromoTable.getColumns().add(idColumn);
+                inlinePromoTable.getColumns().add(dateColumn);
+
+                // Create first row: id=1, date=2008-04-29
+                RowValue row1Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row1Col1.setColumn(idColumn);
+                row1Col1.setValue("1");
+
+                RowValue row1Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row1Col2.setColumn(dateColumn);
+                row1Col2.setValue("2008-04-29");
+
+                Row row1 = RolapMappingFactory.eINSTANCE.createRow();
+                row1.getRowValues().add(row1Col1);
+                row1.getRowValues().add(row1Col2);
+
+                // Create second row: id=2, date=2007-01-20
+                RowValue row2Col1 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row2Col1.setColumn(idColumn);
+                row2Col1.setValue("2");
+
+                RowValue row2Col2 = RolapMappingFactory.eINSTANCE.createRowValue();
+                row2Col2.setColumn(dateColumn);
+                row2Col2.setValue("2007-01-20");
+
+                Row row2 = RolapMappingFactory.eINSTANCE.createRow();
+                row2.getRowValues().add(row2Col1);
+                row2.getRowValues().add(row2Col2);
+
+                inlinePromoTable.getRows().add(row1);
+                inlinePromoTable.getRows().add(row2);
+
+                // Create inline table query
+                InlineTableQuery inlineTableQuery = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                inlineTableQuery.setAlias("inline_promo");
+                inlineTableQuery.setTable(inlinePromoTable);
+
+                // Create level for Alternative Promotion
+                Level altPromoLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                altPromoLevel.setName("Alternative Promotion");
+                altPromoLevel.setColumn(idColumn);
+                altPromoLevel.setNameColumn(dateColumn);
+                altPromoLevel.setUniqueMembers(true);
+
+                // Create hierarchy
+                ExplicitHierarchy altPromoHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                altPromoHierarchy.setHasAll(true);
+                altPromoHierarchy.setPrimaryKey(idColumn);
+                altPromoHierarchy.setQuery(inlineTableQuery);
+                altPromoHierarchy.getLevels().add(altPromoLevel);
+
+                // Create dimension
+                StandardDimension altPromoDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                altPromoDimension.setName("Alternative Promotion");
+                altPromoDimension.getHierarchies().add(altPromoHierarchy);
+
+                // Create cube
+                PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                cube.setName(cubeName);
+
+                // Set up query
+                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
+                cube.setQuery(tableQuery);
+
+                // Create dimension connector for Time
+                DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                timeDimConnector.setOverrideDimensionName("Time");
+                timeDimConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
+                timeDimConnector.setDimension(CatalogSupplier.DIMENSION_TIME);
+
+                // Create dimension connector for Alternative Promotion
+                DimensionConnector altPromoDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                altPromoDimConnector.setOverrideDimensionName("Alternative Promotion");
+                altPromoDimConnector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
+                altPromoDimConnector.setDimension(altPromoDimension);
+
+                cube.getDimensionConnectors().add(timeDimConnector);
+                cube.getDimensionConnectors().add(altPromoDimConnector);
+
+                // Create measures
+                SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                unitSalesMeasure.setName("Unit Sales");
+                unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+                unitSalesMeasure.setFormatString("Standard");
+                unitSalesMeasure.setVisible(false);
+
+                SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                storeSalesMeasure.setName("Store Sales");
+                storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
+                storeSalesMeasure.setFormatString("#,###.00");
+
+                // Create measure group
+                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(unitSalesMeasure);
+                measureGroup.getMeasures().add(storeSalesMeasure);
+
+                cube.getMeasureGroups().add(measureGroup);
+
+                // Add the new cube to the catalog
+                catalog.getCubes().add(cube);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -688,7 +1281,7 @@ class InlineTableTest {
         if (context.getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
-        withSchema(context, TestInlineTableDateModifier::new);
+        withSchemaEmf(context, TestInlineTableDateModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Alternative Promotion].Members} ON COLUMNS\n"
             + "from [" + cubeName + "] ",

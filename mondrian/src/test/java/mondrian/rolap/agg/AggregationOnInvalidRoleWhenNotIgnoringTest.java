@@ -17,8 +17,8 @@ import java.util.function.Function;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,8 +71,8 @@ class AggregationOnInvalidRoleWhenNotIgnoringTest extends CsvDBTestCase {
         fail("Schema should not load when restriction is invalid");
     }
 
-    protected Function<CatalogMapping, PojoMappingModifier> getModifierFunction(){
-        return AggregationOnInvalidRoleTestModifier::new;
+    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
+        return AggregationOnInvalidRoleTestModifierEmf::new;
     }
 
 }

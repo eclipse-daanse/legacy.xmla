@@ -14,17 +14,17 @@
 package org.eclipse.daanse.olap.function.def.hierarchize;
 
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 
 class HierarchizeFunDefTest {
@@ -198,7 +198,7 @@ class HierarchizeFunDefTest {
         + "      formatString=\"Standard\"/>\n"
         + "</Cube>" );
      */
-        withSchema(context, SchemaModifiers.FunctionTestModifier3::new);
+        withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier3::new);
         final Connection connection = context.getConnectionWithDefaultRole();
 
         // The [Time_Alphabetical] is ordered alphabetically by month

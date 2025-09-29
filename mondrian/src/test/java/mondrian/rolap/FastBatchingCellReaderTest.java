@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -47,52 +47,56 @@ import java.util.concurrent.Future;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CacheCommand;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
 import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.common.BatchLoader;
 import org.eclipse.daanse.rolap.common.FastBatchingCellReader;
-import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.common.agg.AggregationKey;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.common.agg.Segment;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.Column;
+import org.eclipse.daanse.rolap.mapping.model.CountMeasure;
+import org.eclipse.daanse.rolap.mapping.model.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.SQLExpressionColumn;
+import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.Table;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.EmfUtil;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
-import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Test for <code>FastBatchingCellReader</code>.
@@ -1037,6 +1041,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "    [Measures].[Count All of Warehouses (Large Independent)],"
             + "    [Measures].[Count Distinct Store+Warehouse]," + "    [Measures].[Count All Store+Warehouse],"
             + "    [Measures].[Store Count]} on columns " + "from [Warehouse2]";
+      /*
       class TestLoadDistinctSqlMeasureModifier extends PojoMappingModifier {
 
           public TestLoadDistinctSqlMeasureModifier(CatalogMapping catalog) {
@@ -1123,7 +1128,132 @@ class FastBatchingCellReaderTest extends BatchTestCase{
               return result;
           }
       }
-      withSchema(context, TestLoadDistinctSqlMeasureModifier::new);
+      */
+    /**
+     * EMF version of TestLoadDistinctSqlMeasureModifier
+     * Creates a test cube with various distinct count measures using SQL expressions
+     */
+    class TestLoadDistinctSqlMeasureModifierEmf implements CatalogMappingSupplier {
+
+        private CatalogImpl catalog;
+
+        public TestLoadDistinctSqlMeasureModifierEmf(Catalog cat) {
+            // Copy catalog using EcoreUtil
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+            catalog = (CatalogImpl) copier.get(cat);
+            // Create the Warehouse2 cube
+            PhysicalCube warehouse2Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            warehouse2Cube.setName("Warehouse2");
+
+            // Set up query
+            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_WAREHOUSE));
+            warehouse2Cube.setQuery(tableQuery);
+
+            // Create dimension connector for Store Type
+            DimensionConnector storeTypeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            storeTypeDimConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORES_ID_WAREHOUSE));
+            storeTypeDimConnector.setOverrideDimensionName("Store Type");
+            storeTypeDimConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE));
+
+            warehouse2Cube.getDimensionConnectors().add(storeTypeDimConnector);
+
+            // Create measure group
+            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+
+            // 1. Count Distinct of Warehouses (Large Owned)
+            CountMeasure measure1 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            measure1.setName("Count Distinct of Warehouses (Large Owned)");
+            measure1.setDistinct(true);
+            measure1.setFormatString("#,##0");
+
+            SQLExpressionColumn sqlCol1 = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            SqlStatement sqlStmt1 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            sqlStmt1.getDialects().add("generic");
+            sqlStmt1.setSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')");
+            sqlCol1.getSqls().add(sqlStmt1);
+            measure1.setColumn(sqlCol1);
+
+            // 2. Count Distinct of Warehouses (Large Independent)
+            CountMeasure measure2 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            measure2.setName("Count Distinct of Warehouses (Large Independent)");
+            measure2.setDistinct(true);
+            measure2.setFormatString("#,##0");
+
+            SQLExpressionColumn sqlCol2 = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            SqlStatement sqlStmt2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            sqlStmt2.getDialects().add("generic");
+            sqlStmt2.setSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')");
+            sqlCol2.getSqls().add(sqlStmt2);
+            measure2.setColumn(sqlCol2);
+
+            // 3. Count All of Warehouses (Large Independent)
+            CountMeasure measure3 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            measure3.setName("Count All of Warehouses (Large Independent)");
+            measure3.setDistinct(false);
+            measure3.setFormatString("#,##0");
+
+            SQLExpressionColumn sqlCol3 = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            SqlStatement sqlStmt3 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            sqlStmt3.getDialects().add("generic");
+            sqlStmt3.setSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')");
+            sqlCol3.getSqls().add(sqlStmt3);
+            measure3.setColumn(sqlCol3);
+
+            // 4. Count Distinct Store+Warehouse
+            CountMeasure measure4 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            measure4.setName("Count Distinct Store+Warehouse");
+            measure4.setDistinct(true);
+            measure4.setFormatString("#,##0");
+
+            SQLExpressionColumn sqlCol4 = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            SqlStatement sqlStmt4 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            sqlStmt4.getDialects().add("generic");
+            sqlStmt4.setSql("`store_id`+`warehouse_id`");
+            sqlCol4.getSqls().add(sqlStmt4);
+            measure4.setColumn(sqlCol4);
+
+            // 5. Count All Store+Warehouse
+            CountMeasure measure5 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            measure5.setName("Count All Store+Warehouse");
+            measure5.setDistinct(false);
+            measure5.setFormatString("#,##0");
+
+            SQLExpressionColumn sqlCol5 = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            SqlStatement sqlStmt5 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            sqlStmt5.getDialects().add("generic");
+            sqlStmt5.setSql("`store_id`+`warehouse_id`");
+            sqlCol5.getSqls().add(sqlStmt5);
+            measure5.setColumn(sqlCol5);
+
+            // 6. Store Count
+            CountMeasure measure6 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            measure6.setName("Store Count");
+            measure6.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORES_ID_WAREHOUSE));
+            measure6.setFormatString("#,###");
+
+            // Add all measures to measure group
+            measureGroup.getMeasures().add(measure1);
+            measureGroup.getMeasures().add(measure2);
+            measureGroup.getMeasures().add(measure3);
+            measureGroup.getMeasures().add(measure4);
+            measureGroup.getMeasures().add(measure5);
+            measureGroup.getMeasures().add(measure6);
+
+            warehouse2Cube.getMeasureGroups().add(measureGroup);
+
+            // Add the new cube to the catalog
+            catalog.getCubes().add(warehouse2Cube);
+        }
+
+        @Override
+        public Catalog get() {
+            return catalog;
+        }
+    }
+
+
+      withSchemaEmf(context, TestLoadDistinctSqlMeasureModifierEmf::new);
       String desiredResult =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Count Distinct of Warehouses (Large Owned)]}\n"
             + "{[Measures].[Count Distinct of Warehouses (Large Independent)]}\n"
@@ -1560,6 +1690,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     // tests that Aggregate( <set>, <count-distinct measure>) aggregates
     // the correct measure when a *different* count-distinct measure is
     // in context (MONDRIAN-2128)
+    /*
       class TestCountDistinctAggWithOtherCountDistinctInContextModifier extends PojoMappingModifier {
 
       	private static CountMeasureMappingImpl m = CountMeasureMappingImpl.builder()
@@ -1618,7 +1749,90 @@ class FastBatchingCellReaderTest extends BatchTestCase{
           }
 
       }
-      withSchema(context, TestCountDistinctAggWithOtherCountDistinctInContextModifier::new);
+      */
+      /**
+       * EMF version of TestCountDistinctAggWithOtherCountDistinctInContextModifier
+       * Creates a test cube with multiple distinct count measures
+       */
+      class TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf implements CatalogMappingSupplier {
+
+          private CatalogImpl catalog;
+
+          public TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf(Catalog cat) {
+              // Copy catalog using EcoreUtil
+              EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+              catalog = (CatalogImpl) copier.get(cat);
+
+
+              // Create Store Count measure (distinct count)
+              CountMeasure storeCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+              storeCountMeasure.setName("Store Count");
+              storeCountMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
+              storeCountMeasure.setDistinct(true);
+
+              // Create Customer Count measure (distinct count)
+              CountMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+              customerCountMeasure.setName("Customer Count");
+              customerCountMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
+              customerCountMeasure.setDistinct(true);
+
+              // Create Unit Sales measure (sum)
+              SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+              unitSalesMeasure.setName("Unit Sales");
+              unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
+
+              // Create 2CountDistincts cube
+              PhysicalCube twoCountDistinctsCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+              twoCountDistinctsCube.setName("2CountDistincts");
+              twoCountDistinctsCube.setDefaultMeasure(storeCountMeasure);
+
+              // Set up query
+              TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+              tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
+              twoCountDistinctsCube.setQuery(tableQuery);
+
+              // Create dimension connector for Time
+              DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+              timeDimConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
+              timeDimConnector.setOverrideDimensionName("Time");
+              timeDimConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+
+              // Create dimension connector for Store
+              DimensionConnector storeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+              storeDimConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
+              storeDimConnector.setOverrideDimensionName("Store");
+              storeDimConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+
+              // Create dimension connector for Product
+              DimensionConnector productDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+              productDimConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
+              productDimConnector.setOverrideDimensionName("Product");
+              productDimConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_PRODUCT));
+
+              twoCountDistinctsCube.getDimensionConnectors().add(timeDimConnector);
+              twoCountDistinctsCube.getDimensionConnectors().add(storeDimConnector);
+              twoCountDistinctsCube.getDimensionConnectors().add(productDimConnector);
+
+              // Create measure group with all measures
+              MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+              measureGroup.getMeasures().add(storeCountMeasure);
+              measureGroup.getMeasures().add(customerCountMeasure);
+              measureGroup.getMeasures().add(unitSalesMeasure);
+
+              twoCountDistinctsCube.getMeasureGroups().add(measureGroup);
+
+              // Add the new cube to the catalog
+              catalog.getCubes().add(twoCountDistinctsCube);
+          }
+
+          @Override
+          public Catalog get() {
+              return catalog;
+          }
+      }
+
+
+      withSchemaEmf(context, TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf::new);
       // We should get the same answer whether the default [Store Count]
     // measure is in context or [Unit Sales]. The measure specified in the
     // second param of Aggregate() should be used.

@@ -20,12 +20,12 @@ import static org.opencube.junit5.TestUtil.getDimensionByNameFromArray;
 import static org.opencube.junit5.TestUtil.getHierarchyByNameFromArray;
 import static org.opencube.junit5.TestUtil.getLevelByNameFromArray;
 import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.sql.SQLException;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -33,7 +33,6 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +46,7 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Unit tests that check compatibility with Microsoft SQL Server Analysis
@@ -119,7 +118,7 @@ class Ssas2005CompatibilityTest {
         // 2. Dimension [Currency] has one unnamed hierarchy
         // 3. Dimension [Time] has hierarchies [Time2] and [Time by Week]
         //    (intentionally named hierarchy differently from dimension)
-        withSchema(context, SchemaModifiers.Ssas2005CompatibilityTestModifier5::new);
+        withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5::new);
         //withCube("Warehouse and Sales");
     }
 
@@ -660,7 +659,7 @@ class Ssas2005CompatibilityTest {
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Time].Members\n"
             + "from [Warehouse and Sales]",
-            "Encountered an error at (or somewhere around) input:2:1");
+            "Encountered an error at (or somewhere around) input:2:6");
     }
 
     @ParameterizedTest
@@ -967,7 +966,7 @@ class Ssas2005CompatibilityTest {
             + "</Dimension>",
             null));
          */
-    	withSchema(context, SchemaModifiers.Ssas2005CompatibilityTestModifier1::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier1::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Store Type 2.Store Type 2].[Store Type].members ON columns "
@@ -1777,7 +1776,7 @@ class Ssas2005CompatibilityTest {
              + " </Hierarchy>\n"
              + "</Dimension>"));
          */
-        withSchema(context, SchemaModifiers.Ssas2005CompatibilityTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier2::new);
         Cube cube = getCubeByNameFromArray(context.getConnectionWithDefaultRole()
             .getCatalog().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
         Dimension dimension =  getDimensionByNameFromArray(cube.getDimensions(), "SameName")
@@ -1827,7 +1826,7 @@ class Ssas2005CompatibilityTest {
                 + "    </Hierarchy>\n"
                 + "  </Dimension>\n"));
     	 */
-    	withSchema(context, SchemaModifiers.Ssas2005CompatibilityTestModifier3::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier3::new);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "head(\n"
             + "  filter(\n"

@@ -21,11 +21,12 @@ import java.util.List;
 
 import org.eclipse.daanse.rolap.common.RolapStarRegistry;
 import org.eclipse.daanse.rolap.common.RolapUtil;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.InlineTableQuery;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
+import org.eclipse.daanse.rolap.mapping.model.RelationalQuery;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
 import org.junit.jupiter.api.Test;
 
 class RolapUtilTest {
@@ -36,20 +37,21 @@ class RolapUtilTest {
   private static final String TABLE_ALIAS = "TableAlias";
   private static final String RELATION_ALIAS = "RelationAlias";
   private static final String FACT_NAME = "order_fact";
-  private TableQueryMappingImpl fact;
+  private TableQuery fact;
 
   @Test
   void testMakeRolapStarKeyUnmodifiable() throws Exception {
     try {
       //fact = SchemaUtil.parse(getFactTableWithSQLFilter(), TableQueryMappingImpl.class);
-      fact = TableQueryMappingImpl.builder()
-    		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
-    		  .withAlias("TableAlias")
-    		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
-    				  .withDialects(List.of("mysql"))
-    				  .withSql("`TableAlias`.`promotion_id` = 112")
-    				  .build())
-    		  .build();
+      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      pt.setName("getFactTable())");
+      SqlStatement ss = RolapMappingFactory.eINSTANCE.createSqlStatement();
+      ss.getDialects().add("mysql");
+      ss.setSql("`TableAlias`.`promotion_id` = 112");
+      fact = RolapMappingFactory.eINSTANCE.createTableQuery();
+      fact.setTable(pt);
+      fact.setAlias("TableAlias");
+      fact.setSqlWhereExpression(ss);
       List<String> polapStarKey = RolapStarRegistry.makeRolapStarKey(FACT_NAME);
       assertNotNull(polapStarKey);
       polapStarKey.add("OneMore");
@@ -64,69 +66,75 @@ class RolapUtilTest {
   @Test
   void testMakeRolapStarKey_ByFactTableName() throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithSQLFilter(), TableQueryMappingImpl.class);
-    fact = TableQueryMappingImpl.builder()
-    		.withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
-    		  .withAlias("TableAlias")
-    		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
-    				  .withDialects(List.of("mysql"))
-    				  .withSql("`TableAlias`.`promotion_id` = 112")
-    				  .build())
-    		  .build();
-    List<String> polapStarKey = RolapStarRegistry.makeRolapStarKey(FACT_NAME);
-    assertNotNull(polapStarKey);
-    assertEquals(1, polapStarKey.size());
-    assertEquals(FACT_NAME, polapStarKey.get(0));
+      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      pt.setName("getFactTable())");
+      SqlStatement ss = RolapMappingFactory.eINSTANCE.createSqlStatement();
+      ss.getDialects().add("mysql");
+      ss.setSql("`TableAlias`.`promotion_id` = 112");
+      fact = RolapMappingFactory.eINSTANCE.createTableQuery();
+      fact.setTable(pt);
+      fact.setAlias("TableAlias");
+      fact.setSqlWhereExpression(ss);
+
+      List<String> polapStarKey = RolapStarRegistry.makeRolapStarKey(FACT_NAME);
+      assertNotNull(polapStarKey);
+      assertEquals(1, polapStarKey.size());
+      assertEquals(FACT_NAME, polapStarKey.get(0));
   }
 
   @Test
   void testMakeRolapStarKey_FactTableWithSQLFilter() throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithSQLFilter(), TableQueryMappingImpl.class);
-    fact = TableQueryMappingImpl.builder()
-          .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
-  		  .withAlias("TableAlias")
-  		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
-  				  .withDialects(List.of("mysql"))
-  				  .withSql("`TableAlias`.`promotion_id` = 112")
-  				  .build())
-  		  .build();
-    List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);
-    assertNotNull(polapStarKey);
-    assertEquals(3, polapStarKey.size());
-    assertEquals(TABLE_ALIAS, polapStarKey.get(0));
-    assertEquals(FILTER_DIALECT, polapStarKey.get(1));
-    assertEquals(FILTER_QUERY, polapStarKey.get(2));
+      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      pt.setName("getFactTable())");
+      SqlStatement ss = RolapMappingFactory.eINSTANCE.createSqlStatement();
+      ss.getDialects().add("mysql");
+      ss.setSql("`TableAlias`.`promotion_id` = 112");
+      fact = RolapMappingFactory.eINSTANCE.createTableQuery();
+      fact.setTable(pt);
+      fact.setAlias("TableAlias");
+      fact.setSqlWhereExpression(ss);
+
+      List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);
+      assertNotNull(polapStarKey);
+      assertEquals(3, polapStarKey.size());
+      assertEquals(TABLE_ALIAS, polapStarKey.get(0));
+      assertEquals(FILTER_DIALECT, polapStarKey.get(1));
+      assertEquals(FILTER_QUERY, polapStarKey.get(2));
   }
 
   @Test
   void testMakeRolapStarKey_FactTableWithEmptyFilter()
       throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithEmptySQLFilter(), TableQueryMappingImpl.class);
-    fact = TableQueryMappingImpl.builder()
-          .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
-  		  .withAlias("TableAlias")
-  		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
-  				  .withDialects(List.of("mysql"))
-  				  .build())
-  		  .build();
+      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      pt.setName("getFactTable())");
+      SqlStatement ss = RolapMappingFactory.eINSTANCE.createSqlStatement();
+      ss.getDialects().add("mysql");
+      fact = RolapMappingFactory.eINSTANCE.createTableQuery();
+      fact.setTable(pt);
+      fact.setAlias("TableAlias");
+      fact.setSqlWhereExpression(ss);
 
-    List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);
-    assertNotNull(polapStarKey);
-    assertEquals(1, polapStarKey.size());
-    assertEquals(TABLE_ALIAS, polapStarKey.get(0));
+      List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);
+      assertNotNull(polapStarKey);
+      assertEquals(1, polapStarKey.size());
+      assertEquals(TABLE_ALIAS, polapStarKey.get(0));
   }
 
   @Test
   void testMakeRolapStarKey_FactTableWithoutSQLFilter()
       throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithoutSQLFilter(), TableQueryMappingImpl.class);
-    fact = TableQueryMappingImpl.builder()
-              .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
-    		  .withAlias("TableAlias")
-    		  .build();
-    List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);
-    assertNotNull(polapStarKey);
-    assertEquals(1, polapStarKey.size());
-    assertEquals(TABLE_ALIAS, polapStarKey.get(0));
+      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      pt.setName("getFactTable())");
+      fact = RolapMappingFactory.eINSTANCE.createTableQuery();
+      fact.setTable(pt);
+      fact.setAlias("TableAlias");
+      List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);
+      assertNotNull(polapStarKey);
+      assertEquals(1, polapStarKey.size());
+      assertEquals(TABLE_ALIAS, polapStarKey.get(0));
   }
 
   @Test
@@ -145,7 +153,7 @@ class RolapUtilTest {
     		  	<Dialect>mysql</Dialect>
                 <SQLStatement>`TableAlias`.`promotion_id` = 112</SQLStatement>
     		</SqlSelectQuery>
-        </Table>        
+        </Table>
     """;
     return fact;
   }
@@ -156,7 +164,7 @@ class RolapUtilTest {
     		   <SqlSelectQuery>
     			   <Dialect>mysql</Dialect>
     		   </SqlSelectQuery>
-        </Table>        
+        </Table>
     	""";
     return fact;
   }
@@ -168,8 +176,8 @@ class RolapUtilTest {
     return fact;
   }
 
-  private static RelationalQueryMapping getFactRelationMock() throws Exception {
-    RelationalQueryMapping factMock = mock(InlineTableQueryMapping.class);
+  private static RelationalQuery getFactRelationMock() throws Exception {
+    RelationalQuery factMock = mock(InlineTableQuery.class);
     when(factMock.getAlias()).thenReturn(RELATION_ALIAS);
     return factMock;
   }

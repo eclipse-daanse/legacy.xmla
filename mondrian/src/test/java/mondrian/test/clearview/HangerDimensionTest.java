@@ -13,9 +13,9 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContext;
@@ -57,11 +57,11 @@ class HangerDimensionTest extends ClearViewBase {
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
             super.runTest(context);
-            ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
+            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
         }
     }
 
-    protected Optional<Function<CatalogMapping, PojoMappingModifier>> getModifier(String currentTestCaseName) {
+    protected Optional<Function<Catalog, CatalogMappingSupplier>> getModifier(String currentTestCaseName) {
         return Optional.of(HangerDimensionTestModifiers.HangerDimensionTestModifier1::new);
     }
 

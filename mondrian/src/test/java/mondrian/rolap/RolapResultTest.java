@@ -12,18 +12,20 @@ package mondrian.rolap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
+import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -235,7 +237,8 @@ Axis #2:
             + "  </Hierarchy>\n"
             + "</Dimension>"));
          */
-        withSchema(context, SchemaModifiers.RolapResultTestModifier::new);
+        ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
+        withSchemaEmf(context, SchemaModifiersEmf.RolapResultTestModifier::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Promotion2 Name].[Price Winners], [Promotion2 Name].[Sale Winners]} * {Tail([Time].[Year].Members,3)} ON COLUMNS, "
             + "NON EMPTY Crossjoin({[Store].CurrentMember.Children},  {[Store Type].[All Store Types].Children}) ON ROWS "
@@ -265,8 +268,8 @@ Axis #2:
             + "Row #2: \n");
     }
 
-    protected Function<CatalogMapping, PojoMappingModifier> getModifierFunction(){
-        return RolapResultTestModifier::new;
+    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
+        return RolapResultTestModifierEmf::new;
     }
 
 }

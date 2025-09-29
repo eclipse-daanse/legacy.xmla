@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 import java.util.function.Function;
@@ -24,18 +24,15 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureFactCountMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationPatternMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.AggregationExclude;
+import org.eclipse.daanse.rolap.mapping.model.AggregationMeasureFactCount;
+import org.eclipse.daanse.rolap.mapping.model.AggregationTable;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.ColumnType;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -111,48 +108,69 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
     	prepareContext(context);
-        List<AggregationTableMappingImpl> aggTables = List.of(
-            AggregationNameMappingImpl.builder()
-                .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
-                .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggC6FactCsv2016).build())
-                .withAggregationMeasureFactCounts(List.of(
-                	AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesFactCountAggC6FactCsv2016)
-                        .withFactColumn(AggMeasureFactCountTestModifier.STORE_SALES_COLUMN_IN_FACT_CSV_2016)
-                        .build(),
-                   AggregationMeasureFactCountMappingImpl.builder()
-                   		.withColumn(AggMeasureFactCountTestModifier.storeCostFactCountAggC6FactCsv2016)
-                        .withFactColumn(AggMeasureFactCountTestModifier.STORE_COST_COLUMN_IN_FACT_CSV_2016)
-                        .build(),
-                   AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesFactCountAggC6FactCsv2016)
-                        .withFactColumn(AggMeasureFactCountTestModifier.UNIT_SALES_COLUMN_IN_FACT_CSV_2016)
-                        .build()
-                ))
-                .withAggregationMeasures(List.of(
-                	AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Unit Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Cost]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeCostAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesAggC6FactCsv2016)
-                        .build()
-                ))
-                .withAggregationLevels(List.of(
-                	AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
-                ))
-                .build()
-        );
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        AggregationColumnName aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
+
+        // Create AggregationMeasureFactCount elements
+        AggregationMeasureFactCount storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
+        storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
+        storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
+        unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+
         /*
         String agg = ""
                 + "<AggName name=\"agg_c_6_fact_csv_2016\">\n"
@@ -184,6 +202,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
         verifySameAggAndNot(context, QUERY, getAggSchema(List.of(), aggTables), aggSql);
+        // Note: aggTablesPojo contains the POJO version, aggTables contains the EMF version using RolapMappingFactory.eINSTANCE
     }
 
     @Disabled //TODO need investigate
@@ -196,45 +215,69 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        List<AggregationTableMappingImpl> aggTables = List.of(
-        	AggregationNameMappingImpl.builder()
-                .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
-                .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggC6FactCsv2016).build())
-                .withAggregationMeasureFactCounts(List.of(
-                	AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesFactCountAggC6FactCsv2016)
-                        .build(),
-                        AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.storeCostFactCountAggC6FactCsv2016)
-                        .build(),
-                        AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesFactCountAggC6FactCsv2016)
-                        .build()
-                ))
-                .withAggregationMeasures(List.of(
-                	AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Unit Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Cost]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeCostAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesAggC6FactCsv2016)
-                        .build()
-                ))
-                .withAggregationLevels(List.of(
-                	AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
-                ))
-                .build()
-        );
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
+
+        // Create AggregationMeasureFactCount elements WITHOUT factColumn (это ключевое отличие этого теста)
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
+        // НЕ устанавливаем factColumn - это тест на отсутствие factColumn
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
+        // НЕ устанавливаем factColumn
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
+        // НЕ устанавливаем factColumn
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+
         /*
         String agg = ""
                 + "<AggName name=\"agg_c_6_fact_csv_2016\">\n"
@@ -259,6 +302,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                             ("Mondrian Error:Internal"
                                     + " error: while parsing catalog"));
         }
+        // Note: aggTablesPojo contains the POJO version, aggTables contains the EMF version using RolapMappingFactory.eINSTANCE
     }
 
     @ParameterizedTest
@@ -269,48 +313,69 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        List<AggregationTableMappingImpl> aggTables = List.of(
-            AggregationNameMappingImpl.builder()
-                .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
-                .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggC6FactCsv2016).build())
-                .withAggregationMeasureFactCounts(List.of(
-                    AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesFactCountAggC6FactCsv2016)
-                        .withFactColumn(AggMeasureFactCountTestModifier.STORE_SALES_COLUMN_IN_FACT_CSV_2016)
-                        .build(),
-                    AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.storeCostFactCountAggC6FactCsv2016)
-                        .withFactColumn(AggMeasureFactCountTestModifier.STORE_COST_COLUMN_IN_FACT_CSV_2016)
-                        .build(),
-                    AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesFactCountAggC6FactCsv2016)
-                        .withFactColumn(AggMeasureFactCountTestModifier.UNIT_SALES_COLUMN_IN_FACT_CSV_2016 )
-                        .build()
-                ))
-                .withAggregationMeasures(List.of(
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Unit Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Cost]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeCostAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesAggC6FactCsv2016)
-                        .build()
-                ))
-                .withAggregationLevels(List.of(
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
-                ))
-                .build()
-        );
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
+
+        // Create AggregationMeasureFactCount elements
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
+        storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
+        storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
+        unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+
         /*
         String agg = ""
                 + "<AggName name=\"agg_c_6_fact_csv_2016\">\n"
@@ -356,8 +421,73 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        PhysicalColumnMappingImpl notExist = PhysicalColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
-        List<AggregationTableMappingImpl> aggTables = List.of(
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        PhysicalColumn notExist = factory.createPhysicalColumn();
+        notExist.setName("not_exist");
+        notExist.setType(ColumnType.INTEGER);
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
+
+        // Create AggregationMeasureFactCount elements
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
+        storeSalesFactCount.setFactColumn(notExist);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
+        storeCostFactCount.setFactColumn(notExist);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
+        unitSalesFactCount.setFactColumn(notExist);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+/*
+        List<AggregationTableMappingImpl> aggTablesPojo = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggC6FactCsv2016).build())
@@ -399,6 +529,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .build()
         );
+        */
         /*
         String agg = ""
                 + "<AggName name=\"agg_c_6_fact_csv_2016\">\n"
@@ -441,34 +572,53 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        List<AggregationTableMappingImpl> aggTables = List.of(
-            AggregationNameMappingImpl.builder()
-                .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
-                .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggC6FactCsv2016).build())
-                .withAggregationMeasures(List.of(
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Unit Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Cost]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeCostAggC6FactCsv2016)
-                        .build(),
-                    AggregationMeasureMappingImpl.builder()
-                        .withName("[Measures].[Store Sales]")
-                        .withColumn(AggMeasureFactCountTestModifier.storeSalesAggC6FactCsv2016)
-                        .build()
-                ))
-                .withAggregationLevels(List.of(
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
-                    AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
-                ))
-                .build()
-        );
+
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
 
         /*
         String agg = ""
@@ -509,6 +659,73 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        PhysicalColumn notExist = factory.createPhysicalColumn();
+        notExist.setName("not_exist");
+        notExist.setType(ColumnType.INTEGER);
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(notExist);
+
+        // Create AggregationMeasureFactCount elements
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
+        storeSalesFactCount.setFactColumn(notExist);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
+        storeCostFactCount.setFactColumn(notExist);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
+        unitSalesFactCount.setFactColumn(notExist);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+/*
         PhysicalColumnMappingImpl notExist = PhysicalColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
@@ -552,6 +769,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .build()
         );
+        */
         /*
         String agg = ""
                 + "<AggName name=\"agg_c_6_fact_csv_2016\">\n"
@@ -586,12 +804,81 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
+
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggCsvDifferentColumnNames);
+
+        // Create AggregationMeasureFactCount elements
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.ssFcAggCsvDifferentColumnNames);
+        storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.scFcAggCsvDifferentColumnNames);
+        storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.usFcAggCsvDifferentColumnNames);
+        unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggCsvDifferentColumnNames);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggCsvDifferentColumnNames);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggCsvDifferentColumnNames);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggCsvDifferentColumnNames);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggCsvDifferentColumnNames);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggCsvDifferentColumnNames);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggCsvDifferentColumnNames);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+
+        AggregationExclude aggregationExclude = factory.createAggregationExclude();
+        aggregationExclude.setName("agg_c_6_fact_csv_2016");
+        List<AggregationExclude> aggExcludes = List.of(aggregationExclude);
+
+        /*
         List<AggregationExcludeMappingImpl> aggExcludes = List.of(
             AggregationExcludeMappingImpl.builder()
                 .withName("agg_c_6_fact_csv_2016")
                 .build()
         );
-        List<AggregationTableMappingImpl> aggTables = List.of(
+        List<AggregationTableMappingImpl> aggTablesPojo = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggCsvDifferentColumnNames)
                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggCsvDifferentColumnNames).build())
@@ -633,6 +920,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .build()
         );
+        */
         /*
             String agg = ""
                 + "<AggExclude name=\"agg_c_6_fact_csv_2016\" />"
@@ -675,12 +963,82 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        List<AggregationExcludeMappingImpl> aggExcludes = List.of(
+
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggCsvDivideByZero);
+
+        // Create AggregationMeasureFactCount elements
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggCsvDivideByZero);
+        storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggCsvDivideByZero);
+        storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggCsvDivideByZero);
+        unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggCsvDivideByZero);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggCsvDivideByZero);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggCsvDivideByZero);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggCsvDivideByZero);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggCsvDivideByZero);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggCsvDivideByZero);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationName();
+        aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggCsvDivideByZero);
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
+
+        AggregationExclude aggregationExclude = factory.createAggregationExclude();
+        aggregationExclude.setName("agg_c_6_fact_csv_2016");
+        List<AggregationExclude> aggExcludes = List.of(aggregationExclude);
+
+
+        /*
+        List<AggregationExcludeMappingImpl> aggExcludesPojo = List.of(
             AggregationExcludeMappingImpl.builder()
                 .withName("agg_c_6_fact_csv_2016")
                 .build()
         );
-        List<AggregationTableMappingImpl> aggTables = List.of(
+        List<AggregationTableMappingImpl> aggTablesPojo = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggCsvDivideByZero)
                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(AggMeasureFactCountTestModifier.factCountAggCsvDivideByZero).build())
@@ -722,6 +1080,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                     ))
                 .build()
         );
+        */
         String result = ""
                 + "Axis #0:\n"
                 + "{}\n"
@@ -747,7 +1106,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 + "Row #2: 3\n"
                 + "Row #2: 3\n";
 
-        withSchema(context, getAggSchema(aggExcludes, aggTables));
+        withSchemaEmf(context, getAggSchema(aggExcludes, aggTables));
         assertQueryReturns(context.getConnectionWithDefaultRole(), QUERY, result);
     }
 
@@ -759,54 +1118,68 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
-        List<AggregationTableMappingImpl> aggTables = List.of(AggregationPatternMappingImpl.builder()
-            .withPattern("agg_c_6_fact_csv_2016")
-            .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                .withColumn(AggMeasureFactCountTestModifier.factCountAggC6FactCsv2016)
-                .build())
-            .withAggregationMeasureFactCounts(List.of(
-                AggregationMeasureFactCountMappingImpl.builder()
-                    .withColumn(AggMeasureFactCountTestModifier.storeSalesFactCountAggC6FactCsv2016)
-                    .withFactColumn(AggMeasureFactCountTestModifier.STORE_SALES_COLUMN_IN_FACT_CSV_2016)
-                    .build(),
-                AggregationMeasureFactCountMappingImpl.builder()
-                    .withColumn(AggMeasureFactCountTestModifier.storeCostFactCountAggC6FactCsv2016 )
-                    .withFactColumn(AggMeasureFactCountTestModifier.STORE_COST_COLUMN_IN_FACT_CSV_2016)
-                    .build(),
-                AggregationMeasureFactCountMappingImpl.builder()
-                    .withColumn(AggMeasureFactCountTestModifier.unitSalesFactCountAggC6FactCsv2016)
-                    .withFactColumn(AggMeasureFactCountTestModifier.UNIT_SALES_COLUMN_IN_FACT_CSV_2016)
-                    .build()
-            ))
-            .withAggregationMeasures(List.of(
-                AggregationMeasureMappingImpl.builder()
-                    .withName("[Measures].[Unit Sales]")
-                    .withColumn(AggMeasureFactCountTestModifier.unitSalesAggC6FactCsv2016)
-                    .build(),
-                AggregationMeasureMappingImpl.builder()
-                    .withName("[Measures].[Store Cost]")
-                    .withColumn(AggMeasureFactCountTestModifier.storeCostAggC6FactCsv2016)
-                    .build(),
-                AggregationMeasureMappingImpl.builder()
-                    .withName("[Measures].[Store Sales]")
-                    .withColumn(AggMeasureFactCountTestModifier.storeSalesAggC6FactCsv2016)
-                    .build()
-            ))
-            .withAggregationLevels(List.of(
-                AggregationLevelMappingImpl.builder()
-                    .withName("[Time].[Time].[Year]")
-                    .withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016)
-                    .build(),
-                AggregationLevelMappingImpl.builder()
-                    .withName("[Time].[Time].[Quarter]")
-                    .withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016)
-                    .build(),
-                AggregationLevelMappingImpl.builder()
-                    .withName("[Time].[Time].[Month]")
-                    .withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016)
-                    .build()
-            ))
-            .build());
+
+        // Create aggTables using RolapMappingFactory.eINSTANCE
+        var factory = RolapMappingFactory.eINSTANCE;
+
+        // Create AggregationColumnName for fact count
+        var aggFactCount = factory.createAggregationColumnName();
+        aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
+
+        // Create AggregationMeasureFactCount elements
+        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
+        storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
+
+        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
+        storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
+
+        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
+        unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
+
+        // Create AggregationMeasure elements
+        var unitSalesMeasure = factory.createAggregationMeasure();
+        unitSalesMeasure.setName("[Measures].[Unit Sales]");
+        unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
+
+        var storeCostMeasure = factory.createAggregationMeasure();
+        storeCostMeasure.setName("[Measures].[Store Cost]");
+        storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
+
+        var storeSalesMeasure = factory.createAggregationMeasure();
+        storeSalesMeasure.setName("[Measures].[Store Sales]");
+        storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
+
+        // Create AggregationLevel elements
+        var yearLevel = factory.createAggregationLevel();
+        yearLevel.setName("[Time].[Time].[Year]");
+        yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
+
+        var quarterLevel = factory.createAggregationLevel();
+        quarterLevel.setName("[Time].[Time].[Quarter]");
+        quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
+
+        var monthLevel = factory.createAggregationLevel();
+        monthLevel.setName("[Time].[Time].[Month]");
+        monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
+
+        // Create AggregationName
+        var aggregationName = factory.createAggregationPattern();
+        aggregationName.setPattern("agg_c_6_fact_csv_2016");
+        aggregationName.setAggregationFactCount(aggFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(storeCostFactCount);
+        aggregationName.getAggregationMeasureFactCounts().add(unitSalesFactCount);
+        aggregationName.getAggregationMeasures().add(unitSalesMeasure);
+        aggregationName.getAggregationMeasures().add(storeCostMeasure);
+        aggregationName.getAggregationMeasures().add(storeSalesMeasure);
+        aggregationName.getAggregationLevels().add(yearLevel);
+        aggregationName.getAggregationLevels().add(quarterLevel);
+        aggregationName.getAggregationLevels().add(monthLevel);
+
+        List<AggregationTable> aggTables = List.of(aggregationName);
 
         String aggSql = ""
                 + "select\n"
@@ -826,28 +1199,28 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         verifySameAggAndNot(context, QUERY, getAggSchema(List.of(), aggTables), aggSql);
     }
 
-    private Function<CatalogMapping, PojoMappingModifier> getAggSchema(List<AggregationExcludeMappingImpl> aggExcludes, List<AggregationTableMappingImpl> aggTables) {
-        class AggMeasureFactCountTestModifierInner extends AggMeasureFactCountTestModifier {
+    private Function<Catalog, CatalogMappingSupplier> getAggSchema(List<AggregationExclude> aggExcludes, List<AggregationTable> aggTables) {
+        class AggMeasureFactCountTestModifierInner extends AggMeasureFactCountTestModifierEmf {
 
-            public AggMeasureFactCountTestModifierInner(CatalogMapping catalogMapping) {
+            public AggMeasureFactCountTestModifierInner(Catalog catalogMapping) {
                 super(catalogMapping);
             }
 
             @Override
-            protected List<AggregationTableMappingImpl> getAggTables() {
+            protected List<AggregationTable> getAggTables() {
                 return aggTables;
             }
 
             @Override
-            protected List<AggregationExcludeMappingImpl> getAggExcludes() {
+            protected List<AggregationExclude> getAggExcludes() {
                 return aggExcludes;
             }
         }
         return AggMeasureFactCountTestModifierInner::new;
     }
 
-    private void verifySameAggAndNot(Context<?> context, String query, Function<CatalogMapping, PojoMappingModifier> mf) {
-        withSchema(context, mf);
+    private void verifySameAggAndNot(Context<?> context, String query, Function<Catalog, CatalogMappingSupplier> mf) {
+        withSchemaEmf(context, mf);
         Result resultWithAgg =
                 executeQuery(query, context.getConnectionWithDefaultRole());
         ((TestContextImpl)context).setUseAggregates(false);
@@ -863,7 +1236,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     }
 
     private void verifySameAggAndNot
-            (Context<?> context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String aggSql) {
+            (Context<?> context, String query, Function<Catalog, CatalogMappingSupplier> mf, String aggSql) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         // check that agg tables are used
@@ -873,9 +1246,9 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     }
 
     private void assertQuerySql
-            (Context<?> context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String sql) {
+            (Context<?> context, String query, Function<Catalog, CatalogMappingSupplier> mf, String sql) {
 
-        withSchema(context, mf);
+        withSchemaEmf(context, mf);
         //withFreshConnection();
         assertQuerySql
                 (context.getConnectionWithDefaultRole(), query, new SqlPattern[]

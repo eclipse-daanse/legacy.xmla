@@ -327,8 +327,9 @@ import org.eclipse.daanse.rolap.common.RolapResultShepherd;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
-import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 
 public class TestContextImpl extends BasicContext implements TestContext {
@@ -707,7 +708,7 @@ public class TestContextImpl extends BasicContext implements TestContext {
     }
 
     @Override
-    public CatalogMapping getCatalogMapping() {
+    public Catalog getCatalogMapping() {
         return catalogMappingSupplier.get();
     }
 

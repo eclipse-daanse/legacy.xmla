@@ -39,7 +39,7 @@ import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_W
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_RESULT;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
@@ -83,7 +83,7 @@ class RolapNativeTopCountTest extends BatchTestCase {
         withSchema(context, schema);
         //withCube(CUSTOM_COUNT_MEASURE_CUBE_NAME);
          */
-        withSchema(context, SchemaModifiers.CustomCountMeasureCubeName::new);
+        withSchemaEmf(context, SchemaModifiersEmf.CustomCountMeasureCubeName::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             CUSTOM_COUNT_MEASURE_QUERY, CUSTOM_COUNT_MEASURE_RESULT);
     }
@@ -137,7 +137,7 @@ class RolapNativeTopCountTest extends BatchTestCase {
                 ROLE_RESTRICTION_WORKS_WA_ROLE_DEF);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.RoleRestrictionWorksWaRoleDef::new);
+        withSchemaEmf(context, SchemaModifiersEmf.RoleRestrictionWorksWaRoleDef::new);
         assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME))),
             ROLE_RESTRICTION_WORKS_WA_QUERY,
             ROLE_RESTRICTION_WORKS_WA_RESULT);
@@ -153,7 +153,7 @@ class RolapNativeTopCountTest extends BatchTestCase {
                 ROLE_RESTRICTION_WORKS_DF_ROLE_DEF);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.RoleRestrictionWorksDfRoleDef::new);
+        withSchemaEmf(context, SchemaModifiersEmf.RoleRestrictionWorksDfRoleDef::new);
         assertQueryReturns(((TestContext) context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME))),
             ROLE_RESTRICTION_WORKS_DF_QUERY,
             ROLE_RESTRICTION_WORKS_DF_RESULT);

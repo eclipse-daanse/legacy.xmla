@@ -13,10 +13,10 @@
  */
 package org.eclipse.daanse.olap.function.def.udf.currentdatemember;
 
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -24,7 +24,7 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 class CurrentDateMemberFunDefTest {
 
@@ -46,7 +46,7 @@ class CurrentDateMemberFunDefTest {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.CurrentDateMemberUdfTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.CurrentDateMemberUdfTestModifier1::new);
         TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, "
             + "NON EMPTY {MockCurrentDateMember([Time].[Time], \"[yyyy]\")} ON ROWS "

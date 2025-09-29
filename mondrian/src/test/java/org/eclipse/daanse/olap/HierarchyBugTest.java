@@ -14,11 +14,10 @@ package org.eclipse.daanse.olap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.sql.SQLException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -36,18 +35,6 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -297,6 +284,7 @@ TestUtil.flushSchemaCache(conn);
             + "    </Hierarchy>\n"
             + "  </Dimension>";
         */
+        /*
         class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier extends org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier {
            public VerifyMemberLevelNamesIdentityOlap4jDateDimModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -344,10 +332,11 @@ TestUtil.flushSchemaCache(conn);
                return result;
            }
         }
+        */
        /*
        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube("Sales", dateDim));
         */
-        withSchema(context, VerifyMemberLevelNamesIdentityOlap4jDateDimModifier::new);
+        withSchemaEmf(context, VerifyMemberLevelNamesIdentityOlap4jDateDimModifier::new);
         verifyLevelMemberNamesIdentityOlap4j(mdx, context, expected);
     }
 	@ParameterizedTest
@@ -393,6 +382,7 @@ TestUtil.flushSchemaCache(conn);
 
 
         //((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube("Sales", dateDim));
+        /*
         class VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier extends PojoMappingModifier {
 
             public VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier(CatalogMapping catalog) {
@@ -450,7 +440,8 @@ TestUtil.flushSchemaCache(conn);
             }
 
         }
-        withSchema(context, VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier::new);
+        */
+        withSchemaEmf(context, VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier::new);
         verifyLevelMemberNamesIdentityOlap4j(mdx, context, expected);
     }
 

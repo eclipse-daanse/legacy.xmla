@@ -287,44 +287,44 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rolap.mapping.api</artifactId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.model</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart</artifactId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart</artifactId>
 			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels</artifactId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels</artifactId>
 			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>
-				org.eclipse.daanse.rolap.mapping.instance.rec.complex.expressivenames
-			</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.complex.expressivenames</artifactId>
+			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.rolap.mapping.modifier.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rolap.mapping.modifier.pojo</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.rolap.mapping.modifier.emf</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.xmla.api</artifactId>
@@ -406,9 +406,21 @@
 			<artifactId>org.eclipse.daanse.rolap.core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
-		</dependency>		
-	</dependencies>
-	<build>
+		</dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <!--version>2.13.4.2</version-->
+      <version>2.18.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java-core</artifactId>
+      <version>3.5.3</version>
+    </dependency>
+  </dependencies>
+  <build>
 
 		<plugins>
 			<plugin>

@@ -12,7 +12,7 @@ package mondrian.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +30,6 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.AbstractProperty;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +37,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Tests intrinsic member and cell properties as specified in OLE DB for OLAP
@@ -345,7 +344,7 @@ class PropertiesTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertyDescription(Context<?> context) throws Exception {
-        withSchema(context, SchemaModifiers.PropertiesTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.PropertiesTestModifier::new);
         List<Cube> cubes = context.getConnectionWithDefaultRole().getCatalog()
             .getCubes();
         Optional<Cube> optionalCube = cubes.stream().filter(c -> c.getName().equals("Foo")).findFirst();

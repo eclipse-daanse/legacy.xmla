@@ -15,7 +15,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +46,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Various unit tests concerned with performance.
@@ -175,7 +175,7 @@ public class PerformanceTest {
         + "      <CalculatedMember dimension=\"Measures\" name=\"EXP2\" formula=\"IIf(0 &#60; [Measures].[EXP2_4], "
         + "[Measures].[EXP2_4], NULL)\"/>\n" ));
      */
-      withSchema(context, SchemaModifiers.PerformanceTestModifier1::new);
+      withSchemaEmf(context, SchemaModifiersEmf.PerformanceTestModifier1::new);
   }
 
   /**
@@ -403,7 +403,7 @@ public class PerformanceTest {
             + "</Dimension>" ),
         null ));
      */
-      withSchema(context, SchemaModifiers.PerformanceTestModifier2::new);
+      withSchemaEmf(context, SchemaModifiersEmf.PerformanceTestModifier2::new);
       String mdx =
       "with "
         + " member [Measures].[one] as '1'"
@@ -576,7 +576,7 @@ public class PerformanceTest {
     //
     // jdk1.7 marmite   main 14770   30,857 ms
     // jdk1.7 marmite   main 14771   29,083 ms
-    withSchema(context, SchemaModifiers.PerformanceTestModifier3::new);
+    withSchemaEmf(context, SchemaModifiersEmf.PerformanceTestModifier3::new);
     assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))),
       "with member [Measures].[Foo] as\n"
         + "Aggregate([Gender].Members * [Marital Status].Members * [Time].Members)\n"

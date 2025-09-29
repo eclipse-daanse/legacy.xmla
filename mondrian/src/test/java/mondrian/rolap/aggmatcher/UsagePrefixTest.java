@@ -10,7 +10,7 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
@@ -21,7 +21,7 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Validates the dimension attribute usagePrefix is correctly
@@ -54,7 +54,7 @@ class UsagePrefixTest extends AggTableTestCase {
             "select {[StoreX].[Store Value].members} on columns, "
                 +   "{ measures.[Amount] } on rows from Cheques";
 
-        withSchema(context, SchemaModifiers.UsagePrefixTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.UsagePrefixTestModifier1::new);
         context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
@@ -91,7 +91,7 @@ class UsagePrefixTest extends AggTableTestCase {
             + " [StoreY].[Store Value].members) on columns, "
             +   "{ measures.[Amount] } on rows from Cheques";
 
-        withSchema(context, SchemaModifiers.UsagePrefixTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.UsagePrefixTestModifier1::new);
         context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,

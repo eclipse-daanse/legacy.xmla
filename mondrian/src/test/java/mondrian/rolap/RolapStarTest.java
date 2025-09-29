@@ -24,12 +24,13 @@ import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.RolapStar.Column;
 import org.eclipse.daanse.rolap.common.util.RelationUtil;
-import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
+import org.eclipse.daanse.rolap.mapping.model.Query;
+import org.eclipse.daanse.rolap.mapping.model.RelationalQuery;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -47,13 +48,13 @@ class RolapStarTest {
         public RolapStarForTests(
             final RolapCatalog schema,
             final Context<?> context,
-            final RelationalQueryMapping fact)
+            final RelationalQuery fact)
         {
             super(schema, context, fact);
         }
 
-        public QueryMapping cloneRelationForTests(
-            RelationalQueryMapping rel,
+        public Query cloneRelationForTests(
+            RelationalQuery rel,
             String possibleName)
         {
             return cloneRelation(rel, possibleName);
@@ -83,18 +84,21 @@ class RolapStarTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCloneRelationWithFilteredTable(Context<?> context) {
       RolapStarForTests rs = getStar(context.getConnectionWithDefaultRole(), "sales");
-      TableQueryMappingImpl original = TableQueryMappingImpl.builder()
-    		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("TestTable")
-    				  .withsSchema(DatabaseSchemaMappingImpl.builder().withName("Sechema").build())).build())
-    		  .withAlias("Alias")
-    		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
-    				  .withSql("Alias.clicked = 'true'")
-    				  .withDialects(List.of("generic"))
-    				  .build())
-    		  .build();
+      DatabaseSchema ds = RolapMappingFactory.eINSTANCE.createDatabaseSchema();
+      ds.setName("Sechema");
+      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      pt.setName("TestTable");
+      pt.setSchema(ds);
+      SqlStatement ss = RolapMappingFactory.eINSTANCE.createSqlStatement();
+      ss.setSql("Alias.clicked = 'true'");
+      ss.getDialects().add("generic");
+      TableQuery original = RolapMappingFactory.eINSTANCE.createTableQuery();
+      original.setTable(pt);
+      original.setAlias("Alias");
+      original.setSqlWhereExpression(ss);
 
 
-      TableQueryMappingImpl cloned = (TableQueryMappingImpl)rs.cloneRelationForTests(
+      TableQuery cloned = (TableQuery)rs.cloneRelationForTests(
           original,
           "NewAlias");
 

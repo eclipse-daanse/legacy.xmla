@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getFakeDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -35,14 +35,14 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.rolap.element.RolapMember;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
+import org.eclipse.daanse.rolap.element.RolapMember;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -54,7 +54,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.opentest4j.AssertionFailedError;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Unit test which checks that {@link Dialect} accurately represents the capabilities of the underlying
@@ -712,7 +712,7 @@ class DialectTest {
       // the following test is specifically for Oracle.
       return;
     }
-      withSchema(context, SchemaModifiers.DialectTestModifier1::new);
+      withSchemaEmf(context, SchemaModifiersEmf.DialectTestModifier1::new);
     // if date literal is incorrect the following query will give the error
     // ORA-01861: literal does not match format string
     Result result = executeQuery(context.getConnectionWithDefaultRole(),
@@ -735,7 +735,7 @@ class DialectTest {
       // Oracle and MySQL as well.
       return;
     }
-    withSchema(context, SchemaModifiers.DialectTestModifier2::new);
+    withSchemaEmf(context, SchemaModifiersEmf.DialectTestModifier2::new);
     Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select StoreSqft.[All StoreSqfts].children on 0 from BigIntTest" );
     RolapMember secondChild =

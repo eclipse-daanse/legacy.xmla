@@ -19,7 +19,7 @@ import static org.opencube.junit5.TestUtil.assertExprThrows;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.executeExprRaw;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
@@ -39,7 +39,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Tests the expressions used for calculated members. Please keep in sync
@@ -99,7 +99,7 @@ import mondrian.rolap.SchemaModifiers;
             + "  dimension='Measures'"
             + "  formula='[Measures].[Store Sales]-[Measures].[Store Cost]'/>"));
          */
-        withSchema(context, SchemaModifiers.TestCalculatedMembersModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier1::new);
         Cell s = executeExprRaw(context.getConnectionWithDefaultRole(), "Warehouse and Sales", "[Measures].[Profit With Spaces]");
         assertEquals("339,610.90", s.getFormattedValue());
     }
@@ -508,7 +508,7 @@ import mondrian.rolap.SchemaModifiers;
             null, s, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.TestCalculatedMembers3::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembers3::new);
         assertQueryThrows(context,
             "select {[Measures].[With a [bracket] inside it]} on columns,\n"
             + " {[Gender].Members} on rows\n"
@@ -738,7 +738,7 @@ import mondrian.rolap.SchemaModifiers;
             null, s, null, null, null, null);
         withSchema(context, schema);
         */
-        withSchema(context, SchemaModifiers.TestCalculatedMembers1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembers1::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Apos in dq], [Measures].[Dq in dq], [Measures].[Apos in apos], [Measures].[Dq in apos], [Measures].[Colored Profit]} on columns,\n"
             + " {[Gender].Members} on rows\n"
@@ -988,7 +988,7 @@ import mondrian.rolap.SchemaModifiers;
             + "\"/>\n"
             + "</CalculatedMember>\n"));
          */
-        withSchema(context, SchemaModifiers.TestCalculatedMembersModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales], [Measures].[Profit Formatted]} on 0,\n"
             + " {[Store].Children} on rows\n"
@@ -1028,7 +1028,7 @@ import mondrian.rolap.SchemaModifiers;
                 + "  <CalculatedMemberProperty name=\"CELL_FORMATTER\" value=\"mondrian.test.NonExistentCellFormatter\"/>\n"
                 + "</CalculatedMember>\n"));
          */
-        withSchema(context, SchemaModifiers.TestCalculatedMembersModifier4::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier4::new);
         assertQueryThrows(context,
             "select {[Measures].[Unit Sales], [Measures].[Profit Formatted]} on 0,\n"
             + " {[Store].Children} on rows\n"
@@ -1054,7 +1054,7 @@ import mondrian.rolap.SchemaModifiers;
                 + "    visible=\"false\"\n"
                 + "    formula=\"StrToTuple('([Gender].[M], [Marital Status].[S])', [Gender], [Marital Status])\"/>\n"));
          */
-        withSchema(context, SchemaModifiers.TestCalculatedMembersModifier3::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier3::new);
         String desiredResult =
             "Axis #0:\n"
             + "{}\n"
@@ -1624,7 +1624,7 @@ import mondrian.rolap.SchemaModifiers;
             null);
         withSchema(context, schema);
         */
-        withSchema(context, SchemaModifiers.TestCalculatedMembers2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembers2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "With \n"
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Country],[*BASE_MEMBERS_Store Type.Store Types Hierarchy])' \n"

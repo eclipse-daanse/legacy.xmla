@@ -13,12 +13,11 @@ import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +26,7 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 class DefaultRecognizerTest {
 
@@ -102,7 +101,7 @@ class DefaultRecognizerTest {
             + "and\n"
             + "    `agg_c_10_sales_fact_1997`.`month_of_year` in (1, 2, 3)";
 
-        withSchema(context, SchemaModifiers.DefaultRecognizerTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.DefaultRecognizerTestModifier::new);
         assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
             query,
             mysqlPattern(expectedSql),

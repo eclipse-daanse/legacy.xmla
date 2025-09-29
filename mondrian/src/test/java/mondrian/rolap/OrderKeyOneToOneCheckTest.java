@@ -13,7 +13,7 @@ package mondrian.rolap;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.AfterEach;
@@ -79,7 +79,7 @@ class OrderKeyOneToOneCheckTest {
                     + "</Cube>\n"
                     + "</Schema>");
      */
-    withSchema(context, SchemaModifiers.OrderKeyOneToOneCheckTestModifier::new);
+    withSchemaEmf(context, SchemaModifiersEmf.OrderKeyOneToOneCheckTestModifier::new);
   }
 
   @ParameterizedTest

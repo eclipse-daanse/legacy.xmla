@@ -21,24 +21,22 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 
 /**
@@ -396,7 +394,7 @@ class CompatibilityTest {
             null,
             null);
          */
-        TestUtil.withSchema(foodMartContext, SchemaModifiers.Ssas2005CompatibilityTestModifier4::new);
+        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier4::new);
         connection = foodMartContext.getConnectionWithDefaultRole();
 
         // This test should work irrespective of the case-sensitivity setting.
@@ -489,7 +487,7 @@ class CompatibilityTest {
             + "      formatString=\"#,###.00\"/>\n"
             + "</Cube>", null, null, null, null);
         */
-        TestUtil.withSchema(foodMartContext, SchemaModifiers.CompatibilityTestModifier::new);
+        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.CompatibilityTestModifier::new);
         connection = foodMartContext.getConnectionWithDefaultRole();
 
         TestUtil.assertQueryReturns(
@@ -525,7 +523,7 @@ class CompatibilityTest {
             return;
         }
         final String cubeName = "Store_NullsCollation";
-        TestUtil.withSchema(foodMartContext, SchemaModifiers.CompatibilityTestModifier2::new);
+        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.CompatibilityTestModifier2::new);
         connection = foodMartContext.getConnectionWithDefaultRole();
 
         TestUtil.assertQueryReturns(

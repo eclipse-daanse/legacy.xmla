@@ -10,11 +10,11 @@
 package mondrian.rolap.sql;
 
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 import mondrian.test.SqlPattern;
 
 /**
@@ -184,7 +184,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SelectNotInGroupByTestModifier1::new);
         assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
@@ -211,7 +211,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SelectNotInGroupByTestModifier2::new);
         assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
@@ -240,7 +240,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier3::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SelectNotInGroupByTestModifier3::new);
         assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
@@ -267,7 +267,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
             null);
         withSchema(context, schema);
         */
-        withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier4::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SelectNotInGroupByTestModifier4::new);
         assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 

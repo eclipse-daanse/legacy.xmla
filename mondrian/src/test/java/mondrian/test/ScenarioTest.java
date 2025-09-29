@@ -18,14 +18,14 @@ import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.checkThrowable;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
@@ -38,7 +38,7 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Test for writeback functionality.
@@ -252,7 +252,7 @@ class ScenarioTest {
                 + "</Dimension>",
                 "<Measure name='Atomic Cell Count' aggregator='count'/>"));
         */
-        withSchema(context,  SchemaModifiers.ScenarioTestModifier1::new);
+        withSchemaEmf(context,  SchemaModifiersEmf.ScenarioTestModifier1::new);
 
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
@@ -439,7 +439,7 @@ class ScenarioTest {
                 + "</Dimension>",
                 "<Measure name='Atomic Cell Count' aggregator='count'/>"));
          */
-        withSchema(context,  SchemaModifiers.ScenarioTestModifier1::new);
+        withSchemaEmf(context,  SchemaModifiersEmf.ScenarioTestModifier1::new);
 
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());

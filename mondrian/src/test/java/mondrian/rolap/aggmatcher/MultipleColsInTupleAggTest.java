@@ -22,8 +22,8 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.RolapAxis;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -272,7 +272,9 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
                   + "order by\n"
                   + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                       ? "    ISNULL(`c2`) ASC, `c2` ASC,\n"
+                      + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                       + "    ISNULL(`c6`) ASC, `c6` ASC,\n"
+                      + "    ISNULL(`c4`) ASC, `c4` ASC,\n"
                       + "    ISNULL(`c7`) ASC, `c7` ASC"
                       : "    ISNULL(`cat`.`ord`) ASC, `cat`.`ord` ASC,\n"
                       + "    ISNULL(`product_cat`.`ord`) ASC, `product_cat`.`ord` ASC,\n"
@@ -316,8 +318,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     }
 
     @Override
-    protected Function<CatalogMapping, PojoMappingModifier> getModifierFunction(){
-        return MultipleColsInTupleAggTestModifier::new;
+    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
+        return MultipleColsInTupleAggTestModifierEmf::new;
     }
 
 }

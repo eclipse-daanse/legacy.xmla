@@ -12,7 +12,7 @@ package mondrian.test;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ class CaptionTest{
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMeasureCaption(Context<?> context) {
-        withSchema(context, MyFoodmartModifier::new);
+        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         String mdxQuery =
@@ -62,7 +62,7 @@ class CaptionTest{
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testDimCaption(Context<?> context) {
-        withSchema(context, MyFoodmartModifier::new);
+        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         String mdxQuery =
@@ -88,7 +88,7 @@ class CaptionTest{
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
                         + "{[Store Size in SQFT].[All Store Size in SQFTs]} ON ROWS "
                         + "FROM [Sales]";
-        withSchema(context, MyFoodmartModifier::new);
+        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         Query monQuery = monConnection.parseQuery(mdxQuery);
@@ -125,7 +125,7 @@ class CaptionTest{
                 // Oracle and MySQL are supported in this test.
                 return;
         }
-        withSchema(context, MyFoodmartModifier::new);
+        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         String mdxQuery =

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,35 +34,36 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.ColumnType;
+import org.eclipse.daanse.rolap.mapping.model.Cube;
+import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.Hierarchy;
+import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.Level;
+import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.RollupPolicy;
+import org.eclipse.daanse.rolap.mapping.model.SQLExpressionColumn;
+import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,7 +75,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 import mondrian.test.SqlPattern;
 
 /**
@@ -712,7 +713,7 @@ class SqlQueryTest  extends BatchTestCase {
                 loadSqlLucidDB,
                 loadSqlLucidDB)
         };
-
+        /*
         class TestDoubleInListModifier extends PojoMappingModifier {
 
             public TestDoubleInListModifier(CatalogMapping catalog) {
@@ -765,6 +766,103 @@ class SqlQueryTest  extends BatchTestCase {
                 return result;
             }
         }
+        */
+        /**
+         * EMF version of TestDoubleInListModifier
+         * Creates Sales 3 cube with StoreEmpSalary dimension containing SQL expression for caption
+         */
+        class TestDoubleInListModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestDoubleInListModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+                // Create cube
+                PhysicalCube cube =
+                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                cube.setName("Sales 3");
+
+                // Set up query
+                TableQuery tableQuery =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
+                cube.setQuery(tableQuery);
+
+                // Create SQL expression for caption column
+                SQLExpressionColumn captionExpression =
+                    RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                captionExpression.setType(ColumnType.DECIMAL);
+
+                // Create SQL statement for LucidDB
+                SqlStatement sqlStatement =
+                    RolapMappingFactory.eINSTANCE.createSqlStatement();
+                sqlStatement.getDialects().add("luciddb");
+                sqlStatement.setSql("cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)");
+                captionExpression.getSqls().add(sqlStatement);
+
+                // Create Salary level
+                Level salaryLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                salaryLevel.setName("Salary");
+                salaryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_SALARY_EMPLOYEE);
+                salaryLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+                salaryLevel.setUniqueMembers(true);
+                salaryLevel.setApproxRowCount("10000000");
+                salaryLevel.setCaptionColumn(captionExpression);
+
+                // Create hierarchy
+                ExplicitHierarchy hierarchy =
+                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy.setHasAll(true);
+                hierarchy.setAllMemberName("All Salary");
+                hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
+
+                TableQuery employeeTableQuery =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                employeeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_EMPLOYEE);
+                hierarchy.setQuery(employeeTableQuery);
+
+                hierarchy.getLevels().add(salaryLevel);
+
+                // Create dimension
+                StandardDimension dimension =
+                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                dimension.setName("StoreEmpSalary");
+                dimension.getHierarchies().add(hierarchy);
+
+                // Create dimension connector
+                DimensionConnector dimConnector =
+                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                dimConnector.setOverrideDimensionName("StoreEmpSalary");
+                dimConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
+                dimConnector.setDimension(dimension);
+
+                cube.getDimensionConnectors().add(dimConnector);
+
+                // Create measure
+                SumMeasure storeCostMeasure =
+                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                storeCostMeasure.setName("Store Cost");
+                storeCostMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
+
+                // Create measure group
+                MeasureGroup measureGroup =
+                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(storeCostMeasure);
+
+                cube.getMeasureGroups().add(measureGroup);
+
+                // Add cube to catalog
+                catalog.getCubes().add(cube);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -776,7 +874,7 @@ class SqlQueryTest  extends BatchTestCase {
                 null);
         withSchema(context, schema);
          */
-        withSchema(context, TestDoubleInListModifier::new);
+        withSchemaEmf(context, TestDoubleInListModifierEmf::new);
         assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
@@ -856,7 +954,7 @@ class SqlQueryTest  extends BatchTestCase {
             new SqlPattern(
                 MYSQL, forbiddenSqlMysql, null)
         };
-
+        /*
         class TestApproxRowCountOverridesCountModifier extends PojoMappingModifier {
 
             public TestApproxRowCountOverridesCountModifier(CatalogMapping catalog) {
@@ -902,6 +1000,90 @@ class SqlQueryTest  extends BatchTestCase {
                 return result;
             }
         }
+        */
+        /**
+         * EMF version of TestApproxRowCountOverridesCountModifier
+         * Creates ApproxTest cube with Gender dimension having approxRowCount
+         */
+        class TestApproxRowCountOverridesCountModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestApproxRowCountOverridesCountModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+                // Create cube
+                PhysicalCube cube =
+                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                cube.setName("ApproxTest");
+
+                // Set up query
+                TableQuery tableQuery =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
+                cube.setQuery(tableQuery);
+
+                // Create Gender level
+                Level genderLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                genderLevel.setName("Gender");
+                genderLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_GENDER_CUSTOMER);
+                genderLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+                genderLevel.setUniqueMembers(true);
+                genderLevel.setApproxRowCount("2");
+
+                // Create hierarchy
+                ExplicitHierarchy hierarchy =
+                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy.setHasAll(true);
+                hierarchy.setAllMemberName("All Gender");
+                hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
+
+                TableQuery customerTableQuery =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                customerTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_CUSTOMER);
+                hierarchy.setQuery(customerTableQuery);
+
+                hierarchy.getLevels().add(genderLevel);
+
+                // Create dimension
+                StandardDimension dimension =
+                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                dimension.setName("Gender");
+                dimension.getHierarchies().add(hierarchy);
+
+                // Create dimension connector
+                DimensionConnector dimConnector =
+                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                dimConnector.setOverrideDimensionName("Gender");
+                dimConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
+                dimConnector.setDimension(dimension);
+
+                cube.getDimensionConnectors().add(dimConnector);
+
+                // Create measure
+                SumMeasure unitSalesMeasure =
+                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                unitSalesMeasure.setName("Unit Sales");
+                unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+
+                // Create measure group
+                MeasureGroup measureGroup =
+                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(unitSalesMeasure);
+
+                cube.getMeasureGroups().add(measureGroup);
+
+                // Add cube to catalog
+                catalog.getCubes().add(cube);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -913,7 +1095,7 @@ class SqlQueryTest  extends BatchTestCase {
                 null);
         withSchema(context, schema);
          */
-        withSchema(context, TestApproxRowCountOverridesCountModifier::new);
+        withSchemaEmf(context, TestApproxRowCountOverridesCountModifierEmf::new);
         assertQuerySqlOrNot(
         	context.getConnectionWithDefaultRole(),
             mdxQuery,
@@ -930,6 +1112,7 @@ class SqlQueryTest  extends BatchTestCase {
         prepareContext(connection);
         final String mdx =
             "select NON EMPTY { [Store].[Store].[Store State].members } on 0 from [Sales]";
+        /*
         class TestLimitedRollupMemberRetrievableFromCacheModifier extends PojoMappingModifier {
 
             public TestLimitedRollupMemberRetrievableFromCacheModifier(CatalogMapping catalog) {
@@ -970,6 +1153,87 @@ class SqlQueryTest  extends BatchTestCase {
                 return result;
             }
         }
+        */
+        /**
+         * EMF version of TestLimitedRollupMemberRetrievableFromCacheModifier
+         * Creates access role 'justCA' with custom hierarchy access and partial rollup policy
+         */
+        class TestLimitedRollupMemberRetrievableFromCacheModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestLimitedRollupMemberRetrievableFromCacheModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
+
+                catalog = (CatalogImpl) copier.get(cat);
+
+                // Find Sales cube
+                //PhysicalCube salesCube = null;
+                //Hierarchy storeHierarchy = null;
+
+                /*
+                for (Cube cube : catalog.getCubes()) {
+                    if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
+                        salesCube = (PhysicalCube) cube;
+                        // Find Store hierarchy
+                        for (DimensionConnector dc : salesCube.getDimensionConnectors()) {
+                            if (dc.getDimension() != null) {
+                                for (Hierarchy h : dc.getDimension().getHierarchies()) {
+                                    if ("Store".equals(h.getName())) {
+                                        storeHierarchy = h;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (storeHierarchy != null) break;
+                        }
+                        break;
+                    }
+                }
+                */
+                // Create member grant
+                AccessMemberGrant memberGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                memberGrant.setMember("[Store].[USA].[CA]");
+                memberGrant.setMemberAccess(MemberAccess.ALL);
+
+                // Create hierarchy grant
+                AccessHierarchyGrant hierarchyGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
+                hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+                hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+                hierarchyGrant.getMemberGrants().add(memberGrant);
+
+                // Create cube grant
+                AccessCubeGrant cubeGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+                cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
+                cubeGrant.setCubeAccess(CubeAccess.ALL);
+                cubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+                // Create catalog grant
+                AccessCatalogGrant catalogGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                catalogGrant.setCatalogAccess(CatalogAccess.ALL);
+                catalogGrant.getCubeGrants().add(cubeGrant);
+
+                // Create role
+                AccessRole role =
+                    RolapMappingFactory.eINSTANCE.createAccessRole();
+                role.setName("justCA");
+                role.getAccessCatalogGrants().add(catalogGrant);
+
+                // Add role to catalog
+                catalog.getAccessRoles().add(role);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -985,7 +1249,7 @@ class SqlQueryTest  extends BatchTestCase {
                 + " </Role>\n");
         withSchema(context, schema);
          */
-        withSchema(context, TestLimitedRollupMemberRetrievableFromCacheModifier::new);
+        withSchemaEmf(context, TestLimitedRollupMemberRetrievableFromCacheModifierEmf::new);
 
         String pgSql =
             "select \"store\".\"store_country\" as \"c0\","
@@ -1039,7 +1303,7 @@ class SqlQueryTest  extends BatchTestCase {
             null,
             null));
          */
-        withSchema(context, SchemaModifiers.SqlQueryTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SqlQueryTestModifier::new);
         String mdx = "select measures.[avg sales] on 0 from sales"
                        + " where { time.[1997].q1, time.[1997].q2.[4] }";
         assertQueryReturns(context.getConnectionWithDefaultRole(),

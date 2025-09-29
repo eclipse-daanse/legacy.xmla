@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,11 +31,11 @@ import java.util.function.Function;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -44,25 +44,24 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
-import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.eclipse.daanse.rolap.common.BatchLoader;
 import org.eclipse.daanse.olap.key.BitKey;
+import org.eclipse.daanse.olap.query.component.IdImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.Pair;
+import org.eclipse.daanse.rolap.common.BatchLoader;
 import org.eclipse.daanse.rolap.common.FastBatchingCellReader;
 import org.eclipse.daanse.rolap.common.GroupingSetsCollector;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
 import org.eclipse.daanse.rolap.common.RolapCatalogReader;
-import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.element.RolapHierarchy;
-import org.eclipse.daanse.rolap.element.RolapLevel;
-import org.eclipse.daanse.rolap.element.RolapMember;
+import org.eclipse.daanse.rolap.common.RolapNative.Listener;
+import org.eclipse.daanse.rolap.common.RolapNative.NativeEvent;
+import org.eclipse.daanse.rolap.common.RolapNative.TupleEvent;
 import org.eclipse.daanse.rolap.common.RolapNativeRegistry;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.SmartMemberReader;
 import org.eclipse.daanse.rolap.common.StarPredicate;
-import org.eclipse.daanse.rolap.common.RolapNative.Listener;
-import org.eclipse.daanse.rolap.common.RolapNative.NativeEvent;
-import org.eclipse.daanse.rolap.common.RolapNative.TupleEvent;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.common.agg.AndPredicate;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
@@ -72,17 +71,17 @@ import org.eclipse.daanse.rolap.common.agg.Segment;
 import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
 import org.eclipse.daanse.rolap.common.agg.ValueColumnPredicate;
 import org.eclipse.daanse.rolap.common.cache.HardSmartCache;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapHierarchy;
+import org.eclipse.daanse.rolap.element.RolapLevel;
+import org.eclipse.daanse.rolap.element.RolapMember;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.opencube.junit5.TestUtil;
 import org.slf4j.LoggerFactory;
 
 import mondrian.enums.DatabaseProduct;
-
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
-import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * To support all <code>Batch</code> related tests.
@@ -736,13 +735,13 @@ public class BatchTestCase{
     }
 
     protected void updateSchemaIfNeed(Context<?> context, String currentTestCaseName){
-        Optional<Function<CatalogMapping, PojoMappingModifier>> oModifier = getModifier(currentTestCaseName);
+        Optional<Function<Catalog, CatalogMappingSupplier>> oModifier = getModifier(currentTestCaseName);
         if (oModifier.isPresent()) {
-            withSchema(context, oModifier.get());
+            withSchemaEmf(context, oModifier.get());
         }
     }
 
-    protected Optional<Function<CatalogMapping, PojoMappingModifier>> getModifier(String currentTestCaseName) {
+    protected Optional<Function<Catalog, CatalogMappingSupplier>> getModifier(String currentTestCaseName) {
         return Optional.empty();
     }
 

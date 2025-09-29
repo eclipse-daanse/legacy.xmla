@@ -26,7 +26,7 @@ import static mondrian.rolap.RolapNativeTopCountTestCases.SUM_MEASURE_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
        withSchema(context, schema);
        //withCube(CUSTOM_COUNT_MEASURE_CUBE_NAME);
        */
-        withSchema(context, SchemaModifiers.CustomCountMeasureCubeName::new);
+        withSchemaEmf(context, SchemaModifiersEmf.CustomCountMeasureCubeName::new);
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "Custom Count Measure", CUSTOM_COUNT_MEASURE_QUERY);
     }
@@ -142,7 +142,7 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
                 ROLE_RESTRICTION_WORKS_WA_ROLE_DEF);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.RoleRestrictionWorksWaRoleDef::new);
+        withSchemaEmf(context, SchemaModifiersEmf.RoleRestrictionWorksWaRoleDef::new);
         assertResultsAreEqual(((TestContext)context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME))),
             "Role restriction works - For WA state",
             ROLE_RESTRICTION_WORKS_WA_QUERY);
@@ -158,7 +158,7 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
                 ROLE_RESTRICTION_WORKS_DF_ROLE_DEF);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.RoleRestrictionWorksDfRoleDef::new);
+        withSchemaEmf(context, SchemaModifiersEmf.RoleRestrictionWorksDfRoleDef::new);
         assertResultsAreEqual(((TestContext)context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME))),
             "Role restriction works - For DF state",
             ROLE_RESTRICTION_WORKS_DF_QUERY);

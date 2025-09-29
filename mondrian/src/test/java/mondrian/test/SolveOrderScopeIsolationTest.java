@@ -14,7 +14,7 @@ import static org.eclipse.daanse.olap.common.SolveOrderMode.SCOPED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
@@ -27,7 +27,7 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * <code>SolveOrderScopeIsolationTest</code> Test conformance to SSAS2005 solve
@@ -113,7 +113,7 @@ class SolveOrderScopeIsolationTest {
             "Sales", null, memberDefs));
 
          */
-        withSchema(context, SchemaModifiers.SolveOrderScopeIsolationTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SolveOrderScopeIsolationTestModifier::new);
 
     }
 

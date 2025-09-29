@@ -13,8 +13,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -56,7 +56,7 @@ public class MiscTest extends ClearViewBase {
     }
 
     @Override
-    protected Optional<Function<CatalogMapping, PojoMappingModifier>> getModifier(String currentTestCaseName) {
+    protected Optional<Function<Catalog, CatalogMappingSupplier>> getModifier(String currentTestCaseName) {
         if (currentTestCaseName.equals("testSolveOrder")) {
             return Optional.of(MiscTestModifier::new);
         }

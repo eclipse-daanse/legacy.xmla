@@ -13,46 +13,40 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
+import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.ColumnType;
+import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
+import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.Level;
+import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.RollupPolicy;
+import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
-
+/*
 public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
 
 	//## TableName: DIM_SPECIES
@@ -99,7 +93,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
     public SpeciesNonCollapsedAggTestModifier(CatalogMapping catalog) {
         super(catalog);
     }
-
+*/
     /*
             "<?xml version='1.0'?>\n"
         + "<Schema name='Testmart'>\n"
@@ -141,7 +135,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         + "  </Role>\n"
         + "</Schema>";
      */
-
+/*
     @Override
     protected List<? extends TableMapping> databaseSchemaTables(DatabaseSchemaMapping databaseSchema) {
         List<TableMapping> result = new ArrayList<TableMapping>();
@@ -293,3 +287,340 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         .build();
 }
 }
+*/
+
+/**
+ * EMF version of SpeciesNonCollapsedAggTestModifier
+ * Creates Testmart catalog with Animal dimension, Test cube, aggregation tables and access roles
+ */
+public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplier {
+
+    private Catalog catalog;
+
+    public SpeciesNonCollapsedAggTestModifier(Catalog cat) {
+        // Create new catalog from scratch (not copying the existing one)
+        catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        catalog.setName("Testmart");
+
+
+        // Create database schema
+        DatabaseSchema dbSchema =
+            RolapMappingFactory.eINSTANCE.createDatabaseSchema();
+
+        // Create tables and columns - DIM_SPECIES
+        PhysicalColumn familyIdDimSpecies =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        familyIdDimSpecies.setName("FAMILY_ID");
+        familyIdDimSpecies.setType(ColumnType.INTEGER);
+
+        PhysicalColumn genusIdDimSpecies =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        genusIdDimSpecies.setName("GENUS_ID");
+        genusIdDimSpecies.setType(ColumnType.INTEGER);
+
+        PhysicalColumn speciesIdDimSpecies =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        speciesIdDimSpecies.setName("SPECIES_ID");
+        speciesIdDimSpecies.setType(ColumnType.INTEGER);
+
+        PhysicalColumn speciesNameDimSpecies =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        speciesNameDimSpecies.setName("SPECIES_NAME");
+        speciesNameDimSpecies.setType(ColumnType.VARCHAR);
+        speciesNameDimSpecies.setCharOctetLength(30);
+
+        PhysicalTable dimSpecies =
+            RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        dimSpecies.setName("DIM_SPECIES");
+        dimSpecies.getColumns().add(familyIdDimSpecies);
+        dimSpecies.getColumns().add(genusIdDimSpecies);
+        dimSpecies.getColumns().add(speciesIdDimSpecies);
+        dimSpecies.getColumns().add(speciesNameDimSpecies);
+
+        // DIM_FAMILY table
+        PhysicalColumn familyIdDimFamily =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        familyIdDimFamily.setName("FAMILY_ID");
+        familyIdDimFamily.setType(ColumnType.INTEGER);
+
+        PhysicalColumn familyNameDimFamily =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        familyNameDimFamily.setName("FAMILY_NAME");
+        familyNameDimFamily.setType(ColumnType.VARCHAR);
+        familyNameDimFamily.setCharOctetLength(30);
+
+        PhysicalTable dimFamily =
+            RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        dimFamily.setName("DIM_FAMILY");
+        dimFamily.getColumns().add(familyIdDimFamily);
+        dimFamily.getColumns().add(familyNameDimFamily);
+
+        // DIM_GENUS table
+        PhysicalColumn familyIdDimGenus =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        familyIdDimGenus.setName("FAMILY_ID");
+        familyIdDimGenus.setType(ColumnType.INTEGER);
+
+        PhysicalColumn genusIdDimGenus =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        genusIdDimGenus.setName("GENUS_ID");
+        genusIdDimGenus.setType(ColumnType.INTEGER);
+
+        PhysicalColumn genusNameDimGenus =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        genusNameDimGenus.setName("GENUS_NAME");
+        genusNameDimGenus.setType(ColumnType.VARCHAR);
+        genusNameDimGenus.setCharOctetLength(30);
+
+        PhysicalTable dimGenus =
+            RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        dimGenus.setName("DIM_GENUS");
+        dimGenus.getColumns().add(familyIdDimGenus);
+        dimGenus.getColumns().add(genusIdDimGenus);
+        dimGenus.getColumns().add(genusNameDimGenus);
+
+        // species_mart fact table
+        PhysicalColumn speciesIdSpeciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        speciesIdSpeciesMart.setName("SPECIES_ID");
+        speciesIdSpeciesMart.setType(ColumnType.INTEGER);
+
+        PhysicalColumn populationSpeciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        populationSpeciesMart.setName("POPULATION");
+        populationSpeciesMart.setType(ColumnType.INTEGER);
+
+        PhysicalTable speciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        speciesMart.setName("species_mart");
+        speciesMart.getColumns().add(speciesIdSpeciesMart);
+        speciesMart.getColumns().add(populationSpeciesMart);
+
+        // AGG_SPECIES_MART aggregation table
+        PhysicalColumn genIdAggSpeciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        genIdAggSpeciesMart.setName("GEN_ID");
+        genIdAggSpeciesMart.setType(ColumnType.INTEGER);
+
+        PhysicalColumn populationAggSpeciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        populationAggSpeciesMart.setName("POPULATION");
+        populationAggSpeciesMart.setType(ColumnType.INTEGER);
+
+        PhysicalColumn factCountAggSpeciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        factCountAggSpeciesMart.setName("FACT_COUNT");
+        factCountAggSpeciesMart.setType(ColumnType.INTEGER);
+
+        PhysicalTable aggSpeciesMart =
+            RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        aggSpeciesMart.setName("AGG_SPECIES_MART");
+        aggSpeciesMart.getColumns().add(genIdAggSpeciesMart);
+        aggSpeciesMart.getColumns().add(populationAggSpeciesMart);
+        aggSpeciesMart.getColumns().add(factCountAggSpeciesMart);
+
+        // Add tables to database schema
+        dbSchema.getTables().add(dimSpecies);
+        dbSchema.getTables().add(dimFamily);
+        dbSchema.getTables().add(dimGenus);
+        dbSchema.getTables().add(speciesMart);
+        dbSchema.getTables().add(aggSpeciesMart);
+
+        // Create levels for Animal hierarchy
+        Level familyLevel =
+            RolapMappingFactory.eINSTANCE.createLevel();
+        familyLevel.setName("Family");
+        familyLevel.setColumn(familyIdDimFamily);
+        familyLevel.setNameColumn(familyNameDimFamily);
+        familyLevel.setUniqueMembers(true);
+        familyLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+        familyLevel.setApproxRowCount("2");
+
+        Level genusLevel =
+            RolapMappingFactory.eINSTANCE.createLevel();
+        genusLevel.setName("Genus");
+        genusLevel.setColumn(genusIdDimGenus);
+        genusLevel.setNameColumn(genusNameDimGenus);
+        genusLevel.setUniqueMembers(true);
+        genusLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+        genusLevel.setApproxRowCount("4");
+
+        Level speciesLevel =
+            RolapMappingFactory.eINSTANCE.createLevel();
+        speciesLevel.setName("Species");
+        speciesLevel.setColumn(speciesIdDimSpecies);
+        speciesLevel.setNameColumn(speciesNameDimSpecies);
+        speciesLevel.setUniqueMembers(true);
+        speciesLevel.setColumnType(ColumnInternalDataType.NUMERIC);
+        speciesLevel.setApproxRowCount("8");
+
+        // Create join query for hierarchy (DIM_SPECIES -> DIM_GENUS -> DIM_FAMILY)
+        TableQuery dimGenusQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        dimGenusQuery.setTable(dimGenus);
+
+        JoinedQueryElement left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        left.setKey(familyIdDimGenus);
+        left.setQuery(dimGenusQuery);
+
+        TableQuery dimFamilyQuery =  RolapMappingFactory.eINSTANCE.createTableQuery();
+        dimFamilyQuery.setTable(dimFamily);
+
+        JoinedQueryElement right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        right.setKey(familyIdDimFamily);
+        right.setQuery(dimFamilyQuery);
+
+        JoinQuery innerJoin =
+            RolapMappingFactory.eINSTANCE.createJoinQuery();
+        innerJoin.setLeft(left);
+        innerJoin.setRight(right);
+
+        TableQuery dimSpeciesQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        dimSpeciesQuery.setTable(dimSpecies);
+
+        JoinedQueryElement left1 = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        left1.setKey(genusIdDimSpecies);
+        left1.setQuery(dimSpeciesQuery);
+
+        JoinedQueryElement right1 = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        right1.setKey(genusIdDimGenus);
+        right1.setAlias("DIM_GENUS");
+        right1.setQuery(innerJoin);
+
+        JoinQuery outerJoin =
+            RolapMappingFactory.eINSTANCE.createJoinQuery();
+        outerJoin.setLeft(left1);
+        outerJoin.setRight(right1);
+
+        // Create Animals hierarchy
+        ExplicitHierarchy animalsHierarchy =
+            RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        animalsHierarchy.setName("Animals");
+        animalsHierarchy.setHasAll(true);
+        animalsHierarchy.setAllMemberName("All Animals");
+        animalsHierarchy.setPrimaryKey(speciesIdDimSpecies);
+        animalsHierarchy.setQuery(outerJoin);
+        animalsHierarchy.getLevels().add(familyLevel);
+        animalsHierarchy.getLevels().add(genusLevel);
+        animalsHierarchy.getLevels().add(speciesLevel);
+
+        // Create Animal dimension
+        StandardDimension animalDimension =
+            RolapMappingFactory.eINSTANCE.createStandardDimension();
+        animalDimension.setName("Animal");
+        animalDimension.getHierarchies().add(animalsHierarchy);
+
+        // Create Population measure
+        SumMeasure populationMeasure =
+            RolapMappingFactory.eINSTANCE.createSumMeasure();
+        populationMeasure.setName("Population");
+        populationMeasure.setColumn(populationSpeciesMart);
+
+
+        // Create aggregation
+        AggregationColumnName aggFactCount =
+            RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+        aggFactCount.setColumn(factCountAggSpeciesMart);
+
+        AggregationMeasure aggMeasure =
+            RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+        aggMeasure.setName("Measures.[Population]");
+        aggMeasure.setColumn(populationAggSpeciesMart);
+
+        AggregationLevel aggLevel =
+            RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        aggLevel.setName("[Animal].[Animals].[Genus]");
+        aggLevel.setColumn(genIdAggSpeciesMart);
+        aggLevel.setCollapsed(false);
+
+        AggregationName aggregation =
+            RolapMappingFactory.eINSTANCE.createAggregationName();
+        aggregation.setName(aggSpeciesMart);
+        aggregation.setAggregationFactCount(aggFactCount);
+        aggregation.getAggregationMeasures().add(aggMeasure);
+        aggregation.getAggregationLevels().add(aggLevel);
+
+        // Create table query with aggregation for cube
+        TableQuery cubeQuery =
+            RolapMappingFactory.eINSTANCE.createTableQuery();
+        cubeQuery.setTable(speciesMart);
+        cubeQuery.getAggregationTables().add(aggregation);
+
+        // Create dimension connector
+        DimensionConnector dimConnector =
+            RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        dimConnector.setOverrideDimensionName("Animal");
+        dimConnector.setDimension(animalDimension);
+        dimConnector.setForeignKey(speciesIdSpeciesMart);
+
+        // Create measure group
+        MeasureGroup measureGroup =
+            RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        measureGroup.getMeasures().add(populationMeasure);
+
+        // Create Test cube
+        PhysicalCube testCube =
+            RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        testCube.setName("Test");
+        testCube.setDefaultMeasure(populationMeasure);
+        testCube.setQuery(cubeQuery);
+        testCube.getDimensionConnectors().add(dimConnector);
+        testCube.getMeasureGroups().add(measureGroup);
+
+        // Create access member grants
+        AccessMemberGrant memberGrant1 =
+            RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        memberGrant1.setMember("[Animal].[Animals].[Family].[Loricariidae]");
+        memberGrant1.setMemberAccess(MemberAccess.ALL);
+
+        AccessMemberGrant memberGrant2 =
+            RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        memberGrant2.setMember("[Animal].[Animals].[Family].[Cichlidae]");
+        memberGrant2.setMemberAccess(MemberAccess.ALL);
+
+        AccessMemberGrant memberGrant3 =
+            RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        memberGrant3.setMember("[Animal].[Animals].[Family].[Cyprinidae]");
+        memberGrant3.setMemberAccess(MemberAccess.NONE);
+
+        // Create hierarchy grant
+        AccessHierarchyGrant hierarchyGrant =
+            RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+        hierarchyGrant.setHierarchy(animalsHierarchy);
+        hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+        hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+        hierarchyGrant.getMemberGrants().add(memberGrant1);
+        hierarchyGrant.getMemberGrants().add(memberGrant2);
+        hierarchyGrant.getMemberGrants().add(memberGrant3);
+
+        // Create cube grant
+        AccessCubeGrant cubeGrant =
+            RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+        cubeGrant.setCube(testCube);
+        cubeGrant.setCubeAccess(CubeAccess.ALL);
+        cubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+        // Create catalog grant
+        AccessCatalogGrant catalogGrant =
+            RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+        catalogGrant.setCatalogAccess(CatalogAccess.NONE);
+        catalogGrant.getCubeGrants().add(cubeGrant);
+
+        // Create access role
+        AccessRole accessRole =
+            RolapMappingFactory.eINSTANCE.createAccessRole();
+        accessRole.setName("Test role");
+        accessRole.getAccessCatalogGrants().add(catalogGrant);
+
+        // Add everything to schema and catalog
+
+        catalog.getDbschemas().add(dbSchema);
+        catalog.getCubes().add(testCube);
+        catalog.getAccessRoles().add(accessRole);
+    }
+
+    @Override
+    public Catalog get() {
+        return catalog;
+    }
+}
+

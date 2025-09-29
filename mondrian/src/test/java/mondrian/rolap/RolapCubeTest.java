@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.cubeByName;
 import static org.opencube.junit5.TestUtil.getDimensionWithName;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,8 @@ import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapVirtualCube;
-import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -68,7 +69,7 @@ class RolapCubeTest {
             (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
         cube.processFormatStringAttribute(
-            CalculatedMemberMappingImpl.builder().build(), builder);
+                RolapMappingFactory.eINSTANCE.createCalculatedMember(), builder);
         assertEquals(0, builder.length());
     }
 
@@ -78,8 +79,8 @@ class RolapCubeTest {
         RolapCube cube =
             (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
-        CalculatedMemberMappingImpl xmlCalcMember =
-        		CalculatedMemberMappingImpl.builder().build();
+        CalculatedMember xmlCalcMember =
+                RolapMappingFactory.eINSTANCE.createCalculatedMember();
         String format = "FORMAT";
         xmlCalcMember.setFormatString(format);
         cube.processFormatStringAttribute(xmlCalcMember, builder);
@@ -346,7 +347,7 @@ class RolapCubeTest {
     }
 
     void createTestContextWithAdditionalMembersAndARole(Context<?> context) {
-    	withSchema(context, SchemaModifiers.RolapCubeTestModifier1::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.RolapCubeTestModifier1::new);
     }
 
     private void assertCalculatedMemberExists(

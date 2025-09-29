@@ -18,9 +18,8 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.CacheControl;
@@ -34,31 +33,6 @@ import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -72,7 +46,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Test native evaluation of supported set operations.
@@ -1102,6 +1076,7 @@ protected void assertQuerySql(Connection connection,
         + "Mouthwash]}\n"
         + "Row #0: 51.60\n"
         + "Row #1: 28.96\n";
+      /*
       class TestMultipleAllWithInExprModifier extends PojoMappingModifier {
 
           public TestMultipleAllWithInExprModifier(CatalogMapping catalogMapping) {
@@ -1209,6 +1184,7 @@ protected void assertQuerySql(Connection connection,
               return result;
           }
       }
+      */
     /*
     String baseSchema = TestUtil.getRawSchema(context);
     String schema = SchemaUtil.getSchema(baseSchema,
@@ -1220,7 +1196,7 @@ protected void assertQuerySql(Connection connection,
         null );
     withSchema(context, schema);
      */
-      withSchema(context, TestMultipleAllWithInExprModifier::new);
+      withSchemaEmf(context, TestMultipleAllWithInExprModifier::new);
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       result );
@@ -1370,13 +1346,15 @@ protected void assertQuerySql(Connection connection,
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
         + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
-        + "    ISNULL(`c4`) ASC, `c4` ASC"
+        + "    ISNULL(`c4`) ASC, `c4` ASC,\n"
+        + "    ISNULL(`c3`) ASC, `c3` ASC"
         : "    sum(`sales_fact_1997`.`unit_sales`) DESC,\n"
         + "    ISNULL(`customer`.`country`) ASC, `customer`.`country` ASC,\n"
         + "    ISNULL(`customer`.`state_province`) ASC, `customer`.`state_province` ASC,\n"
         + "    ISNULL(`customer`.`city`) ASC, `customer`.`city` ASC,\n"
         + "    ISNULL(CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)) ASC, CONCAT(`customer`.`fname`, ' ', "
-        + "`customer`.`lname`) ASC" );
+        + "`customer`.`lname`) ASC,\n"
+        + "    ISNULL(`customer`.`customer_id`) ASC, `customer`.`customer_id` ASC");
     SqlPattern mysqlPattern =
       new SqlPattern(
         DatabaseProduct.MYSQL,
@@ -1461,13 +1439,15 @@ protected void assertQuerySql(Connection connection,
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
         + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
-        + "    ISNULL(`c4`) ASC, `c4` ASC"
+        + "    ISNULL(`c4`) ASC, `c4` ASC,\n"
+        + "    ISNULL(`c3`) ASC, `c3` ASC"
         : "    sum(`sales_fact_1997`.`unit_sales`) DESC,\n"
         + "    ISNULL(`customer`.`country`) ASC, `customer`.`country` ASC,\n"
         + "    ISNULL(`customer`.`state_province`) ASC, `customer`.`state_province` ASC,\n"
         + "    ISNULL(`customer`.`city`) ASC, `customer`.`city` ASC,\n"
         + "    ISNULL(CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)) ASC, CONCAT(`customer`.`fname`, ' ', "
-        + "`customer`.`lname`) ASC" );
+        + "`customer`.`lname`) ASC,\n"
+        + "    ISNULL(`customer`.`customer_id`) ASC, `customer`.`customer_id` ASC");
     SqlPattern mysqlPattern =
       new SqlPattern(
         DatabaseProduct.MYSQL,
@@ -1582,6 +1562,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeVirtualRestrictedSet(Context<?> context) throws Exception {
+      /*
       class TestNativeVirtualRestrictedSetModifier extends PojoMappingModifier {
 
           public TestNativeVirtualRestrictedSetModifier(CatalogMapping catalogMapping) {
@@ -1626,6 +1607,7 @@ protected void assertQuerySql(Connection connection,
               return result;
           }
       }
+      */
     /*
     String baseSchema = TestUtil.getRawSchema(context);
     String schema = SchemaUtil.getSchema(baseSchema,
@@ -1652,7 +1634,7 @@ protected void assertQuerySql(Connection connection,
         + "  </Role>\n" );
     withSchema(context, schema);
     */
-    withSchema(context, TestNativeVirtualRestrictedSetModifier::new);
+    withSchemaEmf(context, TestNativeVirtualRestrictedSetModifier::new);
     Result result = executeQuery(
       "With\n"
         + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Store],[*BASE_MEMBERS_Warehouse])'\n"
@@ -1713,6 +1695,7 @@ protected void assertQuerySql(Connection connection,
         + "  </Role>";
     // The following queries should not include [Denny C-Size Batteries] or
     // [Denny D-Size Batteries]
+      /*
       class TestNativeHonorsRoleRestrictionsModifier extends PojoMappingModifier {
 
           public TestNativeHonorsRoleRestrictionsModifier(CatalogMapping catalogMapping) {
@@ -1772,13 +1755,14 @@ protected void assertQuerySql(Connection connection,
               return result;
           }
       }
+      */
     /*
     String baseSchema = TestUtil.getRawSchema(context);
     String schema = SchemaUtil.getSchema(baseSchema,
       null, null, null, null, null, roleDef );
     withSchema(context, schema);
      */
-    withSchema(context, TestNativeHonorsRoleRestrictionsModifier::new);
+    withSchemaEmf(context, TestNativeHonorsRoleRestrictionsModifier::new);
 
       Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("Test")));
     verifySameNativeAndNot(connection,
@@ -2164,7 +2148,7 @@ protected void assertQuerySql(Connection connection,
         "Sales",
         "<DimensionUsage name=\"PurchaseDate\" source=\"Time\" foreignKey=\"time_id\"/>" ));
      */
-	  withSchema(context, SchemaModifiers.NativeSetEvaluationTestModifier::new);
+	  withSchemaEmf(context, SchemaModifiersEmf.NativeSetEvaluationTestModifier::new);
 
       String mdx = ""
       + "with member Measures.q1Sales as '([PurchaseDate].[PurchaseDate].[1997].[Q1], Measures.[Unit Sales])'\n"

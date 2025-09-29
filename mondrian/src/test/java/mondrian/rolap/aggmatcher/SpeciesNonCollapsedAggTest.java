@@ -93,7 +93,7 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
         //((TestContextImpl)context).setDisableCaching(true);
         super.prepareContext(context);
         //TODO
-        TestUtil.withSchema(context, SpeciesNonCollapsedAggTestModifier::new);
+        TestUtil.withSchemaEmf(context, SpeciesNonCollapsedAggTestModifier::new);
     }
 
 

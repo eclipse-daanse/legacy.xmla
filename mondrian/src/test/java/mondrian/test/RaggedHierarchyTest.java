@@ -14,10 +14,10 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * <code>RaggedHierarchyTest</code> tests ragged hierarchies.
@@ -491,7 +491,7 @@ class RaggedHierarchyTest {
                     + "    </Hierarchy>\n"
                     + "  </Dimension>"));
          */
-        withSchema(context, SchemaModifiers.RaggedHierarchyTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.RaggedHierarchyTestModifier1::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             " select {[Gender4].[Gender].members} "
@@ -522,7 +522,7 @@ class RaggedHierarchyTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
          */
-        withSchema(context, SchemaModifiers.RaggedHierarchyTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.RaggedHierarchyTestModifier2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT\n"
             + "[Measures].[Unit Sales] ON COLUMNS\n"
@@ -577,7 +577,7 @@ class RaggedHierarchyTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
          */
-        withSchema(context,  SchemaModifiers.RaggedHierarchyTestModifier2::new);
+        withSchemaEmf(context,  SchemaModifiersEmf.RaggedHierarchyTestModifier2::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT\n"

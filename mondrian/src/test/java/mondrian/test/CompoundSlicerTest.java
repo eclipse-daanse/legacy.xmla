@@ -12,7 +12,7 @@ package mondrian.test;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
@@ -26,7 +26,8 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
+
 import  org.eclipse.daanse.olap.util.Bug;
 
 /**
@@ -231,7 +232,7 @@ class CompoundSlicerTest {
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
                 "Sales", null, xmlMeasure, null, null));
          */
-        withSchema(context, SchemaModifiers.CompoundSlicerTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.CompoundSlicerTestModifier1::new);
 
         // the cell formatter for the measure should still be used
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -800,7 +801,7 @@ class CompoundSlicerTest {
                 null,
                 null));
          */
-        withSchema(context, SchemaModifiers.CompoundSlicerTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.CompoundSlicerTestModifier2::new);
         // basic query with avg
         assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select from [Sales]\n"
@@ -1471,7 +1472,7 @@ class CompoundSlicerTest {
                         + "</CalculatedMember>",
                 null, "Warehouse Sales"));
          */
-    	TestUtil.withSchema(context, SchemaModifiers.CompoundSlicerTestModifier3::new);
+    	TestUtil.withSchemaEmf(context, SchemaModifiersEmf.CompoundSlicerTestModifier3::new);
 
     }
     @ParameterizedTest

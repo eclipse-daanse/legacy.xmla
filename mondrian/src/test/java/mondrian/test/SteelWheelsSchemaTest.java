@@ -31,7 +31,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.databaseIsValid;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +57,7 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 class SteelWheelsSchemaTest {
 
@@ -93,7 +93,7 @@ class SteelWheelsSchemaTest {
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
     void testMondrian1273(Context<?> context) {
         //createContext(context, schema);
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier1::new);
         if (!databaseIsValid(((TestContext)context).getConnection(new ConnectionProps(List.of("dev"))), "Sales")) {
             return;
         }
@@ -279,7 +279,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS,\n"
             + "NON EMPTY {[Markets].[APAC]} ON ROWS\n"
@@ -306,7 +306,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS,\n"
             + "NON EMPTY {[Markets].[APAC]} ON ROWS\n"
@@ -329,7 +329,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier3::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier3::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS, \n"
             + "  NON EMPTY {([Markets].[APAC], [Customers].[All Customers], "
@@ -365,7 +365,7 @@ class SteelWheelsSchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
     void testMondrianBug476_770_957(Context<?> context) throws Exception {
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier4::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier4::new);
         final String mdxQuery =
             "with set [*NATIVE_CJ_SET] as 'Filter([*BASE_MEMBERS_Time], (NOT IsEmpty([Measures].[Price Each])))'\n"
             + "  set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], Ancestor([Time].CurrentMember, [Time].[Years]).OrderKey, BASC, [Time].CurrentMember.OrderKey, BASC)'\n"
@@ -464,7 +464,7 @@ class SteelWheelsSchemaTest {
         //    return;
         //}
 
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier5::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier5::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Date] as 'Format([Orders].CurrentMember.Properties(\"OrderDate\"), \"yyyy-mm-dd\")'\n"
@@ -1189,7 +1189,7 @@ class SteelWheelsSchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
     void testMondrian1360(Context<?> context) {
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier6::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier6::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
@@ -1269,7 +1269,7 @@ class SteelWheelsSchemaTest {
         //    return;
         //}
 
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier7::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier7::new);
         Connection connection = context.getConnectionWithDefaultRole();
         Catalog schema = connection.getCatalog();
 
@@ -1383,7 +1383,7 @@ class SteelWheelsSchemaTest {
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
     void testMondrian2411_1(Context<?> context) throws Exception {
         // Tests a user query followed by an admin query
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier8::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier8::new);
         assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
@@ -1622,7 +1622,7 @@ class SteelWheelsSchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
     void testMondrian2411_2(Context<?> context) throws Exception {
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier8::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier8::new);
 
         assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Administrator"))),
             "WITH\n"
@@ -1869,7 +1869,7 @@ class SteelWheelsSchemaTest {
         {
             return;
         }
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier9::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier9::new);
         assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Administrator Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
@@ -2132,7 +2132,7 @@ class SteelWheelsSchemaTest {
             + " FROM [rolesTest]";
 
 
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier10::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier10::new);
         //withCube("SteelWheelsSales");
 
         // Report Author gets an exception since
@@ -2142,7 +2142,7 @@ class SteelWheelsSchemaTest {
     "MDX object '[Dimension2].[All Customers].[Alpha Cognac]' not found in cube 'rolesTest'");
 
 
-        withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier10::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier10::new);
         //withCube("SteelWheelsSales");
 
         // Administrator has full access to the data,

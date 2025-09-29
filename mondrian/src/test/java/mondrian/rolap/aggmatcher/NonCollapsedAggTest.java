@@ -9,43 +9,18 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MaxMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -421,6 +396,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         String schema = SchemaUtil.getSchema(baseSchema,
             null, SSAS_COMPAT_CUBE, null, null, null, null);
          */
+        /*
         class TestSsasCompatNamingInAggModifier extends PojoMappingModifier {
 
             public TestSsasCompatNamingInAggModifier(CatalogMapping catalog) {
@@ -783,8 +759,9 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 return result;
             }
         }
-
-        withSchema(context, TestSsasCompatNamingInAggModifier::new);
+        */
+        ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
+        withSchemaEmf(context, TestSsasCompatNamingInAggModifier::new);
 
         final String mdx =
                 "select {[Measures].[Unit Sales]} on columns, {[dimension].[tenant].[tenant].Members} on rows from [testSsas]";
@@ -821,7 +798,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
             + "{ Measures.[Bogus Number]} on 0,\n"
             + "non empty Descendants([Time].[Time].[Year].Members, Time.Time.Month, SELF_AND_BEFORE) on 1\n"
             + "FROM [Sales]";
-
+        /*
         class TestMondrian1325Modifier extends PojoMappingModifier {
 
             public TestMondrian1325Modifier(CatalogMapping catalog) {
@@ -843,6 +820,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 return result;
             }
         }
+        */
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
                 "Sales",
@@ -851,14 +829,15 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 null,
                 null));
         */
-        withSchema(context, TestMondrian1325Modifier::new);
+        ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
+        withSchemaEmf(context, TestMondrian1325Modifier::new);
 
 
         executeQuery(query2, context.getConnectionWithDefaultRole());
     }
 
-    protected Function<CatalogMapping, PojoMappingModifier> getModifierFunction(){
-        return NonCollapsedAggTestModifier::new;
+    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
+        return NonCollapsedAggTestModifierEmf::new;
     }
 
 }

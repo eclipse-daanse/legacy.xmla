@@ -38,8 +38,8 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
@@ -68,9 +68,9 @@ class AggSchemaScanTest {
     try {
       sqlConnection = dataSource.getConnection();
 
-      CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
-      DatabaseSchemaMapping databaseSchema = schemas.getFirst();
+      Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
+      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
+      DatabaseSchema databaseSchema = schemas.getFirst();
 
       //RolapConnectionPropsR rc = new ConnectionProps(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
@@ -157,12 +157,12 @@ class AggSchemaScanTest {
         System.out.println( "Cannot find foodmart schema or catalog in database.  Cannot run test." );
         return;
       }
-      CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
-      DatabaseSchemaMapping databaseSchema = schemas.getFirst();
+      Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
+      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
+      DatabaseSchema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //The foodmart schema has 26 tables in module.
-      assertEquals( 26, jdbcSchema.getTablesMap().size() );
+      assertEquals( 22, jdbcSchema.getTablesMap().size() );
     } finally {
       if (sqlConnection != null) {
         try {

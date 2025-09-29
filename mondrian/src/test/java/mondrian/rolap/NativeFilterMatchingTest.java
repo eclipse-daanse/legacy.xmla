@@ -12,9 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.ConfigConstants;
@@ -23,35 +22,39 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.Column;
+import org.eclipse.daanse.rolap.mapping.model.Cube;
+import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.Level;
+import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.RollupPolicy;
+import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.Table;
+import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.EmfUtil;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.context.TestContextImpl;
@@ -96,7 +99,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
                     ? "ISNULL(`c0`) ASC, `c0` ASC, "
                     + "ISNULL(`c1`) ASC, `c1` ASC, "
                     + "ISNULL(`c2`) ASC, `c2` ASC, "
-                    + "ISNULL(`c4`) ASC, `c4` ASC"
+                    + "ISNULL(`c4`) ASC, `c4` ASC, "
+                    + "ISNULL(`c3`) ASC, `c3` ASC"
                     : "ISNULL(`customer`.`country`) ASC, `customer`.`country` ASC, ISNULL(`customer`.`state_province`) ASC, `customer`.`state_province` ASC, ISNULL(`customer`.`city`) ASC, `customer`.`city` ASC, ISNULL(CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)) ASC, CONCAT(`customer`.`fname`, ' ', `customer`.`lname`) ASC");
 
         SqlPattern[] patterns = {
@@ -181,7 +185,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
                     ? "ISNULL(`c0`) ASC, `c0` ASC, "
                     + "ISNULL(`c1`) ASC, `c1` ASC, "
                     + "ISNULL(`c2`) ASC, `c2` ASC, "
-                    + "ISNULL(`c4`) ASC, `c4` ASC"
+                    + "ISNULL(`c4`) ASC, `c4` ASC, "
+                    + "ISNULL(`c3`) ASC, `c3` ASC"
                     : "ISNULL(`customer`.`country`) ASC, `customer`.`country` ASC, ISNULL(`customer`.`state_province`) ASC, `customer`.`state_province` ASC, ISNULL(`customer`.`city`) ASC, `customer`.`city` ASC, ISNULL(CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)) ASC, CONCAT(`customer`.`fname`, ' ', `customer`.`lname`) ASC");
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -312,7 +317,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMatchesWithAccessControl(Context<?> context) {
-
+        /*
         class TestCachedNativeFilterModifier extends PojoMappingModifier {
 
         	private static final HierarchyMappingImpl h =ExplicitHierarchyMappingImpl.builder()
@@ -421,6 +426,158 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
             }
         }
+        */
+        /**
+         * EMF version of TestCachedNativeFilterModifier
+         * Creates TinySales cube with Store2 dimension and access role with member grants
+         */
+        class TestCachedNativeFilterModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+            private ExplicitHierarchy hierarchy;
+            private PhysicalCube tinySalesCube;
+
+            public TestCachedNativeFilterModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                catalog = (CatalogImpl) copier.get(cat);
+
+                // Create levels for hierarchy using RolapMappingFactory
+                Level storeCountryLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                storeCountryLevel.setName("Store Country");
+                storeCountryLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
+                storeCountryLevel.setUniqueMembers(true);
+
+                Level storeStateLevel =
+                    RolapMappingFactory.eINSTANCE.createLevel();
+                storeStateLevel.setName("Store State");
+                storeStateLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_STATE_STORE));
+                storeStateLevel.setUniqueMembers(true);
+
+                // Create hierarchy using RolapMappingFactory
+                hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy.setHasAll(true);
+                hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE));
+
+                TableQuery storeTableQuery =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                storeTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
+                hierarchy.setQuery(storeTableQuery);
+                hierarchy.getLevels().add(storeCountryLevel);
+                hierarchy.getLevels().add(storeStateLevel);
+
+                // Create Store2 dimension using RolapMappingFactory
+                StandardDimension store2Dimension =
+                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                store2Dimension.setName("Store2");
+                store2Dimension.getHierarchies().add(hierarchy);
+
+                // Find Product dimension
+                Dimension productDimension = null;
+                for (Cube cube : catalog.getCubes()) {
+                    if (cube instanceof PhysicalCube) {
+                        for (DimensionConnector dc :
+                             ((PhysicalCube)cube).getDimensionConnectors()) {
+                            if (dc.getDimension() != null && "Product".equals(dc.getDimension().getName())) {
+                                productDimension = dc.getDimension();
+                                break;
+                            }
+                        }
+                        if (productDimension != null) break;
+                    }
+                }
+
+                // Create TinySales cube using RolapMappingFactory
+                tinySalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                tinySalesCube.setName("TinySales");
+
+                TableQuery salesTableQuery =
+                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                salesTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT));
+                tinySalesCube.setQuery(salesTableQuery);
+
+                // Create dimension connector for Product
+                DimensionConnector productDimConnector =
+                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                productDimConnector.setOverrideDimensionName("Product");
+                productDimConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
+                productDimConnector.setDimension(productDimension);
+
+                // Create dimension connector for Store2
+                DimensionConnector store2DimConnector =
+                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                store2DimConnector.setOverrideDimensionName("Store2");
+                store2DimConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
+                store2DimConnector.setDimension(store2Dimension);
+
+                tinySalesCube.getDimensionConnectors().add(productDimConnector);
+                tinySalesCube.getDimensionConnectors().add(store2DimConnector);
+
+                // Create measure using RolapMappingFactory
+                SumMeasure unitSalesMeasure =
+                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                unitSalesMeasure.setName("Unit Sales");
+                unitSalesMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
+                unitSalesMeasure.setFormatString("Standard");
+
+                MeasureGroup measureGroup =
+                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(unitSalesMeasure);
+                tinySalesCube.getMeasureGroups().add(measureGroup);
+
+                // Add cube to catalog
+                catalog.getCubes().add(tinySalesCube);
+
+                // Create access role "test" using RolapMappingFactory
+                AccessMemberGrant memberGrant1 =
+                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                memberGrant1.setMember("[Store2].[USA].[CA]");
+                memberGrant1.setMemberAccess(MemberAccess.ALL);
+
+                AccessMemberGrant memberGrant2 =
+                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                memberGrant2.setMember("[Store2].[USA].[OR]");
+                memberGrant2.setMemberAccess(MemberAccess.ALL);
+
+                AccessMemberGrant memberGrant3 =
+                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                memberGrant3.setMember("[Store2].[Canada]");
+                memberGrant3.setMemberAccess(MemberAccess.ALL);
+
+                AccessHierarchyGrant hierarchyGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                hierarchyGrant.setHierarchy(hierarchy);
+                hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+                hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+                hierarchyGrant.getMemberGrants().add(memberGrant1);
+                hierarchyGrant.getMemberGrants().add(memberGrant2);
+                hierarchyGrant.getMemberGrants().add(memberGrant3);
+
+                AccessCubeGrant cubeGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+                cubeGrant.setCube(tinySalesCube);
+                cubeGrant.setCubeAccess(CubeAccess.ALL);
+                cubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+                AccessCatalogGrant catalogGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                catalogGrant.setCatalogAccess(CatalogAccess.NONE);
+                catalogGrant.getCubeGrants().add(cubeGrant);
+
+                AccessRole role =
+                    RolapMappingFactory.eINSTANCE.createAccessRole();
+                role.setName("test");
+                role.getAccessCatalogGrants().add(catalogGrant);
+
+                catalog.getAccessRoles().add(role);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -429,7 +586,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             roleDefs);
         withSchema(context, schema);
          */
-        withSchema(context, TestCachedNativeFilterModifier::new);
+        withSchemaEmf(context, TestCachedNativeFilterModifierEmf::new);
         Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("test")));
         verifySameNativeAndNot(connection,
             "select Filter([Product].[Product Category].Members, [Product].CurrentMember.Name matches \"(?i).*Food.*\")"
@@ -681,7 +838,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
                         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                         + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
-                        + "    ISNULL(`c4`) ASC, `c4` ASC"
+                        + "    ISNULL(`c4`) ASC, `c4` ASC,\n"
+                        + "    ISNULL(`c3`) ASC, `c3` ASC"
                         : "    ISNULL(`customer`.`country`) ASC, `customer`.`country` ASC,\n"
                         + "    ISNULL(`customer`.`state_province`) ASC, `customer`.`state_province` ASC,\n"
                         + "    ISNULL(`customer`.`city`) ASC, `customer`.`city` ASC,\n"

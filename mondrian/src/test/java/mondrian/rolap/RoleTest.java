@@ -46,12 +46,12 @@ public class RoleTest {
             DatabaseSchema ds = dsList.get(0);
             List<? extends DatabaseTable> tList = ds.getDbTables();
             assertEquals(
-                    26,
+                    23, //26
                     tList.size());
             Optional<? extends DatabaseTable> oT = tList.stream().filter(t -> "sales_fact_1997".equals(t.getName())).findFirst();
             List<? extends DatabaseColumn> cList = oT.get().getDbColumns();
             assertEquals(
-                    9,
+                    8,
                     cList.size());
         } finally {
             connection.close();
@@ -61,7 +61,7 @@ public class RoleTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDatabaseSchemaWithRole(Context<?> context) {
-        TestUtil.withSchema(context, RoleTestModifier::new);
+        TestUtil.withSchemaEmf(context, RoleTestModifier::new);
         Connection connection = context.getConnection(new ConnectionProps(List.of("Test")));
 
         try {
@@ -80,14 +80,14 @@ public class RoleTest {
             assertTrue(oT.isPresent());
             List<? extends DatabaseColumn> cList = oT.get().getDbColumns();
             assertEquals(
-                    9,
+                    8,
                     cList.size());
 
             oT = tList.stream().filter(t -> "product".equals(t.getName())).findFirst();
             assertTrue(oT.isPresent());
             cList = oT.get().getDbColumns();
             assertEquals(
-                    4,
+                    7,
                     cList.size());
 
             oT = tList.stream().filter(t -> "salary".equals(t.getName())).findFirst();

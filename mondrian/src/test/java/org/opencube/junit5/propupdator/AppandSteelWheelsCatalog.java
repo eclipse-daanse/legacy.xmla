@@ -25,6 +25,6 @@ public class AppandSteelWheelsCatalog implements TestContextUpdater {
 
 	@Override
 	public void updateContext(Context<?> context) {
-        ((TestContext)context).setCatalogMappingSupplier(new org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels.SteelwheelsSupplier());
+        ((TestContext)context).setCatalogMappingSupplier(new org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier());
 	}
 }

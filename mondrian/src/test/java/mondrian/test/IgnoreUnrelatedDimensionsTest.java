@@ -11,7 +11,7 @@
 package mondrian.test;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
@@ -23,7 +23,7 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Test case to
@@ -130,7 +130,7 @@ class IgnoreUnrelatedDimensionsTest {
             null);
         withSchema(context, schema);
          */
-    	withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier::new);
 
     }
 
@@ -190,7 +190,7 @@ class IgnoreUnrelatedDimensionsTest {
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-    	withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Total Sales] AS "
             + "'ValidMeasure(Measures.[Warehouse Sales]) + [Measures].[Unit Sales]',"
@@ -224,7 +224,7 @@ class IgnoreUnrelatedDimensionsTest {
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
@@ -248,7 +248,7 @@ class IgnoreUnrelatedDimensionsTest {
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
@@ -274,7 +274,7 @@ class IgnoreUnrelatedDimensionsTest {
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
@@ -303,7 +303,7 @@ class IgnoreUnrelatedDimensionsTest {
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
         // Should equal the [Unit Sales] of [Graduate Degree] and
         // [High School Degree] (with default Gender.F),
         //  plus the total [warehouse sales].

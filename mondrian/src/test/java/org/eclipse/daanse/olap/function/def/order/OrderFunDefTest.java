@@ -18,21 +18,20 @@ import static mondrian.olap.fun.FunctionTest.assertAxisCompilesTo;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -1051,6 +1050,53 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "Row #0: 75\n" );
     }
 
+    /**
+     * EMF version of TestOrderTupleMultiKeyswithVCubeModifier
+     * Creates a virtual cube for testing order functionality
+     */
+    public static class TestOrderTupleMultiKeyswithVCubeModifierEmf implements CatalogMappingSupplier {
+
+        private CatalogImpl catalog;
+
+        public TestOrderTupleMultiKeyswithVCubeModifierEmf(Catalog cat) {
+            // Copy catalog using EcoreUtil
+            EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
+            catalog = (CatalogImpl) copier.get(cat);
+
+
+            // Create virtual cube
+            VirtualCube virtualCube =
+                RolapMappingFactory.eINSTANCE.createVirtualCube();
+            virtualCube.setName("Sales vs HR");
+
+            // Create dimension connector for Customers from Sales cube
+            //org.eclipse.daanse.rolap.mapping.emf.rolapmapping.DimensionConnector customersDimConnector =
+            //    org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //customersDimConnector.setOverrideDimensionName("Customers");
+            //customersDimConnector.setPhysicalCube(CatalogSupplier.CUBE_SALES);
+
+            // Create dimension connector for Position from HR cube
+            //org.eclipse.daanse.rolap.mapping.emf.rolapmapping.DimensionConnector positionDimConnector =
+            //    org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //positionDimConnector.setOverrideDimensionName("Position");
+            //positionDimConnector.setPhysicalCube(CatalogSupplier.CUBE_HR);
+
+            // Add dimension connectors to virtual cube
+            virtualCube.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER));
+            virtualCube.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_HR_POSITION));
+
+            virtualCube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_ORG_SALARY));
+
+            // Add virtual cube to catalog
+            catalog.getCubes().add(virtualCube);
+        }
+
+        @Override
+        public Catalog get() {
+            return catalog;
+        }
+    }
+
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderTupleMultiKeyswithVCube(Context<?> context) {
@@ -1063,6 +1109,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
         // a non-sense cube just to test ordering by order key
 
         context.getCatalogCache().clear();
+        /*
         class TestOrderTupleMultiKeyswithVCubeModifier extends PojoMappingModifier {
 
             public TestOrderTupleMultiKeyswithVCubeModifier(CatalogMapping catalog) {
@@ -1088,6 +1135,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 return result;
             }
         }
+        */
     /*
     String baseSchema = TestUtil.getRawSchema(context);
     String schema = SchemaUtil.getSchema(baseSchema,
@@ -1101,7 +1149,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
       null, null, null );
     TestUtil.withSchema(context, schema);
      */
-        withSchema(context, TestOrderTupleMultiKeyswithVCubeModifier::new);
+        withSchemaEmf(context, TestOrderTupleMultiKeyswithVCubeModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  set [CJ] as \n"

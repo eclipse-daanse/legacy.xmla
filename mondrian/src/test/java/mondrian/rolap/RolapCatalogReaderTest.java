@@ -16,9 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,26 +27,25 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
-import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.Dimension;
-import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessDimensionGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.Cube;
+import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.DimensionAccess;
+import org.eclipse.daanse.rolap.mapping.model.Hierarchy;
+import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContext;
@@ -72,7 +70,7 @@ class RolapCatalogReaderTest {
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
-            List<Cube> cubes = reader.getCubes();
+            List<org.eclipse.daanse.olap.api.element.Cube> cubes = reader.getCubes();
 
             assertEquals(expectedCubes.length, cubes.size());
 
@@ -94,7 +92,7 @@ class RolapCatalogReaderTest {
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
-            List<Cube> cubes = reader.getCubes();
+            List<org.eclipse.daanse.olap.api.element.Cube> cubes = reader.getCubes();
 
             assertEquals(expectedCubes.length, cubes.size());
 
@@ -115,7 +113,7 @@ class RolapCatalogReaderTest {
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
-            List<Cube> cubes = reader.getCubes();
+            List<org.eclipse.daanse.olap.api.element.Cube> cubes = reader.getCubes();
 
             assertEquals(expectedCubes.length, cubes.size());
 
@@ -146,10 +144,10 @@ class RolapCatalogReaderTest {
         }
     }
 
-    private void assertCubeExists(String[] expectedCubes, List<Cube> cubes) {
+    private void assertCubeExists(String[] expectedCubes, List<org.eclipse.daanse.olap.api.element.Cube> cubes) {
         List cubesAsList = Arrays.asList(expectedCubes);
 
-        for (Cube cube : cubes) {
+        for (org.eclipse.daanse.olap.api.element.Cube cube : cubes) {
             String cubeName = cube.getName();
             assertTrue(cubesAsList.contains(cubeName), "Cube name not found: " + cubeName);
         }
@@ -171,6 +169,7 @@ class RolapCatalogReaderTest {
             hierarchyName("Time", "Weekly");
         final String timeTime =
             hierarchyName("Time", "Time");
+        /*
         class TestGetCubeDimensionsModifier extends PojoMappingModifier {
 
             public TestGetCubeDimensionsModifier(CatalogMapping catalog) {
@@ -214,6 +213,69 @@ class RolapCatalogReaderTest {
                 return result;
             }
         }
+        */
+        /**
+         * EMF version of TestGetCubeDimensionsModifier
+         * Creates access role 'REG1' with dimension and hierarchy grants
+         */
+        class TestGetCubeDimensionsModifierEmf implements CatalogMappingSupplier {
+
+            private CatalogImpl catalog;
+
+            public TestGetCubeDimensionsModifierEmf(Catalog cat) {
+                // Copy catalog using EcoreUtil
+                EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
+                catalog = (CatalogImpl) copier.get(cat);
+
+
+                // Create dimension grant for Store (access = NONE) using RolapMappingFactory
+                AccessDimensionGrant dimensionGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+                dimensionGrant.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+                dimensionGrant.setDimensionAccess(DimensionAccess.NONE);
+
+                // Create hierarchy grant for Time (access = NONE) using RolapMappingFactory
+                AccessHierarchyGrant hierarchyGrant1 =
+                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                hierarchyGrant1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
+                hierarchyGrant1.setHierarchyAccess(HierarchyAccess.NONE);
+
+                // Create hierarchy grant for Weekly (access = ALL) using RolapMappingFactory
+                AccessHierarchyGrant hierarchyGrant2 =
+                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                hierarchyGrant2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME2));
+                hierarchyGrant2.setHierarchyAccess(HierarchyAccess.ALL);
+
+                // Create cube grant using RolapMappingFactory
+                AccessCubeGrant cubeGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+                cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
+                cubeGrant.setCubeAccess(CubeAccess.ALL);
+                cubeGrant.getDimensionGrants().add(dimensionGrant);
+                cubeGrant.getHierarchyGrants().add(hierarchyGrant1);
+                cubeGrant.getHierarchyGrants().add(hierarchyGrant2);
+
+                // Create catalog grant using RolapMappingFactory
+                AccessCatalogGrant catalogGrant =
+                    RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                catalogGrant.setCatalogAccess(CatalogAccess.NONE);
+                catalogGrant.getCubeGrants().add(cubeGrant);
+
+                // Create role using RolapMappingFactory
+                AccessRole role =
+                    RolapMappingFactory.eINSTANCE.createAccessRole();
+                role.setName("REG1");
+                role.getAccessCatalogGrants().add(catalogGrant);
+
+                // Add role to catalog
+                catalog.getAccessRoles().add(role);
+            }
+
+            @Override
+            public Catalog get() {
+                return catalog;
+            }
+        }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -233,26 +295,26 @@ class RolapCatalogReaderTest {
                 + "</Role>");
         withSchema(context, schema);
          */
-        withSchema(context, TestGetCubeDimensionsModifier::new);
+        withSchemaEmf(context, TestGetCubeDimensionsModifierEmf::new);
         Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("REG1")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
-            final Map<String, Cube> cubes = new HashMap<>();
-            for (Cube cube : reader.getCubes()) {
+            final Map<String, org.eclipse.daanse.olap.api.element.Cube> cubes = new HashMap<>();
+            for (org.eclipse.daanse.olap.api.element.Cube cube : reader.getCubes()) {
                 cubes.put(cube.getName(), cube);
             }
             assertTrue(cubes.containsKey("Sales")); // granted access
             assertFalse(cubes.containsKey("HR")); // denied access
             assertFalse(cubes.containsKey("Bad")); // not exist
 
-            final Cube salesCube = cubes.get("Sales");
-            final Map<String, Dimension> dimensions =
+            final org.eclipse.daanse.olap.api.element.Cube salesCube = cubes.get("Sales");
+            final Map<String, org.eclipse.daanse.olap.api.element.Dimension> dimensions =
                 new HashMap<>();
-            final Map<String, Hierarchy> hierarchies =
+            final Map<String, org.eclipse.daanse.olap.api.element.Hierarchy> hierarchies =
                 new HashMap<>();
-            for (Dimension dimension : reader.getCubeDimensions(salesCube)) {
+            for (org.eclipse.daanse.olap.api.element.Dimension dimension : reader.getCubeDimensions(salesCube)) {
                 dimensions.put(dimension.getName(), dimension);
-                for (Hierarchy hierarchy
+                for (org.eclipse.daanse.olap.api.element.Hierarchy hierarchy
                     : reader.getDimensionHierarchies(dimension))
                 {
                     hierarchies.put(hierarchy.getUniqueName(), hierarchy);

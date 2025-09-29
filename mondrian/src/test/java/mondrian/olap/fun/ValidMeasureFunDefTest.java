@@ -10,7 +10,7 @@
 package mondrian.olap.fun;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.sql.SQLException;
 
@@ -20,7 +20,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 
 /**
  * Tests for ValidMeasureFunDef
@@ -78,7 +78,7 @@ class ValidMeasureFunDefTest {
     /*
     TestUtil.withSchema(context, schema);
      */
-    withSchema(context, SchemaModifiers.ValidMeasureFunDefTestModifier::new);
+    withSchemaEmf(context, SchemaModifiersEmf.ValidMeasureFunDefTestModifier::new);
 
     final String expected = "Axis #0:\n"
         + "{}\n"

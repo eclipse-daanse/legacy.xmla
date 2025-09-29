@@ -17,10 +17,10 @@ import java.io.File;
 import java.util.function.Function;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.opencube.junit5.Constants;
 import org.opencube.junit5.TestUtil;
 
@@ -45,7 +45,7 @@ public abstract class CsvDBTestCase extends BatchTestCase {
     protected void prepareContext(Context<?> context) {
         try {
             File inputFile = new File(Constants.TESTFILES_DIR + "/mondrian/rolap/agg/" +  getFileName());
-
+            context.getCatalogCache().clear();
             CsvDBLoader loader = new CsvDBLoader(context);
             loader.setConnection(context.getConnectionWithDefaultRole().getDataSource().getConnection());
             loader.initialize();
@@ -64,7 +64,7 @@ public abstract class CsvDBTestCase extends BatchTestCase {
                     getUdfDescription(), getRoleDescription());
             TestUtil.withSchema(context, schema);
              */
-            TestUtil.withSchema(context, getModifierFunction());
+            TestUtil.withSchemaEmf(context, getModifierFunction());
 
         }
         catch (Exception e) {
@@ -81,10 +81,19 @@ public abstract class CsvDBTestCase extends BatchTestCase {
 
     protected abstract String getFileName();
 
-    protected Function<CatalogMapping, PojoMappingModifier>  getModifierFunction(){
+    protected Function<Catalog, CatalogMappingSupplier>  getModifierFunction(){
 
-    	//constructor notz longer public.
-    	return PojoMappingModifier::new;
+        return new Function<Catalog, CatalogMappingSupplier>() {
+            @Override
+            public CatalogMappingSupplier apply(Catalog catalogMapping) {
+                return new CatalogMappingSupplier() {
+                    @Override
+                    public Catalog get() {
+                        return catalogMapping;
+                    }
+                };
+            }
+        };
     }
 
 }
