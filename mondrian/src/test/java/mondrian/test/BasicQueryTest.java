@@ -35,6 +35,7 @@ import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.sql.SQLException;
 import java.time.Duration;
@@ -103,6 +104,7 @@ import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
 import mondrian.spi.impl.JdbcStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProvider;
 
@@ -1804,7 +1806,7 @@ public class BasicQueryTest {
                 + "    <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\"/>\n" + "  </Hierarchy>\n"
                 + "</Dimension>", null ));
      */
-        withSchema(context, SchemaModifiers.BasicQueryTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier1::new);
         Connection connection = context.getConnectionWithDefaultRole();
     if ( !TestUtil.getDialect(connection).allowsFromQuery() ) {
       return;
@@ -1834,7 +1836,7 @@ public class BasicQueryTest {
                 + "      <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
                 + "          uniqueMembers=\"false\"/>\n" + "    </Hierarchy>\n" + "  </Dimension>\n", null ));
        */
-      withSchema(context, SchemaModifiers.BasicQueryTestModifier2::new);
+      withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier2::new);
     // These two references should resolve
     // to the same member whether used in the WITH block or on an axis
     String[] alternateReferences =
@@ -1990,7 +1992,7 @@ public class BasicQueryTest {
             + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
             + "      formatString=\"Standard\"/>\n" + "</Cube>\n" + "</Schema>";
     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier14::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier14::new);
     ((TestContextImpl)context).setUseAggregates(true);
     ((TestContextImpl)context).setReadAggregates(true);
     executeQuery(context.getConnectionWithDefaultRole(), mdx);
@@ -2026,7 +2028,7 @@ public class BasicQueryTest {
             + "     formatString=\"Standard\"/>\n" + "</Cube>\n" + "</Schema>";
     */
     //TestContext<?> testContext<?> = TestContext.instance().withFreshConnection().withSchema( schema );
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier15::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier15::new);
     ((TestContextImpl)context).setUseAggregates(true);
     ((TestContextImpl)context).setReadAggregates(true);
 
@@ -2090,7 +2092,7 @@ public class BasicQueryTest {
             + "{[Time].[Time].[1997], [Warehouse].[Warehouse].[USA]}\n" + "Row #0: 196,771\n";
 
 
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier16::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier16::new);
     assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, result );
     context.getCatalogCache().clear();
   }
@@ -2129,7 +2131,7 @@ public class BasicQueryTest {
             + "</Schema>";
     */
     //TestContext<?> testContext<?> = TestContext.instance().withFreshConnection().withSchema( schema );
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier17::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier17::new);
     ((TestContextImpl)context).setUseAggregates(true);
     ((TestContextImpl)context).setReadAggregates(true);
 
@@ -2188,7 +2190,7 @@ public class BasicQueryTest {
             + "</Schema>";
     */
     //TestContext<?> testContext<?> = TestContext.instance().withFreshConnection().withSchema( schema );
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier18::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier18::new);
     ((TestContextImpl)context).setUseAggregates(true);
     ((TestContextImpl)context).setReadAggregates(true);
 
@@ -2233,7 +2235,7 @@ public class BasicQueryTest {
             + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"avg\" />\n" + "</Cube>\n"
             + "</Schema>";
     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier19::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier19::new);
     ((TestContextImpl)context).setUseAggregates(true);
     ((TestContextImpl)context).setReadAggregates(true);
 
@@ -3847,7 +3849,7 @@ public class BasicQueryTest {
             + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"$#,##0.00\"/>\n"
             + "  </CalculatedMember>\n" + "</Cube>", null, null, null, null );
      */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier20::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier20::new);
     CatalogReader scr = context.getConnectionWithDefaultRole().getCatalog().lookupCube( cubeName ).orElseThrow().getCatalogReader( null );
     Member member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Unit Sales" ), true );
     Object visible = member.getPropertyValue( StandardProperty.VISIBLE.getName() );
@@ -3896,7 +3898,7 @@ public class BasicQueryTest {
                 + "    <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\"/>\n" + "  </Hierarchy>\n"
                 + "</Dimension>" ));
        */
-        withSchema(context, SchemaModifiers.BasicQueryTestModifier10::new);
+        withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier10::new);
         String mdx = "select {[Gender4].[All Gender]} on columns from Sales";
     Result result = executeQuery(context.getConnectionWithDefaultRole(), mdx );
     Axis axis0 = result.getAxes()[0];
@@ -3939,7 +3941,7 @@ public class BasicQueryTest {
             + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
             + "      formatString=\"#,###.00\"/>\n" + "</Cube>", null, null, null, null );
     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier21::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier21::new);
     //withCube( "Sales_DimWithoutAll" );
     Connection connection = context.getConnectionWithDefaultRole();
     // the default member of the Gender dimension is the first member
@@ -4099,7 +4101,7 @@ public class BasicQueryTest {
             + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
             + "      formatString=\"#,###.00\"/>\n" + "</Cube>", null, null, null, null );
        */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier22::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier22::new);
     assertQueryReturns(context.getConnectionWithDefaultRole(),"select {\n" + " [Customers].[All Customers].[USA],\n"
         + " [Customers].[All Customers].[USA].[OR],\n" + " [Customers].[All Customers].[USA].[CA],\n"
         + " [Customers].[All Customers].[USA].[CA].[Altadena],\n"
@@ -4134,7 +4136,7 @@ public class BasicQueryTest {
             + "  <Measure name=\"Bad Measure\" aggregator=\"sum\"\n" + "      formatString=\"Standard\"/>\n"
             + "</Cube>", null, null, null, null );
        */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier23::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier23::new);
     Throwable throwable = null;
     try {
       assertSimpleQuery(context.getConnectionWithDefaultRole());
@@ -4159,7 +4161,7 @@ public class BasicQueryTest {
             + "         unit_sales\n" + "       </SQL>\n" + "    </MeasureExpression>\n" + "  </Measure>\n"
             + "</Cube>", null, null, null, null );
     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier24::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier24::new);
     Throwable throwable = null;
     try {
       assertSimpleQuery(context.getConnectionWithDefaultRole());
@@ -4386,7 +4388,7 @@ public class BasicQueryTest {
     String schema = SchemaUtil.getSchema(baseSchema, null, null, null, null, "<UserDefinedFunction name=\"SleepUdf\" className=\""
             + SleepUdf.class.getName() + "\"/>", null );
      */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier25::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier25::new);
     Connection connection = context.getConnectionWithDefaultRole();
 
     final Query query = connection.parseQuery( queryString );
@@ -4594,7 +4596,7 @@ public class BasicQueryTest {
       String schema = SchemaUtil.getSchema(baseSchema, null, null, null, null, "<UserDefinedFunction name=\"SleepUdf\" className=\""
             + SleepUdf.class.getName() + "\"/>", null );
     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier25::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier25::new);
     String query =
         "WITH\n" + "  MEMBER [Measures].[Sleepy]\n" + "    AS 'SleepUdf([Measures].[Unit Sales])'\n"
             + "SELECT {[Measures].[Sleepy]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
@@ -4776,7 +4778,7 @@ public class BasicQueryTest {
             + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
             + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier26::new);
+    TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier26::new);
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithDeflaultMeasureFilter =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Supply Time]";
@@ -4799,7 +4801,7 @@ public class BasicQueryTest {
        */
     context.getCatalogCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-    ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "Supply Time Error"));
+    ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.BasicQueryTestModifier27(catalog, "Supply Time Error"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Store Invoice]";
@@ -4822,7 +4824,7 @@ public class BasicQueryTest {
 
     context.getCatalogCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-    ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "SUPPLY TIME"));
+    ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.BasicQueryTestModifier27(catalog, "SUPPLY TIME"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Store Invoice]";
@@ -4923,7 +4925,7 @@ public class BasicQueryTest {
                 + "    </Hierarchy>\n" + "  </Dimension>" ));
 
          */
-        withSchema(context, SchemaModifiers.BasicQueryTestModifier11::new);
+        withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier11::new);
 
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), "WITH SET [#DataSet#] AS "
@@ -5214,7 +5216,7 @@ public class BasicQueryTest {
             + "  <MeasureExpression>\n" + "  <SQL dialect='generic'>\n" + "    0"
             + "  </SQL></MeasureExpression></Measure>", null, null ));
        */
-      withSchema(context, SchemaModifiers.BasicQueryTestModifier12::new);
+      withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier12::new);
       assertQueryReturns(context.getConnectionWithDefaultRole(),"select " + "Crossjoin([Gender].[Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [Sales] " + "  \n", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[Gender].[F], [Measures].[zero]}\n"
             + "{[Gender].[Gender].[M], [Measures].[zero]}\n" + "Row #0: 0\n" + "Row #0: 0\n" );
@@ -5237,7 +5239,7 @@ public class BasicQueryTest {
             + "  <SQL dialect='generic'>\n" + "    0" + "  </SQL></MeasureExpression></Measure>" + "</Cube>", null,
             null, null, null );
        */
-      TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier28::new);
+      TestUtil.withSchemaEmf(context, SchemaModifiersEmf.BasicQueryTestModifier28::new);
       assertQueryReturns( context.getConnectionWithDefaultRole(),"select " + "Crossjoin([Gender].[Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [FooBarZerOneAnything] ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[Gender].[F], [Measures].[zero]}\n"
             + "{[Gender].[Gender].[M], [Measures].[zero]}\n" + "Row #0: 0\n" + "Row #0: 0\n" );

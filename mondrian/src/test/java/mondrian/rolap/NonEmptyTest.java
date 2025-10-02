@@ -22,6 +22,7 @@ import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
 import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +67,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
+import org.eclipse.daanse.rolap.mapping.emf.rolapmapping.HideMemberIf;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
@@ -1893,7 +1895,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
       */
-    withSchema(context, SchemaModifiers.NonEmptyTestModifier::new);
+    withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier::new);
     // No 'all' level, and ragged because [Product Name] is hidden if
     // blank.  Native evaluation should be able to handle this query.
     checkNative(context,
@@ -1929,8 +1931,8 @@ class NonEmptyTest extends BatchTestCase {
      */
       context.getCatalogCache().clear();
       CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalog,
-    		  HideMemberIfType.IF_BLANK_NAME));
+      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.NonEmptyTestModifier2(catalog,
+              HideMemberIf.IF_BLANK_NAME));
 
       // [Product Name] can be hidden if it is blank, but native evaluation
     // should be able to handle the query.
@@ -1967,8 +1969,8 @@ class NonEmptyTest extends BatchTestCase {
      */
       context.getCatalogCache().clear();
       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
-      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalogMapping,
-    		  HideMemberIfType.IF_PARENTS_NAME));
+      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.NonEmptyTestModifier2(catalogMapping,
+              HideMemberIf.IF_PARENTS_NAME));
 
       // [Product Name] can be hidden if it it matches its parent name, so
     // native evaluation can not handle this query.
@@ -2002,7 +2004,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
      */
-    withSchema(context, SchemaModifiers.NonEmptyTestModifier3::new);
+    withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier3::new);
     // Since the parent of [Product Name] can be hidden, native evaluation
     // can't handle the query.
     checkNative(context,
@@ -2036,7 +2038,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
     */
-      withSchema(context, SchemaModifiers.NonEmptyTestModifier3::new);
+      withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier3::new);
       // Since the parent of [Product Name] can be hidden, native evaluation
     // can't handle the query.
     checkNative(context,
@@ -2072,8 +2074,8 @@ class NonEmptyTest extends BatchTestCase {
       */
       context.getCatalogCache().clear();
       CatalogMapping schema = ((RolapContext) context).getCatalogMapping();
-      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(schema,
-    		  HideMemberIfType.IF_BLANK_NAME));
+      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.NonEmptyTestModifier2(schema,
+              HideMemberIf.IF_BLANK_NAME));
 
       // [Product Name] can be hidden if it is blank, but native evaluation
     // should be able to handle the query.
@@ -3929,7 +3931,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    </Hierarchy>\n"
         + "  </Dimension>" ));
      */
-      withSchema(context, SchemaModifiers.NonEmptyTestModifier4::new);
+      withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier4::new);
     // Check that the grand total is different than when [Time].[1997] is
     // the default member.
     assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -6409,8 +6411,7 @@ class NonEmptyTest extends BatchTestCase {
     };
 
     context.getCatalogCache().clear();
-    withSchema(context, SchemaModifiers.NonEmptyTestModifier6::new );
-    //withSchema(context, schema );
+    withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier6::new );
 
     // The filter condition does not require a join to the fact table.
     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
@@ -6596,7 +6597,7 @@ class NonEmptyTest extends BatchTestCase {
         oracleWithFactJoin, oracleWithFactJoin )
     };
 
-    withSchema(context, SchemaModifiers.NonEmptyTestModifier6::new );
+    withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier6::new );
 
     // The filter condition does not require a join to the fact table.
     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
@@ -7697,7 +7698,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    </Hierarchy>\n"
         + "  </Dimension>" ));
      */
-      withSchema(context, SchemaModifiers.NonEmptyTestModifier5::new);
+      withSchemaEmf(context, SchemaModifiersEmf.NonEmptyTestModifier5::new);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member measures.one as '1' select non empty store2.usa.[OR].children on 0, measures.one on 1 from sales",
       "Axis #0:\n"
@@ -7766,7 +7767,7 @@ class NonEmptyTest extends BatchTestCase {
           + "  </VirtualCube>"
           + "</Schema>" );
      */
-      withSchema(context,  SchemaModifiers.NonEmptyTestModifier7::new);
+      withSchemaEmf(context,  SchemaModifiersEmf.NonEmptyTestModifier7::new);
       verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
       "select "
         + " [Measures].[dummyMeasure2] on COLUMNS, "

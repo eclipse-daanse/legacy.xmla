@@ -25,6 +25,7 @@ import static org.opencube.junit5.TestUtil.member;
 import static org.opencube.junit5.TestUtil.productMembersPotScrubbersPotsAndPans;
 import static org.opencube.junit5.TestUtil.upgradeActual;
 import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,6 +103,8 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
+
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
@@ -154,7 +157,7 @@ class AggregationOnDistinctCountMeasuresTest {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.AggregationOnDistinctCountMeasuresTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.AggregationOnDistinctCountMeasuresTestModifier::new);
         Connection connection = context.getConnectionWithDefaultRole();
 
         catalogReader =

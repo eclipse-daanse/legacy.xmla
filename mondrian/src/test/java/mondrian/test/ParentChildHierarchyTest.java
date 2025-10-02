@@ -23,6 +23,7 @@ import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.unfold;
 import static org.opencube.junit5.TestUtil.upgradeActual;
 import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
@@ -44,6 +45,8 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.SchemaModifiers;
+import mondrian.rolap.SchemaModifiersEmf;
+
 import  org.eclipse.daanse.olap.util.Bug;
 
 /**
@@ -87,7 +90,7 @@ class ParentChildHierarchyTest {
             + "      </Hierarchy>\n"
             + "  </Dimension>"));
          */
-    	withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier1::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier1::new);
     }
 
     /**
@@ -126,7 +129,7 @@ class ParentChildHierarchyTest {
             + "</Hierarchy>"
             + "</Dimension>"));
          */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier2::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier2::new);
 
     }
 
@@ -186,7 +189,7 @@ class ParentChildHierarchyTest {
                 sharedClosureDimension, cube, null, null, null, null);
         withSchema(context, schema);
         */
-    	withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier3::new);
+    	withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier3::new);
 
     }
 
@@ -218,7 +221,7 @@ class ParentChildHierarchyTest {
             + "</Dimension>",
             null));
         */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier4::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier4::new);
 
     }
 
@@ -242,7 +245,7 @@ class ParentChildHierarchyTest {
                 + "</Hierarchy>\n"
                 + "</Dimension>\n"));
         */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier5::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier5::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET] AS 'Head(FILTER([*BASE_MEMBERS__EmployeesNoClosure_], NOT ISEMPTY ([Measures].[Count])), 5)'\n"
@@ -802,7 +805,7 @@ class ParentChildHierarchyTest {
         withSchema(context,schema);
          */
         // On a cube with fewer dimensions, this gave a false failure.
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier6::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier6::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Employees].[All Employees].Children} on columns,\n"
@@ -1150,7 +1153,7 @@ class ParentChildHierarchyTest {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier7::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier7::new);
 
         // Make sure <Member>.CHILDREN is sorted.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1264,7 +1267,7 @@ class ParentChildHierarchyTest {
             null);
         withSchema(context, schema);
         */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier8::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier8::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select "
             + "[Employees].[All Employees].[Sheri Nowmer].[Rebecca Kanagaki].Children"
@@ -1320,7 +1323,7 @@ class ParentChildHierarchyTest {
                 null, cubestart + closure + cubeend, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier9::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier9::new);
 
         String mdx;
         String expected;
@@ -1371,7 +1374,7 @@ class ParentChildHierarchyTest {
                 null, cubestart + cubeend, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier10::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier10::new);
 
         // Need to unfold because 'expect' has platform-specific line-endings,
         // yet assertQueryReturns assumes that it contains linefeeds.
@@ -1490,7 +1493,7 @@ class ParentChildHierarchyTest {
             + "  </Cube>\n"
             + "</Schema>");
         */
-        withSchema(context, SchemaModifiers.ParentChildHierarchyTestModifier11::new);
+        withSchemaEmf(context, SchemaModifiersEmf.ParentChildHierarchyTestModifier11::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " NON EMPTY {[Measures].[Store Sales]} ON COLUMNS,\n"

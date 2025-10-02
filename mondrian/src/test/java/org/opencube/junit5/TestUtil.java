@@ -1214,6 +1214,12 @@ public class TestUtil {
           ((TestContext)context).setCatalogMappingSupplier(f.apply(catalogMapping));
     }
 
+	public static void withSchemaEmf(Context<?> context, Function<CatalogMapping, org.eclipse.daanse.rolap.mapping.modifier.emf.EmfMappingModifier> f) {
+	       context.getCatalogCache().clear();
+	       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
+	       ((TestContext)context).setCatalogMappingSupplier(f.apply(catalogMapping));
+	}
+
 	public static void assertExprDependsOn(Connection connection, String expr, String hierList ) {
 		// Construct a query, and mine it for a parsed expression.
 		// Use a fresh connection, because some tests define their own dims.
