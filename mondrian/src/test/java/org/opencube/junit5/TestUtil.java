@@ -1301,9 +1301,9 @@ public class TestUtil {
 		final StringWriter sw = new StringWriter();
 		final PrintWriter pw = new PrintWriter( sw );
 
-		   SimpleCalculationProfileWriter w=new SimpleCalculationProfileWriter(pw);
+		SimpleCalculationProfileWriter w=new SimpleCalculationProfileWriter(pw);
 
-				w.write(calc.getCalculationProfile());
+		w.write(calc.getCalculationProfile());
 		pw.flush();
 		return sw.toString();
 	}

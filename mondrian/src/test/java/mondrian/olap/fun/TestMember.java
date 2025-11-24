@@ -39,6 +39,7 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.element.AbstractProperty;
 
 /**
  * Mock implementation of {@link Member} for testing.
@@ -174,7 +175,7 @@ public void setProperty( String name, Object value ) {
   }
 
   @Override
-public org.eclipse.daanse.olap.element.AbstractProperty[] getProperties() {
+public AbstractProperty[] getProperties() {
     throw new UnsupportedOperationException();
   }
 
