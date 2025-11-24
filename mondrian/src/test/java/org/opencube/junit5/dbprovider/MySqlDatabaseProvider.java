@@ -82,7 +82,7 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 			e1.printStackTrace();
 		}
 		for (int i = 0; i < 1000; i++) {
-			System.out.println(i);
+			System.out.print(".");
 
 			try {
 				Thread.sleep(100);
@@ -95,9 +95,10 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 
 			} catch (Exception e) {
 //				e.printStackTrace();
-				System.out.println("nope");
+				System.out.print("-");
 			}
 
+            System.out.print("");
 		}
 		return null;
 	}

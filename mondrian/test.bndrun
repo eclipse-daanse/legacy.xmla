@@ -11,7 +11,7 @@
 
 -runsystemcapabilities: ${native_capability}
 
--runproperties: org.slf4j.simpleLogger.defaultLogLevel=debug
+-runproperties: logback.configurationFile=${project.basedir}/logback.xml
 
 -runfw: org.apache.felix.framework
 

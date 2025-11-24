@@ -321,7 +321,7 @@ import org.eclipse.daanse.rolap.core.internal.BasicContext;
 import org.eclipse.daanse.rolap.common.RolapDependencyTestingEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
-import org.eclipse.daanse.rolap.common.RolapProfilingEvaluator;
+import org.eclipse.daanse.rolap.common.RolapInterceptaleEvaluator;
 import org.eclipse.daanse.rolap.common.RolapResult;
 import org.eclipse.daanse.rolap.common.RolapResultShepherd;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
@@ -970,8 +970,7 @@ public class TestContextImpl extends BasicContext implements TestContext {
 
     @Override
     public ExpressionCompiler createProfilingCompiler(ExpressionCompiler compiler) {
-        return new RolapProfilingEvaluator.ProfilingEvaluatorCompiler(
-            compiler);
+        return new RolapInterceptaleEvaluator.InterceptableEvaluatorCompiler(compiler);
     }
 
     /**

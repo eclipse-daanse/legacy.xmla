@@ -54,7 +54,6 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
-import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
@@ -1304,11 +1303,7 @@ public class TestUtil {
 
 		   SimpleCalculationProfileWriter w=new SimpleCalculationProfileWriter(pw);
 
-			if (calc instanceof ProfilingCalc pc) {
-				w.write(pc.getCalculationProfile());
-			}else {
-				throw new RuntimeException("must be profiling calc");
-			}
+				w.write(calc.getCalculationProfile());
 		pw.flush();
 		return sw.toString();
 	}
