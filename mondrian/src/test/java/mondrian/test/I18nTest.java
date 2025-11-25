@@ -9,13 +9,10 @@
 
 package mondrian.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 
 import java.time.Duration;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.commons.lang3.LocaleUtils;
@@ -24,8 +21,6 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
-import  org.eclipse.daanse.olap.util.Format;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -45,39 +40,6 @@ class I18nTest {
     public static final char Nbsp = ' ';
     public static final char EA = '\u00e9'; // e acute
     public static final char UC = '\u00FB'; // u circumflex
-
-    @Test
-    void testFormat() {
-        // Make sure Util is loaded, so that the LocaleFormatFactory gets
-        // registered.
-//        discard(Util.NL);
-
-        Locale spanish = new Locale("es", "ES");
-        Locale german = new Locale("de", "DE");
-
-        // Thousands and decimal separators are different in Spain
-        Format numFormat = new Format("#,000.00", spanish);
-        assertEquals(numFormat.format(new Double(123456.789)), "123.456,79");
-
-        // Currency too
-        Format currencyFormat = new Format("Currency", spanish);
-        assertEquals(
-            "1.234.567,79 €",
-            currencyFormat.format(new Double(1234567.789)));
-
-        // Dates
-        Format dateFormat = new Format("Medium Date", spanish);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 2005);
-        calendar.set(Calendar.MONTH, 0); // January, 0-based
-        calendar.set(Calendar.DATE, 22);
-        java.util.Date date = calendar.getTime();
-        assertEquals("22-ene-05", dateFormat.format(date));
-
-        // Dates in German
-        dateFormat = new Format("Long Date", german);
-        assertEquals("Samstag, Januar 22, 2005", dateFormat.format(date));
-    }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )

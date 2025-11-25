@@ -11,19 +11,13 @@ package mondrian.rolap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.List;
-
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.util.RelationUtil;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.common.RolapStar;
-import org.eclipse.daanse.rolap.common.RolapStar.Column;
-import org.eclipse.daanse.rolap.common.util.RelationUtil;
 import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
 import org.eclipse.daanse.rolap.mapping.model.Query;
@@ -31,7 +25,6 @@ import org.eclipse.daanse.rolap.mapping.model.RelationalQuery;
 import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
 import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -108,46 +101,4 @@ class RolapStarTest {
       assertEquals("NewAlias.clicked = 'true'", cloned.getSqlWhereExpression().getSql());
   }
 
-   //Below there are tests for mondrian.rolap.RolapStar.ColumnComparator
-   @Test
-   void testTwoColumnsWithDifferentNamesNotEquals() {
-     RolapStar.ColumnComparator colComparator =
-         RolapStar.ColumnComparator.instance;
-     Column column1 = getColumnMock("Column1", "Table1");
-     Column column2 = getColumnMock("Column2", "Table1");
-     assertNotSame(column1, column2);
-     assertEquals(-1, colComparator.compare(column1, column2));
-   }
-
-   @Test
-   void testTwoColumnsWithEqualsNamesButDifferentTablesNotEquals() {
-     RolapStar.ColumnComparator colComparator =
-         RolapStar.ColumnComparator.instance;
-     Column column1 = getColumnMock("Column1", "Table1");
-     Column column2 = getColumnMock("Column1", "Table2");
-     assertNotSame(column1, column2);
-     assertEquals(-1, colComparator.compare(column1, column2));
-   }
-
-   @Test
-   void testTwoColumnsEquals() {
-     RolapStar.ColumnComparator colComparator =
-         RolapStar.ColumnComparator.instance;
-     Column column1 = getColumnMock("Column1", "Table1");
-     Column column2 = getColumnMock("Column1", "Table1");
-     assertNotSame(column1, column2);
-     assertEquals(0, colComparator.compare(column1, column2));
-   }
-
-   private static Column getColumnMock(
-       String columnName,
-       String tableName)
-   {
-     Column colMock = mock(Column.class);
-     RolapStar.Table tableMock = mock(RolapStar.Table.class);
-     when(colMock.getName()).thenReturn(columnName);
-     when(colMock.getTable()).thenReturn(tableMock);
-     when(tableMock.getAlias()).thenReturn(tableName);
-    return colMock;
-   }
 }

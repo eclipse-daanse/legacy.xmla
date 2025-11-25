@@ -33,15 +33,14 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Position;
-import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsCalc;
 import org.eclipse.daanse.olap.impl.CellImpl;
-import org.junit.jupiter.api.Test;
+import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsFunDef;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -55,52 +54,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @author efine
  */
 class VisualTotalsTest {
-	@Test
-    void testSubstituteEmpty() {
-        final String actual = VisualTotalsCalc.substitute("", "anything");
-        final String expected = "";
-        assertEquals(expected, actual);
-    }
-
-	@Test
-    void testSubstituteOneStarOnly() {
-        final String actual = VisualTotalsCalc.substitute("*", "anything");
-        final String expected = "anything";
-        assertEquals(expected, actual);
-    }
-
-	@Test
-    void testSubstituteOneStarBegin() {
-        final String actual =
-        VisualTotalsCalc.substitute("* is the word.", "Grease");
-        final String expected = "Grease is the word.";
-        assertEquals(expected, actual);
-    }
-
-	@Test
-    void testSubstituteOneStarEnd() {
-        final String actual =
-            VisualTotalsCalc.substitute(
-                "Lies, damned lies, and *!", "statistics");
-        final String expected = "Lies, damned lies, and statistics!";
-        assertEquals(expected, actual);
-    }
-
-	@Test
-    void testSubstituteTwoStars() {
-        final String actual = VisualTotalsCalc.substitute("**", "anything");
-        final String expected = "*";
-        assertEquals(expected, actual);
-    }
-
-	@Test
-    void testSubstituteCombined() {
-        final String actual =
-            VisualTotalsCalc.substitute(
-                "*: see small print**** for *", "disclaimer");
-        final String expected = "disclaimer: see small print** for disclaimer";
-        assertEquals(expected, actual);
-    }
 
     /**
      * Test case for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-925">

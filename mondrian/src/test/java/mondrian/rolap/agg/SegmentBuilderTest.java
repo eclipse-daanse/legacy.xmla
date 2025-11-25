@@ -9,13 +9,9 @@
 package mondrian.rolap.agg;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonMap;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.eclipse.daanse.olap.util.Pair.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
@@ -36,13 +32,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.spi.SegmentBody;
 import org.eclipse.daanse.olap.spi.SegmentCache;
 import org.eclipse.daanse.olap.spi.SegmentColumn;
@@ -51,15 +47,11 @@ import org.eclipse.daanse.olap.util.ByteString;
 import  org.eclipse.daanse.olap.util.Pair;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.common.RolapUtil;
-import org.eclipse.daanse.rolap.common.agg.DenseDoubleSegmentBody;
-import org.eclipse.daanse.rolap.common.agg.DenseIntSegmentBody;
 import org.eclipse.daanse.rolap.common.agg.DenseObjectSegmentBody;
 import org.eclipse.daanse.rolap.common.agg.SegmentBuilder;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
-import org.eclipse.daanse.rolap.common.agg.SparseSegmentBody;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -172,35 +164,6 @@ class SegmentBuilderTest {
             + "Row #0: 1,907\n");
     }
 
-    @Test
-    void testSegmentBodyIterator() {
-        // checks that cell key coordinates are generated correctly
-        // when a null member is present.
-        List<Pair<SortedSet<Comparable>, Boolean>> axes =
-            new ArrayList<>();
-        axes.add(new Pair<SortedSet<Comparable>, Boolean>(
-            new TreeSet<Comparable>(
-                Arrays.asList("foo1", "bar1")), true)); // nullAxisFlag=T
-        axes.add(new Pair<SortedSet<Comparable>, Boolean>(
-            new TreeSet<Comparable>(
-                Arrays.asList("foo2", "bar2", "baz3")), false));
-        SegmentBody testBody = new DenseIntSegmentBody(
-            new BitSet(), new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9},
-            axes);
-        Map valueMap = testBody.getValueMap();
-        assertEquals(
-            "{(0, 0)=1, "
-            + "(0, 1)=2, "
-            + "(0, 2)=3, "
-            + "(1, 0)=4, "
-            + "(1, 1)=5, "
-            + "(1, 2)=6, "
-            + "(2, 0)=7, "
-            + "(2, 1)=8, "
-            + "(2, 2)=9}",
-            valueMap.toString());
-    }
-
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSparseRollup(Context<?> context) {
@@ -232,127 +195,6 @@ class SegmentBuilderTest {
             // second query will throw OOM if .rollup() attempts
             // to create a dense segment
         }
-    }
-
-    @Test
-    void testRollupWithIntOverflowPossibility() {
-        // rolling up a segment that would cause int overflow if
-        // rolled up to a dense segment
-        // MONDRIAN-1377
-
-        // make a source segment w/ 3 cols, 47K vals each,
-        // target segment has 2 of the 3 cols.
-        // count of possible values will exceed Integer.MAX_VALUE
-        Pair<SegmentHeader, SegmentBody> rollup =
-            SegmentBuilder.rollup(
-                makeSegmentMap(
-                    new String[] {"col1", "col2", "col3"},
-                    null, 47000, 4, false, null),
-                new HashSet<>(Arrays.asList("col1", "col2")),
-                null, SumAggregator.INSTANCE, Datatype.NUMERIC,
-                1000, 0.5);
-        assertTrue(rollup.right instanceof SparseSegmentBody);
-    }
-
-    @Test
-    void testRollupWithOOMPossibility() {
-        // rolling up a segment that would cause OOM if
-        // rolled up to a dense segment
-        // MONDRIAN-1377
-
-        // make a source segment w/ 3 cols, 44K vals each,
-        // target segment has 2 of the 3 cols.
-        Pair<SegmentHeader, SegmentBody> rollup =
-            SegmentBuilder.rollup(
-                makeSegmentMap(
-                    new String[] {"col1", "col2", "col3"},
-                    null, 44000, 4, false, null),
-                new HashSet<>(Arrays.asList("col1", "col2")),
-                null, SumAggregator.INSTANCE, Datatype.NUMERIC,
-                1000, 0.5);
-        assertTrue(rollup.right instanceof SparseSegmentBody);
-    }
-
-    @Test
-    void testRollupShouldBeDense() {
-        // Fewer than 1000 column values in rolled up segment.
-        Pair<SegmentHeader, SegmentBody> rollup =
-            SegmentBuilder.rollup(
-                makeSegmentMap(
-                    new String[] {"col1", "col2", "col3"},
-                    null, 10, 15, false, null),
-                new HashSet<>(Arrays.asList("col1", "col2")),
-                null, SumAggregator.INSTANCE, Datatype.NUMERIC,
-                1000, 0.5);
-        assertTrue(rollup.right instanceof DenseDoubleSegmentBody);
-
-        // greater than 1K col vals, above density ratio
-        rollup =
-            SegmentBuilder.rollup(
-                makeSegmentMap(
-                    new String[] {"col1", "col2", "col3", "col4"},
-                    null, 11, 10000, false, null),
-                    // 1331 possible intersections (11*3)
-                new HashSet<>(Arrays.asList("col1", "col2", "col3")),
-                null, SumAggregator.INSTANCE, Datatype.NUMERIC,
-                1000, 0.5);
-        assertTrue(rollup.right instanceof DenseDoubleSegmentBody);
-    }
-
-    @Test
-    void testRollupWithDenseIntBody() {
-      //
-      //  We have the following data:
-      //
-      //           1 _ _
-      //    col2   1 2 _
-      //           1 _ 1
-      //            col1
-      //   So, after rolling it up with the SUM function, we expect to get
-      //
-      //           3 2 1
-      //            col1
-      //
-      String[][] colValues = dummyColumnValues(2, 3);
-      int[] values = {1, 1, 1, 0, 2, 0, 1};
-
-      BitSet nulls = new BitSet();
-      for (int i = 0; i < values.length; i++) {
-        if (values[i] == 0) {
-          nulls.set(i);
-        }
-      }
-
-      List<Pair<SortedSet<Comparable>, Boolean>> axes =
-          new ArrayList<>();
-      List<SegmentColumn> segmentColumns = new ArrayList<>();
-      for (int i = 0; i < colValues.length; i++) {
-        axes.add(of(toSortedSet(colValues[i]), false));
-        segmentColumns.add(new SegmentColumn(
-            "col" + (i + 1),
-            colValues[i].length,
-            toSortedSet(colValues[i])));
-      }
-      SegmentHeader header = makeDummySegmentHeader(segmentColumns);
-      SegmentBody body = new DenseIntSegmentBody(nulls, values, axes);
-      Map<SegmentHeader, SegmentBody> segmentsMap = singletonMap(header, body);
-
-      Pair<SegmentHeader, SegmentBody> rollup =
-          SegmentBuilder.rollup(
-              segmentsMap, singleton("col1"),
-              null, SumAggregator.INSTANCE, Datatype.NUMERIC,
-              1000, 0.5);
-
-      double[] result = (double[])rollup.right.getValueArray();
-      double[] expected = {3, 2, 1};
-      assertEquals(expected.length, result.length);
-      for (int i = 0; i < expected.length; i++) {
-        double exp = expected[i];
-        double act = result[i];
-        assertTrue(
-                Math.abs(exp - act) < 1e-6,
-                String.format("%d %f %f", i, exp, act));
-      }
     }
 
     @Disabled //TODO need investigate

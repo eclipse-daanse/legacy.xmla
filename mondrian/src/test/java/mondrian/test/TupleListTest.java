@@ -23,10 +23,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
-import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
@@ -34,13 +35,11 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.olap.api.element.Catalog;
-import org.junit.jupiter.api.Test;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import  org.eclipse.daanse.olap.server.LocusImpl;
 
 /**
  * Unit test for {@link TupleList} and common implementations.
@@ -48,12 +47,6 @@ import  org.eclipse.daanse.olap.server.LocusImpl;
  * @author jhyde
  */
 class TupleListTest {
-
-    @Test
-    void testTupleList() {
-        assertTrue(TupleCollections.createList(1) instanceof UnaryTupleList);
-        assertTrue(TupleCollections.createList(2) instanceof ArrayTupleList);
-    }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)

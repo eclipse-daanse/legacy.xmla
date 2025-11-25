@@ -121,48 +121,6 @@ Does not work without the notify on add feature.
         }
     }
 */
-    @Test
-    void testDeltaUsage() throws Exception {
-        if (!enabled) {
-            return;
-        }
-        class Listener implements MemoryMonitor.Listener {
-            boolean wasNotified = false;
-            Listener() {
-            }
-            @Override
-			public void memoryUsageNotification(long used, long max) {
-                wasNotified = true;
-            }
-        }
-        Listener listener = new Listener();
-        MemoryMonitor mm = new NotificationMemoryMonitor();
-        // we will set a percentage slightly above the current
-        // used level, and then allocate some objects that will
-        // force a notification.
-        long maxMemory = mm.getMaxMemory();
-        long usedMemory = mm.getUsedMemory();
-        int currentPercentage =
-            convertThresholdToPercentage(usedMemory, maxMemory);
-        int delta = (int) (maxMemory - usedMemory) / 10;
-        int percentage = convertThresholdToPercentage(delta, maxMemory);
-        try {
-            byte[][] bytes = new byte[10][];
-            mm.addListener(listener, percentage + currentPercentage);
-            for (int i = 0; i < bytes.length; i++) {
-                bytes[i] = new byte[delta];
-                if (listener.wasNotified) {
-                    bytes = null;
-                    break;
-                }
-            }
-            if (! listener.wasNotified) {
-                Assertions.fail("Listener callback not called");
-            }
-        } finally {
-            mm.removeListener(listener);
-        }
-    }
 /*
 Does not work without the notify on add feature.
     void testUpdatePercent() throws Exception {

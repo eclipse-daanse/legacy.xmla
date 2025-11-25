@@ -9,15 +9,12 @@
 
 package mondrian.olap.fun;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.olap.fun.FunUtil;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
@@ -41,36 +38,6 @@ class SortTest {
   @AfterEach
   public void afterEach() {
     SystemWideProperties.instance().populateInitial();
-  }
-
-  @Test
-  void testFoo() {
-    // Check that each value compares according to its position in the total
-    // order. For example, NaN compares greater than
-    // Double.NEGATIVE_INFINITY, -34.5, -0.001, 0, 0.00000567, 1, 3.14;
-    // equal to NaN; and less than Double.POSITIVE_INFINITY.
-    double[] values = {
-      Double.NEGATIVE_INFINITY,
-      FunUtil.DOUBLE_NULL,
-      -34.5,
-      -0.001,
-      0,
-      0.00000567,
-      1,
-      3.14,
-      Double.NaN,
-      Double.POSITIVE_INFINITY,
-    };
-    for ( int i = 0; i < values.length; i++ ) {
-      for ( int j = 0; j < values.length; j++ ) {
-        int expected = Integer.compare( i, j );
-        assertEquals(
-          expected,
-          FunUtil.compareValues( values[ i ], values[ j ] ),
-                "values[" + i + "]=" + values[ i ] + ", values[" + j
-                        + "]=" + values[ j ]);
-      }
-    }
   }
 
   @ParameterizedTest

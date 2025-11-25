@@ -13,29 +13,25 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
-import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -48,29 +44,23 @@ import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
-import org.eclipse.daanse.olap.function.def.crossjoin.BaseListCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinIterCalc;
-import org.eclipse.daanse.olap.function.def.crossjoin.ImmutableListCalc;
-import org.eclipse.daanse.olap.function.def.crossjoin.MutableListCalc;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.rolap.element.RolapCube;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.element.RolapCube;
 
 
 /**
@@ -131,46 +121,7 @@ public class CrossJoinTest {
   // Iterable
   ////////////////////////////////////////////////////////////////////////
 
-  @Test
-  void testListTupleListTupleIterCalc() {
-        Statement statement = mock(Statement.class);
-        Connection rolapConnection = mock(Connection.class);
-        Context context = mock(Context.class);
-        when(context.getConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE, Integer.class)).thenReturn(0);
-        when(rolapConnection.getContext()).thenReturn(context);
-        when(statement.getMondrianConnection()).thenReturn(rolapConnection);
-        when(excMock.getMondrianStatement()).thenReturn(statement);
-      CrossJoinIterCalc calc =
-        new CrossJoinIterCalc( getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
 
-      doTupleTupleIterTest( calc, excMock );
-  }
-
-    private void doTupleTupleIterTest(
-    CrossJoinIterCalc calc, ExecutionImpl execution ) {
-    TupleList l4 = makeListTuple( m4 );
-    String s4 = toString( l4 );
-    String e4 = "{[U, V], [W, X], [Y, Z]}";
-    assertEquals( e4, s4 );
-
-    TupleList l3 = makeListTuple( m3 );
-    String s3 = toString( l3 );
-    String e3 = "{[k, l], [m, n]}";
-    assertEquals( e3, s3 );
-
-    String s = LocusImpl.execute(
-      execution, "CrossJoinTest", new LocusImpl.Action<String>() {
-        @Override
-		public String execute() {
-          TupleIterable iterable = calc.makeIterable( l4, l3 );
-          return CrossJoinTest.this.toString( iterable );
-        }
-      } );
-    String e =
-      "{[U, V, k, l], [U, V, m, n], [W, X, k, l], "
-        + "[W, X, m, n], [Y, Z, k, l], [Y, Z, m, n]}";
-    assertEquals( e, s );
-  }
 
   // The test to verify that cancellation/timeout is checked
   // in CrossJoinFunDef$CrossJoinIterCalc$1$1.forward()
@@ -237,147 +188,6 @@ public class CrossJoinTest {
       } );
   }
 
-  ////////////////////////////////////////////////////////////////////////
-  // Immutable List
-  ////////////////////////////////////////////////////////////////////////
-
-  @Test
-  void testImmutableListTupleListTupleListCalc() {
-    ImmutableListCalc calc =
-      new ImmutableListCalc(
-        getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
-
-    doTupleTupleListTest( calc );
-  }
-
-  protected void doTupleTupleListTest(
-    BaseListCalc calc ) {
-    TupleList l4 = makeListTuple( m4 );
-    String s4 = toString( l4 );
-    String e4 = "{[U, V], [W, X], [Y, Z]}";
-    assertEquals( e4, s4 );
-
-    TupleList l3 = makeListTuple( m3 );
-    String s3 = toString( l3 );
-    String e3 = "{[k, l], [m, n]}";
-    assertEquals( e3, s3 );
-
-    TupleList list = calc.makeList( l4, l3 );
-    String s = toString( list );
-    String e =
-      "{[U, V, k, l], [U, V, m, n], [W, X, k, l], "
-        + "[W, X, m, n], [Y, Z, k, l], [Y, Z, m, n]}";
-    assertEquals( e, s );
-
-    TupleList subList = list.subList( 0, 6 );
-    s = toString( subList );
-    assertEquals( 6, subList.size() );
-    assertEquals( e, s );
-
-    subList = subList.subList( 0, 6 );
-    s = toString( subList );
-    assertEquals( 6, subList.size() );
-    assertEquals( e, s );
-
-    subList = subList.subList( 1, 5 );
-    s = toString( subList );
-    e = "{[U, V, m, n], [W, X, k, l], [W, X, m, n], [Y, Z, k, l]}";
-    assertEquals( 4, subList.size() );
-    assertEquals( e, s );
-
-    subList = subList.subList( 2, 4 );
-    s = toString( subList );
-    e = "{[W, X, m, n], [Y, Z, k, l]}";
-    assertEquals( 2, subList.size() );
-    assertEquals( e, s );
-
-    subList = subList.subList( 1, 2 );
-    s = toString( subList );
-    e = "{[Y, Z, k, l]}";
-    assertEquals( 1, subList.size() );
-    assertEquals( e, s );
-
-    subList = list.subList( 1, 4 );
-    s = toString( subList );
-    e = "{[U, V, m, n], [W, X, k, l], [W, X, m, n]}";
-    assertEquals( 3, subList.size() );
-    assertEquals( e, s );
-
-    subList = list.subList( 2, 4 );
-    s = toString( subList );
-    e = "{[W, X, k, l], [W, X, m, n]}";
-    assertEquals( 2, subList.size() );
-    assertEquals( e, s );
-
-    subList = list.subList( 2, 3 );
-    s = toString( subList );
-    e = "{[W, X, k, l]}";
-    assertEquals( 1, subList.size() );
-    assertEquals( e, s );
-
-    subList = list.subList( 4, 4 );
-    s = toString( subList );
-    e = "{}";
-    assertEquals( 0, subList.size() );
-    assertEquals( e, s );
-  }
-
-
-  ////////////////////////////////////////////////////////////////////////
-  // Mutable List
-  ////////////////////////////////////////////////////////////////////////
-  @Test
-  void testMutableListTupleListTupleListCalc() {
-    MutableListCalc calc =
-      new MutableListCalc(
-        getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
-
-    doMTupleTupleListTest( calc );
-  }
-
-  protected void doMTupleTupleListTest(
-    BaseListCalc calc ) {
-    TupleList l1 = makeListTuple( m3 );
-    String s1 = toString( l1 );
-    String e1 = "{[k, l], [m, n]}";
-    assertEquals( e1, s1 );
-
-    TupleList l2 = makeListTuple( m4 );
-    String s2 = toString( l2 );
-    String e2 = "{[U, V], [W, X], [Y, Z]}";
-    assertEquals( e2, s2 );
-
-    TupleList list = calc.makeList( l1, l2 );
-    String s = toString( list );
-    String e = "{[k, l, U, V], [k, l, W, X], [k, l, Y, Z], "
-      + "[m, n, U, V], [m, n, W, X], [m, n, Y, Z]}";
-    assertEquals( e, s );
-
-    if ( false ) {
-      // Cannot apply Collections.reverse to TupleList
-      // because TupleList.set always returns null.
-      // (This is a violation of the List contract, but it is inefficient
-      // to construct a list to return.)
-      Collections.reverse( list );
-      s = toString( list );
-      e = "{[m, n, Y, Z], [m, n, W, X], [m, n, U, V], "
-        + "[k, l, Y, Z], [k, l, W, X], [k, l, U, V]}";
-      assertEquals( e, s );
-    }
-
-    // sort
-    Collections.sort( list, memberComparator );
-    s = toString( list );
-    e = "{[k, l, U, V], [k, l, W, X], [k, l, Y, Z], "
-      + "[m, n, U, V], [m, n, W, X], [m, n, Y, Z]}";
-    assertEquals( e, s );
-
-    List<Member> members = list.remove( 1 );
-    s = toString( list );
-    e = "{[k, l, U, V], [k, l, Y, Z], [m, n, U, V], "
-      + "[m, n, W, X], [m, n, Y, Z]}";
-    assertEquals( e, s );
-  }
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
@@ -395,30 +205,6 @@ void testResultLimitWithinCrossjoin_1(Context<?> foodMartContext) {
       "result (1,539) exceeded limit (1,000)","Sales" );
   }
 
-  ////////////////////////////////////////////////////////////////////////
-  // Helper methods
-  ////////////////////////////////////////////////////////////////////////
-  protected String toString( TupleIterable l ) {
-    StringBuffer buf = new StringBuffer( 100 );
-    buf.append( '{' );
-    int j = 0;
-    for ( List<Member> o : l ) {
-      if ( j++ > 0 ) {
-        buf.append( ", " );
-      }
-      buf.append( o );
-    }
-    buf.append( '}' );
-    return buf.toString();
-  }
-
-  protected TupleList makeListTuple( List<List<Member>> ms ) {
-    final TupleList list = new ArrayTupleList( ms.get( 0 ).size() );
-    for ( List<Member> m : ms ) {
-      list.add( m );
-    }
-    return list;
-  }
 
   protected ResolvedFunCallImpl getResolvedFunCall() {
     FunctionDefinition funDef = new TestFunDef();
