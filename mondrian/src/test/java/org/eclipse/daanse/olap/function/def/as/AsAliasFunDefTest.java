@@ -265,7 +265,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithAsterics(Context<?> context) {
 		// Bug MONDRIAN-648 causes 'AS' to have lower precedence than '*'.
-		if (Bug.BugMondrian648Fixed) {
+		if (Bug.Bug648Fixed) {
 			// Note that 'as' has higher precedence than '*'.
 			assertQueryReturns(context.getConnectionWithDefaultRole(), """
 					select

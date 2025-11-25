@@ -120,7 +120,7 @@ class NonEmptyTest extends BatchTestCase {
     // in the query. Native evaluation returns the females before males,
     // which is probably a reflection of the database ordering.
     //
-    if ( Bug.BugMondrian584Fixed ) {
+    if ( Bug.Bug584Fixed ) {
       checkNative(context,
         4,
         4,
@@ -3900,7 +3900,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmptyWithWeirdDefaultMember(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    if ( !Bug.BugMondrian229Fixed ) {
+    if ( !Bug.Bug229Fixed ) {
       return;
     }
     /*
@@ -4466,7 +4466,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBug1791609NonEmptyCrossJoinEliminatesCalcMember(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    if ( !Bug.BugMondrian328Fixed ) {
+    if ( !Bug.Bug328Fixed ) {
       return;
     }
     // From the bug:
@@ -4620,7 +4620,7 @@ class NonEmptyTest extends BatchTestCase {
           + "Row #1: 142,277.07\n"
           + "Row #1: 263,793.22\n" );
 
-      if ( Bug.BugMondrian446Fixed ) {
+      if ( Bug.Bug446Fixed ) {
         SystemWideProperties.instance().EnableNativeNonEmpty = true;
         assertQueryReturns(context.getConnectionWithDefaultRole(),
           "WITH MEMBER [Measures].[One] AS '1' "

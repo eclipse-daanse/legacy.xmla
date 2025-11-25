@@ -52,7 +52,7 @@ class IsEmptyFunDefTest {
             "[Gender].CurrentMember.Parent.NextMember IS NULL",
             true );
 
-        if ( !Bug.BugMondrian207Fixed ) {
+        if ( !Bug.Bug207Fixed ) {
             return;
         }
 

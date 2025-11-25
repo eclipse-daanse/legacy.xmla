@@ -1426,7 +1426,7 @@ class ParentChildHierarchyTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBridgeTable(Context<?> context) {
-        if (!Bug.BugMondrian441Fixed) {
+        if (!Bug.Bug441Fixed) {
             return;
         }
         // The test case in the bug has a new table "bri_store_employee". For

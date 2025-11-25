@@ -519,7 +519,7 @@ class CompoundSlicerTest {
                         + "[Gender].Members on 1\n"
                         + "from [Sales]\n"
                         + "where {[Product].[Drink], [Product].[Food], [Product].[Drink]}",
-                Bug.BugMondrian555Fixed
+                Bug.Bug555Fixed
                         ? "Axis #0:\n"
                         + "{[Product].[Product].[Drink]}\n"
                         + "{[Product].[Product].[Food]}\n"
@@ -601,7 +601,7 @@ class CompoundSlicerTest {
                         + "  [Product].[Drink],\n"
                         + "  [Product].[Food].[Dairy],\n"
                         + "  [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}",
-                Bug.BugMondrian555Fixed
+                Bug.Bug555Fixed
                         ? "Axis #0:\n"
                         + "{[Product].[Product].[Drink]}\n"
                         + "{[Product].[Product].[Food].[Dairy]}\n"

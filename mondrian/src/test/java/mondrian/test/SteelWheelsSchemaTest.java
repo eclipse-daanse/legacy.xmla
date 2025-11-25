@@ -1865,7 +1865,7 @@ class SteelWheelsSchemaTest {
         // Tests an admin query followed by a user query, but both are wrapped
         // with a no-op role in a union.
         if ((context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
-                    && !Bug.BugMondrian2440Fixed))
+                    && !Bug.Bug2440Fixed))
         {
             return;
         }

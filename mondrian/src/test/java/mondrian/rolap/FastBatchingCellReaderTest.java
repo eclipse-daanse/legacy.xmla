@@ -135,7 +135,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     connection.getCacheControl( null ).flushSchemaCache();
     final Statement statement = ((Connection) connection).getInternalStatement();
     e = new ExecutionImpl( statement, Optional.empty() );
-    AbstractBasicContext<?> abc = (AbstractBasicContext) e.getMondrianStatement().getMondrianConnection().getContext();
+    AbstractBasicContext<?> abc = (AbstractBasicContext) e.getDaanseStatement().getDaanseConnection().getContext();
     aggMgr = (AggregationManager)abc.getAggregationManager();
     locus = new LocusImpl( e, "FastBatchingCellReaderTest", null );
     LocusImpl.push( locus );
@@ -470,7 +470,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
     // Until MONDRIAN-1001 is fixed, behavior is flaky due to interaction
     // with previous tests.
-    if ( Bug.BugMondrian1001Fixed ) {
+    if ( Bug.Bug1001Fixed ) {
       if ( context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
         assertEquals( 4, groupedBatchCount );
       } else {
@@ -812,7 +812,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     // with previous tests.
     final boolean batch2CanBatch1 = batch2.canBatch( batch1 );
     final boolean batch1CanBatch2 = batch1.canBatch( batch2 );
-    if ( Bug.BugMondrian1001Fixed ) {
+    if ( Bug.Bug1001Fixed ) {
       if ( context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
         assertFalse( batch2CanBatch1 );
         assertFalse( batch1CanBatch2 );

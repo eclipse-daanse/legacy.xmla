@@ -395,7 +395,7 @@ class SchemaTest {
                     dimensionConnector.setOverrideDimensionName("Gender with default");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
-                    
+
                     List connectors = cube.getDimensionConnectors();
                     connectors.add(dimensionConnector);
                 }
@@ -2320,7 +2320,7 @@ class SchemaTest {
         // due to a known limitation
         if ((context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
              || context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class))
-            && !Bug.BugMondrian361Fixed)
+            && !Bug.Bug361Fixed)
         {
             return;
         }
@@ -7098,7 +7098,7 @@ class SchemaTest {
                 measureGroup.getMeasures().add(customerCount2);
 
                 cube.getMeasureGroups().add(measureGroup);
-                
+
                 CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Half Customer Count");
                 calculatedMember.setVisible(false);
@@ -10151,7 +10151,7 @@ class SchemaTest {
             }
         }
         */
-        if (Bug.BugMondrian361Fixed) {
+        if (Bug.Bug361Fixed) {
             /*
             String baseSchema = TestUtil.getRawSchema(context);
             String schema = SchemaUtil.getSchema(baseSchema,
@@ -12656,7 +12656,7 @@ class SchemaTest {
     void testBugMondrian482(Context<?> context) {
         // until bug MONDRIAN-495, "Table filter concept does not support
         // dialects." is fixed, this test case only works on MySQL
-        if (!Bug.BugMondrian495Fixed
+        if (!Bug.Bug495Fixed
             && getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
             != MYSQL)
         {
@@ -13469,7 +13469,7 @@ class SchemaTest {
             private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
 
             public TestCaptionDescriptionAndAnnotationModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
-                
+
                 this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
 
 
@@ -13850,7 +13850,7 @@ class SchemaTest {
                 vc1.getDimensionConnectors().add(warehouseConnector);
                 vc1.getReferencedMeasures().add(unitSalesMeasure);
                 vc1.getReferencedMeasures().add(unitsShippedMeasure);
-                
+
                 // Create virtual cube calculated member
                 org.eclipse.daanse.rolap.mapping.model.CalculatedMember vcCalcMember =
                     RolapMappingFactory.eINSTANCE.createCalculatedMember();
@@ -14855,7 +14855,7 @@ class SchemaTest {
             + "</Schema>");
         */
 
-        if (!Bug.BugMondrian747Fixed
+        if (!Bug.Bug747Fixed
             && context.getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class))
         {
             // With grouping sets enabled, MONDRIAN-747 behavior is even worse.
@@ -14867,7 +14867,7 @@ class SchemaTest {
         // [Store].[All Stores] and [Store].[USA] should be 266,773. A higher
         // value would indicate that there is a cartesian product going on --
         // because "store_state" is not unique in "store" table.
-        final String x = !Bug.BugMondrian747Fixed
+        final String x = !Bug.Bug747Fixed
             ? "1,379,620"
             : "266,773";
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -15422,7 +15422,7 @@ class SchemaTest {
             private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
 
             public TestBugMondrian463Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
-                
+
                 this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
 
 
@@ -18715,7 +18715,7 @@ class SchemaTest {
         public TestNonCollapsedAggregateOnNonUniqueLevelFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
-            
+
             AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
             AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
             AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
@@ -18877,7 +18877,7 @@ class SchemaTest {
             fooCube.getDimensionConnectors().add(dimensionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
-            
+
             catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
             catalog.getCubes().add(fooCube);
         }

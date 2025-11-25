@@ -909,7 +909,7 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSlicerTuplesFullCrossJoin(Context<?> context) {
     if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)
-      && !Bug.BugMondrian2452Fixed ) {
+      && !Bug.Bug2452Fixed ) {
       // The NonEmptyCrossJoin in the TSET named set below returns
       // extra tuples due to MONDRIAN-2452.
       return;

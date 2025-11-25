@@ -50,7 +50,7 @@ public class SummaryMetricPercentTest extends ClearViewBase {
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
 
-            if (!Bug.BugMondrian2452Fixed
+            if (!Bug.Bug2452Fixed
                     && (getName().equals("testSpecialMetricPctOfCol"))
                     && !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
                 // Tests give wrong results if native crossjoin is disabled.

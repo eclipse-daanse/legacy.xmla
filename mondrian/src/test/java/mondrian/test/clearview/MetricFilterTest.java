@@ -48,7 +48,7 @@ public class MetricFilterTest extends ClearViewBase {
         for (String name : diffRepos.getTestCaseNames()) {
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
-            if (!Bug.BugMondrian2452Fixed
+            if (!Bug.Bug2452Fixed
                     && (getName().equals("testMetricFiltersWithNoSubtotals"))
                     && !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
                 // Tests give wrong results if native crossjoin is disabled.

@@ -19,8 +19,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.fun.MondrianEvaluationException;
+import org.eclipse.daanse.olap.fun.DaanseEvaluationException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -81,7 +80,7 @@ class UCaseFunDefTest {
                     + " UCase(NULL) = \"\" "
                     + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
                     + "on 0 from sales" );
-        } catch ( MondrianEvaluationException e ) {
+        } catch ( DaanseEvaluationException e ) {
             assertEquals( "No method with the signature UCase(NULL) matches known functions.",
                 e.getMessage() );
             return;

@@ -340,8 +340,8 @@ public class BatchTestCase{
                 new ExecutionImpl(
                     ((Connection) connection).getInternalStatement(),
                     Optional.of(Duration.ofMillis(1000)));
-            AbstractBasicContext<?> abc = (AbstractBasicContext) execution.getMondrianStatement()
-                    .getMondrianConnection()
+            AbstractBasicContext<?> abc = (AbstractBasicContext) execution.getDaanseStatement()
+                    .getDaanseConnection()
                     .getContext();
             final AggregationManager aggMgr =
                 (AggregationManager)abc.getAggregationManager();

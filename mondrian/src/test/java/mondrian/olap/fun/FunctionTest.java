@@ -1099,7 +1099,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
     // This case demonstrates the relative precedence of 'AS' in 'CAST'
     // and 'AS' for creating inline named sets. See also bug MONDRIAN-648.
-//    discard( Bug.BugMondrian648Fixed );
+//    discard( Bug.Bug648Fixed );
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "'xxx' || Cast(1 = 1 AND 1 = 2 AS String)",
       "xxxfalse" );

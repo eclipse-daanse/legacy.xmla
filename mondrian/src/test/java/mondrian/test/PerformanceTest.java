@@ -188,7 +188,7 @@ public class PerformanceTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMondrianBug641(Context<?> context) {
-    if ( !Bug.BugMondrian641Fixed ) {
+    if ( !Bug.Bug641Fixed ) {
       return;
     }
     long start = System.currentTimeMillis();

@@ -120,8 +120,8 @@ class TestAggregationManager extends BatchTestCase {
                 .getInternalStatement();
         execution = new ExecutionImpl(statement, Optional.empty());
         aggMgr =
-            (AggregationManager)((AbstractBasicContext)execution.getMondrianStatement()
-                .getMondrianConnection()
+            (AggregationManager)((AbstractBasicContext)execution.getDaanseStatement()
+                .getDaanseConnection()
                 .getContext()).getAggregationManager();
         locus = new LocusImpl(execution, "TestAggregationManager", null);
         LocusImpl.push(locus);

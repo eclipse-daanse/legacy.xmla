@@ -108,7 +108,7 @@ class SegmentLoaderTest extends BatchTestCase {
         statement = ((Connection) connection).getInternalStatement();
         execution = new ExecutionImpl(statement, Optional.of(Duration.ofMillis(1000)));
         locus = new LocusImpl(execution, null, null);
-        cacheMgr = (SegmentCacheManager) ((AbstractBasicContext)execution.getMondrianStatement().getMondrianConnection()
+        cacheMgr = (SegmentCacheManager) ((AbstractBasicContext)execution.getDaanseStatement().getDaanseConnection()
             .getContext()).getAggregationManager().getCacheMgr();
 
         LocusImpl.push(locus);

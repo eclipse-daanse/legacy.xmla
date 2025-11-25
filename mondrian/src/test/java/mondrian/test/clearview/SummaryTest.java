@@ -50,7 +50,7 @@ public class SummaryTest extends ClearViewBase {
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
 
-            if (!Bug.BugMondrian785Fixed
+            if (!Bug.Bug785Fixed
                     && (getName().equals("testRankExpandNonNative")
                     || getName().equals("testCountExpandNonNative")
                     || getName().equals("testCountOverTimeExpandNonNative"))
@@ -58,7 +58,7 @@ public class SummaryTest extends ClearViewBase {
                 // Tests give wrong results if native crossjoin is disabled.
                 return;
             }
-            if (!Bug.BugMondrian2452Fixed
+            if (!Bug.Bug2452Fixed
                     && (getName().equals("testRankExpandNonNative"))
                     && !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
                 // Tests give wrong results if native crossjoin is disabled.

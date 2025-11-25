@@ -51,7 +51,7 @@ import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
 
 public abstract class AbstractDockerBasesDatabaseProvider implements DatabaseProvider{
 
-	private static final String THIS_IS_MONDRIAN_INSTANCE = "thisIsMondrianInstance";
+	private static final String THIS_IS_MONDRIAN_INSTANCE = "thisIsDaanseInstance";
 	private DockerClient dc;
     protected int port;
 
