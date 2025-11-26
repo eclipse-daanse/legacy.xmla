@@ -76,7 +76,6 @@ public abstract class AbstractDockerBasesDatabaseProvider implements DatabasePro
 
             port = freePort();
 
-            deregisterDrivers();
 			DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder().build();
 
 			DockerHttpClient client = new ZerodepDockerHttpClient.Builder().dockerHost(config.getDockerHost())
@@ -130,16 +129,6 @@ public abstract class AbstractDockerBasesDatabaseProvider implements DatabasePro
 			return createDataSource();
 
 		}
-
-    private void deregisterDrivers() {
-        DriverManager.drivers().forEach(it -> {
-            try {
-                DriverManager.deregisterDriver(it);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        });
-    }
 
     protected abstract  Entry<DataSource,Dialect> createDataSource();
 

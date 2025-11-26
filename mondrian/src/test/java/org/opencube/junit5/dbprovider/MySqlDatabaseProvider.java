@@ -70,12 +70,7 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 		dataSource.setPassword(MYSQL_PASSWORD);
 		dataSource.setUser(MYSQL_USER);
 		dataSource.setDatabaseName(MYSQL_DATABASE);
-		try {
-			java.sql.DriverManager.registerDriver(new Driver());
-		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+
 		try {
 			dataSource.setRewriteBatchedStatements(true);
 		} catch (SQLException e1) {
