@@ -315,6 +315,48 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.tutorial.access.cubegrand</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.tutorial.access.cataloggrand</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.tutorial.access.defaultrole</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.tutorial.access.dimensiongrand</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.tutorial.access.hierarchygrand</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.tutorial.access.membergrand</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.rolap.mapping.modifier.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
