@@ -20,7 +20,6 @@
 	bnd.identity;id=junit-jupiter-engine,\
 	bnd.identity;id=junit-platform-launcher,\
 	bnd.identity;id='org.glassfish.hk2.osgi-resource-locator',\
-	bnd.identity;id='com.sun.xml.bind.jaxb-impl',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.api',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.core',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.mysql',\
@@ -28,7 +27,6 @@
 	bnd.identity;id='com.github.ben-manes.caffeine',\
 	bnd.identity;id='org.apache.aries.spifly.dynamic.bundle'
 
-# -runbundles is calculated by the bnd-resolver-maven-plugin
 
 
 #-runproperties.tester: \
@@ -46,6 +44,8 @@
 #	tester.names='mondrian.rolap.VirtualCubeTest'
 
 
+# -runbundles is calculated by the bnd-resolver-maven-plugin
+
 -runbundles: \
 	assertj-core;version='[3.26.0,3.26.1)',\
 	ch.qos.logback.classic;version='[1.5.6,1.5.7)',\
@@ -57,21 +57,20 @@
 	com.h2database;version='[2.2.224,2.2.225)',\
 	com.mysql.cj;version='[8.0.28,8.0.29)',\
 	com.sun.jna;version='[5.11.0,5.11.1)',\
-	com.sun.xml.bind.jaxb-core;version='[4.0.4,4.0.5)',\
-	com.sun.xml.bind.jaxb-impl;version='[4.0.4,4.0.5)',\
+	com.sun.xml.bind.jaxb-core;version='[4.0.6,4.0.7)',\
+	com.sun.xml.bind.jaxb-impl;version='[4.0.6,4.0.7)',\
 	de.siegmar.fastcsv;version='[3.0.0,3.0.1)',\
-	jakarta.activation-api;version='[2.1.2,2.1.3)',\
-	jakarta.xml.bind-api;version='[4.0.1,4.0.2)',\
+	jakarta.activation-api;version='[2.1.4,2.1.5)',\
+	jakarta.xml.bind-api;version='[4.0.4,4.0.5)',\
 	junit-jupiter-api;version='[5.12.2,5.12.3)',\
 	junit-jupiter-engine;version='[5.12.2,5.12.3)',\
 	junit-jupiter-params;version='[5.12.2,5.12.3)',\
 	junit-platform-commons;version='[1.12.2,1.12.3)',\
 	junit-platform-engine;version='[1.12.2,1.12.3)',\
 	junit-platform-launcher;version='[1.12.2,1.12.3)',\
-	net.bytebuddy.byte-buddy;version='[1.14.16,1.14.17)',\
-	net.bytebuddy.byte-buddy-agent;version='[1.12.16,1.12.17)',\
+	net.bytebuddy.byte-buddy;version='[1.17.5,1.17.6)',\
+	net.bytebuddy.byte-buddy-agent;version='[1.17.5,1.17.6)',\
 	org.apache.aries.spifly.dynamic.bundle;version='[1.3.7,1.3.8)',\
-	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.commons.lang3;version='[3.17.0,3.17.1)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
@@ -90,8 +89,8 @@
 	org.eclipse.daanse.olap.common;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.format;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.spi;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.rolap.citest;version='[0.0.5,0.0.6)',\
-	org.eclipse.daanse.rolap.citest-tests;version='[0.0.5,0.0.6)',\
+	org.eclipse.daanse.rolap.citest;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.rolap.citest-tests;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.core;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.emf.complex.expressivenames;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart;version='[0.0.1,0.0.2)',\
