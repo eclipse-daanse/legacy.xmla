@@ -49,7 +49,7 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.type.BestFitColumnType;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;

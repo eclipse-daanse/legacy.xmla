@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.type.Datatype;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.connection.Connection;
