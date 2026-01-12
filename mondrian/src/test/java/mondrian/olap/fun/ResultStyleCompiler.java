@@ -23,7 +23,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingCalc;
-import org.eclipse.daanse.olap.calc.base.compiler.DelegatingExpCompiler;
+import org.eclipse.daanse.olap.calc.base.compiler.DelegatingExpressionCompiler;
 
 /**
  * The <code>ResultStyleCompiler</code> can be used to assure that
@@ -49,7 +49,7 @@ import org.eclipse.daanse.olap.calc.base.compiler.DelegatingExpCompiler;
  * @author Richard M. Emberson
  * @since Feb 10 2007
  */
-public class ResultStyleCompiler extends DelegatingExpCompiler {
+public class ResultStyleCompiler extends DelegatingExpressionCompiler {
     static {
         // This is here so that folks can see that this compiler is
         // being used. It should be removed in the future.
