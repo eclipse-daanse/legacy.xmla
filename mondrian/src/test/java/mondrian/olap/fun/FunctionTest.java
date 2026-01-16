@@ -1264,9 +1264,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "select filter([Store].MEMBERS,"
         + "Left([Store].CURRENTMEMBER.Name, -20)=\"Bellingham\") "
         + "on 0 from sales",
-      Util.IBM_JVM
-        ? "StringIndexOutOfBoundsException: null"
-        : "StringIndexOutOfBoundsException: Range [0, -20) out of bounds for length 10" );
+      "StringIndexOutOfBoundsException: Range [0, -20) out of bounds for length 10" );
   }
 
   @ParameterizedTest
@@ -1528,9 +1526,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void testVbaExceptions(Context<?> context) {
     assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "right(\"abc\", -4)",
-      Util.IBM_JVM
-        ? "StringIndexOutOfBoundsException: null"
-        : "StringIndexOutOfBoundsException: Range [7, 3) out of bounds for length 3");
+      "StringIndexOutOfBoundsException: Range [7, 3) out of bounds for length 3");
   }
 
   @ParameterizedTest
