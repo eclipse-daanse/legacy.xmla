@@ -15,7 +15,6 @@ package mondrian.rolap;
 
 import java.util.List;
 
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
 import org.eclipse.daanse.rolap.mapping.model.AggregationExclude;

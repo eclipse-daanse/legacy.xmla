@@ -13,8 +13,6 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
 import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;

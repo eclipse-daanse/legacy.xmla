@@ -312,18 +312,6 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.rolap.mapping.modifier.common</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.rolap.mapping.modifier.emf</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.xmla.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
