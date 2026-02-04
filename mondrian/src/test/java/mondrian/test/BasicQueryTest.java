@@ -87,7 +87,6 @@ import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.model.Catalog;
 import org.eclipse.daanse.rolap.sql.SqlStatisticsProviderNew;
 import org.junit.jupiter.api.AfterEach;

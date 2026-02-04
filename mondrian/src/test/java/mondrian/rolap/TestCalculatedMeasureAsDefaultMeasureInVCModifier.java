@@ -14,7 +14,6 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
 import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
 import org.eclipse.daanse.rolap.mapping.model.Catalog;
@@ -24,7 +23,6 @@ import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
 import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
 
