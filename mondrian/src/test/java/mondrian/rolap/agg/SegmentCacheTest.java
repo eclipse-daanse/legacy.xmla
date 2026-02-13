@@ -31,12 +31,14 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.CacheControl;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.ISegmentCacheManager;
+import org.eclipse.daanse.olap.api.cache.CacheControl;
+import org.eclipse.daanse.olap.api.cache.OlapSegmentCacheManager;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.spi.SegmentCache;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheWorker;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,8 +46,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import org.eclipse.daanse.olap.spi.SegmentCache;
-import org.eclipse.daanse.olap.spi.SegmentHeader;
 import mondrian.test.BasicQueryTest;
 
 /**
@@ -104,7 +104,7 @@ class SegmentCacheTest {
         cc.flush(cc.createMeasuresRegion(salesCube));
         Thread.sleep(1000);
 
-        ISegmentCacheManager  segmentCacheManager = ((AbstractBasicContext)connection.getContext())
+        OlapSegmentCacheManager  segmentCacheManager = ((AbstractBasicContext)connection.getContext())
             .getAggregationManager().getCacheMgr();
         ((SegmentCacheManager)segmentCacheManager).segmentCacheWorkers
             .add(testWorker);

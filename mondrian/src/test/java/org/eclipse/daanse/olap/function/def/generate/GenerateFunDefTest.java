@@ -22,8 +22,8 @@ import static org.opencube.junit5.TestUtil.executeAxis;
 import java.util.concurrent.CancellationException;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.common.QueryTimeoutException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.exceptions.QueryTimeoutException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;

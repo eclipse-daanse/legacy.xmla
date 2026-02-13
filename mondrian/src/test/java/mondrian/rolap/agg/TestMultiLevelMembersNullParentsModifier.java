@@ -30,8 +30,6 @@ import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
 import org.eclipse.daanse.rolap.mapping.model.TableQuery;
 import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * EMF version of TestMultiLevelMembersNullParentsModifier from AggregationOnDistinctCountMeasuresTest.

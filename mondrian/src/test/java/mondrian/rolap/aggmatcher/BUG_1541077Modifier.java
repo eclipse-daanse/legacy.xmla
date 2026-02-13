@@ -18,6 +18,7 @@ import org.eclipse.daanse.rolap.mapping.model.AggregationForeignKey;
 import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
 import org.eclipse.daanse.rolap.mapping.model.AggregationName;
 import org.eclipse.daanse.rolap.mapping.model.AvgMeasure;
+import org.eclipse.daanse.rolap.mapping.model.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.ColumnType;
 import org.eclipse.daanse.rolap.mapping.model.CountMeasure;
 import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
@@ -31,7 +32,6 @@ import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
 import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
 import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 

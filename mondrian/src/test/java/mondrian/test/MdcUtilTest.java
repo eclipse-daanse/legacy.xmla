@@ -15,9 +15,9 @@ import static org.opencube.junit5.TestUtil.flushSchemaCache;
 
 import java.io.StringWriter;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 //import org.apache.logging.log4j.ThreadContext;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
