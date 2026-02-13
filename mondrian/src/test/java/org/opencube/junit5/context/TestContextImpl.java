@@ -29,23 +29,25 @@ import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.CCCMdxParserProvider;
 import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
+import org.eclipse.daanse.olap.api.evaluator.Evaluator;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
+import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
 import org.eclipse.daanse.olap.function.core.resolver.NullReservedWordsResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.avg.AvgResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.children.AggregateChildrenResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.count.CountResolver;
+import org.eclipse.daanse.olap.function.def.aggregate.median.MedianResolver;
 import org.eclipse.daanse.olap.function.def.ancestor.AncestorResolver;
 import org.eclipse.daanse.olap.function.def.as.AsAliasResolver;
 import org.eclipse.daanse.olap.function.def.cache.CacheFunResolver;
@@ -116,7 +118,6 @@ import org.eclipse.daanse.olap.function.def.logical.IsEmptyFunctionResolver;
 import org.eclipse.daanse.olap.function.def.logical.IsEmptyPostfixResolver;
 import org.eclipse.daanse.olap.function.def.logical.IsNullResolver;
 import org.eclipse.daanse.olap.function.def.logical.IsResolver;
-import org.eclipse.daanse.olap.function.def.median.MedianResolver;
 import org.eclipse.daanse.olap.function.def.member.AncestorsResolver;
 import org.eclipse.daanse.olap.function.def.member.cousin.CousinResolver;
 import org.eclipse.daanse.olap.function.def.member.datamember.DataMemberResolver;
@@ -312,22 +313,19 @@ import org.eclipse.daanse.olap.function.def.vba.typename.TypeNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
-import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.rolap.common.AbstractRolapContext;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+import org.eclipse.daanse.rolap.common.catalog.RolapCatalogCache;
 import org.eclipse.daanse.rolap.common.connection.ExternalRolapConnection;
 import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
+import org.eclipse.daanse.rolap.common.evaluator.RolapDependencyTestingEvaluator;
+import org.eclipse.daanse.rolap.common.evaluator.RolapEvaluator;
+import org.eclipse.daanse.rolap.common.evaluator.RolapEvaluatorRoot;
+import org.eclipse.daanse.rolap.common.evaluator.RolapInterceptableEvaluator;
+import org.eclipse.daanse.rolap.common.result.RolapResult;
+import org.eclipse.daanse.rolap.common.result.RolapResultShepherd;
 import org.eclipse.daanse.rolap.core.internal.BasicContext;
-import org.eclipse.daanse.rolap.common.RolapDependencyTestingEvaluator;
-import org.eclipse.daanse.rolap.common.RolapEvaluator;
-import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
-import org.eclipse.daanse.rolap.common.RolapInterceptaleEvaluator;
-import org.eclipse.daanse.rolap.common.RolapResult;
-import org.eclipse.daanse.rolap.common.RolapResultShepherd;
-import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
@@ -970,7 +968,7 @@ public class TestContextImpl extends BasicContext implements TestContext {
 
     @Override
     public ExpressionCompiler createProfilingCompiler(ExpressionCompiler compiler) {
-        return new RolapInterceptaleEvaluator.InterceptableEvaluatorCompiler(compiler);
+        return new RolapInterceptableEvaluator.InterceptableEvaluatorCompiler(compiler);
     }
 
     /**

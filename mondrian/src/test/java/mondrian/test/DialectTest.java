@@ -35,8 +35,8 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.type.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.type.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;

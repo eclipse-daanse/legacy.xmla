@@ -21,8 +21,6 @@ package org.opencube.junit5.dbprovider;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;

@@ -16,7 +16,6 @@ import java.util.function.Function;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;

@@ -50,12 +50,27 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.type.BestFitColumnType;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.execution.ExecutionImpl;
+import org.eclipse.daanse.olap.key.BitKey;
+import org.eclipse.daanse.olap.key.CellKey;
+import org.eclipse.daanse.rolap.common.SqlStatement;
+import org.eclipse.daanse.rolap.common.agg.GroupingSet;
+import org.eclipse.daanse.rolap.common.agg.GroupingSetsList;
+import org.eclipse.daanse.rolap.common.agg.Segment;
+import org.eclipse.daanse.rolap.common.agg.SegmentAxis;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
+import org.eclipse.daanse.rolap.common.agg.SegmentLoader;
+import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
+import org.eclipse.daanse.rolap.common.star.RolapStar;
+import org.eclipse.daanse.rolap.common.star.StarPredicate;
+import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -68,23 +83,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-
-import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.olap.api.execution.ExecutionContext;
-import org.eclipse.daanse.olap.key.BitKey;
-import org.eclipse.daanse.olap.key.CellKey;
-import org.eclipse.daanse.rolap.common.RolapStar;
-import org.eclipse.daanse.rolap.common.SqlStatement;
-import org.eclipse.daanse.rolap.common.StarPredicate;
-import org.eclipse.daanse.rolap.common.agg.GroupingSet;
-import org.eclipse.daanse.rolap.common.agg.GroupingSetsList;
-import org.eclipse.daanse.rolap.common.agg.Segment;
-import org.eclipse.daanse.rolap.common.agg.SegmentAxis;
-import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
-import org.eclipse.daanse.rolap.common.agg.SegmentLoader;
-import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
-import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
-
 import mondrian.test.SqlPattern;
 
 /**

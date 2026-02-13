@@ -21,8 +21,8 @@ import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.executeExprRaw;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;

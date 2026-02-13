@@ -33,7 +33,7 @@ import java.util.TreeSet;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.type.Datatype;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.ISegmentCacheManager;
+import org.eclipse.daanse.olap.api.cache.OlapSegmentCacheManager;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
@@ -449,7 +449,7 @@ class SegmentBuilderTest {
     }
 
     private void clearAggregationCache(Connection connection) {
-        ISegmentCacheManager cacheMgr = ((AbstractBasicContext)connection.getContext()).getAggregationManager()
+        OlapSegmentCacheManager cacheMgr = ((AbstractBasicContext)connection.getContext()).getAggregationManager()
         .getCacheMgr();
     	SegmentCache segmentCache = ((SegmentCacheManager)cacheMgr).compositeCache;
     	segmentCache.getSegmentHeaders().stream().forEach(it -> segmentCache.remove(it));
@@ -630,7 +630,7 @@ class SegmentBuilderTest {
     private Map<SegmentHeader, SegmentBody> getReversibleTestMap(Connection connection,
         final Order order)
     {
-        ISegmentCacheManager cacheMgr = ((AbstractBasicContext)connection.getContext()).getAggregationManager()
+        OlapSegmentCacheManager cacheMgr = ((AbstractBasicContext)connection.getContext()).getAggregationManager()
         .getCacheMgr();
         SegmentCache cache = ((SegmentCacheManager)cacheMgr).compositeCache;
 

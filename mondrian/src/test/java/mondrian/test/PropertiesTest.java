@@ -18,9 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.catalog.CatalogReader;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;

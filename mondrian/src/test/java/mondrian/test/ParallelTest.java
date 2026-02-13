@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Random;
 
-import org.eclipse.daanse.olap.api.CacheControl;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.cache.CacheControl;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;

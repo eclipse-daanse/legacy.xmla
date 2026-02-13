@@ -26,13 +26,13 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.CacheControl;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.ProfileHandler;
-import org.eclipse.daanse.olap.api.QueryTiming;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.cache.CacheControl;
+import org.eclipse.daanse.olap.api.calc.profile.ProfileHandler;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.execution.QueryTiming;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;

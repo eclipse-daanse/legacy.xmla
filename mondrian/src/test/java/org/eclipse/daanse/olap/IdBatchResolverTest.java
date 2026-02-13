@@ -18,13 +18,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,9 +30,9 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
+import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
@@ -50,6 +48,7 @@ import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 import org.eclipse.daanse.olap.query.component.QueryImpl;
+import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,9 +60,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import org.eclipse.daanse.olap.api.execution.ExecutionContext;
-import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
 
 
 class IdBatchResolverTest  {

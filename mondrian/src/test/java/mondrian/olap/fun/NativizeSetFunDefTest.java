@@ -17,12 +17,15 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import java.time.Duration;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.execution.ExecutionContext;
+import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.exceptions.ResourceLimitExceededException;
+import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -34,11 +37,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-
-import org.eclipse.daanse.olap.api.execution.ExecutionContext;
-import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
-import org.eclipse.daanse.olap.execution.ExecutionImpl;
-
 import mondrian.test.SqlPattern;
 
 /**

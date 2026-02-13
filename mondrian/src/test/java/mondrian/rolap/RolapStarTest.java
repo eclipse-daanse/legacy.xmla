@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.common.util.RelationUtil;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.element.RolapCube;

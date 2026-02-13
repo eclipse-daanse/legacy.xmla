@@ -22,15 +22,15 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.exceptions.NativeEvaluationUnsupportedException;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.junit.jupiter.api.AfterEach;

@@ -45,18 +45,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.CacheControl;
-import org.eclipse.daanse.olap.api.CacheControl.MemberEditCommand;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.IAggregationManager;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.agg.OlapAggregationManager;
+import org.eclipse.daanse.olap.api.cache.CacheControl;
+import org.eclipse.daanse.olap.api.cache.CacheControl.MemberEditCommand;
+import org.eclipse.daanse.olap.api.catalog.CatalogReader;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.execution.ExecutionContext;
+import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
@@ -64,7 +66,17 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.RolapUtil;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+import org.eclipse.daanse.rolap.common.member.MemberCache;
+import org.eclipse.daanse.rolap.common.member.MemberReader;
+import org.eclipse.daanse.rolap.common.member.SmartMemberReader;
+import org.eclipse.daanse.rolap.element.RolapBaseCubeMeasure;
+import org.eclipse.daanse.rolap.element.RolapCubeMember;
+import org.eclipse.daanse.rolap.element.RolapHierarchy;
+import org.eclipse.daanse.rolap.element.RolapMember;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -74,18 +86,6 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
-import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.olap.api.execution.ExecutionContext;
-import org.eclipse.daanse.rolap.common.MemberCache;
-import org.eclipse.daanse.rolap.common.MemberReader;
-import org.eclipse.daanse.rolap.element.RolapBaseCubeMeasure;
-import org.eclipse.daanse.rolap.element.RolapCubeMember;
-import org.eclipse.daanse.rolap.element.RolapHierarchy;
-import org.eclipse.daanse.rolap.element.RolapMember;
-import org.eclipse.daanse.rolap.common.RolapUtil;
-import org.eclipse.daanse.rolap.common.SmartMemberReader;
-import org.eclipse.daanse.rolap.common.agg.AggregationManager;
-import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
 
 import mondrian.test.DiffRepository;
 
@@ -603,7 +603,7 @@ class MemberCacheControlTest {
             "select {[Measures].[Unit Sales]} on columns, {[Retail].[CA]} on rows from [Sales]");
 
         AbstractBasicContext<?> abc = (AbstractBasicContext) conn.getContext();
-        final IAggregationManager aggMgr =
+        final OlapAggregationManager aggMgr =
           abc.getAggregationManager();
         ExecutionContext.where(executionContext, () -> {
         assertEquals(
@@ -765,7 +765,7 @@ class MemberCacheControlTest {
         executeQuery(conn,
             "select {[Measures].[Unit Sales]} on columns, {[Retail].[CA].[Alameda]} on rows from [Sales]");
         AbstractBasicContext<?> abc = (AbstractBasicContext) conn.getContext();
-        final IAggregationManager aggMgr =
+        final OlapAggregationManager aggMgr =
             abc.getAggregationManager();
         ExecutionContext.where(executionContext, () -> {
             assertEquals(

@@ -21,7 +21,6 @@ import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
