@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.result.CellSet;

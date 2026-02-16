@@ -45,10 +45,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.agg.Segment;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.calc.Calc;
@@ -62,6 +59,8 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.execution.Statement;
+import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -73,6 +72,7 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -510,7 +510,7 @@ public class TestUtil {
 	}
 
 	public static ResultSet executeStatement(Connection connection, String queryString ) throws SQLException {
-        org.eclipse.daanse.olap.api.Statement stmt = connection.createStatement();
+        org.eclipse.daanse.olap.api.execution.Statement stmt = connection.createStatement();
 		return stmt.executeQuery( queryString, Optional.empty(), null );
 	}
 
@@ -1029,7 +1029,7 @@ public class TestUtil {
 		assertThat(connection).isNotNull();
 		assertThat(queryString).isNotNull().isNotBlank();
 
-        org.eclipse.daanse.olap.api.Statement stmt = connection.createStatement();
+        org.eclipse.daanse.olap.api.execution.Statement stmt = connection.createStatement();
 
 	    assertThat(stmt).isNotNull();
 
@@ -1052,7 +1052,7 @@ public class TestUtil {
         assertThat(connection).isNotNull();
         assertThat(queryString).isNotNull().isNotBlank();
 
-        org.eclipse.daanse.olap.api.Statement stmt = connection.createStatement();
+        org.eclipse.daanse.olap.api.execution.Statement stmt = connection.createStatement();
 
         assertThat(stmt).isNotNull();
 
@@ -1720,7 +1720,7 @@ public class TestUtil {
 		Connection connection = context.getConnectionWithDefaultRole();
 		//		con.unwrap( OlapConnection.class );
 
-        org.eclipse.daanse.olap.api.Statement statement = connection.createStatement();
+        org.eclipse.daanse.olap.api.execution.Statement statement = connection.createStatement();
 		return statement.executeQuery( queryString );
 	}
 

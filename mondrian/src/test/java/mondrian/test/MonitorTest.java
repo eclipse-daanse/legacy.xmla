@@ -14,7 +14,7 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.agg.Segment;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -29,6 +28,7 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
+import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.api.type.BooleanType;
 import org.eclipse.daanse.olap.api.type.DateTimeType;
 import org.eclipse.daanse.olap.api.type.DecimalType;

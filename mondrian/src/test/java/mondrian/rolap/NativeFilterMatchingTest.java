@@ -16,11 +16,11 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
