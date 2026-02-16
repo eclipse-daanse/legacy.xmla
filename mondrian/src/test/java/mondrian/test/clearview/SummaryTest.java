@@ -8,15 +8,15 @@
 */
 package mondrian.test.clearview;
 
-import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.test.DiffRepository;
-import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * <code>SummaryTest</code> is a test suite which tests scenarios of

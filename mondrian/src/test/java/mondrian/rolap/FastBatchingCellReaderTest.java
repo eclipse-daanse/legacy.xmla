@@ -45,13 +45,13 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
-import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.cache.CacheCommand;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
+import org.eclipse.daanse.olap.api.execution.Statement;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -65,7 +65,6 @@ import org.eclipse.daanse.rolap.common.agg.Segment;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
 import org.eclipse.daanse.rolap.common.result.BatchLoader;
-import org.eclipse.daanse.rolap.common.result.BatchLoader.Batch;
 import org.eclipse.daanse.rolap.common.result.FastBatchingCellReader;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -1116,10 +1115,10 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "    [Measures].[Store Count]} on columns " + "from [Warehouse2]";
         /*
          * class TestLoadDistinctSqlMeasureModifier extends PojoMappingModifier {
-         * 
+         *
          * public TestLoadDistinctSqlMeasureModifier(CatalogMapping catalog) {
          * super(catalog); }
-         * 
+         *
          * @Override protected List<CubeMapping> cubes(List<? extends CubeMapping>
          * cubes) { List<CubeMapping> result = new ArrayList<>();
          * result.addAll(super.cubes(cubes));
@@ -1741,18 +1740,18 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         /*
          * class TestCountDistinctAggWithOtherCountDistinctInContextModifier extends
          * PojoMappingModifier {
-         * 
+         *
          * private static CountMeasureMappingImpl m = CountMeasureMappingImpl.builder()
          * .withName("Store Count")
          * .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
          * .withDistinct(true) .build();
-         * 
-         * 
-         * 
+         *
+         *
+         *
          * public
          * TestCountDistinctAggWithOtherCountDistinctInContextModifier(CatalogMapping
          * catalog) { super(catalog); }
-         * 
+         *
          * @Override protected List<CubeMapping> cubes(List<? extends CubeMapping>
          * cubes) { List<CubeMapping> result = new ArrayList<>();
          * result.addAll(super.cubes(cubes));
@@ -1780,7 +1779,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
          * .withName("Unit Sales")
          * .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
          * .build() )) .build())) .build()); return result; }
-         * 
+         *
          * }
          */
         /**

@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.agg.OlapAggregationManager;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.cache.CacheControl.MemberEditCommand;
@@ -59,6 +58,7 @@ import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
+import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
@@ -482,7 +482,7 @@ class MemberCacheControlTest {
             cc.filter(hqMember.getLevel(), memberSet);
         command =
             cc.createSetPropertyCommand(filteredMemberSet, propertyValues);
-        final MemberEditCommand c = command; 
+        final MemberEditCommand c = command;
         ExecutionContext.where(executionContext, () -> {
         	cc.execute(c);
         });

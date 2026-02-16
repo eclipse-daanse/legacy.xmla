@@ -17,7 +17,7 @@ import static org.eclipse.daanse.olap.common.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.connection.ConnectionBase;

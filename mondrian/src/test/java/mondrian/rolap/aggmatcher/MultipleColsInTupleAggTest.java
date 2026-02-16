@@ -16,10 +16,10 @@ import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.util.function.Function;
 
-import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.result.RolapAxis;
 import org.eclipse.daanse.rolap.mapping.model.Catalog;
