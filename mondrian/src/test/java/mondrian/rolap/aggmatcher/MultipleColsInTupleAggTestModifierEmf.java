@@ -27,6 +27,7 @@ import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
 import org.eclipse.daanse.rolap.mapping.model.Level;
 import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
 import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
@@ -294,17 +295,23 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         productNameLevel.setUniqueMembers(true);
         productNameLevel.getMemberProperties().add(productColorProperty);
 
+        OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+        oc1.setColumn(ordProductCat);
+
         Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
         productCategoryLevel.setName("Product Category");
         productCategoryLevel.setColumn(name2ProductCat);
-        productCategoryLevel.setOrdinalColumn(ordProductCat);
+        productCategoryLevel.setOrdinalColumn(oc1);
         productCategoryLevel.setCaptionColumn(capProductCat);
         productCategoryLevel.setUniqueMembers(false);
+
+        OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+        oc2.setColumn(ordCat);
 
         Level categoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
         categoryLevel.setName("Category");
         categoryLevel.setColumn(catCat);
-        categoryLevel.setOrdinalColumn(ordCat);
+        categoryLevel.setOrdinalColumn(oc2);
         categoryLevel.setCaptionColumn(capCat);
         categoryLevel.setNameColumn(name3Cat);
         categoryLevel.setUniqueMembers(false);

@@ -34,6 +34,7 @@ import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
 import org.eclipse.daanse.rolap.mapping.model.Member;
 import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
@@ -399,7 +400,9 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         }
         PhysicalColumn monthOrdinalCol = (PhysicalColumn) getMonthOrdinalCol();
         if (monthOrdinalCol != null) {
-            monthLevel.setOrdinalColumn(monthOrdinalCol);
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(monthOrdinalCol);
+            monthLevel.setOrdinalColumn(oc1);
         }
         PhysicalColumn monthNameCol = (PhysicalColumn) getMonthNameCol();
         if (monthNameCol != null) {
