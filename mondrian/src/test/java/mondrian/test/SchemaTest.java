@@ -92,6 +92,7 @@ import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
 import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
 import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
 import org.eclipse.daanse.rolap.mapping.model.ParentChildHierarchy;
 import org.eclipse.daanse.rolap.mapping.model.ParentChildLink;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
@@ -11529,13 +11530,16 @@ class SchemaTest {
                 inlineTableQuery.setAlias("binary");
                 inlineTableQuery.setTable(inlineTable);
 
+                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                oc1.setColumn(nameColumn);
+
                 // Create levels
                 org.eclipse.daanse.rolap.mapping.model.Level level1 =
                     RolapMappingFactory.eINSTANCE.createLevel();
                 level1.setName("Level1");
                 level1.setColumn(binColumn);
                 level1.setNameColumn(nameColumn);
-                level1.setOrdinalColumn(nameColumn);
+                level1.setOrdinalColumn(oc1);
 
                 org.eclipse.daanse.rolap.mapping.model.Level level2 =
                     RolapMappingFactory.eINSTANCE.createLevel();
@@ -16040,13 +16044,16 @@ class SchemaTest {
                     managementRoleLevel.setUniqueMembers(true);
                     managementRoleLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE));
 
+                    OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                    oc1.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE));
+
                     // Create Position Title level with ordinalColumn and captionColumn
                     org.eclipse.daanse.rolap.mapping.model.Level positionTitleLevel =
                         RolapMappingFactory.eINSTANCE.createLevel();
                     positionTitleLevel.setName("Position Title");
                     positionTitleLevel.setUniqueMembers(false);
                     positionTitleLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
-                    positionTitleLevel.setOrdinalColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE));
+                    positionTitleLevel.setOrdinalColumn(oc1);
                     positionTitleLevel.setCaptionColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
 
                     // Create hierarchy
@@ -17937,11 +17944,14 @@ class SchemaTest {
             positionLevel1.setUniqueMembers(true);
             positionLevel1.setColumn(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
+
             org.eclipse.daanse.rolap.mapping.model.Level positionLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
             positionLevel2.setName("Position Title");
             positionLevel2.setUniqueMembers(false);
             positionLevel2.setColumn(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE);
-            positionLevel2.setOrdinalColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
+            positionLevel2.setOrdinalColumn(oc1);
 
             ExplicitHierarchy positionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
             positionHierarchy.setHasAll(true);
@@ -20076,10 +20086,13 @@ class SchemaTest {
                 sqlExpressionColumn.getSqls().add(sqlStatement);
                 sqlExpressionColumn.setType(ColumnType.VARCHAR);
 
+                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                oc1.setColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
+
                 level = RolapMappingFactory.eINSTANCE.createLevel();
                 level.setName("Position Title");
                 level.setUniqueMembers(false);
-                level.setOrdinalColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
+                level.setOrdinalColumn(oc1);
                 level.setColumn(sqlExpressionColumn);
 
                 tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();

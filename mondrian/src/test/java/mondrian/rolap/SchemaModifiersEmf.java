@@ -70,6 +70,7 @@ import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
 import org.eclipse.daanse.rolap.mapping.model.MemberFormatter;
 import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.MemberPropertyFormatter;
+import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
 import org.eclipse.daanse.rolap.mapping.model.ParentChildHierarchy;
 import org.eclipse.daanse.rolap.mapping.model.ParentChildLink;
 import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
@@ -2364,19 +2365,20 @@ public class SchemaModifiersEmf {
         private static final SumMeasure orgSalaryMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
         private static final CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
         private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final OrderedColumn ORDERED_COLUMN_LAST_NAME_EMPLOYEE = RolapMappingFactory.eINSTANCE.createOrderedColumn();
 
         static {
             // Configure First Name property
             firstNameProperty.setName("First Name");
             firstNameProperty.setColumn(CatalogSupplier.COLUMN_FIRST_NAME_EMPLOYEE);
-
+            ORDERED_COLUMN_LAST_NAME_EMPLOYEE.setColumn(CatalogSupplier.COLUMN_LAST_NAME_EMPLOYEE);
             // Configure Employee Id level with ordinalColumn
             employeeIdLevel.setName("Employee Id");
             employeeIdLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             employeeIdLevel.setUniqueMembers(true);
             employeeIdLevel.setColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
             employeeIdLevel.setNameColumn(CatalogSupplier.COLUMN_FULL_NAME_EMPLOYEE);
-            employeeIdLevel.setOrdinalColumn(CatalogSupplier.COLUMN_LAST_NAME_EMPLOYEE);
+            employeeIdLevel.setOrdinalColumn(ORDERED_COLUMN_LAST_NAME_EMPLOYEE);
             employeeIdLevel.getMemberProperties().add(firstNameProperty);
 
             // Configure employee table query
@@ -3243,12 +3245,15 @@ public class SchemaModifiersEmf {
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
+            OrderedColumn oc = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
+
             Level monthLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
             monthLevel1.setName("Month");
             monthLevel1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthLevel1.setUniqueMembers(false);
             monthLevel1.setColumnType(ColumnInternalDataType.NUMERIC);
-            monthLevel1.setOrdinalColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
+            monthLevel1.setOrdinalColumn(oc);
             monthLevel1.setType(LevelDefinition.TIME_MONTHS);
 
             timeAlphaHierarchy.getLevels().add(yearLevel);
@@ -3273,12 +3278,15 @@ public class SchemaModifiersEmf {
             timeByDayQuery2.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
             monthAlphaHierarchy.setQuery(timeByDayQuery2);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
+
             Level monthLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
             monthLevel2.setName("Month");
             monthLevel2.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY));
             monthLevel2.setUniqueMembers(false);
             monthLevel2.setColumnType(ColumnInternalDataType.NUMERIC);
-            monthLevel2.setOrdinalColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
+            monthLevel2.setOrdinalColumn(oc1);
             monthLevel2.setType(LevelDefinition.TIME_MONTHS);
 
             monthAlphaHierarchy.getLevels().add(monthLevel2);
@@ -4609,11 +4617,14 @@ public class SchemaModifiersEmf {
                 managementRoleLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE));
                 managementRoleLevel.setUniqueMembers(true);
 
+                OrderedColumn oc = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                oc.setColumn((Column) copier.get(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE));
+
                 Level positionTitleLevel = RolapMappingFactory.eINSTANCE.createLevel();
                 positionTitleLevel.setName("Position Title");
                 positionTitleLevel.setUniqueMembers(false);
                 positionTitleLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
-                positionTitleLevel.setOrdinalColumn((Column) copier.get(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE));
+                positionTitleLevel.setOrdinalColumn(oc);
 
                 hierarchy.getLevels().add(managementRoleLevel);
                 hierarchy.getLevels().add(positionTitleLevel);
@@ -5095,19 +5106,25 @@ public class SchemaModifiersEmf {
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
+
             Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setNameColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
-            yearLevel.setOrdinalColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
+            yearLevel.setOrdinalColumn(oc1);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
             yearLevel.setUniqueMembers(true);
 
+            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc2.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
+
             Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
-            quarterLevel.setOrdinalColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
+            quarterLevel.setOrdinalColumn(oc2);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
             quarterLevel.setUniqueMembers(false);
 
@@ -7660,11 +7677,14 @@ public class SchemaModifiersEmf {
 
                 ordinalExpressionColumn.getSqls().add(sqlStatement);
 
+                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                oc1.setColumn(ordinalExpressionColumn);
+
                 // Create level
                 Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
-                promotionNameLevel.setOrdinalColumn(ordinalExpressionColumn);
+                promotionNameLevel.setOrdinalColumn(oc1);
                 promotionNameLevel.setUniqueMembers(true);
 
                 // Create hierarchy
@@ -8893,11 +8913,14 @@ public class SchemaModifiersEmf {
                 table.setTable(CatalogSupplier.TABLE_STORE_RAGGED);
                 hierarchy.setQuery(table);
 
+                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                oc1.setColumn(CatalogSupplier.COLUMN_REGION_ID_STORE_RAGGED);
+
                 Level level = RolapMappingFactory.eINSTANCE.createLevel();
                 level.setName("Store Id");
                 level.setColumn(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
                 level.setNameColumn(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
-                level.setOrdinalColumn(CatalogSupplier.COLUMN_REGION_ID_STORE_RAGGED);
+                level.setOrdinalColumn(oc1);
                 level.setUniqueMembers(true);
                 hierarchy.getLevels().add(level);
 
@@ -9989,12 +10012,15 @@ public class SchemaModifiersEmf {
                 storeTable.setTable(CatalogSupplier.TABLE_STORE);
                 storeHierarchy.setQuery(storeTable);
 
+                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                oc1.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
+
                 Level storeLevel = RolapMappingFactory.eINSTANCE.createLevel();
                 storeLevel.setName("Store Name");
                 storeLevel.setColumn(CatalogSupplier.COLUMN_STORE_NUMBER_STORE);
                 storeLevel.setUniqueMembers(true);
                 storeLevel.setColumnType(ColumnInternalDataType.NUMERIC);
-                storeLevel.setOrdinalColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
+                storeLevel.setOrdinalColumn(oc1);
                 storeHierarchy.getLevels().add(storeLevel);
 
                 storeDimension.getHierarchies().add(storeHierarchy);
@@ -15090,10 +15116,13 @@ public class SchemaModifiersEmf {
             propertyStoreSqft.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             propertyStoreSqft.setPropertyType(ColumnInternalDataType.NUMERIC);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(ordinalExpression);
+
             levelStoreName.setName("Store Name");
             levelStoreName.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
             levelStoreName.setUniqueMembers(true);
-            levelStoreName.setOrdinalColumn(ordinalExpression);
+            levelStoreName.setOrdinalColumn(oc1);
             levelStoreName.getMemberProperties().add(propertyStoreSqft);
 
             hierarchyStore.setHasAll(true);
@@ -19205,10 +19234,13 @@ public class SchemaModifiersEmf {
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
+
             Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
-            quarterLevel.setOrdinalColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
+            quarterLevel.setOrdinalColumn(oc1);
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
@@ -19312,10 +19344,13 @@ public class SchemaModifiersEmf {
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
+
             Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
-            quarterLevel.setOrdinalColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
+            quarterLevel.setOrdinalColumn(oc1);
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
@@ -20811,10 +20846,13 @@ public class SchemaModifiersEmf {
             yearsAnnotation.setValue("[yyyy]");
             yearsLevel.getAnnotations().add(yearsAnnotation);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
+
             Level quartersLevel = RolapMappingFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_NAME_TIME);
-            quartersLevel.setOrdinalColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
+            quartersLevel.setOrdinalColumn(oc1);
             quartersLevel.setColumnType(ColumnInternalDataType.STRING);
             quartersLevel.setUniqueMembers(false);
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
@@ -20825,10 +20863,13 @@ public class SchemaModifiersEmf {
             quartersAnnotation.setValue("[yyyy].['QTR'q]");
             quartersLevel.getAnnotations().add(quartersAnnotation);
 
+            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
+
             Level monthsLevel = RolapMappingFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_NAME_TIME);
-            monthsLevel.setOrdinalColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
+            monthsLevel.setOrdinalColumn(oc2);
             monthsLevel.setColumnType(ColumnInternalDataType.STRING);
             monthsLevel.setUniqueMembers(false);
             monthsLevel.setType(LevelDefinition.TIME_MONTHS);
@@ -21266,21 +21307,27 @@ public class SchemaModifiersEmf {
             yearsLevel.setType(LevelDefinition.TIME_YEARS);
             yearsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
+
             Level quartersLevel = RolapMappingFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
             quartersLevel.setNameColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_NAME_TIME);
-            quartersLevel.setOrdinalColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
+            quartersLevel.setOrdinalColumn(oc1);
             quartersLevel.setColumnType(ColumnInternalDataType.STRING);
             quartersLevel.setUniqueMembers(false);
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
             quartersLevel.setHideMemberIf(HideMemberIf.NEVER);
 
+            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
+
             Level monthsLevel = RolapMappingFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
             monthsLevel.setNameColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_NAME_TIME);
-            monthsLevel.setOrdinalColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
+            monthsLevel.setOrdinalColumn(oc2);
             monthsLevel.setColumnType(ColumnInternalDataType.STRING);
             monthsLevel.setUniqueMembers(false);
             monthsLevel.setType(LevelDefinition.TIME_MONTHS);
@@ -21906,23 +21953,27 @@ public class SchemaModifiersEmf {
             yearsLevel.setType(LevelDefinition.TIME_YEARS);
             yearsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
+            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
+
             Level quartersLevel = RolapMappingFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_NAME_TIME);
-            quartersLevel.setOrdinalColumn(
-                    org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
+            quartersLevel.setOrdinalColumn(oc1);
             quartersLevel.setColumnType(ColumnInternalDataType.STRING);
             quartersLevel.setUniqueMembers(false);
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
             quartersLevel.setHideMemberIf(HideMemberIf.NEVER);
 
+            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
+
             Level monthsLevel = RolapMappingFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_NAME_TIME);
-            monthsLevel.setOrdinalColumn(
-                    org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
+            monthsLevel.setOrdinalColumn(oc2);
             monthsLevel.setColumnType(ColumnInternalDataType.STRING);
             monthsLevel.setUniqueMembers(false);
             monthsLevel.setType(LevelDefinition.TIME_MONTHS);
