@@ -40,6 +40,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.type.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.api.sql.SortingDirection;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.eclipse.daanse.rolap.element.RolapMember;
@@ -1703,7 +1704,7 @@ class DialectTest {
 
     SqlQuery query = new SqlQuery( dialect, true );
     query.addOrderBy(
-            expr, null, true, false,
+            expr, null, SortingDirection.ASC, false,
             dialect.requiresUnionOrderByOrdinal(), true );
 
     assertTrue( query.toString().contains( expected ) );

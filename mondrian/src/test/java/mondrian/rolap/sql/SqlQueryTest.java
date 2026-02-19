@@ -31,6 +31,7 @@ import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
+import org.eclipse.daanse.olap.api.sql.SortingDirection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
@@ -173,24 +174,24 @@ class SqlQueryTest  extends BatchTestCase {
         prepareContext(connection);
         // Test with requireAlias = true
         assertEquals(
-            queryUnixString("expr", "alias", true, true, true, true),
+            queryUnixString("expr", "alias", SortingDirection.ASC, true, true, true),
             "\norder by\n"
             + "    CASE WHEN alias IS NULL THEN 1 ELSE 0 END, alias ASC");
         // requireAlias = false
         assertEquals(
             "\norder by\n"
             + "    CASE WHEN expr IS NULL THEN 1 ELSE 0 END, expr ASC",
-            queryUnixString("expr", "alias", true, true, true, false));
+            queryUnixString("expr", "alias", SortingDirection.ASC, true, true, false));
         //  nullable = false
         assertEquals(
             "\norder by\n"
             + "    expr ASC",
-            queryUnixString("expr", "alias", true, false, true, false));
+            queryUnixString("expr", "alias", SortingDirection.ASC, false, true, false));
         //  ascending=false, collateNullsLast=false
         assertEquals(
             "\norder by\n"
             + "    CASE WHEN alias IS NULL THEN 0 ELSE 1 END, alias DESC",
-            queryUnixString("expr", "alias", false, true, false, true));
+            queryUnixString("expr", "alias", SortingDirection.DESC, true, false, true));
     }
 
     /**
@@ -200,23 +201,23 @@ class SqlQueryTest  extends BatchTestCase {
      */
 
     private SqlQuery makeTestSqlQuery(
-        String expr, String alias, boolean ascending,
+        String expr, String alias, SortingDirection sortingDirection,
         boolean nullable, boolean collateNullsLast, boolean reqOrderByAlias)
     {
         JdbcDialectImpl dialect = spy(new JdbcDialectImplForTest());
         when(dialect.requiresOrderByAlias()).thenReturn(reqOrderByAlias);
         SqlQuery query = new SqlQuery(dialect, true);
         query.addOrderBy(
-            expr, alias, ascending, true, nullable, collateNullsLast);
+            expr, alias, sortingDirection, true, nullable, collateNullsLast);
         return query;
     }
 
     private String queryUnixString(
-        String expr, String alias, boolean ascending,
+        String expr, String alias, SortingDirection sortingDirection,
         boolean nullable, boolean collateNullsLast, boolean reqOrderByAlias)
     {
         String sql = makeTestSqlQuery(
-            expr, alias, ascending, nullable, collateNullsLast,
+            expr, alias, sortingDirection, nullable, collateNullsLast,
             reqOrderByAlias).toString();
         return sql.replaceAll("\\r", "");
     }
