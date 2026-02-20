@@ -425,7 +425,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         AggregationLevel monthLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[TimeExtra].[TimeExtra].[Month]");
         monthLevel.setColumn((PhysicalColumn) testmonthnameExpAggTest);
-        monthLevel.setOrdinalColumn((PhysicalColumn) testmonthordExpAggTest);
+        monthLevel.getOrdinalColumns().addAll(List.of((PhysicalColumn) testmonthordExpAggTest));
         aggName.getAggregationLevels().add(monthLevel);
 
         setupMultiColDimCube(catalog, copier, context,
