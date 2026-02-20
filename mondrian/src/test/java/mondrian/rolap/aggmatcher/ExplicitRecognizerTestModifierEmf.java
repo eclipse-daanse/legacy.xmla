@@ -402,7 +402,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         if (monthOrdinalCol != null) {
             OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(monthOrdinalCol);
-            monthLevel.setOrdinalColumn(oc1);
+            monthLevel.getOrdinalColumns().add(oc1);
         }
         PhysicalColumn monthNameCol = (PhysicalColumn) getMonthNameCol();
         if (monthNameCol != null) {
