@@ -301,7 +301,7 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
         productCategoryLevel.setName("Product Category");
         productCategoryLevel.setColumn(name2ProductCat);
-        productCategoryLevel.setOrdinalColumn(oc1);
+        productCategoryLevel.getOrdinalColumns().add(oc1);
         productCategoryLevel.setCaptionColumn(capProductCat);
         productCategoryLevel.setUniqueMembers(false);
 
@@ -311,7 +311,7 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         Level categoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
         categoryLevel.setName("Category");
         categoryLevel.setColumn(catCat);
-        categoryLevel.setOrdinalColumn(oc2);
+        categoryLevel.getOrdinalColumns().add(oc2);
         categoryLevel.setCaptionColumn(capCat);
         categoryLevel.setNameColumn(name3Cat);
         categoryLevel.setUniqueMembers(false);
