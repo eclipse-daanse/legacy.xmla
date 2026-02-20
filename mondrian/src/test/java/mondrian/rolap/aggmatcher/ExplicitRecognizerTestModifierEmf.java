@@ -174,7 +174,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         // Store State level
         Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
         storeStateLevel.setName("Store State");
-        storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
+        storeStateLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STATE_STORE));
         storeStateLevel.setUniqueMembers(true);
 
         // Store City level
@@ -186,7 +186,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         // Store Name level with property
         Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
         storeNameLevel.setName("Store Name");
-        storeNameLevel.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
+        storeNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
         storeNameLevel.setUniqueMembers(true);
 
         // Street address property
@@ -402,7 +402,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         if (monthOrdinalCol != null) {
             OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(monthOrdinalCol);
-            monthLevel.setOrdinalColumn(oc1);
+            monthLevel.getOrdinalColumns().add(oc1);
         }
         PhysicalColumn monthNameCol = (PhysicalColumn) getMonthNameCol();
         if (monthNameCol != null) {

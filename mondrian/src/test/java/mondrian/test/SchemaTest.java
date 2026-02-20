@@ -11539,7 +11539,7 @@ class SchemaTest {
                 level1.setName("Level1");
                 level1.setColumn(binColumn);
                 level1.setNameColumn(nameColumn);
-                level1.setOrdinalColumn(oc1);
+                level1.getOrdinalColumns().add(oc1);
 
                 org.eclipse.daanse.rolap.mapping.model.Level level2 =
                     RolapMappingFactory.eINSTANCE.createLevel();
@@ -16053,7 +16053,7 @@ class SchemaTest {
                     positionTitleLevel.setName("Position Title");
                     positionTitleLevel.setUniqueMembers(false);
                     positionTitleLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
-                    positionTitleLevel.setOrdinalColumn(oc1);
+                    positionTitleLevel.getOrdinalColumns().add(oc1);
                     positionTitleLevel.setCaptionColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
 
                     // Create hierarchy
@@ -17951,7 +17951,7 @@ class SchemaTest {
             positionLevel2.setName("Position Title");
             positionLevel2.setUniqueMembers(false);
             positionLevel2.setColumn(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE);
-            positionLevel2.setOrdinalColumn(oc1);
+            positionLevel2.getOrdinalColumns().add(oc1);
 
             ExplicitHierarchy positionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
             positionHierarchy.setHasAll(true);
@@ -20092,7 +20092,7 @@ class SchemaTest {
                 level = RolapMappingFactory.eINSTANCE.createLevel();
                 level.setName("Position Title");
                 level.setUniqueMembers(false);
-                level.setOrdinalColumn(oc1);
+                level.getOrdinalColumns().add(oc1);
                 level.setColumn(sqlExpressionColumn);
 
                 tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
