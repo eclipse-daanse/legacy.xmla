@@ -32,6 +32,7 @@ import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -39,6 +40,11 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 
 class OrderFunDefTest {
+
+    @AfterEach
+    public void afterEach() {
+        SystemWideProperties.instance().populateInitial();
+    }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -1197,6 +1203,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderConstant1(Context<?> context) {
         // sort by customerId (Abel = 7851, Adeline = 6442, Abe = 570)
+    	SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("
