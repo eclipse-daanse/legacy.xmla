@@ -313,6 +313,8 @@ import org.eclipse.daanse.olap.function.def.vba.typename.TypeNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
+import org.eclipse.daanse.rolap.aggmatch.instance.basic.BasicAggMatchRulesSupplier;
+import org.eclipse.daanse.rolap.api.aggmatch.AggregationMatchRulesSupplier;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.common.catalog.RolapCatalogCache;
 import org.eclipse.daanse.rolap.common.connection.ExternalRolapConnection;
@@ -342,6 +344,7 @@ public class TestContextImpl extends BasicContext implements TestContext {
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
     private AggregationFactory aggregationFactory;
+    private AggregationMatchRulesSupplier aggMatchRulesSupplier = new BasicAggMatchRulesSupplier();
 
     private List<CustomAggregatorFactory> customAggregators = new ArrayList<CustomAggregatorFactory>();
 
@@ -981,6 +984,11 @@ public class TestContextImpl extends BasicContext implements TestContext {
         ExpressionCompiler compiler)
     {
         return new RolapDependencyTestingEvaluator.DteCompiler(compiler);
+    }
+
+    @Override
+    public Optional<AggregationMatchRulesSupplier> getAggMatchRulesSupplier() {
+        return Optional.ofNullable(aggMatchRulesSupplier);
     }
 
 }
