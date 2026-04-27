@@ -16,21 +16,21 @@ package mondrian.test;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.RollupPolicy;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.RollupPolicy;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /**
  * EMF version of TestNativeHonorsRoleRestrictionsModifier from NativeSetEvaluationTest.
  * Creates an access role "Test" with restricted access to specific battery products in the Sales cube.
@@ -78,33 +78,33 @@ public class TestNativeHonorsRoleRestrictionsModifier implements CatalogMappingS
 
     static {
         // Create member grants for specific battery products
-        MEMBER_GRANT_CORMORANT_AA_1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        MEMBER_GRANT_CORMORANT_AA_1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
         MEMBER_GRANT_CORMORANT_AA_1.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AA-Size Batteries]");
         MEMBER_GRANT_CORMORANT_AA_1.setMemberAccess(MemberAccess.ALL);
 
         // Note: Original POJO has duplicate entry for Cormorant AA-Size Batteries
-        MEMBER_GRANT_CORMORANT_AA_2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        MEMBER_GRANT_CORMORANT_AA_2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
         MEMBER_GRANT_CORMORANT_AA_2.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AA-Size Batteries]");
         MEMBER_GRANT_CORMORANT_AA_2.setMemberAccess(MemberAccess.ALL);
 
-        MEMBER_GRANT_CORMORANT_AAA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        MEMBER_GRANT_CORMORANT_AAA = OlapFactory.eINSTANCE.createAccessMemberGrant();
         MEMBER_GRANT_CORMORANT_AAA.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AAA-Size Batteries]");
         MEMBER_GRANT_CORMORANT_AAA.setMemberAccess(MemberAccess.ALL);
 
-        MEMBER_GRANT_CORMORANT_C = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        MEMBER_GRANT_CORMORANT_C = OlapFactory.eINSTANCE.createAccessMemberGrant();
         MEMBER_GRANT_CORMORANT_C.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant C-Size Batteries]");
         MEMBER_GRANT_CORMORANT_C.setMemberAccess(MemberAccess.ALL);
 
-        MEMBER_GRANT_DENNY_AA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        MEMBER_GRANT_DENNY_AA = OlapFactory.eINSTANCE.createAccessMemberGrant();
         MEMBER_GRANT_DENNY_AA.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Denny].[Denny AA-Size Batteries]");
         MEMBER_GRANT_DENNY_AA.setMemberAccess(MemberAccess.ALL);
 
-        MEMBER_GRANT_DENNY_AAA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        MEMBER_GRANT_DENNY_AAA = OlapFactory.eINSTANCE.createAccessMemberGrant();
         MEMBER_GRANT_DENNY_AAA.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Denny].[Denny AAA-Size Batteries]");
         MEMBER_GRANT_DENNY_AAA.setMemberAccess(MemberAccess.ALL);
 
         // Create hierarchy grant for Product with CUSTOM access and PARTIAL rollup
-        HIERARCHY_GRANT_PRODUCT = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+        HIERARCHY_GRANT_PRODUCT = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
         HIERARCHY_GRANT_PRODUCT.setHierarchy(CatalogSupplier.HIERARCHY_PRODUCT);
         HIERARCHY_GRANT_PRODUCT.setHierarchyAccess(HierarchyAccess.CUSTOM);
         HIERARCHY_GRANT_PRODUCT.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -118,18 +118,18 @@ public class TestNativeHonorsRoleRestrictionsModifier implements CatalogMappingS
         ));
 
         // Create cube grant for Sales cube with ALL access
-        CUBE_GRANT_SALES = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+        CUBE_GRANT_SALES = OlapFactory.eINSTANCE.createAccessCubeGrant();
         CUBE_GRANT_SALES.setCube(CatalogSupplier.CUBE_SALES);
         CUBE_GRANT_SALES.setCubeAccess(CubeAccess.ALL);
         CUBE_GRANT_SALES.getHierarchyGrants().add(HIERARCHY_GRANT_PRODUCT);
 
         // Create catalog grant with NONE access (only specific cubes granted)
-        CATALOG_GRANT = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+        CATALOG_GRANT = CommonFactory.eINSTANCE.createAccessCatalogGrant();
         CATALOG_GRANT.setCatalogAccess(CatalogAccess.NONE);
         CATALOG_GRANT.getCubeGrants().add(CUBE_GRANT_SALES);
 
         // Create access role "Test"
-        ACCESS_ROLE_TEST = RolapMappingFactory.eINSTANCE.createAccessRole();
+        ACCESS_ROLE_TEST = CommonFactory.eINSTANCE.createAccessRole();
         ACCESS_ROLE_TEST.setName("Test");
         ACCESS_ROLE_TEST.getAccessCatalogGrants().add(CATALOG_GRANT);
     }

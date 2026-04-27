@@ -14,17 +14,16 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.Member;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
-
 /**
  * EMF version of TestBugMondrian322aModifier from VirtualCubeTest. Creates a
  * virtual cube "Warehouse and Sales2" to test bug MONDRIAN-322 (variant test
@@ -54,21 +53,21 @@ public class TestBugMondrian322aModifier implements CatalogMappingSupplier {
         VirtualCube VIRTUAL_CUBE_WAREHOUSE_AND_SALES2;
 /*
         // Create dimension connector for Customers (references Sales cube)
-        CONNECTOR_CUSTOMERS = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_CUSTOMERS = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_CUSTOMERS.setOverrideDimensionName("Customers");
         CONNECTOR_CUSTOMERS.setPhysicalCube(CatalogSupplier.CUBE_SALES);
 
         // Create dimension connector for Time (no cube reference, just override name)
-        CONNECTOR_TIME = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_TIME = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_TIME.setOverrideDimensionName("Time");
 
         // Create dimension connector for Warehouse (references Warehouse cube)
-        CONNECTOR_WAREHOUSE = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_WAREHOUSE = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_WAREHOUSE.setOverrideDimensionName("Warehouse");
         CONNECTOR_WAREHOUSE.setPhysicalCube(CatalogSupplier.CUBE_WAREHOUSE);
 */
         // Create virtual cube
-        VIRTUAL_CUBE_WAREHOUSE_AND_SALES2 = RolapMappingFactory.eINSTANCE.createVirtualCube();
+        VIRTUAL_CUBE_WAREHOUSE_AND_SALES2 = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setName("Warehouse and Sales2");
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setDefaultMeasure((Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
 

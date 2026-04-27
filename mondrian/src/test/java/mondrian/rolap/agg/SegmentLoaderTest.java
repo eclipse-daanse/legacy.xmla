@@ -84,7 +84,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
 import mondrian.test.SqlPattern;
-
 /**
  * <p>Test for <code>SegmentLoader</code></p>
  *

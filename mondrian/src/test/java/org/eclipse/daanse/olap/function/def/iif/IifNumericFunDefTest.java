@@ -14,7 +14,7 @@
 package org.eclipse.daanse.olap.function.def.iif;
 
 import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.*;
+import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;

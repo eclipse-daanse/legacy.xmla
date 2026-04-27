@@ -29,22 +29,14 @@
 
 
 
-#-runproperties.tester: \
-    #tester.names='mondrian.rolap.NativeEvalVirtualCubeTest'
-	#tester.names='org.eclipse.daanse.olap.function.def.dimension.DimensionFunctionsTest'
-    #tester.names='mondrian.rolap.TestAggregationManager'
-    #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'
-#-runproperties.tester: \
-#	tester.names='mondrian.test.CaptionTest'
-#-runproperties.tester: \
-#	tester.names='mondrian.rolap.TestAggregationManager'
-#-runproperties.tester: \
-#	tester.names='mondrian.test.CompoundSlicerTest'
-#-runproperties.tester: \
-#	tester.names='mondrian.rolap.VirtualCubeTest'
+# No tester.names filter — all @Testable classes in the test fragment run.
+# If you want to pin a single test, set:
+#   -runproperties.tester: tester.names='mondrian.test.PerformanceTest'
+# (kept commented; leave commented for full-suite runs.)
 
 
 # -runbundles is calculated by the bnd-resolver-maven-plugin
+
 
 -runbundles: \
 	assertj-core;version='[3.26.0,3.26.1)',\
@@ -74,6 +66,8 @@
 	org.apache.commons.lang3;version='[3.17.0,3.17.1)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
+	org.eclipse.daanse.cwm.model;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.util;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.core;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
@@ -86,6 +80,8 @@
 	org.eclipse.daanse.mdx.parser.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.ccc;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.olap.check.model.emf;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.olap.check.runtime;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.common;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.format;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.spi;version='[0.0.1,0.0.2)',\
@@ -95,6 +91,7 @@
 	org.eclipse.daanse.rolap.citest;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.citest-tests;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.core;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.rolap.mapping.instance.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.emf.complex.expressivenames;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels;version='[0.0.1,0.0.2)',\
@@ -104,7 +101,7 @@
 	org.eclipse.emf.common;version='[2.44.0,2.44.1)',\
 	org.eclipse.emf.ecore;version='[2.41.0,2.41.1)',\
 	org.eclipse.emf.ecore.xmi;version='[2.39.0,2.39.1)',\
-	org.eclipse.fennec.emf.osgi.component;version='[1.0.0,1.0.1)',\
+	org.eclipse.fennec.emf.osgi.component;version='[0.1.1,0.1.2)',\
 	org.glassfish.hk2.osgi-resource-locator;version='[2.4.0,2.4.1)',\
 	org.mockito.mockito-core;version='[4.9.0,4.9.1)',\
 	org.objectweb.asm;version='[9.9.0,9.9.1)',\

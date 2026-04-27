@@ -15,22 +15,26 @@ package mondrian.rolap;
 
 import java.util.List;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /**
  * EMF version of TestMultiLevelMemberConstraintNullParentModifier from NonEmptyTest.
  * Creates a cube "Warehouse2" with custom Warehouse dimension having address levels.
@@ -70,7 +74,7 @@ public class TestMultiLevelMemberConstraintNullParentModifier implements Catalog
 
     // Static hierarchy for Warehouse2
     private static final ExplicitHierarchy HIERARCHY_WAREHOUSE2;
-    private static final TableQuery TABLE_QUERY_WAREHOUSE;
+    private static final TableSource TABLE_QUERY_WAREHOUSE;
 
     // Static dimension Warehouse2
     private static final StandardDimension DIMENSION_WAREHOUSE2;
@@ -80,7 +84,7 @@ public class TestMultiLevelMemberConstraintNullParentModifier implements Catalog
     private static final DimensionConnector CONNECTOR_WAREHOUSE2;
 
     // Static table query for fact table
-    private static final TableQuery TABLE_QUERY_INVENTORY_FACT;
+    private static final TableSource TABLE_QUERY_INVENTORY_FACT;
 
     // Static measures
     private static final SumMeasure MEASURE_WAREHOUSE_COST;
@@ -94,45 +98,45 @@ public class TestMultiLevelMemberConstraintNullParentModifier implements Catalog
 
     static {
         // Create wa_address columns (not available in CatalogSupplier)
-        COLUMN_WA_ADDRESS1 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        COLUMN_WA_ADDRESS1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS1.setName("wa_address1");
-        COLUMN_WA_ADDRESS1.setType(ColumnType.VARCHAR);
+        COLUMN_WA_ADDRESS1.setType(SqlSimpleTypes.varcharType(255));
 
-        COLUMN_WA_ADDRESS2 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        COLUMN_WA_ADDRESS2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS2.setName("wa_address2");
-        COLUMN_WA_ADDRESS2.setType(ColumnType.VARCHAR);
+        COLUMN_WA_ADDRESS2.setType(SqlSimpleTypes.varcharType(255));
 
-        COLUMN_WA_ADDRESS3 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        COLUMN_WA_ADDRESS3 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS3.setName("wa_address3");
-        COLUMN_WA_ADDRESS3.setType(ColumnType.VARCHAR);
+        COLUMN_WA_ADDRESS3.setType(SqlSimpleTypes.varcharType(255));
 
         // Create levels for Warehouse2 dimension
-        LEVEL_ADDRESS3 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_ADDRESS3 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_ADDRESS3.setName("address3");
         LEVEL_ADDRESS3.setColumn(COLUMN_WA_ADDRESS3);
         LEVEL_ADDRESS3.setUniqueMembers(true);
 
-        LEVEL_ADDRESS2 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_ADDRESS2 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_ADDRESS2.setName("address2");
         LEVEL_ADDRESS2.setColumn(COLUMN_WA_ADDRESS2);
         LEVEL_ADDRESS2.setUniqueMembers(true);
 
-        LEVEL_ADDRESS1 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_ADDRESS1 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_ADDRESS1.setName("address1");
         LEVEL_ADDRESS1.setColumn(COLUMN_WA_ADDRESS1);
         LEVEL_ADDRESS1.setUniqueMembers(false);
 
-        LEVEL_NAME = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_NAME = LevelFactory.eINSTANCE.createLevel();
         LEVEL_NAME.setName("name");
         LEVEL_NAME.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_NAME_WAREHOUSE);
         LEVEL_NAME.setUniqueMembers(false);
 
         // Create table query for warehouse
-        TABLE_QUERY_WAREHOUSE = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_WAREHOUSE = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_WAREHOUSE.setTable(CatalogSupplier.TABLE_WAREHOUSE);
 
         // Create hierarchy for Warehouse2
-        HIERARCHY_WAREHOUSE2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_WAREHOUSE2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_WAREHOUSE2.setHasAll(true);
         HIERARCHY_WAREHOUSE2.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
         HIERARCHY_WAREHOUSE2.setQuery(TABLE_QUERY_WAREHOUSE);
@@ -144,44 +148,44 @@ public class TestMultiLevelMemberConstraintNullParentModifier implements Catalog
         ));
 
         // Create dimension Warehouse2
-        DIMENSION_WAREHOUSE2 = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        DIMENSION_WAREHOUSE2 = DimensionFactory.eINSTANCE.createStandardDimension();
         DIMENSION_WAREHOUSE2.setName("Warehouse2");
         DIMENSION_WAREHOUSE2.getHierarchies().add(HIERARCHY_WAREHOUSE2);
 
         // Create dimension connector for Product (reuse from CatalogSupplier)
-        CONNECTOR_PRODUCT = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_PRODUCT = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_PRODUCT.setOverrideDimensionName("Product");
         CONNECTOR_PRODUCT.setDimension(CatalogSupplier.DIMENSION_PRODUCT);
         CONNECTOR_PRODUCT.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
 
         // Create dimension connector for Warehouse2
-        CONNECTOR_WAREHOUSE2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_WAREHOUSE2 = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_WAREHOUSE2.setOverrideDimensionName("Warehouse2");
         CONNECTOR_WAREHOUSE2.setDimension(DIMENSION_WAREHOUSE2);
         CONNECTOR_WAREHOUSE2.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
 
         // Create fact table query
-        TABLE_QUERY_INVENTORY_FACT = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_INVENTORY_FACT = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_INVENTORY_FACT.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
 
         // Create measures
-        MEASURE_WAREHOUSE_COST = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        MEASURE_WAREHOUSE_COST = MeasureFactory.eINSTANCE.createSumMeasure();
         MEASURE_WAREHOUSE_COST.setName("Warehouse Cost");
         MEASURE_WAREHOUSE_COST.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
 
-        MEASURE_WAREHOUSE_SALES = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        MEASURE_WAREHOUSE_SALES = MeasureFactory.eINSTANCE.createSumMeasure();
         MEASURE_WAREHOUSE_SALES.setName("Warehouse Sales");
         MEASURE_WAREHOUSE_SALES.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
 
         // Create measure group
-        MEASURE_GROUP = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MEASURE_GROUP = CubeFactory.eINSTANCE.createMeasureGroup();
         MEASURE_GROUP.getMeasures().addAll(List.of(
             MEASURE_WAREHOUSE_COST,
             MEASURE_WAREHOUSE_SALES
         ));
 
         // Create cube
-        CUBE_WAREHOUSE2 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        CUBE_WAREHOUSE2 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_WAREHOUSE2.setName("Warehouse2");
         CUBE_WAREHOUSE2.setQuery(TABLE_QUERY_INVENTORY_FACT);
         CUBE_WAREHOUSE2.getDimensionConnectors().addAll(List.of(

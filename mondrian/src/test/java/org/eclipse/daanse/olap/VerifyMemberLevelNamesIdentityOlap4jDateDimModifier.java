@@ -16,20 +16,22 @@ package org.eclipse.daanse.olap;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.Cube;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.TimeDimension;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /**
  * EMF version of VerifyMemberLevelNamesIdentityOlap4jDateDimModifier from HierarchyBugTest.
  * Creates a Date dimension with default hierarchy (hasAll=false) using RolapMappingFactory.
@@ -63,27 +65,27 @@ public class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier implements Cata
     private static final TimeDimension DIMENSION_DATE;
 
     // Static table query
-    private static final TableQuery TABLE_QUERY;
+    private static final TableSource TABLE_QUERY;
 
     // Static dimension connector
     private static final DimensionConnector DIMENSION_CONNECTOR_DATE;
 
     static {
         // Create Level definitions using columns from CatalogSupplier
-        LEVEL_YEAR = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_YEAR = LevelFactory.eINSTANCE.createLevel();
         LEVEL_YEAR.setName("Year");
         LEVEL_YEAR.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
         LEVEL_YEAR.setColumnType(ColumnInternalDataType.NUMERIC);
         LEVEL_YEAR.setUniqueMembers(true);
         LEVEL_YEAR.setType(LevelDefinition.TIME_YEARS);
 
-        LEVEL_QUARTER = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_QUARTER = LevelFactory.eINSTANCE.createLevel();
         LEVEL_QUARTER.setName("Quarter");
         LEVEL_QUARTER.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
         LEVEL_QUARTER.setUniqueMembers(false);
         LEVEL_QUARTER.setType(LevelDefinition.TIME_QUARTERS);
 
-        LEVEL_MONTH = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_MONTH = LevelFactory.eINSTANCE.createLevel();
         LEVEL_MONTH.setName("Month");
         LEVEL_MONTH.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
         LEVEL_MONTH.setUniqueMembers(false);
@@ -91,23 +93,23 @@ public class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier implements Cata
         LEVEL_MONTH.setType(LevelDefinition.TIME_MONTHS);
 
         // Create table query using table from CatalogSupplier
-        TABLE_QUERY = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
 
         // Create Date hierarchy with hasAll=false
-        HIERARCHY_DATE = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_DATE = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_DATE.setHasAll(false);
         HIERARCHY_DATE.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
         HIERARCHY_DATE.setQuery(TABLE_QUERY);
         HIERARCHY_DATE.getLevels().addAll(List.of(LEVEL_YEAR, LEVEL_QUARTER, LEVEL_MONTH));
 
         // Create Time Dimension
-        DIMENSION_DATE = RolapMappingFactory.eINSTANCE.createTimeDimension();
+        DIMENSION_DATE = DimensionFactory.eINSTANCE.createTimeDimension();
         DIMENSION_DATE.setName("Date");
         DIMENSION_DATE.getHierarchies().add(HIERARCHY_DATE);
 
         // Create Dimension Connector using foreign key from CatalogSupplier
-        DIMENSION_CONNECTOR_DATE = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DIMENSION_CONNECTOR_DATE = DimensionFactory.eINSTANCE.createDimensionConnector();
         DIMENSION_CONNECTOR_DATE.setOverrideDimensionName("Date");
         DIMENSION_CONNECTOR_DATE.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
         DIMENSION_CONNECTOR_DATE.setDimension(DIMENSION_DATE);

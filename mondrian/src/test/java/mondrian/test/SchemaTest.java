@@ -32,6 +32,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.InstanceFactory;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
@@ -59,60 +67,63 @@ import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggTableManager;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationExclude;
-import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.AggregationName;
 import org.eclipse.daanse.rolap.mapping.model.Annotation;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.CountMeasure;
-import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.HideMemberIf;
-import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.InlineTable;
-import org.eclipse.daanse.rolap.mapping.model.InlineTableQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
-import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
-import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
-import org.eclipse.daanse.rolap.mapping.model.ParentChildHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.ParentChildLink;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
 import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.Row;
-import org.eclipse.daanse.rolap.mapping.model.RowValue;
-import org.eclipse.daanse.rolap.mapping.model.SQLExpressionColumn;
-import org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery;
-import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Table;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.TimeDimension;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.impl.CubeImpl;
-import org.eclipse.daanse.rolap.mapping.model.impl.DimensionConnectorImpl;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.CatalogFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.OrderedColumn;
+import org.eclipse.daanse.rolap.mapping.model.database.source.InlineTableSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.impl.CubeImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.CountMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ParentChildHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ParentChildLink;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.HideMemberIf;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.impl.DimensionConnectorImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.format.FormatFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -128,8 +139,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-//import org.apache.logging.log4j.spi.LoggerContext;
 
 /**
  * Unit tests for various schema features.
@@ -259,36 +268,36 @@ class SchemaTest {
         class TestSolveOrderInCalculatedMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestSolveOrderInCalculatedMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestSolveOrderInCalculatedMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     CubeImpl cube = (CubeImpl) oCube.get();
-                    CalculatedMemberProperty cmProperty1 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    CalculatedMemberProperty cmProperty1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     cmProperty1.setName("FORMAT_STRING");
                     cmProperty1.setValue("$#,##0.00");
 
                     // Create first calculated member using RolapMappingFactory
-                    CalculatedMember calculatedMember1 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    CalculatedMember calculatedMember1 = LevelFactory.eINSTANCE.createCalculatedMember();
                     calculatedMember1.setName("QuantumProfit");
                     calculatedMember1.setFormula("[Measures].[Store Sales] / [Measures].[Store Cost]");
                     calculatedMember1.getCalculatedMemberProperties().add(cmProperty1);
 
                     // Create second calculated member properties using RolapMappingFactory
-                    CalculatedMemberProperty cmProperty21 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    CalculatedMemberProperty cmProperty21 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     cmProperty21.setName("FORMAT_STRING");
                     cmProperty21.setValue("$#,##0.00");
 
-                    CalculatedMemberProperty cmProperty22 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    CalculatedMemberProperty cmProperty22 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     cmProperty22.setName("SOLVE_ORDER");
                     cmProperty22.setValue("2000");
 
                     // Create second calculated member using RolapMappingFactory
-                    CalculatedMember calculatedMember2 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    CalculatedMember calculatedMember2 = LevelFactory.eINSTANCE.createCalculatedMember();
                     calculatedMember2.setName("foo");
-                    calculatedMember2.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
+                    calculatedMember2.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                     calculatedMember2.setFormula("Sum(Gender.Members)");
                     calculatedMember2.getCalculatedMemberProperties().add(cmProperty21);
                     calculatedMember2.getCalculatedMemberProperties().add(cmProperty22);
@@ -298,7 +307,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
 
@@ -361,25 +370,24 @@ class SchemaTest {
         class TestHierarchyDefaultMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestHierarchyDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Gender");
                     level.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setDefaultMember("[Gender with default].[All Gender with defaults].[M]");
@@ -387,12 +395,12 @@ class SchemaTest {
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Gender with default");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Gender with default");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -403,7 +411,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -502,38 +510,36 @@ class SchemaTest {
         // EMF version of TestDefaultMemberNameModifier
         class TestDefaultMemberNameModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDefaultMemberNameModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDefaultMemberNameModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create left table query using RolapMappingFactory
-                    TableQuery leftTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    TableSource leftTableQuery = SourceFactory.eINSTANCE.createTableSource();
                     leftTableQuery.setTable(CatalogSupplier.TABLE_PRODUCT);
-
                     // Create left joined query element using RolapMappingFactory
-                    JoinedQueryElement leftElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    JoinedQueryElement leftElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
                     leftElement.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
                     leftElement.setQuery(leftTableQuery);
 
                     // Create right table query using RolapMappingFactory
-                    TableQuery rightTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    TableSource rightTableQuery = SourceFactory.eINSTANCE.createTableSource();
                     rightTableQuery.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-
                     // Create right joined query element using RolapMappingFactory
-                    JoinedQueryElement rightElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    JoinedQueryElement rightElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
                     rightElement.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
                     rightElement.setQuery(rightTableQuery);
 
                     // Create join query using RolapMappingFactory
-                    JoinQuery join = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                    JoinSource join = SourceFactory.eINSTANCE.createJoinSource();
                     join.setLeft(leftElement);
                     join.setRight(rightElement);
 
                     // Create level 1 using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 = LevelFactory.eINSTANCE.createLevel();
                     level1.setName("Product Class");
                     level1.setNameColumn(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
                     level1.setColumn(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
@@ -541,19 +547,19 @@ class SchemaTest {
                     level1.setUniqueMembers(true);
 
                     // Create level 2 using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 = LevelFactory.eINSTANCE.createLevel();
                     level2.setName("Brand Name");
                     level2.setColumn(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
                     level2.setUniqueMembers(false);
 
                     // Create level 3 using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level3 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level3 = LevelFactory.eINSTANCE.createLevel();
                     level3.setName("Product Name");
                     level3.setColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
                     level3.setUniqueMembers(true);
 
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(false);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
                     hierarchy.setQuery(join);
@@ -562,12 +568,12 @@ class SchemaTest {
                     hierarchy.getLevels().add(level3);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Product with no all");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Product with no all");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -578,7 +584,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         };
@@ -655,25 +661,24 @@ class SchemaTest {
         // EMF version of TestHierarchyAbbreviatedDefaultMemberModifier
         class TestHierarchyAbbreviatedDefaultMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestHierarchyAbbreviatedDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyAbbreviatedDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Gender");
                     level.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setDefaultMember("[Gender with default].[F]");
@@ -681,12 +686,12 @@ class SchemaTest {
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Gender with default");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Gender with default");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -699,7 +704,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -766,31 +771,30 @@ class SchemaTest {
         // EMF version of TestHierarchyNoLevelsFailsModifier
         class TestHierarchyNoLevelsFailsModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestHierarchyNoLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyNoLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy without levels using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     // Note: No levels added - this should fail validation
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Gender no levels");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Gender no levels");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -803,7 +807,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -875,32 +879,32 @@ class SchemaTest {
         // EMF version of TestHierarchyNonUniqueLevelsFailsModifier
         class TestHierarchyNonUniqueLevelsFailsModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestHierarchyNonUniqueLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyNonUniqueLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create first level with name "Gender" using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 = LevelFactory.eINSTANCE.createLevel();
                     level1.setName("Gender");
                     level1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
                     level1.setUniqueMembers(true);
 
                     // Create second level with the same name "Gender" using RolapMappingFactory
                     // This is intentional to test duplicate level name validation
-                    org.eclipse.daanse.rolap.mapping.model.Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 = LevelFactory.eINSTANCE.createLevel();
                     level2.setName("Gender");
                     level2.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
                     level2.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
 
                     // Create hierarchy with duplicate level names using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
                     hierarchy.setQuery(tableQuery);
@@ -908,12 +912,12 @@ class SchemaTest {
                     hierarchy.getLevels().add(level2);  // Adding duplicate level name - should fail validation
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Gender dup levels");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Gender dup levels");
                     dimensionConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
                     dimensionConnector.setDimension(standardDimension);
@@ -924,7 +928,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -977,19 +981,19 @@ class SchemaTest {
         // EMF version of TestCountMeasureModifier
         class TestCountMeasureModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestCountMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCountMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create count measure using RolapMappingFactory
-                    CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+                    CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
                     countMeasure.setName("Fact Count");
 
                     // Create measure group using RolapMappingFactory
-                    MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                     measureGroup.getMeasures().add(countMeasure);
 
                     cube.getMeasureGroups().add(measureGroup);
@@ -998,7 +1002,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1086,58 +1090,53 @@ class SchemaTest {
         // EMF version of TestHierarchyTableNotFoundModifier
         class TestHierarchyTableNotFoundModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestHierarchyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create physical columns using RolapMappingFactory
-                    Column yearly_income = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                    Column yearly_income = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     yearly_income.setName("yearly_income");
-                    yearly_income.setType(ColumnType.INTEGER);
+                    yearly_income.setType(SqlSimpleTypes.Sql99.integerType());
 
-                    Column customer_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                    Column customer_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     customer_id.setName("customer_id");
-                    customer_id.setType(ColumnType.INTEGER);
+                    customer_id.setType(SqlSimpleTypes.Sql99.integerType());
 
                     // Create physical table with non-existent name using RolapMappingFactory
-                    PhysicalTable customer_not_found = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                    Table customer_not_found = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                     customer_not_found.setName("customer_not_found");
-                    customer_not_found.getColumns().add(customer_id);
-                    customer_not_found.getColumns().add(yearly_income);
+                    customer_not_found.getFeature().add(customer_id);
+                    customer_not_found.getFeature().add(yearly_income);
 
                     // Set table reference for columns
-                    ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) yearly_income)
-                        .setTable((org.eclipse.daanse.rolap.mapping.model.Table) customer_not_found);
-                    ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) customer_id)
-                        .setTable((org.eclipse.daanse.rolap.mapping.model.Table) customer_not_found);
-
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(yearly_income);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                    tableQuery.setTable((org.eclipse.daanse.rolap.mapping.model.Table) customer_not_found);
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
+                    tableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) customer_not_found);
 
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(customer_id);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income3");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income3");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1148,7 +1147,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1178,7 +1177,7 @@ class SchemaTest {
     void testPrimaryKeyTableNotFound(Context<?> context) {
         /*
         class TestPrimaryKeyTableNotFoundModifier extends PojoMappingModifier {
-            public TestPrimaryKeyTableNotFoundModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestPrimaryKeyTableNotFoundModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -1223,52 +1222,48 @@ class SchemaTest {
         // EMF version of TestPrimaryKeyTableNotFoundModifier
         class TestPrimaryKeyTableNotFoundModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestPrimaryKeyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestPrimaryKeyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create physical column using RolapMappingFactory
-                    PhysicalColumn customer_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                    Column customer_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     customer_id.setName("customer_id");
-                    customer_id.setType(ColumnType.INTEGER);
+                    customer_id.setType(SqlSimpleTypes.Sql99.integerType());
 
                     // Create physical table with non-existent name using RolapMappingFactory
-                    PhysicalTable customer_not_found = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                    Table customer_not_found = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                     customer_not_found.setName("customer_not_found");
-                    customer_not_found.getColumns().add(customer_id);
+                    customer_not_found.getFeature().add(customer_id);
 
                     // Set table reference for column
-                    ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) customer_id)
-                        .setTable((org.eclipse.daanse.rolap.mapping.model.Table) customer_not_found);
-
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory (pointing to existing table)
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory (pointing to existing table)
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy using RolapMappingFactory
                     // Primary key references non-existent table
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(customer_id);  // This column is from non-existent table
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income4");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income4");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1281,7 +1276,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1306,7 +1301,7 @@ class SchemaTest {
     void testLevelTableNotFound(Context<?> context) {
         /*
         class TestLevelTableNotFoundModifier extends PojoMappingModifier {
-            public TestLevelTableNotFoundModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestLevelTableNotFoundModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -1349,52 +1344,48 @@ class SchemaTest {
         // EMF version of TestLevelTableNotFoundModifier
         class TestLevelTableNotFoundModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestLevelTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestLevelTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create physical column using RolapMappingFactory
-                    Column yearly_income = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                    Column yearly_income = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     yearly_income.setName("yearly_income");
-                    yearly_income.setType(ColumnType.INTEGER);
+                    yearly_income.setType(SqlSimpleTypes.Sql99.integerType());
 
                     // Create physical table with non-existent name using RolapMappingFactory
-                    PhysicalTable customer_not_found = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                    Table customer_not_found = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                     customer_not_found.setName("customer_not_found");
-                    customer_not_found.getColumns().add(yearly_income);
+                    customer_not_found.getFeature().add(yearly_income);
 
                     // Set table reference for column
-                    ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) yearly_income)
-                        .setTable((org.eclipse.daanse.rolap.mapping.model.Table) customer_not_found);
-
                     // Create level using RolapMappingFactory
                     // Level column references non-existent table
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(yearly_income);  // This column is from non-existent table
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory (pointing to existing table)
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory (pointing to existing table)
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income5");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income5");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1405,7 +1396,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1432,7 +1423,7 @@ class SchemaTest {
     void testHierarchyBadDefaultMember(Context<?> context) {
         /*
         class TestHierarchyBadDefaultMemberModifier extends PojoMappingModifier {
-            public TestHierarchyBadDefaultMemberModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyBadDefaultMemberModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -1471,25 +1462,24 @@ class SchemaTest {
         // EMF version of TestHierarchyBadDefaultMemberModifier
         class TestHierarchyBadDefaultMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestHierarchyBadDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestHierarchyBadDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Gender");
                     level.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy with bad default member using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setDefaultMember("[Gender with default].[Non].[Existent]");  // Non-existent member
@@ -1497,12 +1487,12 @@ class SchemaTest {
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Gender with default");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Gender with default");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1513,7 +1503,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1552,7 +1542,7 @@ class SchemaTest {
     void testDuplicateTableAlias(Context<?> context) {
         /*
         class TestDuplicateTableAliasModifier extends PojoMappingModifier {
-            public TestDuplicateTableAliasModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDuplicateTableAliasModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -1591,37 +1581,36 @@ class SchemaTest {
         // EMF version of TestDuplicateTableAliasModifier
         class TestDuplicateTableAliasModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDuplicateTableAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDuplicateTableAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CITY_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income2");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income2");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1632,7 +1621,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1669,7 +1658,7 @@ class SchemaTest {
     void testDuplicateTableAliasSameForeignKey(Context<?> context) {
         /*
         class TestDuplicateTableAliasSameForeignKeyModifier extends PojoMappingModifier {
-            public TestDuplicateTableAliasSameForeignKeyModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDuplicateTableAliasSameForeignKeyModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -1709,38 +1698,37 @@ class SchemaTest {
         // EMF version of TestDuplicateTableAliasSameForeignKeyModifier
         class TestDuplicateTableAliasSameForeignKeyModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDuplicateTableAliasSameForeignKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDuplicateTableAliasSameForeignKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income2");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
                     // Same foreign key as primary key
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income2");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1751,7 +1739,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -1793,7 +1781,7 @@ class SchemaTest {
     void testDimensionsShareTable(Context<?> context) {
         /*
         class TestDimensionsShareTableModifier extends PojoMappingModifier {
-            public TestDimensionsShareTableModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareTableModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -1833,38 +1821,38 @@ class SchemaTest {
         // EMF version of TestDimensionsShareTableModifier
         class TestDimensionsShareTableModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery with alias using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource with alias using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
                     tableQuery.setAlias("customerx");  // Important: table alias to avoid conflict
 
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income2");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income2");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -1875,7 +1863,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -2052,7 +2040,7 @@ class SchemaTest {
     void testDimensionsShareTableNativeNonEmptyCrossJoin(Context<?> context) {
         /*
         class TestDimensionsShareTableNativeNonEmptyCrossJoinModifier extends PojoMappingModifier {
-            public TestDimensionsShareTableNativeNonEmptyCrossJoinModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareTableNativeNonEmptyCrossJoinModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -2091,38 +2079,38 @@ class SchemaTest {
         // EMF version of TestDimensionsShareTableNativeNonEmptyCrossJoinModifier
         class TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery with alias using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource with alias using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
                     tableQuery.setAlias("customerx");  // Table alias for native non-empty cross join
 
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income2");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income2");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -2135,7 +2123,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -2172,7 +2160,7 @@ class SchemaTest {
     void testDimensionsShareTableSameForeignKeys(Context<?> context) {
         /*
         class TestDimensionsShareTableSameForeignKeysModifier extends PojoMappingModifier {
-            public TestDimensionsShareTableSameForeignKeysModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareTableSameForeignKeysModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -2212,39 +2200,39 @@ class SchemaTest {
         // EMF version of TestDimensionsShareTableSameForeignKeysModifier
         class TestDimensionsShareTableSameForeignKeysModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Yearly Income");
                     level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
                     level.setUniqueMembers(true);
 
-                    // Create TableQuery with alias using RolapMappingFactory
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource with alias using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
                     tableQuery.setAlias("customerx");  // Table alias with same foreign keys
 
                     // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     standardDimension.setName("Yearly Income2");
                     standardDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector using RolapMappingFactory
                     // Same foreign key as primary key (customer_id)
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Yearly Income2");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(standardDimension);
@@ -2255,7 +2243,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -2327,7 +2315,7 @@ class SchemaTest {
         }
         /*
         class TestSnowflakeHierarchyValidationNotNeededModifier extends PojoMappingModifier{
-            public TestSnowflakeHierarchyValidationNotNeededModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestSnowflakeHierarchyValidationNotNeededModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -2514,170 +2502,160 @@ class SchemaTest {
         // Note: This is a complex snowflake schema test with multiple JOINs
         class TestSnowflakeHierarchyValidationNotNeededModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestSnowflakeHierarchyValidationNotNeededModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestSnowflakeHierarchyValidationNotNeededModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
                 // Create physical columns for region table using RolapMappingFactory
-                Column sales_region = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(ColumnType.VARCHAR);
-                ((org.eclipse.daanse.rolap.mapping.model.PhysicalColumn) sales_region).setCharOctetLength(30);
+                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
-                Column sales_district_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column sales_district_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_district_id.setName("sales_district_id");
-                sales_district_id.setType(ColumnType.INTEGER);
+                sales_district_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-                Column region_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(ColumnType.INTEGER);
+                region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
                 // Create region table using RolapMappingFactory
-                PhysicalTable region = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                Table region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                 region.setName("region");
-                region.getColumns().add(sales_region);
-                region.getColumns().add(sales_district_id);
-                region.getColumns().add(region_id);
+                region.getFeature().add(sales_region);
+                region.getFeature().add(sales_district_id);
+                region.getFeature().add(region_id);
 
                 // Set table references for columns
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) sales_region)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) sales_district_id)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) region_id)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-
                 // Create JOIN j1: region -> promotion using RolapMappingFactory
-                TableQuery regionTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement j1Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement j1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Left.setKey(sales_district_id);
                 j1Left.setQuery(regionTableQuery);
 
-                TableQuery promotionTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 promotionTableQuery.setTable(CatalogSupplier.TABLE_PROMOTION);
-
-                JoinedQueryElement j1Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement j1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Right.setKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 j1Right.setQuery(promotionTableQuery);
 
-                JoinQuery j1 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource j1 = SourceFactory.eINSTANCE.createJoinSource();
                 j1.setLeft(j1Left);
                 j1.setRight(j1Right);
 
                 // Create JOIN join11: store -> j1 using RolapMappingFactory
-                TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-
-                JoinedQueryElement join11Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join11Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Left.setKey((Column) CatalogSupplier.COLUMN_REGION_ID_STORE);
                 join11Left.setQuery(storeTableQuery);
 
-                JoinedQueryElement join11Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join11Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Right.setKey(region_id);
                 join11Right.setQuery(j1);
 
-                JoinQuery join11 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join11 = SourceFactory.eINSTANCE.createJoinSource();
                 join11.setLeft(join11Left);
                 join11.setRight(join11Right);
 
                 // Create JOIN join12: customer -> region using RolapMappingFactory
-                TableQuery customerTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 customerTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
-                JoinedQueryElement join12Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join12Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
                 join12Left.setQuery(customerTableQuery);
 
-                TableQuery regionTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery2.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement join12Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join12Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Right.setKey(region_id);
                 join12Right.setQuery(regionTableQuery2);
 
-                JoinQuery join12 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join12 = SourceFactory.eINSTANCE.createJoinSource();
                 join12.setLeft(join12Left);
                 join12.setRight(join12Right);
 
                 // Create JOIN join21: customer -> region using RolapMappingFactory
-                TableQuery customerTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                customerTableQuery2.setTable((org.eclipse.daanse.rolap.mapping.model.Table) CatalogSupplier.TABLE_CUSTOMER);
+                TableSource customerTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+                customerTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) CatalogSupplier.TABLE_CUSTOMER);
 
-                JoinedQueryElement join21Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join21Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
                 join21Left.setQuery(customerTableQuery2);
 
-                TableQuery regionTableQuery3 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery3.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery3 = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery3.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement join21Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join21Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Right.setKey(region_id);
                 join21Right.setQuery(regionTableQuery3);
 
-                JoinQuery join21 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join21 = SourceFactory.eINSTANCE.createJoinSource();
                 join21.setLeft(join21Left);
                 join21.setRight(join21Right);
 
                 // Create levels for first hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
                 l11.setName("Store Country");
                 l11.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
                 l12.setName("Store Region");
                 l12.setColumn(sales_region);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
                 l13.setName("Store Name");
                 l13.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
 
                 // Create levels for second hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
                 l21.setName("Country");
                 l21.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
                 l21.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
                 l22.setName("Region");
                 l22.setColumn(sales_region);
                 l22.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l23 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l23 = LevelFactory.eINSTANCE.createLevel();
                 l23.setName("City");
                 l23.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
                 l23.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l24 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l24 = LevelFactory.eINSTANCE.createLevel();
                 l24.setName("Name");
                 l24.setColumn((Column) CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 l24.setColumnType(ColumnInternalDataType.NUMERIC);
                 l24.setUniqueMembers(true);
 
                 // Create levels for third hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l31 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l31 = LevelFactory.eINSTANCE.createLevel();
                 l31.setName("Country");
                 l31.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
                 l31.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l32 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l32 = LevelFactory.eINSTANCE.createLevel();
                 l32.setName("Region");
                 l32.setColumn(sales_region);
                 l32.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l33 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l33 = LevelFactory.eINSTANCE.createLevel();
                 l33.setName("City");
                 l33.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
                 l33.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l34 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l34 = LevelFactory.eINSTANCE.createLevel();
                 l34.setName("Name");
                 l34.setColumn( CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 l34.setColumnType(ColumnInternalDataType.NUMERIC);
                 l34.setUniqueMembers(true);
 
                 // Create hierarchies using RolapMappingFactory
-                ExplicitHierarchy h11 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(true);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
                 h11.setQuery(join11);
@@ -2685,7 +2663,7 @@ class SchemaTest {
                 h11.getLevels().add(l12);
                 h11.getLevels().add(l13);
 
-                ExplicitHierarchy h12 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h12 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h12.setName("MyHierarchy");
                 h12.setHasAll(true);
                 h12.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -2695,7 +2673,7 @@ class SchemaTest {
                 h12.getLevels().add(l23);
                 h12.getLevels().add(l24);
 
-                ExplicitHierarchy h21 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h21 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h21.setHasAll(true);
                 h21.setAllMemberName("All Customers");
                 h21.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -2706,42 +2684,42 @@ class SchemaTest {
                 h21.getLevels().add(l34);
 
                 // Create dimensions using RolapMappingFactory
-                StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store");
                 storeDimension.getHierarchies().add(h11);
                 storeDimension.getHierarchies().add(h12);
 
-                DimensionConnector dimension1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector dimension1 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimension1.setOverrideDimensionName("Store");
                 dimension1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 dimension1.setDimension(storeDimension);
 
-                StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 customerDimension.setName("Customers");
                 customerDimension.getHierarchies().add(h21);
 
-                DimensionConnector dimension2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector dimension2 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimension2.setOverrideDimensionName("Customers");
                 dimension2.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 dimension2.setDimension(customerDimension);
 
                 // Create measure using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
 
                 // Create measure group using RolapMappingFactory
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
 
                 // Create cube using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 cube.setName("AliasedDimensionsTesting");
 
-                TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 cube.setQuery(cubeTableQuery);
 
@@ -2754,7 +2732,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -2835,7 +2813,7 @@ class SchemaTest {
     void testSnowflakeHierarchyValidationNotNeeded2(Context<?> context) {
         /*
         class TestSnowflakeHierarchyValidationNotNeeded2Modifier extends PojoMappingModifier {
-            public TestSnowflakeHierarchyValidationNotNeeded2Modifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestSnowflakeHierarchyValidationNotNeeded2Modifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -3018,161 +2996,151 @@ class SchemaTest {
         // Note: Similar to previous but with slightly different join paths
         class TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
                 // Create physical columns for region table using RolapMappingFactory
-                Column sales_region = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(ColumnType.VARCHAR);
-                ((org.eclipse.daanse.rolap.mapping.model.PhysicalColumn) sales_region).setCharOctetLength(30);
+                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
-                Column sales_district_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column sales_district_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_district_id.setName("sales_district_id");
-                sales_district_id.setType(ColumnType.INTEGER);
+                sales_district_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-                Column region_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(ColumnType.INTEGER);
+                region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
                 // Create region table using RolapMappingFactory
-                PhysicalTable region = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                Table region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                 region.setName("region");
-                region.getColumns().add(sales_region);
-                region.getColumns().add(sales_district_id);
-                region.getColumns().add(region_id);
+                region.getFeature().add(sales_region);
+                region.getFeature().add(sales_district_id);
+                region.getFeature().add(region_id);
 
                 // Set table references for columns
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) sales_region)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) sales_district_id)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) region_id)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-
                 // Create JOIN j1: region -> promotion using RolapMappingFactory
-                TableQuery regionTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement j1Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement j1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Left.setKey(sales_district_id);
                 j1Left.setQuery(regionTableQuery);
 
-                TableQuery promotionTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                promotionTableQuery.setTable((org.eclipse.daanse.rolap.mapping.model.Table) CatalogSupplier.TABLE_PROMOTION);
+                TableSource promotionTableQuery = SourceFactory.eINSTANCE.createTableSource();
+                promotionTableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) CatalogSupplier.TABLE_PROMOTION);
 
-                JoinedQueryElement j1Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement j1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Right.setKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 j1Right.setQuery(promotionTableQuery);
 
-                JoinQuery j1 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource j1 = SourceFactory.eINSTANCE.createJoinSource();
                 j1.setLeft(j1Left);
                 j1.setRight(j1Right);
 
                 // Create JOIN join11: store -> j1 using RolapMappingFactory
-                TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-
-                JoinedQueryElement join11Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join11Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Left.setKey(CatalogSupplier.COLUMN_REGION_ID_STORE);
                 join11Left.setQuery(storeTableQuery);
 
-                JoinedQueryElement join11Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join11Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Right.setKey(region_id);
                 join11Right.setQuery(j1);
 
-                JoinQuery join11 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join11 = SourceFactory.eINSTANCE.createJoinSource();
                 join11.setLeft(join11Left);
                 join11.setRight(join11Right);
 
                 // Create JOIN join12: store -> region (different from join11) using RolapMappingFactory
-                TableQuery storeTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource storeTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery2.setTable(CatalogSupplier.TABLE_STORE);
-
-                JoinedQueryElement join12Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join12Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Left.setKey(CatalogSupplier.COLUMN_REGION_ID_STORE);
                 join12Left.setQuery(storeTableQuery2);
 
-                TableQuery regionTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery2.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement join12Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join12Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Right.setKey(region_id);
                 join12Right.setQuery(regionTableQuery2);
 
-                JoinQuery join12 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join12 = SourceFactory.eINSTANCE.createJoinSource();
                 join12.setLeft(join12Left);
                 join12.setRight(join12Right);
 
                 // Create JOIN join21: customer -> region using RolapMappingFactory
-                TableQuery customerTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 customerTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
-                JoinedQueryElement join21Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join21Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
                 join21Left.setQuery(customerTableQuery);
 
-                TableQuery regionTableQuery3 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery3.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery3 = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery3.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement join21Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join21Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Right.setKey(region_id);
                 join21Right.setQuery(regionTableQuery3);
 
-                JoinQuery join21 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join21 = SourceFactory.eINSTANCE.createJoinSource();
                 join21.setLeft(join21Left);
                 join21.setRight(join21Right);
 
                 // Create levels for first hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
                 l11.setName("Store Country");
                 l11.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
                 l12.setName("Store Region");
                 l12.setColumn(sales_region);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
                 l13.setName("Store Name");
                 l13.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
 
                 // Create levels for second hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
                 l21.setName("Store Country");
                 l21.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
                 l22.setName("Store Region");
                 l22.setColumn(sales_region);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l23 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l23 = LevelFactory.eINSTANCE.createLevel();
                 l23.setName("Store Name");
                 l23.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
 
                 // Create levels for third hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l31 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l31 = LevelFactory.eINSTANCE.createLevel();
                 l31.setName("Country");
                 l31.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
                 l31.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l32 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l32 = LevelFactory.eINSTANCE.createLevel();
                 l32.setName("Region");
                 l32.setColumn(sales_region);
                 l32.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l33 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l33 = LevelFactory.eINSTANCE.createLevel();
                 l33.setName("City");
                 l33.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
                 l33.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l34 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l34 = LevelFactory.eINSTANCE.createLevel();
                 l34.setName("Name");
                 l34.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 l34.setColumnType(ColumnInternalDataType.NUMERIC);
                 l34.setUniqueMembers(true);
 
                 // Create hierarchies using RolapMappingFactory
-                ExplicitHierarchy h11 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(true);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
                 h11.setQuery(join11);
@@ -3180,7 +3148,7 @@ class SchemaTest {
                 h11.getLevels().add(l12);
                 h11.getLevels().add(l13);
 
-                ExplicitHierarchy h12 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h12 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h12.setName("MyHierarchy");
                 h12.setHasAll(true);
                 h12.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
@@ -3189,7 +3157,7 @@ class SchemaTest {
                 h12.getLevels().add(l22);
                 h12.getLevels().add(l23);
 
-                ExplicitHierarchy h21 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h21 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h21.setHasAll(true);
                 h21.setAllMemberName("All Customers");
                 h21.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -3200,47 +3168,47 @@ class SchemaTest {
                 h21.getLevels().add(l34);
 
                 // Create dimensions using RolapMappingFactory
-                StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store");
                 storeDimension.getHierarchies().add(h11);
                 storeDimension.getHierarchies().add(h12);
 
-                DimensionConnector dimension1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector dimension1 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimension1.setOverrideDimensionName("Store");
                 dimension1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 dimension1.setDimension(storeDimension);
 
-                StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 customerDimension.setName("Customers");
                 customerDimension.getHierarchies().add(h21);
 
-                DimensionConnector dimension2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector dimension2 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimension2.setOverrideDimensionName("Customers");
                 dimension2.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 dimension2.setDimension(customerDimension);
 
                 // Create measure using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
 
                 // Create measure group using RolapMappingFactory
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
 
                 // Create aggregation exclude using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude =
-                    RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude =
+                    AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude.setPattern("agg_lc_06_sales_fact_1997");
 
                 // Create cube using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 cube.setName("AliasedDimensionsTesting");
 
-                TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 cubeTableQuery.getAggregationExcludes().add(aggExclude);
                 cube.setQuery(cubeTableQuery);
@@ -3254,7 +3222,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -3336,7 +3304,7 @@ class SchemaTest {
     void testDimensionsShareJoinTable(Context<?> context) {
         /*
         class TestDimensionsShareJoinTableModifier extends PojoMappingModifier {
-            public TestDimensionsShareJoinTableModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareJoinTableModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -3480,68 +3448,63 @@ class SchemaTest {
         // EMF version of TestDimensionsShareJoinTableModifier
         class TestDimensionsShareJoinTableModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestDimensionsShareJoinTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareJoinTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
                 // Create physical columns for region table using RolapMappingFactory
-                Column region_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(ColumnType.INTEGER);
+                region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-                Column sales_region = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(ColumnType.VARCHAR);
-                ((org.eclipse.daanse.rolap.mapping.model.PhysicalColumn) sales_region).setCharOctetLength(30);
+                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
                 // Create region table using RolapMappingFactory
-                PhysicalTable region = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                Table region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                 region.setName("region");
-                region.getColumns().add(region_id);
-                region.getColumns().add(sales_region);
+                region.getFeature().add(region_id);
+                region.getFeature().add(sales_region);
 
                 // Set table references for columns
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) region_id)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-                ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) sales_region)
-                    .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-
                 // Create JOIN join1: store -> region using RolapMappingFactory
-                TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                storeTableQuery.setTable((org.eclipse.daanse.rolap.mapping.model.Table) CatalogSupplier.TABLE_STORE);
+                TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
+                storeTableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) CatalogSupplier.TABLE_STORE);
 
-                JoinedQueryElement join1Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join1Left.setKey((Column) CatalogSupplier.COLUMN_REGION_ID_STORE);
                 join1Left.setQuery(storeTableQuery);
 
-                TableQuery regionTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery1.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery1.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement join1Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join1Right.setKey(region_id);
                 join1Right.setQuery(regionTableQuery1);
 
-                JoinQuery join1 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join1 = SourceFactory.eINSTANCE.createJoinSource();
                 join1.setLeft(join1Left);
                 join1.setRight(join1Right);
 
                 // Create levels for first hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
                 l11.setName("Store Country");
                 l11.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 l11.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
                 l12.setName("Store Region");
                 l12.setColumn(sales_region);
                 l12.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
                 l13.setName("Store Name");
                 l13.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
                 l13.setUniqueMembers(true);
 
                 // Create first hierarchy using RolapMappingFactory
-                ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h1.setHasAll(true);
                 h1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
                 h1.setQuery(join1);
@@ -3550,48 +3513,48 @@ class SchemaTest {
                 h1.getLevels().add(l13);
 
                 // Create JOIN join2: customer -> region using RolapMappingFactory
-                TableQuery customerTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                customerTableQuery.setTable((org.eclipse.daanse.rolap.mapping.model.Table) CatalogSupplier.TABLE_CUSTOMER);
+                TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
+                customerTableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) CatalogSupplier.TABLE_CUSTOMER);
 
-                JoinedQueryElement join2Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join2Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join2Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
                 join2Left.setQuery(customerTableQuery);
 
-                TableQuery regionTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-                regionTableQuery2.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+                TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+                regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
-                JoinedQueryElement join2Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement join2Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join2Right.setKey(region_id);
                 join2Right.setQuery(regionTableQuery2);
 
-                JoinQuery join2 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource join2 = SourceFactory.eINSTANCE.createJoinSource();
                 join2.setLeft(join2Left);
                 join2.setRight(join2Right);
 
                 // Create levels for second hierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
                 l21.setName("Country");
                 l21.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
                 l21.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
                 l22.setName("Region");
                 l22.setColumn(sales_region);
                 l22.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l23 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l23 = LevelFactory.eINSTANCE.createLevel();
                 l23.setName("City");
                 l23.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
                 l23.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l24 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l24 = LevelFactory.eINSTANCE.createLevel();
                 l24.setName("Name");
                 l24.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 l24.setColumnType(ColumnInternalDataType.NUMERIC);
                 l24.setUniqueMembers(true);
 
                 // Create second hierarchy using RolapMappingFactory
-                ExplicitHierarchy h2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h2.setHasAll(true);
                 h2.setAllMemberName("All Customers");
                 h2.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -3602,52 +3565,52 @@ class SchemaTest {
                 h2.getLevels().add(l24);
 
                 // Create dimensions using RolapMappingFactory
-                StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store");
                 storeDimension.getHierarchies().add(h1);
 
-                DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d1.setOverrideDimensionName("Store");
                 d1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 d1.setDimension(storeDimension);
 
-                StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 customerDimension.getHierarchies().add(h2);
 
-                DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d2.setOverrideDimensionName("Customers");
                 d2.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 d2.setDimension(customerDimension);
 
                 // Create measures using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
 
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 storeSalesMeasure.setName("Store Sales");
                 storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
                 storeSalesMeasure.setFormatString("#,###.00");
 
                 // Create measure group using RolapMappingFactory
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
                 measureGroup.getMeasures().add(storeSalesMeasure);
 
                 // Create aggregation exclude using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude =
-                    RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude =
+                    AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude.setPattern("agg_lc_06_sales_fact_1997");
 
                 // Create cube using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 cube.setName("AliasedDimensionsTesting");
 
-                TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 cubeTableQuery.getAggregationExcludes().add(aggExclude);
                 cube.setQuery(cubeTableQuery);
@@ -3660,7 +3623,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -3734,7 +3697,7 @@ class SchemaTest {
     void testDimensionsShareJoinTableOneAlias(Context<?> context) {
         /*
         class TestDimensionsShareJoinTableOneAliasModifier extends PojoMappingModifier {
-            public TestDimensionsShareJoinTableOneAliasModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareJoinTableOneAliasModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -3926,79 +3889,74 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Customers].[USA].[South West]}\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[South West]}\n"
+            + "{[Store].[Store].[USA].[South West]}\n"
             + "Row #0: 72,631\n");
     }
 
     // EMF version of TestDimensionsShareJoinTableOneAliasModifier
     class TestDimensionsShareJoinTableOneAliasModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestDimensionsShareJoinTableOneAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestDimensionsShareJoinTableOneAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
 
             // Create physical columns for region table using RolapMappingFactory
-            Column region_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             region_id.setName("region_id");
-            region_id.setType(ColumnType.INTEGER);
+            region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-            Column sales_region = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             sales_region.setName("sales_region");
-            sales_region.setType(ColumnType.VARCHAR);
-            ((org.eclipse.daanse.rolap.mapping.model.PhysicalColumn) sales_region).setCharOctetLength(30);
+            sales_region.setType(SqlSimpleTypes.varcharType(255));
+            // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
             // Create region table using RolapMappingFactory
-            PhysicalTable region = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Table region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             region.setName("region");
-            region.getColumns().add(region_id);
-            region.getColumns().add(sales_region);
+            region.getFeature().add(region_id);
+            region.getFeature().add(sales_region);
 
             // Set table references for columns
-            ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) region_id)
-                .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-            ((org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl) sales_region)
-                .setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
-
             // Create JOIN join1: store -> region (without alias) using RolapMappingFactory
-            TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
 
-            JoinedQueryElement join1Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_REGION_ID_STORE));
             join1Left.setQuery(storeTableQuery);
 
-            TableQuery regionTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
-            regionTableQuery1.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+            TableSource regionTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
+            regionTableQuery1.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
             // No alias for join1
 
-            JoinedQueryElement join1Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Right.setKey(region_id);
             join1Right.setQuery(regionTableQuery1);
 
-            JoinQuery join1 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource join1 = SourceFactory.eINSTANCE.createJoinSource();
             join1.setLeft(join1Left);
             join1.setRight(join1Right);
 
             // Create levels for first hierarchy using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
             l11.setName("Store Country");
-            l11.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE));
+            l11.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
             l11.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
             l12.setName("Store Region");
             l12.setColumn(sales_region);
             l12.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
             l13.setName("Store Name");
             l13.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
             l13.setUniqueMembers(true);
 
             // Create first hierarchy using RolapMappingFactory
-            ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
             h1.setQuery(join1);
@@ -4007,51 +3965,51 @@ class SchemaTest {
             h1.getLevels().add(l13);
 
             // Create JOIN join2: customer -> region (WITH alias "customer_region") using RolapMappingFactory
-            TableQuery customerTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customerTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
 
-            JoinedQueryElement join2Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join2Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER));
             join2Left.setQuery(customerTableQuery);
 
-            TableQuery regionTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-            regionTableQuery2.setTable((org.eclipse.daanse.rolap.mapping.model.Table) region);
+            TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+            regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
             regionTableQuery2.setAlias("customer_region");  // Important: alias for customer hierarchy
 
-            JoinedQueryElement join2Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join2Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Right.setKey(region_id);
             join2Right.setQuery(regionTableQuery2);
 
-            JoinQuery join2 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource join2 = SourceFactory.eINSTANCE.createJoinSource();
             join2.setLeft(join2Left);
             join2.setRight(join2Right);
 
             // Create levels for second hierarchy using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
             l21.setName("Country");
             l21.setColumn((Column) copier.get(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER));
             l21.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
             l22.setName("Region");
             // Note: Level uses column from aliased table but doesn't specify table name
             // This is the source of the issue mentioned in the comments
             l22.setColumn(sales_region);
             l22.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l23 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l23 = LevelFactory.eINSTANCE.createLevel();
             l23.setName("City");
             l23.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CITY_CUSTOMER));
             l23.setUniqueMembers(false);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l24 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l24 = LevelFactory.eINSTANCE.createLevel();
             l24.setName("Name");
             l24.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
             l24.setColumnType(ColumnInternalDataType.NUMERIC);
             l24.setUniqueMembers(true);
 
             // Create second hierarchy using RolapMappingFactory
-            ExplicitHierarchy h2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h2.setHasAll(true);
             h2.setAllMemberName("All Customers");
             h2.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
@@ -4062,53 +4020,53 @@ class SchemaTest {
             h2.getLevels().add(l24);
 
             // Create dimensions using RolapMappingFactory
-            StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeDimension.setName("Store");
             storeDimension.getHierarchies().add(h1);
 
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store");
             d1.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
             d1.setDimension(storeDimension);
 
-            StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customerDimension.setName("Customers");
             customerDimension.getHierarchies().add(h2);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Customers");
             d2.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             d2.setDimension(customerDimension);
 
             // Create measures using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             unitSalesMeasure.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT));
             storeSalesMeasure.setFormatString("#,###.00");
 
             // Create measure group using RolapMappingFactory
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeSalesMeasure);
 
             // Create aggregation exclude using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude =
-                RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude =
+                AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude.setPattern("agg_lc_06_sales_fact_1997");
 
             // Create cube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
 
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             cubeTableQuery.getAggregationExcludes().add(aggExclude);
             cube.setQuery(cubeTableQuery);
@@ -4121,7 +4079,7 @@ class SchemaTest {
 
         }
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -4139,7 +4097,7 @@ class SchemaTest {
     void testDimensionsShareJoinTableTwoAliases(Context<?> context) {
         /*
         class TestDimensionsShareJoinTableTwoAliasesModifier extends PojoMappingModifier {
-            public TestDimensionsShareJoinTableTwoAliasesModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionsShareJoinTableTwoAliasesModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -4331,80 +4289,80 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Customers].[USA].[South West]}\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[South West]}\n"
+            + "{[Store].[Store].[USA].[South West]}\n"
             + "Row #0: 72,631\n");
     }
 
     private static class TestDimensionsShareJoinTableTwoAliasesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestDimensionsShareJoinTableTwoAliasesModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestDimensionsShareJoinTableTwoAliasesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create physical table and columns for region
-            PhysicalTable regionTable = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Table regionTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             regionTable.setName("region");
 
-            PhysicalColumn region_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             region_id.setName("region_id");
-            region_id.setType(ColumnType.INTEGER);
+            region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-            PhysicalColumn sales_region = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             sales_region.setName("sales_region");
-            sales_region.setType(ColumnType.VARCHAR);
-            sales_region.setCharOctetLength(30);
+            sales_region.setType(SqlSimpleTypes.varcharType(255));
+            // sales_region.setCharOctetLength(30);
 
-            //if (region_id instanceof org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl pc1) {
+            //if (region_id instanceof org.eclipse.daanse.cwm.model.cwm.resource.relational.Column pc1) {
             //    pc1.setTable(regionTable);
             //}
-            //if (sales_region instanceof org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl pc2) {
+            //if (sales_region instanceof org.eclipse.daanse.cwm.model.cwm.resource.relational.Column pc2) {
             //    pc2.setTable(regionTable);
             //}
 
-            regionTable.getColumns().add(region_id);
-            regionTable.getColumns().add(sales_region);
+            regionTable.getFeature().add(region_id);
+            regionTable.getFeature().add(sales_region);
 
             // Create join1 for Store hierarchy with "store_region" alias
-            TableQuery tableQuery1Left = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery1Left = SourceFactory.eINSTANCE.createTableSource();
             tableQuery1Left.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
 
-            JoinedQueryElement join1Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_REGION_ID_STORE));
             join1Left.setQuery(tableQuery1Left);
 
-            TableQuery tableQuery1Right = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery1Right = SourceFactory.eINSTANCE.createTableSource();
             tableQuery1Right.setTable(regionTable);
             tableQuery1Right.setAlias("store_region");
 
-            JoinedQueryElement join1Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Right.setKey(region_id);
             join1Right.setQuery(tableQuery1Right);
 
-            JoinQuery join1 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource join1 = SourceFactory.eINSTANCE.createJoinSource();
             join1.setLeft(join1Left);
             join1.setRight(join1Right);
 
             // Create levels for Store hierarchy
-            org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
             l11.setName("Store Country");
             l11.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
             l11.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
             l12.setName("Store Region");
             //NOTE: test have issue with alias and Level. we have hierarchy with inner join.
             //Left join have alias with "store_region". Level of hierarchy use table (reference) without alias with table name "region".
             l12.setColumn(sales_region);
             l12.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
             l13.setName("Store Name");
             l13.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
             l13.setUniqueMembers(true);
 
             // Create Store hierarchy
-            ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
             h1.setQuery(join1);
@@ -4413,51 +4371,51 @@ class SchemaTest {
             h1.getLevels().add(l13);
 
             // Create join2 for Customer hierarchy with "customer_region" alias
-            TableQuery tableQuery2Left = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery2Left = SourceFactory.eINSTANCE.createTableSource();
             tableQuery2Left.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
 
-            JoinedQueryElement join2Left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join2Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER));
             join2Left.setQuery(tableQuery2Left);
 
-            TableQuery tableQuery2Right = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery2Right = SourceFactory.eINSTANCE.createTableSource();
             tableQuery2Right.setTable(regionTable);
             tableQuery2Right.setAlias("customer_region");
 
-            JoinedQueryElement join2Right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement join2Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Right.setKey(region_id);
             join2Right.setQuery(tableQuery2Right);
 
-            JoinQuery join2 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource join2 = SourceFactory.eINSTANCE.createJoinSource();
             join2.setLeft(join2Left);
             join2.setRight(join2Right);
 
             // Create levels for Customer hierarchy
-            org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
             l21.setName("Country");
             l21.setColumn((Column) copier.get(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER));
             l21.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
             l22.setName("Region");
             //NOTE: test have issue with alias and Level. we have hierarchy with inner join.
             //Right join have alias with "customer_region". Level of hierarchy use table (reference) without alias with table name "region".
             l22.setColumn(sales_region);
             l22.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l23 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l23 = LevelFactory.eINSTANCE.createLevel();
             l23.setName("City");
             l23.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CITY_CUSTOMER));
             l23.setUniqueMembers(false);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l24 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l24 = LevelFactory.eINSTANCE.createLevel();
             l24.setName("Name");
             l24.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
             l24.setColumnType(ColumnInternalDataType.NUMERIC);
             l24.setUniqueMembers(true);
 
             // Create Customer hierarchy
-            ExplicitHierarchy h2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h2.setHasAll(true);
             h2.setAllMemberName("All Customers");
             h2.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
@@ -4468,50 +4426,50 @@ class SchemaTest {
             h2.getLevels().add(l24);
 
             // Create Store dimension
-            StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeDimension.setName("Store");
             storeDimension.getHierarchies().add(h1);
 
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store");
             d1.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
             d1.setDimension(storeDimension);
 
             // Create Customers dimension
-            StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customerDimension.getHierarchies().add(h2);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Customers");
             d2.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             d2.setDimension(customerDimension);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Unit Sales");
             measure1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             measure1.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Store Sales");
             measure2.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT));
             measure2.setFormatString("#,###.00");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create aggregation exclude
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude.setPattern("agg_lc_06_sales_fact_1997");
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             cubeTableQuery.getAggregationExcludes().add(aggExclude);
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -4523,7 +4481,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -4537,7 +4495,7 @@ class SchemaTest {
     void testTwoAliasesDimensionsShareTable(Context<?> context) {
         /*
         class TestTwoAliasesDimensionsShareTableModifier extends PojoMappingModifier {
-            public TestTwoAliasesDimensionsShareTableModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestTwoAliasesDimensionsShareTableModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -4707,49 +4665,49 @@ class SchemaTest {
 
     private static class TestTwoAliasesDimensionsShareTableModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestTwoAliasesDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestTwoAliasesDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create physical table and columns for region (not used in this test)
-            PhysicalTable regionTable = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Table regionTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             regionTable.setName("region");
 
-            PhysicalColumn region_id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             region_id.setName("region_id");
-            region_id.setType(ColumnType.INTEGER);
+            region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-            PhysicalColumn sales_region = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             sales_region.setName("sales_region");
-            sales_region.setType(ColumnType.VARCHAR);
-            sales_region.setCharOctetLength(30);
+            sales_region.setType(SqlSimpleTypes.varcharType(255));
+            // sales_region.setCharOctetLength(30);
 
-            if (region_id instanceof org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl pc1) {
-                pc1.setTable(regionTable);
+            if (region_id instanceof org.eclipse.daanse.cwm.model.cwm.resource.relational.Column pc1) {
+                regionTable.getFeature().add(pc1);
             }
-            if (sales_region instanceof org.eclipse.daanse.rolap.mapping.model.impl.PhysicalColumnImpl pc2) {
-                pc2.setTable(regionTable);
+            if (sales_region instanceof org.eclipse.daanse.cwm.model.cwm.resource.relational.Column pc2) {
+                regionTable.getFeature().add(pc2);
             }
 
-            regionTable.getColumns().add(region_id);
-            regionTable.getColumns().add(sales_region);
+            regionTable.getFeature().add(region_id);
+            regionTable.getFeature().add(sales_region);
 
             // Create levels for StoreA hierarchy
-            org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
             l11.setName("Store Country");
             l11.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
             l11.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
             l12.setName("Store Name");
             l12.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
             l12.setUniqueMembers(true);
 
             // Create StoreA hierarchy with alias "storea"
-            TableQuery tableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery1 = SourceFactory.eINSTANCE.createTableSource();
             tableQuery1.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
             tableQuery1.setAlias("storea");
 
-            ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
             h1.setQuery(tableQuery1);
@@ -4757,22 +4715,22 @@ class SchemaTest {
             h1.getLevels().add(l12);
 
             // Create levels for StoreB hierarchy
-            org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
             l21.setName("Country");
             l21.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
             l21.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
             l22.setName("Store Name");
             l22.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
             l22.setUniqueMembers(true);
 
             // Create StoreB hierarchy with alias "storeb"
-            TableQuery tableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             tableQuery2.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
             tableQuery2.setAlias("storeb");
 
-            ExplicitHierarchy h2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h2.setHasAll(true);
             h2.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
             h2.setQuery(tableQuery2);
@@ -4780,49 +4738,49 @@ class SchemaTest {
             h2.getLevels().add(l22);
 
             // Create StoreA dimension
-            StandardDimension storeADimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeADimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeADimension.setName("StoreA");
             storeADimension.getHierarchies().add(h1);
 
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("StoreA");
             d1.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT));
             d1.setDimension(storeADimension);
 
             // Create StoreB dimension
-            StandardDimension storeBDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeBDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeBDimension.setName("StoreB");
             storeBDimension.getHierarchies().add(h2);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("StoreB");
             d2.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT));
             d2.setDimension(storeBDimension);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Store Invoice");
             measure1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_INVOICE_INVENTORY_FACT));
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Supply Time");
             measure2.setColumn((Column) copier.get(CatalogSupplier.COLUMN_SUPPLY_TIME_INVENTORY_FACT));
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure3 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure3 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure3.setName("Warehouse Cost");
             measure3.setColumn((Column) copier.get(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT));
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
             measureGroup.getMeasures().add(measure3);
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_INVENTORY_FACT));
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
             cube.setDefaultMeasure(measure2);
             cube.setQuery(cubeTableQuery);
@@ -4834,7 +4792,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -4848,7 +4806,7 @@ class SchemaTest {
     void testTwoAliasesDimensionsShareTableSameForeignKeys(Context<?> context) {
         /*
         class TestTwoAliasesDimensionsShareTableSameForeignKeysModifier extends PojoMappingModifier {
-            public TestTwoAliasesDimensionsShareTableSameForeignKeysModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestTwoAliasesDimensionsShareTableSameForeignKeysModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -5004,26 +4962,26 @@ class SchemaTest {
 
     private static class TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create levels for StoreA hierarchy
-            org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
             l11.setName("Store Country");
             l11.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             l11.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
             l12.setName("Store Name");
             l12.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
             l12.setUniqueMembers(true);
 
             // Create StoreA hierarchy with alias "storea"
-            TableQuery tableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery1 = SourceFactory.eINSTANCE.createTableSource();
             tableQuery1.setTable(CatalogSupplier.TABLE_STORE);
             tableQuery1.setAlias("storea");
 
-            ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             h1.setQuery(tableQuery1);
@@ -5031,22 +4989,22 @@ class SchemaTest {
             h1.getLevels().add(l12);
 
             // Create levels for StoreB hierarchy
-            org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
             l21.setName("Store Country");
             l21.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             l21.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
             l22.setName("Store Name");
             l22.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
             l22.setUniqueMembers(true);
 
             // Create StoreB hierarchy with alias "storeb"
-            TableQuery tableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             tableQuery2.setTable(CatalogSupplier.TABLE_STORE);
             tableQuery2.setAlias("storeb");
 
-            ExplicitHierarchy h2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h2.setHasAll(true);
             h2.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             h2.setQuery(tableQuery2);
@@ -5054,49 +5012,48 @@ class SchemaTest {
             h2.getLevels().add(l22);
 
             // Create StoreA dimension
-            StandardDimension storeADimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeADimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeADimension.setName("StoreA");
             storeADimension.getHierarchies().add(h1);
 
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("StoreA");
             d1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
             d1.setDimension(storeADimension);
 
             // Create StoreB dimension
-            StandardDimension storeBDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeBDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeBDimension.setName("StoreB");
             storeBDimension.getHierarchies().add(h2);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("StoreB");
             d2.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
             d2.setDimension(storeBDimension);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Store Invoice");
             measure1.setColumn(CatalogSupplier.COLUMN_STORE_INVOICE_INVENTORY_FACT);
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Supply Time");
             measure2.setColumn(CatalogSupplier.COLUMN_SUPPLY_TIME_INVENTORY_FACT);
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure3 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure3 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure3.setName("Warehouse Cost");
             measure3.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
             measureGroup.getMeasures().add(measure3);
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
-
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
             cube.setDefaultMeasure(measure2);
             cube.setQuery(cubeTableQuery);
@@ -5108,7 +5065,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -5121,7 +5078,7 @@ class SchemaTest {
     void testMultipleDimensionUsages(Context<?> context) {
         /*
         class TestMultipleDimensionUsagesModifier extends PojoMappingModifier {
-            public TestMultipleDimensionUsagesModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestMultipleDimensionUsagesModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -5220,55 +5177,55 @@ class SchemaTest {
 
     private static class TestMultipleDimensionUsagesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestMultipleDimensionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestMultipleDimensionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connectors for Time, Time2, and Store
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Time2");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d2.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-            DimensionConnector d3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store");
             d3.setDimension(CatalogSupplier.DIMENSION_STORE);
             d3.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Unit Sales");
             measure1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure1.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Store Cost");
             measure2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             measure2.setFormatString("#,###.00");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create aggregation excludes
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_10_sales_fact_1997");
 
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_g_ms_pcat_sales_fact_1997");
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             cubeTableQuery.getAggregationExcludes().add(aggExclude1);
             cubeTableQuery.getAggregationExcludes().add(aggExclude2);
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Dimensions");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -5281,7 +5238,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -5295,7 +5252,7 @@ class SchemaTest {
     void testMultipleDimensionHierarchyCaptionUsages(Context<?> context) {
         /*
         class TestMultipleDimensionHierarchyCaptionUsagesModifier extends PojoMappingModifier {
-            public TestMultipleDimensionHierarchyCaptionUsagesModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestMultipleDimensionHierarchyCaptionUsagesModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -5403,57 +5360,57 @@ class SchemaTest {
 
     private static class TestMultipleDimensionHierarchyCaptionUsagesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestMultipleDimensionHierarchyCaptionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestMultipleDimensionHierarchyCaptionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connectors for Time, Time2, and Store
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
             // NOTE: caption doesn't support now
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Time2");
             // NOTE: caption doesn't support now
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d2.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-            DimensionConnector d3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store");
-            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d3.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Unit Sales");
             measure1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure1.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Store Cost");
             measure2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             measure2.setFormatString("#,###.00");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create aggregation excludes
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_10_sales_fact_1997");
 
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_g_ms_pcat_sales_fact_1997");
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             cubeTableQuery.getAggregationExcludes().add(aggExclude1);
             cubeTableQuery.getAggregationExcludes().add(aggExclude2);
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Dimensions");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -5465,7 +5422,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -5480,7 +5437,7 @@ class SchemaTest {
     void testDimensionCreation(Context<?> context) {
         /*
         class TestDimensionCreationModifier extends PojoMappingModifier {
-            public TestDimensionCreationModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionCreationModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -5561,41 +5518,40 @@ class SchemaTest {
 
     private static class TestDimensionCreationModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestDimensionCreationModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestDimensionCreationModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connectors for Store and Time
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Time");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d2.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Unit Sales");
             measure1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure1.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Store Cost");
             measure2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             measure2.setFormatString("#,###.00");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Create Dimension");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -5607,7 +5563,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -5620,7 +5576,7 @@ class SchemaTest {
     void testDimensionUsageLevel(Context<?> context) {
         /*
         class TestDimensionUsageLevelModifier extends PojoMappingModifier {
-            public TestDimensionUsageLevelModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDimensionUsageLevelModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -5722,35 +5678,34 @@ class SchemaTest {
 
     private static class TestDimensionUsageLevelModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestDimensionUsageLevelModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestDimensionUsageLevelModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connector for Store with level attribute
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d1.setLevel(CatalogSupplier.LEVEL_STORE_STATE);
             d1.setForeignKey(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Cars");
             measure1.setColumn(CatalogSupplier.COLUMN_NUM_CARS_OWNED_CUSTOMER);
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Children");
             measure2.setColumn(CatalogSupplier.COLUMN_TOTAL_CHILDREN_CUSTOMER);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Customer Usage Level");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -5760,7 +5715,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -5775,7 +5730,7 @@ class SchemaTest {
     void testAllMemberMultipleDimensionUsages(Context<?> context) {
         /*
         class TestAllMemberMultipleDimensionUsagesModifier extends PojoMappingModifier {
-            public TestAllMemberMultipleDimensionUsagesModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestAllMemberMultipleDimensionUsagesModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -5898,21 +5853,20 @@ class SchemaTest {
 
     private static class TestAllMemberMultipleDimensionUsagesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestAllMemberMultipleDimensionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestAllMemberMultipleDimensionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connector for Store (first usage)
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store");
             // NOTE: caption doesn't support now
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d1.setForeignKey(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
 
             // Create hierarchy for Store2 dimension
-            TableQuery hierarchyTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource hierarchyTableQuery = SourceFactory.eINSTANCE.createTableSource();
             hierarchyTableQuery.setTable(CatalogSupplier.TABLE_STORE_RAGGED);
-
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setName("Store");
             hierarchy.setHasAll(true);
             hierarchy.setAllMemberName("All Stores");
@@ -5924,37 +5878,36 @@ class SchemaTest {
             hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_NAME);
 
             // Create Store2 dimension
-            StandardDimension store2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension store2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             store2Dimension.setName("Store2");
             store2Dimension.getHierarchies().add(hierarchy);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Store2");
             // NOTE: caption doesn't support now
             d2.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             d2.setDimension(store2Dimension);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Unit Sales");
             measure1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure1.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Store Cost");
             measure2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             measure2.setFormatString("#,###.00");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Sales Dimensions");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -5965,7 +5918,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -5979,7 +5932,7 @@ class SchemaTest {
     void testNonAliasedDimensionUsage(Context<?> context) {
         /*
         class TestNonAliasedDimensionUsageModifier extends PojoMappingModifier {
-            public TestNonAliasedDimensionUsageModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestNonAliasedDimensionUsageModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -6062,41 +6015,40 @@ class SchemaTest {
 
     private static class TestNonAliasedDimensionUsageModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestNonAliasedDimensionUsageModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestNonAliasedDimensionUsageModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connectors
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time2");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Store");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d2.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Unit Sales");
             measure1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure1.setFormatString("Standard");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Store Cost");
             measure2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             measure2.setFormatString("#,###.00");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create table query for cube
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Dimensions");
             cube.setQuery(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
@@ -6107,7 +6059,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -6121,7 +6073,7 @@ class SchemaTest {
     void testViewDegenerateDims(Context<?> context) {
         /*
         class TestViewDegenerateDimsModifier extends PojoMappingModifier {
-            public TestViewDegenerateDimsModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestViewDegenerateDimsModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -6298,138 +6250,138 @@ class SchemaTest {
 
     private static class TestViewDegenerateDimsModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestViewDegenerateDimsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestViewDegenerateDimsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connectors for Time, Product, and Store
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Product");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_PRODUCT));
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_PRODUCT));
             d2.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
 
-            DimensionConnector d3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store");
-            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d3.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
 
             // Create warehouse_id column for Warehouse dimension
-            PhysicalColumn warehouseIdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column warehouseIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             warehouseIdColumn.setName("warehouse_id");
-            warehouseIdColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+            warehouseIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
             // Create SQL view for Warehouse hierarchy
-            org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery sqlView1 = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource sqlView1 = SourceFactory.eINSTANCE.createSqlSelectSource();
             sqlView1.setAlias("FACT");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlView sqlViewDef1 = RolapMappingFactory.eINSTANCE.createSqlView();
-            sqlViewDef1.getColumns().add(warehouseIdColumn);
+            org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlViewDef1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+            sqlViewDef1.getFeature().add(warehouseIdColumn);
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt1a = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1a = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1a.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt1a.getDialects().add("generic");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt1b = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1b = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1b.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt1b.getDialects().add("oracle");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt1c = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1c = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1c.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt1c.getDialects().add("mysql");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt1d = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1d = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1d.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt1d.getDialects().add("infobright");
 
-            sqlViewDef1.getSqlStatements().add(stmt1a);
-            sqlViewDef1.getSqlStatements().add(stmt1b);
-            sqlViewDef1.getSqlStatements().add(stmt1c);
-            sqlViewDef1.getSqlStatements().add(stmt1d);
+            sqlViewDef1.getDialectStatements().add(stmt1a);
+            sqlViewDef1.getDialectStatements().add(stmt1b);
+            sqlViewDef1.getDialectStatements().add(stmt1c);
+            sqlViewDef1.getDialectStatements().add(stmt1d);
 
             sqlView1.setSql(sqlViewDef1);
 
             // Create Warehouse dimension with degenerate dimension
-            org.eclipse.daanse.rolap.mapping.model.Level warehouseLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level warehouseLevel = LevelFactory.eINSTANCE.createLevel();
             warehouseLevel.setName("Warehouse ID");
             warehouseLevel.setColumn(warehouseIdColumn);
             warehouseLevel.setUniqueMembers(true);
-            warehouseLevel.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+            warehouseLevel.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
 
-            ExplicitHierarchy warehouseHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy warehouseHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             warehouseHierarchy.setQuery(sqlView1);
             warehouseHierarchy.getLevels().add(warehouseLevel);
 
-            StandardDimension warehouseDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension warehouseDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             warehouseDimension.setName("Warehouse");
             warehouseDimension.getHierarchies().add(warehouseHierarchy);
 
-            DimensionConnector d4 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d4 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d4.setOverrideDimensionName("Warehouse");
             d4.setDimension(warehouseDimension);
 
             // Create columns for measures
-            PhysicalColumn warehouseCostColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column warehouseCostColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             warehouseCostColumn.setName("warehouse_cost");
-            warehouseCostColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.DECIMAL);
-            warehouseCostColumn.setColumnSize(10);
-            warehouseCostColumn.setDecimalDigits(4);
+            warehouseCostColumn.setType(SqlSimpleTypes.decimalType(18, 4));
+            // warehouseCostColumn.setColumnSize(10);
+            // warehouseCostColumn.setDecimalDigits(4);
 
-            PhysicalColumn warehouseSalesColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column warehouseSalesColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             warehouseSalesColumn.setName("warehouse_sales");
-            warehouseSalesColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.DECIMAL);
-            warehouseSalesColumn.setColumnSize(10);
-            warehouseSalesColumn.setDecimalDigits(4);
+            warehouseSalesColumn.setType(SqlSimpleTypes.decimalType(18, 4));
+            // warehouseSalesColumn.setColumnSize(10);
+            // warehouseSalesColumn.setDecimalDigits(4);
 
             // Create SQL view for cube fact table
-            org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery cubeView = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource cubeView = SourceFactory.eINSTANCE.createSqlSelectSource();
             cubeView.setAlias("FACT");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlView sqlViewDef2 = RolapMappingFactory.eINSTANCE.createSqlView();
-            sqlViewDef2.getColumns().add(warehouseCostColumn);
-            sqlViewDef2.getColumns().add(warehouseSalesColumn);
+            org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlViewDef2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+            sqlViewDef2.getFeature().add(warehouseCostColumn);
+            sqlViewDef2.getFeature().add(warehouseSalesColumn);
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt2a = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2a = SourceFactory.eINSTANCE.createSqlStatement();
             stmt2a.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt2a.getDialects().add("generic");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt2b = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2b = SourceFactory.eINSTANCE.createSqlStatement();
             stmt2b.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt2b.getDialects().add("oracle");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt2c = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2c = SourceFactory.eINSTANCE.createSqlStatement();
             stmt2c.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt2c.getDialects().add("mysql");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt2d = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2d = SourceFactory.eINSTANCE.createSqlStatement();
             stmt2d.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt2d.getDialects().add("infobright");
 
-            sqlViewDef2.getSqlStatements().add(stmt2a);
-            sqlViewDef2.getSqlStatements().add(stmt2b);
-            sqlViewDef2.getSqlStatements().add(stmt2c);
-            sqlViewDef2.getSqlStatements().add(stmt2d);
+            sqlViewDef2.getDialectStatements().add(stmt2a);
+            sqlViewDef2.getDialectStatements().add(stmt2b);
+            sqlViewDef2.getDialectStatements().add(stmt2c);
+            sqlViewDef2.getDialectStatements().add(stmt2d);
 
             cubeView.setSql(sqlViewDef2);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Warehouse Cost");
             measure1.setColumn(warehouseCostColumn);
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Warehouse Sales");
             measure2.setColumn(warehouseSalesColumn);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Warehouse (based on view)");
             cube.setQuery(cubeView);
             cube.getDimensionConnectors().add(d1);
@@ -6443,7 +6395,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -6456,7 +6408,7 @@ class SchemaTest {
     void testViewFactTable(Context<?> context) {
         /*
         class TestViewFactTableModifier extends PojoMappingModifier {
-            public TestViewFactTableModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestViewFactTableModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -6633,51 +6585,50 @@ class SchemaTest {
 
     private static class TestViewFactTableModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestViewFactTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestViewFactTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension connectors for Time, Product, and Store
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
             d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Product");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_PRODUCT));
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_PRODUCT));
             d2.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
 
-            DimensionConnector d3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store");
-            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
+            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
             d3.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
 
             // Create Warehouse dimension levels
-            org.eclipse.daanse.rolap.mapping.model.Level l1 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 = LevelFactory.eINSTANCE.createLevel();
             l1.setName("Country");
             l1.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COUNTRY_WAREHOUSE);
             l1.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l2 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l2 = LevelFactory.eINSTANCE.createLevel();
             l2.setName("State Province");
             l2.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_STATE_PROVINCE_WAREHOUSE);
             l2.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l3 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 = LevelFactory.eINSTANCE.createLevel();
             l3.setName("City");
             l3.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_CITY_WAREHOUSE);
             l3.setUniqueMembers(false);
 
-            org.eclipse.daanse.rolap.mapping.model.Level l4 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 = LevelFactory.eINSTANCE.createLevel();
             l4.setName("Warehouse Name");
             l4.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_NAME_WAREHOUSE);
             l4.setUniqueMembers(true);
 
             // Create Warehouse hierarchy
-            TableQuery warehouseTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseTableQuery.setTable(CatalogSupplier.TABLE_WAREHOUSE);
-
-            ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setDefaultMember("[USA]");
             h1.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
@@ -6688,57 +6639,57 @@ class SchemaTest {
             h1.getLevels().add(l4);
 
             // Create Warehouse dimension
-            StandardDimension warehouseDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension warehouseDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             warehouseDimension.setName("Warehouse");
             warehouseDimension.getHierarchies().add(h1);
 
-            DimensionConnector d4 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d4 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d4.setOverrideDimensionName("Warehouse");
             d4.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
             d4.setDimension(warehouseDimension);
 
             // Create SQL view for cube fact table
-            org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery view = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource view = SourceFactory.eINSTANCE.createSqlSelectSource();
             view.setAlias("FACT");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlView sqlViewDef = RolapMappingFactory.eINSTANCE.createSqlView();
-            sqlViewDef.getColumns().add(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
-            sqlViewDef.getColumns().add(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
-            sqlViewDef.getColumns().add(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
-            sqlViewDef.getColumns().add(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
-            sqlViewDef.getColumns().add(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
-            sqlViewDef.getColumns().add(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
+            org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlViewDef = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
+            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
+            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
+            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
+            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
+            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt1 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1 = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt1.getDialects().add("generic");
             stmt1.getDialects().add("oracle");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2 = SourceFactory.eINSTANCE.createSqlStatement();
             stmt2.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt2.getDialects().add("mysql");
             stmt2.getDialects().add("infobright");
 
-            sqlViewDef.getSqlStatements().add(stmt1);
-            sqlViewDef.getSqlStatements().add(stmt2);
+            sqlViewDef.getDialectStatements().add(stmt1);
+            sqlViewDef.getDialectStatements().add(stmt2);
 
             view.setSql(sqlViewDef);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Warehouse Cost");
             measure1.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Warehouse Sales");
             measure2.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Warehouse (based on view)");
             cube.setQuery(view);
             cube.getDimensionConnectors().add(d1);
@@ -6751,7 +6702,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -6765,7 +6716,7 @@ class SchemaTest {
     void testViewFactTable2(Context<?> context) {
         /*
         class TestViewFactTable2Modifier extends PojoMappingModifier {
-            public TestViewFactTable2Modifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestViewFactTable2Modifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -6901,82 +6852,82 @@ class SchemaTest {
 
     private static class TestViewFactTable2ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestViewFactTable2ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestViewFactTable2ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create columns for the view
-            PhysicalColumn storeTypeColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column storeTypeColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeTypeColumn.setName("store_type");
-            storeTypeColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.VARCHAR);
-            storeTypeColumn.setColumnSize(30);
+            storeTypeColumn.setType(SqlSimpleTypes.varcharType(255));
+            // storeTypeColumn.setColumnSize(30);
 
-            PhysicalColumn storeSqftColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column storeSqftColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeSqftColumn.setName("store_sqft");
-            storeSqftColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+            storeSqftColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-            PhysicalColumn grocerySqftColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column grocerySqftColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             grocerySqftColumn.setName("grocery_sqft");
-            grocerySqftColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+            grocerySqftColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
             // Create Store Type dimension
-            org.eclipse.daanse.rolap.mapping.model.Level l1 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 = LevelFactory.eINSTANCE.createLevel();
             l1.setName("Store Type");
             l1.setColumn(storeTypeColumn);
             l1.setUniqueMembers(true);
 
-            ExplicitHierarchy h1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.getLevels().add(l1);
 
-            StandardDimension storeTypeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeTypeDimension.setName("Store Type");
             storeTypeDimension.getHierarchies().add(h1);
 
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store Type");
             d1.setDimension(storeTypeDimension);
 
             // Create SQL view for cube fact table
-            org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery view = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource view = SourceFactory.eINSTANCE.createSqlSelectSource();
             view.setAlias("FACT");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlView sqlViewDef = RolapMappingFactory.eINSTANCE.createSqlView();
-            sqlViewDef.getColumns().add(storeTypeColumn);
-            sqlViewDef.getColumns().add(storeSqftColumn);
-            sqlViewDef.getColumns().add(grocerySqftColumn);
+            org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlViewDef = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+            sqlViewDef.getFeature().add(storeTypeColumn);
+            sqlViewDef.getFeature().add(storeSqftColumn);
+            sqlViewDef.getFeature().add(grocerySqftColumn);
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt1 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1 = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1.setSql("select * from \"store\" as \"FOOBAR\"");
             stmt1.getDialects().add("generic");
             stmt1.getDialects().add("oracle");
 
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement stmt2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2 = SourceFactory.eINSTANCE.createSqlStatement();
             stmt2.setSql("select * from `store` as `FOOBAR`");
             stmt2.getDialects().add("mysql");
             stmt2.getDialects().add("infobright");
 
-            sqlViewDef.getSqlStatements().add(stmt1);
-            sqlViewDef.getSqlStatements().add(stmt2);
+            sqlViewDef.getDialectStatements().add(stmt1);
+            sqlViewDef.getDialectStatements().add(stmt2);
 
             view.setSql(sqlViewDef);
 
             // Create measures
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Store Sqft");
             measure1.setColumn(storeSqftColumn);
             measure1.setFormatString("#,###");
 
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Grocery Sqft");
             measure2.setColumn(grocerySqftColumn);
             measure2.setFormatString("#,###");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
             measureGroup.getMeasures().add(measure2);
 
             // Create cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Store2");
             cube.setQuery(view);
             cube.getDimensionConnectors().add(d1);
@@ -6988,7 +6939,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -7004,7 +6955,7 @@ class SchemaTest {
         /*
         class TestDeprecatedDistinctCountAggregatorModifier extends PojoMappingModifier{
 
-            public TestDeprecatedDistinctCountAggregatorModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestDeprecatedDistinctCountAggregatorModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -7081,26 +7032,26 @@ class SchemaTest {
 
     private static class TestDeprecatedDistinctCountAggregatorModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestDeprecatedDistinctCountAggregatorModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestDeprecatedDistinctCountAggregatorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
-            Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+            Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                 // Create Customer Count2 measure with distinct count
-                CountMeasure customerCount2 = RolapMappingFactory.eINSTANCE.createCountMeasure();
+                CountMeasure customerCount2 = MeasureFactory.eINSTANCE.createCountMeasure();
                 customerCount2.setName("Customer Count2");
                 customerCount2.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 customerCount2.setDistinct(true);
                 customerCount2.setFormatString("#,###");
 
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(customerCount2);
 
                 cube.getMeasureGroups().add(measureGroup);
 
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Half Customer Count");
                 calculatedMember.setVisible(false);
                 calculatedMember.setFormula("[Measures].[Customer Count2] / 2");
@@ -7112,7 +7063,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -7127,12 +7078,12 @@ class SchemaTest {
     void testUnknownUsages(Context<?> context) {
         /*
         class TestUnknownUsagesModifier extends PojoMappingModifier {
-            public TestUnknownUsagesModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestUnknownUsagesModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
             @Override
-            protected org.eclipse.daanse.rolap.mapping.model.Catalog modifyCatalog(org.eclipse.daanse.rolap.mapping.model.Catalog catalog2) {
+            protected org.eclipse.daanse.rolap.mapping.model.catalog.Catalog modifyCatalog(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog2) {
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
             			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
             			.withAggregationExcludes(
@@ -7261,59 +7212,59 @@ class SchemaTest {
         }
 
         class TestUnknownUsagesModifierEmf implements CatalogMappingSupplier {
-            private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
-            public TestUnknownUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
+            public TestUnknownUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 // Create aggregation excludes
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude1.setName("agg_c_14_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude2.setName("agg_l_05_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude3.setName("agg_g_ms_pcat_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude4.setName("agg_ll_01_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude5.setName("agg_c_special_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude6.setName("agg_l_03_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude7.setName("agg_l_04_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude8.setName("agg_pl_01_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude9 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude9.setName("agg_lc_06_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude10 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude10 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude10.setName("agg_lc_100_sales_fact_1997");
 
                 // Create aggregation table agg_c_10_sales_fact_1997
-                org.eclipse.daanse.rolap.mapping.model.AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationMeasure aggMeasure1 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure aggMeasure1 = AggregationFactory.eINSTANCE.createAggregationMeasure();
                 aggMeasure1.setName("[Measures].[Store Cost]");
                 aggMeasure1.setColumn(CatalogSupplier.COLUMN_STORE_COST_AGG_C_10_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationMeasure aggMeasure2 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure aggMeasure2 = AggregationFactory.eINSTANCE.createAggregationMeasure();
                 aggMeasure2.setName("[Measures].[Store Sales]");
                 aggMeasure2.setColumn(CatalogSupplier.COLUMN_STORE_SALES_AGG_C_10_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationName aggTable = RolapMappingFactory.eINSTANCE.createAggregationName();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName aggTable = AggregationFactory.eINSTANCE.createAggregationName();
                 aggTable.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
                 aggTable.setAggregationFactCount(factCount);
                 aggTable.getAggregationMeasures().add(aggMeasure1);
                 aggTable.getAggregationMeasures().add(aggMeasure2);
 
                 // Create table query with aggregations
-                TableQuery t = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource t = SourceFactory.eINSTANCE.createTableSource();
                 t.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 t.getAggregationExcludes().add(aggExclude1);
                 t.getAggregationExcludes().add(aggExclude2);
@@ -7328,31 +7279,30 @@ class SchemaTest {
                 t.getAggregationTables().add(aggTable);
 
                 // Create Time dimension levels
-                org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
                 l11.setName("Year");
                 l11.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
-                l11.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                l11.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 l11.setUniqueMembers(true);
                 l11.setType(LevelDefinition.TIME_YEARS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
                 l12.setName("Quarter");
                 l12.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
                 l12.setUniqueMembers(false);
                 l12.setType(LevelDefinition.TIME_QUARTERS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
                 l13.setName("Month");
                 l13.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
                 l13.setUniqueMembers(false);
-                l13.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                l13.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 l13.setType(LevelDefinition.TIME_MONTHS);
 
                 // Create Time hierarchy
-                TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-
-                ExplicitHierarchy h11 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(false);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
                 h11.setQuery(timeTableQuery);
@@ -7361,56 +7311,56 @@ class SchemaTest {
                 h11.getLevels().add(l13);
 
                 // Create Time dimension
-                org.eclipse.daanse.rolap.mapping.model.TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
                 timeDimension.setName("Time");
                 timeDimension.getHierarchies().add(h11);
 
-                DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d1.setOverrideDimensionName("Time");
                 d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 d1.setDimension(timeDimension);
 
                 // Create Time Degenerate dimension
-                org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
                 l21.setName("day");
                 l21.setColumn(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l22 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l22 = LevelFactory.eINSTANCE.createLevel();
                 l22.setName("month");
                 l22.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-                l22.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                l22.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
 
-                ExplicitHierarchy h21 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h21 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h21.setHasAll(true);
                 h21.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 h21.getLevels().add(l21);
                 h21.getLevels().add(l22);
 
-                StandardDimension timeDegenerateDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension timeDegenerateDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 timeDegenerateDimension.setName("Time Degenerate");
                 timeDegenerateDimension.getHierarchies().add(h21);
 
-                DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d2.setOverrideDimensionName("Time Degenerate");
                 d2.setDimension(timeDegenerateDimension);
 
                 // Create measures
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
                 measure1.setName("Store Cost");
                 measure1.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
                 measure1.setFormatString("#,###.00");
 
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
                 measure2.setName("Store Sales");
                 measure2.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
                 measure2.setFormatString("#,###.00");
 
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(measure1);
                 measureGroup.getMeasures().add(measure2);
 
                 // Create cube
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c = CubeFactory.eINSTANCE.createPhysicalCube();
                 c.setName("Sales Degen");
                 c.setQuery(t);
                 c.getDimensionConnectors().add(d1);
@@ -7418,15 +7368,15 @@ class SchemaTest {
                 c.getMeasureGroups().add(measureGroup);
 
                 // Create catalog
-                this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+                this.catalog = CatalogFactory.eINSTANCE.createCatalog();
                 this.catalog.setName("FoodMart");
-                this.catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog.getDbschemas());
+                this.catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog.getDbschemas());
                 this.catalog.getCubes().add(c);
 
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -7503,12 +7453,12 @@ class SchemaTest {
     void testUnknownUsages1(Context<?> context) {
         /*
         class TestUnknownUsages1Modifier extends PojoMappingModifier {
-            public TestUnknownUsages1Modifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestUnknownUsages1Modifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
             @Override
-            protected org.eclipse.daanse.rolap.mapping.model.Catalog modifyCatalog(org.eclipse.daanse.rolap.mapping.model.Catalog catalog2) {
+            protected org.eclipse.daanse.rolap.mapping.model.catalog.Catalog modifyCatalog(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog2) {
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
             			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
             			.withAggregationExcludes(
@@ -7670,57 +7620,57 @@ class SchemaTest {
         }
 
         class TestUnknownUsages1ModifierEmf implements CatalogMappingSupplier {
-            private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
-            public TestUnknownUsages1ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
+            public TestUnknownUsages1ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 // Create aggregation excludes
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude1.setName("agg_c_14_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude2.setName("agg_l_05_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude3.setName("agg_g_ms_pcat_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude4.setName("agg_ll_01_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude5.setName("agg_c_special_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude6.setName("agg_l_04_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude7.setName("agg_pl_01_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude8.setName("agg_c_10_sales_fact_1997");
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude9 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude9.setName("agg_lc_06_sales_fact_1997");
 
                 // Create aggregation table agg_l_03_sales_fact_1997
-                org.eclipse.daanse.rolap.mapping.model.AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_L_03_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationMeasure aggMeasure1 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure aggMeasure1 = AggregationFactory.eINSTANCE.createAggregationMeasure();
                 aggMeasure1.setName("[Measures].[Store Cost]");
                 aggMeasure1.setColumn(CatalogSupplier.COLUMN_STORE_COST_AGG_L_03_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationMeasure aggMeasure2 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure aggMeasure2 = AggregationFactory.eINSTANCE.createAggregationMeasure();
                 aggMeasure2.setName("[Measures].[Unit Sales]");
                 aggMeasure2.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_L_03_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
                 aggLevel.setName("[Customer].[Customer ID]");
                 aggLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_AGG_L_03_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationForeignKey aggForeignKey = RolapMappingFactory.eINSTANCE.createAggregationForeignKey();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationForeignKey aggForeignKey = AggregationFactory.eINSTANCE.createAggregationForeignKey();
                 aggForeignKey.setFactColumn(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 aggForeignKey.setAggregationColumn(CatalogSupplier.COLUMN_TIME_ID_AGG_L_03_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.AggregationName aggTable = RolapMappingFactory.eINSTANCE.createAggregationName();
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName aggTable = AggregationFactory.eINSTANCE.createAggregationName();
                 aggTable.setName(CatalogSupplier.TABLE_AGG_L_03_SALES_FACT);
                 aggTable.setAggregationFactCount(factCount);
                 aggTable.getAggregationMeasures().add(aggMeasure1);
@@ -7729,7 +7679,7 @@ class SchemaTest {
                 aggTable.getAggregationForeignKeys().add(aggForeignKey);
 
                 // Create table query with aggregations
-                TableQuery t = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource t = SourceFactory.eINSTANCE.createTableSource();
                 t.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 t.getAggregationExcludes().add(aggExclude1);
                 t.getAggregationExcludes().add(aggExclude2);
@@ -7743,31 +7693,30 @@ class SchemaTest {
                 t.getAggregationTables().add(aggTable);
 
                 // Create Time dimension levels
-                org.eclipse.daanse.rolap.mapping.model.Level l11 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l11 = LevelFactory.eINSTANCE.createLevel();
                 l11.setName("Year");
                 l11.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
-                l11.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                l11.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 l11.setUniqueMembers(true);
                 l11.setType(LevelDefinition.TIME_YEARS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l12 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l12 = LevelFactory.eINSTANCE.createLevel();
                 l12.setName("Quarter");
                 l12.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
                 l12.setUniqueMembers(false);
                 l12.setType(LevelDefinition.TIME_QUARTERS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l13 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l13 = LevelFactory.eINSTANCE.createLevel();
                 l13.setName("Month");
                 l13.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
                 l13.setUniqueMembers(false);
-                l13.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                l13.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 l13.setType(LevelDefinition.TIME_MONTHS);
 
                 // Create Time hierarchy
-                TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-
-                ExplicitHierarchy h11 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(false);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
                 h11.setQuery(timeTableQuery);
@@ -7776,74 +7725,74 @@ class SchemaTest {
                 h11.getLevels().add(l13);
 
                 // Create Time dimension
-                org.eclipse.daanse.rolap.mapping.model.TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
                 timeDimension.setName("Time");
                 timeDimension.getHierarchies().add(h11);
 
-                DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d1.setOverrideDimensionName("Time");
                 d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 d1.setDimension(timeDimension);
 
                 // Create Customer dimension
-                org.eclipse.daanse.rolap.mapping.model.Level l21 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l21 = LevelFactory.eINSTANCE.createLevel();
                 l21.setName("Customer ID");
                 l21.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
 
-                ExplicitHierarchy h21 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h21 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h21.setHasAll(true);
                 h21.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 h21.getLevels().add(l21);
 
-                StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 customerDimension.setName("Customer");
                 customerDimension.getHierarchies().add(h21);
 
-                DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d2.setOverrideDimensionName("Customer");
                 d2.setDimension(customerDimension);
 
                 // Create Product dimension
-                org.eclipse.daanse.rolap.mapping.model.Level l31 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l31 = LevelFactory.eINSTANCE.createLevel();
                 l31.setName("Product ID");
                 l31.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-                ExplicitHierarchy h31 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy h31 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h31.setHasAll(true);
                 h31.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                 h31.getLevels().add(l31);
 
-                StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 productDimension.setName("Product");
                 productDimension.getHierarchies().add(h31);
 
-                DimensionConnector d3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 d3.setOverrideDimensionName("Product");
                 d3.setDimension(productDimension);
 
                 // Create measures
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
                 measure1.setName("Store Cost");
                 measure1.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
                 measure1.setFormatString("#,###.00");
 
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure measure2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
                 measure2.setName("Store Sales");
                 measure2.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
                 measure2.setFormatString("#,###.00");
 
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure measure3 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure3 = MeasureFactory.eINSTANCE.createSumMeasure();
                 measure3.setName("Unit Sales");
                 measure3.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 measure3.setFormatString("#,###");
 
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(measure1);
                 measureGroup.getMeasures().add(measure2);
                 measureGroup.getMeasures().add(measure3);
 
                 // Create cube
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c = CubeFactory.eINSTANCE.createPhysicalCube();
                 c.setName("Denormalized Sales");
                 c.setQuery(t);
                 c.getDimensionConnectors().add(d1);
@@ -7852,14 +7801,14 @@ class SchemaTest {
                 c.getMeasureGroups().add(measureGroup);
 
                 // Create catalog
-                this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+                this.catalog = CatalogFactory.eINSTANCE.createCatalog();
                 this.catalog.setName("FoodMart");
-                this.catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog.getDbschemas());
+                this.catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog.getDbschemas());
                 this.catalog.getCubes().add(c);
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -7957,7 +7906,7 @@ class SchemaTest {
     void testPropertyFormatter(Context<?> context) {
         /*
         class TestPropertyFormatterModifier extends PojoMappingModifier {
-            public TestPropertyFormatterModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestPropertyFormatterModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -8010,32 +7959,32 @@ class SchemaTest {
         }*/
         class TestPropertyFormatterModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
-            public TestPropertyFormatterModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestPropertyFormatterModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
                     // Create MemberProperty objects using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.MemberPropertyFormatter formatter =
-                        RolapMappingFactory.eINSTANCE.createMemberPropertyFormatter();
+                    org.eclipse.daanse.rolap.mapping.model.olap.format.MemberPropertyFormatter formatter =
+                        FormatFactory.eINSTANCE.createMemberPropertyFormatter();
                     formatter.setRef(DummyPropertyFormatter.class.getName());
 
-                    org.eclipse.daanse.rolap.mapping.model.MemberProperty storeTypeProperty =
-                        RolapMappingFactory.eINSTANCE.createMemberProperty();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty storeTypeProperty =
+                        LevelFactory.eINSTANCE.createMemberProperty();
                     storeTypeProperty.setName("Store Type");
                     storeTypeProperty.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE_RAGGED));
                     storeTypeProperty.setFormatter(formatter);
 
-                    org.eclipse.daanse.rolap.mapping.model.MemberProperty storeManagerProperty =
-                        RolapMappingFactory.eINSTANCE.createMemberProperty();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty storeManagerProperty =
+                        LevelFactory.eINSTANCE.createMemberProperty();
                     storeManagerProperty.setName("Store Manager");
                     storeManagerProperty.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_MANAGER_STORE_RAGGED));
 
                     // Create Level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.Level level =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                        LevelFactory.eINSTANCE.createLevel();
                     level.setName("Store2");
                     level.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED));
                     level.setCaptionColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_NAME_STORE_RAGGED));
@@ -8043,14 +7992,14 @@ class SchemaTest {
                     level.getMemberProperties().add(storeTypeProperty);
                     level.getMemberProperties().add(storeManagerProperty);
 
-                    // Create TableQuery using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource using RolapMappingFactory
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE_RAGGED));
 
                     // Create ExplicitHierarchy using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setName("Store2");
                     hierarchy.setHasAll(true);
                     hierarchy.setAllMemberName("All Stores");
@@ -8059,14 +8008,14 @@ class SchemaTest {
                     hierarchy.getLevels().add(level);
 
                     // Create StandardDimension using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName("Store2");
                     dimension.getHierarchies().add(hierarchy);
 
                     // Create DimensionConnector using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Store2");
                     dimensionConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
                     dimensionConnector.setDimension(dimension);
@@ -8077,7 +8026,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -8124,7 +8073,7 @@ class SchemaTest {
     void testBugMondrian233(Context<?> context) {
         /*
         class TestBugMondrian233Modifier extends PojoMappingModifier {
-            public TestBugMondrian233Modifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestBugMondrian233Modifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -8200,53 +8149,52 @@ class SchemaTest {
     class TestBugMondrian233ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        public TestBugMondrian233ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+        public TestBugMondrian233ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create DimensionConnector for Time using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                     copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_TIME));
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
             // Create DimensionConnector for Product using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d2 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d2 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Product");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                     copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_PRODUCT));
             d2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Store Cost measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure storeCostMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeCostMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Sales2");
             c.setDefaultMeasure(unitSalesMeasure);
             c.setQuery(tableQuery);
@@ -8259,7 +8207,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -8273,7 +8221,7 @@ class SchemaTest {
     void testBugMondrian303(Context<?> context) {
         /*
         class TestBugMondrian303Modifier extends PojoMappingModifier {
-            public TestBugMondrian303Modifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestBugMondrian303Modifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -8403,27 +8351,27 @@ class SchemaTest {
     class TestBugMondrian303ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        public TestBugMondrian303ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestBugMondrian303ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
-            Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube = catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+            Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
             // Create MemberProperty objects using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MemberProperty storeTypeProperty =
-                RolapMappingFactory.eINSTANCE.createMemberProperty();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty storeTypeProperty =
+                LevelFactory.eINSTANCE.createMemberProperty();
             storeTypeProperty.setName("Store Type");
             storeTypeProperty.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE_RAGGED);
 
-            org.eclipse.daanse.rolap.mapping.model.MemberProperty storeManagerProperty =
-                RolapMappingFactory.eINSTANCE.createMemberProperty();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty storeManagerProperty =
+                LevelFactory.eINSTANCE.createMemberProperty();
             storeManagerProperty.setName("Store Manager");
             storeManagerProperty.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_MANAGER_STORE_RAGGED);
 
             // Create Level using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level level =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                LevelFactory.eINSTANCE.createLevel();
             level.setName("Store2");
             level.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
             level.setCaptionColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_NAME_STORE_RAGGED);
@@ -8431,14 +8379,13 @@ class SchemaTest {
             level.getMemberProperties().add(storeTypeProperty);
             level.getMemberProperties().add(storeManagerProperty);
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE_RAGGED);
-
             // Create ExplicitHierarchy using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setName("Store2");
             hierarchy.setHasAll(true);
             hierarchy.setAllMemberName("All Stores");
@@ -8447,14 +8394,14 @@ class SchemaTest {
             hierarchy.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                RolapMappingFactory.eINSTANCE.createStandardDimension();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Store2");
             dimension.getHierarchies().add(hierarchy);
 
             // Create DimensionConnector using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             dimensionConnector.setOverrideDimensionName("Store2");
             dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             dimensionConnector.setDimension(dimension);
@@ -8464,7 +8411,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -8474,7 +8421,7 @@ class SchemaTest {
     void testCubeWithOneDimensionOneMeasure(Context<?> context) {
         /*
         class TestCubeWithOneDimensionOneMeasureModifier extends PojoMappingModifier {
-            public TestCubeWithOneDimensionOneMeasureModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCubeWithOneDimensionOneMeasureModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -8563,22 +8510,21 @@ class SchemaTest {
 
     class TestCubeWithOneDimensionOneMeasureModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestCubeWithOneDimensionOneMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeWithOneDimensionOneMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-            org.eclipse.daanse.rolap.mapping.model.Level level =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                    LevelFactory.eINSTANCE.createLevel();
                 level.setName("Media Type");
                 level.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MEDIA_TYPE_PROMOTION);
                 level.setUniqueMembers(true);
 
-                // Create TableQuery using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.TableQuery promotionTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource using RolapMappingFactory
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource promotionTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 promotionTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PROMOTION);
-
                 // Create ExplicitHierarchy using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy h1 =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy h1 =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h1.setHasAll(true);
                 h1.setAllMemberName("All Media");
                 h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -8587,38 +8533,37 @@ class SchemaTest {
                 h1.getLevels().add(level);
 
                 // Create StandardDimension using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotion Media");
                 dimension.getHierarchies().add(h1);
 
                 // Create DimensionConnector using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 d1.setOverrideDimensionName("Promotion Media");
                 d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 d1.setDimension(dimension);
 
                 // Create Unit Sales measure using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
 
                 // Create MeasureGroup using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
 
-                // Create TableQuery for fact table using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.TableQuery factTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource for fact table using RolapMappingFactory
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource factTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 factTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
                 // Create PhysicalCube using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 c.setName("OneDim");
                 c.setDefaultMeasure(unitSalesMeasure);
                 c.setQuery(factTableQuery);
@@ -8626,7 +8571,7 @@ class SchemaTest {
                 c.getMeasureGroups().add(measureGroup);
                 catalog.getCubes().add(c);
         }
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -8636,7 +8581,7 @@ class SchemaTest {
     void testCubeWithOneDimensionUsageOneMeasure(Context<?> context) {
         /*
         class TestCubeWithOneDimensionUsageOneMeasureModifier extends PojoMappingModifier {
-            public TestCubeWithOneDimensionUsageOneMeasureModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCubeWithOneDimensionUsageOneMeasureModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -8705,40 +8650,39 @@ class SchemaTest {
     }
 
     class TestCubeWithOneDimensionUsageOneMeasureModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCubeWithOneDimensionUsageOneMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeWithOneDimensionUsageOneMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy(
-                (org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+                (org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
 
             // Create DimensionConnector for Product using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Product");
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_PRODUCT);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("OneDimUsage");
             c.setDefaultMeasure(unitSalesMeasure);
             c.setQuery(tableQuery);
@@ -8748,7 +8692,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -8758,7 +8702,7 @@ class SchemaTest {
     void testCubeHasFact(Context<?> context) {
         /*
         class TestCubeHasFactModifier extends PojoMappingModifier {
-            public TestCubeHasFactModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCubeHasFactModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -8796,21 +8740,21 @@ class SchemaTest {
     }
 
     class TestCubeHasFactModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCubeHasFactModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeHasFactModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Cube with caption");
 
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -8820,7 +8764,7 @@ class SchemaTest {
     void testCubeCaption(Context<?> context) throws SQLException {
         /*
         class TestCubeCaptionModifier extends PojoMappingModifier {
-            public TestCubeCaptionModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCubeCaptionModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -8882,37 +8826,37 @@ class SchemaTest {
     }
 
     class TestCubeCaptionModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCubeCaptionModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeCaptionModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT));
 
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Cube with caption");
             c.setQuery(tableQuery);
 
             // Create DimensionConnector for VirtualCube using RolapMappingFactory
-            //org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-            //    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+            //    DimensionFactory.eINSTANCE.createDimensionConnector();
             //dimensionConnector.setOverrideDimensionName("Customers");
-            //dimensionConnector.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(
+            //dimensionConnector.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(
             //    org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_CUSTOMERS));
             //dimensionConnector.setPhysicalCube((PhysicalCube) copier.get(
             //    org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.CUBE_SALES));
 
             // Create VirtualCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.VirtualCube vc =
-                RolapMappingFactory.eINSTANCE.createVirtualCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc =
+                CubeFactory.eINSTANCE.createVirtualCube();
             vc.setName("Warehouse and Sales with caption");
-            vc.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.Member) copier.get(
+            vc.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.MEASURE_STORE_SALES));
             vc.getDimensionConnectors().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.CONNECTOR_CUSTOMER);
 
@@ -8920,7 +8864,7 @@ class SchemaTest {
             catalog.getCubes().add(vc);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -8930,7 +8874,7 @@ class SchemaTest {
     void testCubeWithNoDimensions(Context<?> context) {
         /*
         class TestCubeWithNoDimensionsModifier extends PojoMappingModifier {
-            public TestCubeWithNoDimensionsModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCubeWithNoDimensionsModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -8970,32 +8914,31 @@ class SchemaTest {
     }
 
     class TestCubeWithNoDimensionsModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCubeWithNoDimensionsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeWithNoDimensionsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy(
-                (org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+                (org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure m =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure m =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             m.setName("Unit Sales");
             m.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             m.setFormatString("Standard");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(m);
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("NoDim");
             c.setDefaultMeasure(m);
             c.setQuery(tableQuery);
@@ -9004,7 +8947,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -9093,27 +9036,26 @@ class SchemaTest {
     }
 
     class TestCubeWithNoMeasuresFailsModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCubeWithNoMeasuresFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeWithNoMeasuresFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy(
-                (org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+                (org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
 
             // Create Level using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level level =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                LevelFactory.eINSTANCE.createLevel();
             level.setName("Media Type");
             level.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MEDIA_TYPE_PROMOTION);
             level.setUniqueMembers(true);
 
-            // Create TableQuery for promotion table using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery promotionTableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource for promotion table using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource promotionTableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             promotionTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PROMOTION);
-
             // Create ExplicitHierarchy using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy h1 =
-                RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy h1 =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setAllMemberName("All Media");
             h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -9122,38 +9064,37 @@ class SchemaTest {
             h1.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                RolapMappingFactory.eINSTANCE.createStandardDimension();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Promotion Media");
             dimension.getHierarchies().add(h1);
 
             // Create DimensionConnector using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Promotion Media");
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
             d1.setDimension(dimension);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
 
-            // Create TableQuery for fact table using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery factTableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource for fact table using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource factTableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             factTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("NoMeasures");
             c.setQuery(factTableQuery);
             c.getDimensionConnectors().add(d1);
@@ -9162,7 +9103,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -9172,7 +9113,7 @@ class SchemaTest {
     void testCubeWithOneCalcMeasure(Context<?> context) {
         /*
         class TestCubeWithOneCalcMeasureModifier extends PojoMappingModifier {
-            public TestCubeWithOneCalcMeasureModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCubeWithOneCalcMeasureModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
@@ -9259,27 +9200,26 @@ class SchemaTest {
     }
 
     class TestCubeWithOneCalcMeasureModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCubeWithOneCalcMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCubeWithOneCalcMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy(
-                (org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+                (org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
 
             // Create Level using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level level =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                LevelFactory.eINSTANCE.createLevel();
             level.setName("Media Type");
             level.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MEDIA_TYPE_PROMOTION);
             level.setUniqueMembers(true);
 
-            // Create TableQuery for promotion table using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery promotionTableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource for promotion table using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource promotionTableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             promotionTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PROMOTION);
-
             // Create ExplicitHierarchy using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy h1 =
-                RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy h1 =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setAllMemberName("All Media");
             h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -9288,32 +9228,31 @@ class SchemaTest {
             h1.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                RolapMappingFactory.eINSTANCE.createStandardDimension();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Promotion Media");
             dimension.getHierarchies().add(h1);
 
             // Create DimensionConnector using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Promotion Media");
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
             d1.setDimension(dimension);
 
             // Create CalculatedMember using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                LevelFactory.eINSTANCE.createCalculatedMember();
             calculatedMember.setName("One");
             calculatedMember.setFormula("1");
 
-            // Create TableQuery for fact table using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery factTableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource for fact table using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource factTableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             factTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("OneCalcMeasure");
             c.setQuery(factTableQuery);
             c.getDimensionConnectors().add(d1);
@@ -9322,7 +9261,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -9338,7 +9277,7 @@ class SchemaTest {
     void testCalcMemberInCube(Context<?> context) {
         /*
         class TestCalcMemberInCubeModifier1 extends PojoMappingModifier {
-            public TestCalcMemberInCubeModifier1(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestCalcMemberInCubeModifier1(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -9403,7 +9342,7 @@ class SchemaTest {
         try {
             /*
             class TestCalcMemberInCubeModifier2 extends PojoMappingModifier {
-                public TestCalcMemberInCubeModifier2(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+                public TestCalcMemberInCubeModifier2(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
                 }
 
@@ -9465,7 +9404,7 @@ class SchemaTest {
         try {
             /*
             class TestCalcMemberInCubeModifier3 extends PojoMappingModifier {
-                public TestCalcMemberInCubeModifier3(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+                public TestCalcMemberInCubeModifier3(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
                 }
 
@@ -9523,7 +9462,7 @@ class SchemaTest {
         try {
             /*
             class TestCalcMemberInCubeModifier4 extends PojoMappingModifier {
-                public TestCalcMemberInCubeModifier4(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+                public TestCalcMemberInCubeModifier4(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
                 }
 
@@ -9580,7 +9519,7 @@ class SchemaTest {
         try {
             /*
             class TestCalcMemberInCubeModifier5 extends PojoMappingModifier {
-                public TestCalcMemberInCubeModifier5(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+                public TestCalcMemberInCubeModifier5(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
                 }
 
@@ -9640,7 +9579,7 @@ class SchemaTest {
         try {
             /*
             class TestCalcMemberInCubeModifier6 extends PojoMappingModifier {
-                public TestCalcMemberInCubeModifier6(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+                public TestCalcMemberInCubeModifier6(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
                 }
 
@@ -9702,7 +9641,7 @@ class SchemaTest {
         try {
             /*
             class TestCalcMemberInCubeModifier7 extends PojoMappingModifier {
-                public TestCalcMemberInCubeModifier7(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+                public TestCalcMemberInCubeModifier7(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
                 }
 
@@ -9757,27 +9696,27 @@ class SchemaTest {
     }
 
     class TestCalcMemberInCubeModifier1Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier1Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier1Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Create CalculatedMember using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy) copier.get(
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
                 calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
@@ -9786,37 +9725,37 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestCalcMemberInCubeModifier2Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier2Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier2Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Remove existing "SF and LA" calculated member if exists
                 cube.getCalculatedMembers().removeIf(cm -> "SF and LA".equals(cm.getName()));
 
                 // Create CalculatedMember using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy)
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE);
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
                 calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
@@ -9825,36 +9764,36 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestCalcMemberInCubeModifier3Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier3Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier3Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Remove existing "SF and LA" calculated member if exists
                 cube.getCalculatedMembers().removeIf(cm -> "SF and LA".equals(cm.getName()));
 
                 // Create CalculatedMember using RolapMappingFactory with wrong hierarchy
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy) copier.get(
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE_TYPE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
                 calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
@@ -9863,36 +9802,36 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestCalcMemberInCubeModifier4Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier4Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier4Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Remove existing "SF and LA" calculated member if exists
                 cube.getCalculatedMembers().removeIf(cm -> "SF and LA".equals(cm.getName()));
 
                 // Create CalculatedMember using RolapMappingFactory with invalid formula
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy) copier.get(
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
                 calculatedMember.setFormula("Baconating!");
@@ -9901,36 +9840,36 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestCalcMemberInCubeModifier5Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier5Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier5Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Remove existing "SF and LA" calculated member if exists
                 cube.getCalculatedMembers().removeIf(cm -> "SF and LA".equals(cm.getName()));
 
                 // Create CalculatedMember using RolapMappingFactory with invalid parent
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy)
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                         copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[USA].[CA].[Baconville]");
                 calculatedMember.setFormula("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]");
@@ -9939,36 +9878,36 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestCalcMemberInCubeModifier6Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier6Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier6Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Remove existing "SF and LA" calculated member if exists
                 cube.getCalculatedMembers().removeIf(cm -> "SF and LA".equals(cm.getName()));
 
                 // Create CalculatedMember using RolapMappingFactory with parent from different hierarchy
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy)
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                         copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE_TYPE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
                 calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
@@ -9977,36 +9916,36 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestCalcMemberInCubeModifier7Emf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestCalcMemberInCubeModifier7Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCalcMemberInCubeModifier7Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                    (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                    (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                 // Remove existing "SF and LA" calculated member if exists
                 cube.getCalculatedMembers().removeIf(cm -> "SF and LA".equals(cm.getName()));
 
                 // Create CalculatedMember using RolapMappingFactory with empty formula
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calculatedMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("SF and LA");
-                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.Hierarchy)
+                calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                         copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
                 calculatedMember.setFormula("");
@@ -10015,70 +9954,69 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     class TestAggTableSupportOfSharedDimsModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestAggTableSupportOfSharedDimsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestAggTableSupportOfSharedDimsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create DimensionConnector for Time using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
-            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_TIME);
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
             // Create DimensionConnector for Time2 (shared dimension) using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d2 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d2 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Time2");
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_TIME);
             d2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
             // Create DimensionConnector for Store using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d3 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d3 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store");
-            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d3.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_STORE);
             d3.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Store Cost measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure storeCostMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeCostMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Sales Two Dimensions");
             c.setQuery(tableQuery);
             c.getDimensionConnectors().add(d1);
@@ -10089,7 +10027,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -10102,7 +10040,7 @@ class SchemaTest {
     void testAggTableSupportOfSharedDims(Context<?> context) {
         /*
         class TestAggTableSupportOfSharedDimsModifier extends PojoMappingModifier {
-            public TestAggTableSupportOfSharedDimsModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping) {
+            public TestAggTableSupportOfSharedDimsModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping) {
                     super(catalogMapping);
             }
 
@@ -10204,33 +10142,33 @@ class SchemaTest {
     }
 
     class TestLevelTableAttributeAsViewModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestLevelTableAttributeAsViewModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestLevelTableAttributeAsViewModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
-            // Create PhysicalColumn for gender using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalColumn genderColumn =
-                RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            // Create Column for gender using RolapMappingFactory
+            org.eclipse.daanse.cwm.model.cwm.resource.relational.Column genderColumn =
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             genderColumn.setName("gender");
-            genderColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.VARCHAR);
+            genderColumn.setType(SqlSimpleTypes.varcharType(255));
 
-            // Create PhysicalColumn for customer_id using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalColumn customerIdColumn =
-                RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            // Create Column for customer_id using RolapMappingFactory
+            org.eclipse.daanse.cwm.model.cwm.resource.relational.Column customerIdColumn =
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             customerIdColumn.setName("customer_id");
-            customerIdColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+            customerIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
             // Create SqlStatement for generic dialect using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement sqlStatementGeneric =
-                RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatementGeneric =
+                SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatementGeneric.setSql("SELECT * FROM customer");
             sqlStatementGeneric.getDialects().add("generic");
 
             // Create SqlStatement for other dialects using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement sqlStatementOther =
-                RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatementOther =
+                SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatementOther.setSql("SELECT * FROM \"customer\"");
             sqlStatementOther.getDialects().add("oracle");
             sqlStatementOther.getDialects().add("derby");
@@ -10240,28 +10178,28 @@ class SchemaTest {
             sqlStatementOther.getDialects().add("netezza");
             sqlStatementOther.getDialects().add("db2");
 
-            // Create SqlSelectQuery (View) using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SqlView sqlView =
-                    RolapMappingFactory.eINSTANCE.createSqlView();
-                sqlView.getColumns().add(genderColumn);
-                sqlView.getColumns().add(customerIdColumn);
-                sqlView.getSqlStatements().add(sqlStatementGeneric);
-                sqlView.getSqlStatements().add(sqlStatementOther);
+            // Create SqlSelectSource (View) using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlView =
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+                sqlView.getFeature().add(genderColumn);
+                sqlView.getFeature().add(customerIdColumn);
+                sqlView.getDialectStatements().add(sqlStatementGeneric);
+                sqlView.getDialectStatements().add(sqlStatementOther);
 
-            SqlSelectQuery sqlSelectQuery = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+            SqlSelectSource sqlSelectQuery = SourceFactory.eINSTANCE.createSqlSelectSource();
             sqlSelectQuery.setAlias("customer");
             sqlSelectQuery.setSql(sqlView);
 
             // Create Level using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level level =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                LevelFactory.eINSTANCE.createLevel();
             level.setName("Gender");
             level.setColumn(genderColumn);
             level.setUniqueMembers(true);
 
             // Create ExplicitHierarchy using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setAllMemberName("All Gender");
             hierarchy.setPrimaryKey(customerIdColumn);
@@ -10269,52 +10207,52 @@ class SchemaTest {
             hierarchy.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                RolapMappingFactory.eINSTANCE.createStandardDimension();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Gender2");
             dimension.getHierarchies().add(hierarchy);
 
             // Create DimensionConnector using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Gender2");
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             d1.setDimension(dimension);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Store Cost measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure storeCostMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeCostMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
 
             // Create AggregationExclude using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AggregationExclude aggExclude =
-                RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude aggExclude =
+                AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude.setPattern("agg_g_ms_pcat_sales_fact_1997");
 
-            // Create TableQuery using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.getAggregationExcludes().add(aggExclude);
 
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("GenderCube");
             c.setQuery(tableQuery);
             c.getDimensionConnectors().add(d1);
@@ -10323,7 +10261,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -10336,7 +10274,7 @@ class SchemaTest {
     void testLevelTableAttributeAsView(Context<?> context) {
         /*
         class TestLevelTableAttributeAsViewModifier extends PojoMappingModifier {
-            public TestLevelTableAttributeAsViewModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestLevelTableAttributeAsViewModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -10482,11 +10420,11 @@ class SchemaTest {
     void testInvalidSchemaAccess(Context<?> context) {
         /*
         class TestInvalidSchemaAccess extends PojoMappingModifier {
-            public TestInvalidSchemaAccess(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestInvalidSchemaAccess(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
             @Override
-            protected List<? extends AccessRoleMapping> catalogAccessRoles(org.eclipse.daanse.rolap.mapping.model.Catalog schema) {
+            protected List<? extends AccessRoleMapping> catalogAccessRoles(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.catalogAccessRoles(schema));
                 result.add(AccessRoleMappingImpl.builder()
@@ -10505,20 +10443,20 @@ class SchemaTest {
 
             private CatalogImpl catalog;
 
-            public TestInvalidSchemaAccessEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestInvalidSchemaAccessEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 // Copy catalog using EcoreUtil
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
                 // Create catalog grant with null access (invalid) using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant =
-                    org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant =
+                    org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory.eINSTANCE.createAccessCatalogGrant();
                 catalogGrant.setCatalogAccess(null);
                 // Intentionally not setting access - this will be null and cause an error
 
                 // Create role using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.AccessRole role =
-                    org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory.eINSTANCE.createAccessRole();
+                org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role =
+                    org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory.eINSTANCE.createAccessRole();
                 role.setName("Role1");
                 role.getAccessCatalogGrants().add(catalogGrant);
 
@@ -10527,7 +10465,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -10547,44 +10485,43 @@ class SchemaTest {
     }
 
     class TestAllMemberNoStringReplaceModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestAllMemberNoStringReplaceModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestAllMemberNoStringReplaceModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create Level for Years using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level yearsLevel =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level yearsLevel =
+                LevelFactory.eINSTANCE.createLevel();
             yearsLevel.setName("Years");
             yearsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearsLevel.setUniqueMembers(true);
             yearsLevel.setType(LevelDefinition.TIME_YEARS);
 
             // Create Level for Quarters using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level quartersLevel =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level quartersLevel =
+                LevelFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quartersLevel.setUniqueMembers(false);
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
 
             // Create Level for Months using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.Level monthsLevel =
-                RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level monthsLevel =
+                LevelFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthsLevel.setUniqueMembers(false);
             monthsLevel.setType(LevelDefinition.TIME_MONTHS);
 
-            // Create TableQuery for time_by_day using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery timeTableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource for time_by_day using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource timeTableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-
             // Create ExplicitHierarchy CALENDAR using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy h1 =
-                RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy h1 =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setName("CALENDAR");
             h1.setHasAll(true);
             h1.setAllMemberName("All TIME(CALENDAR)");
@@ -10595,54 +10532,53 @@ class SchemaTest {
             h1.getLevels().add(monthsLevel);
 
             // Create TimeDimension using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TimeDimension timeDimension =
-                RolapMappingFactory.eINSTANCE.createTimeDimension();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension timeDimension =
+                DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("TIME");
             timeDimension.getHierarchies().add(h1);
 
             // Create DimensionConnector for TIME using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("TIME");
             d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             d1.setDimension(timeDimension);
 
             // Create DimensionConnector for Store using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector d2 =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d2 =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Store");
             d2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension)
+            d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension)
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_STORE);
 
             // Create Unit Sales measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Store Cost measure using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure storeCostMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeCostMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
             // Create MeasureGroup using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
 
-            // Create TableQuery for fact table using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.TableQuery factTableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource for fact table using RolapMappingFactory
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource factTableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             factTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
             // Create PhysicalCube using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube c =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Sales Special Time");
             c.setQuery(factTableQuery);
             c.getDimensionConnectors().add(d1);
@@ -10652,7 +10588,7 @@ class SchemaTest {
             catalog.getCubes().add(c);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -10662,7 +10598,7 @@ class SchemaTest {
     void testAllMemberNoStringReplace(Context<?> context) {
         /*
         class TestAllMemberNoStringReplaceModifier extends PojoMappingModifier {
-            public TestAllMemberNoStringReplaceModifier(org.eclipse.daanse.rolap.mapping.model.Catalog catalog) {
+            public TestAllMemberNoStringReplaceModifier(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 super(catalog);
             }
 
@@ -10737,44 +10673,44 @@ class SchemaTest {
     }
 
     class TestUnionRoleModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestUnionRoleModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestUnionRoleModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create AccessCatalogGrant for Role1 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant1 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant1 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role1 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Create AccessCatalogGrant for Role2 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant2 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant2 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role2 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role2 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role2 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
             // Create AccessRole Role1Plus2 (union of Role1 and Role2) using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1Plus2 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1Plus2 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1Plus2.setName("Role1Plus2");
             role1Plus2.getReferencedAccessRoles().add(role1);
             role1Plus2.getReferencedAccessRoles().add(role2);
 
             // Create AccessRole Role1Plus2Plus1 (union of Role1Plus2 and Role1) using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1Plus2Plus1 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1Plus2Plus1 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1Plus2Plus1.setName("Role1Plus2Plus1");
             role1Plus2Plus1.getReferencedAccessRoles().add(role1Plus2);
             role1Plus2Plus1.getReferencedAccessRoles().add(role1);
@@ -10786,7 +10722,7 @@ class SchemaTest {
             catalog.getAccessRoles().add(role1Plus2Plus1);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -10863,31 +10799,31 @@ class SchemaTest {
     }
 
     class TestUnionRoleContainsGrantsModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestUnionRoleContainsGrantsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestUnionRoleContainsGrantsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create AccessCatalogGrant for Role1 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant1 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant1 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role1 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Create AccessCatalogGrant for Role1Plus2 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant2 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant2 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role1Plus2 (with grants AND references - invalid) using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1Plus2 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1Plus2 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1Plus2.setName("Role1Plus2");
             role1Plus2.getAccessCatalogGrants().add(catalogGrant2);
             role1Plus2.getReferencedAccessRoles().add(role1);
@@ -10898,7 +10834,7 @@ class SchemaTest {
             catalog.getAccessRoles().add(role1Plus2);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -10951,42 +10887,42 @@ class SchemaTest {
     }
 
     class TestUnionRoleIllegalForwardRefModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestUnionRoleIllegalForwardRefModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestUnionRoleIllegalForwardRefModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create AccessCatalogGrant for Role1 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant1 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant1 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role1 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Create AccessCatalogGrant for Role2 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant2 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant2 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role2 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role2 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role2 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
             // Create AccessCatalogGrant for Role1Plus2 using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant catalogGrant3 =
-                RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant catalogGrant3 =
+                CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant3.setCatalogAccess(CatalogAccess.ALL);
 
             // Create AccessRole Role1Plus2 (with grants AND references - invalid) using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole role1Plus2 =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole role1Plus2 =
+                CommonFactory.eINSTANCE.createAccessRole();
             role1Plus2.setName("Role1Plus2");
             role1Plus2.getAccessCatalogGrants().add(catalogGrant3);
             role1Plus2.getReferencedAccessRoles().add(role1);
@@ -10998,7 +10934,7 @@ class SchemaTest {
             catalog.getAccessRoles().add(role1Plus2);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11058,24 +10994,24 @@ class SchemaTest {
     }
 
     class TestVirtualCubeNamedSetSupportInSchemaModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestVirtualCubeNamedSetSupportInSchemaModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestVirtualCubeNamedSetSupportInSchemaModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Warehouse and Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.VirtualCube cube = (VirtualCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube cube = (VirtualCube) oCube.get();
 
                 // Create NamedSet using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.NamedSet namedSet =
-                    RolapMappingFactory.eINSTANCE.createNamedSet();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.NamedSet namedSet =
+                    DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Non CA State Stores");
                 namedSet.setFormula("EXCEPT({[Store].[Store Country].[USA].children},{[Store].[Store Country].[USA].[CA]})");
 
@@ -11084,7 +11020,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11155,24 +11091,24 @@ class SchemaTest {
     }
 
     class TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Warehouse and Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.Cube cube = oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube = oCube.get();
 
                 // Create NamedSet with invalid formula using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.NamedSet namedSet =
-                    RolapMappingFactory.eINSTANCE.createNamedSet();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.NamedSet namedSet =
+                    DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Non CA State Stores");
                 // Invalid formula: uses [Store State] instead of [Store Country]
                 namedSet.setFormula("EXCEPT({[Store].[Store State].[USA].children},{[Store].[Store Country].[USA].[CA]})");
@@ -11182,7 +11118,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11243,51 +11179,51 @@ class SchemaTest {
     }
 
     class TestValidatorFindsNumericLevelModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestValidatorFindsNumericLevelModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestValidatorFindsNumericLevelModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
                 // Create Level with RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.Level level =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                    LevelFactory.eINSTANCE.createLevel();
                 level.setName("Store Sqft");
                 level.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE);
-                level.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                level.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 level.setUniqueMembers(true);
 
                 // Create Hierarchy
                 ExplicitHierarchy hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                // Create TableQuery
-                org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
                 hierarchy.setQuery(tableQuery);
                 hierarchy.getLevels().add(level);
 
                 // Create StandardDimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension standardDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension standardDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 standardDimension.setName("Store Size in SQFT");
                 standardDimension.getHierarchies().add(hierarchy);
 
                 // Create DimensionConnector
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Store Size in SQFT");
                 dimensionConnector.setDimension(standardDimension);
 
@@ -11297,7 +11233,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11360,22 +11296,22 @@ class SchemaTest {
     }
 
     class TestInvalidRoleErrorModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestInvalidRoleErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestInvalidRoleErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy(
-                (org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+                (org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
 
             // Create an unknown role using RolapMappingFactory
-            org.eclipse.daanse.rolap.mapping.model.AccessRole unknownRole =
-                RolapMappingFactory.eINSTANCE.createAccessRole();
+            org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole unknownRole =
+                CommonFactory.eINSTANCE.createAccessRole();
             unknownRole.setName("Unknown");
 
             // Set as default access role
             catalog.setDefaultAccessRole(unknownRole);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11418,137 +11354,139 @@ class SchemaTest {
     }
 
     class TestBinaryLevelKeyModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestBinaryLevelKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestBinaryLevelKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
                 // Create columns using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn idColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column idColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn binColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column binColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 binColumn.setName("bin");
-                binColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+                binColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn nameColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column nameColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nameColumn.setName("name");
-                nameColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.VARCHAR);
-                nameColumn.setCharOctetLength(20);
+                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                // nameColumn.setCharOctetLength(20);
 
                 // Create row values
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_1 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_1.setColumn(idColumn);
-                rowValue1_1.setValue("2");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_1 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_1.setFeature(idColumn);
+                rowValue1_1.setDataValue("2");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_2 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_2.setColumn(binColumn);
-                rowValue1_2.setValue("X'4546'");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_2 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_2.setFeature(binColumn);
+                rowValue1_2.setDataValue("X'4546'");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_3 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_3.setColumn(nameColumn);
-                rowValue1_3.setValue("Ben");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_3 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_3.setFeature(nameColumn);
+                rowValue1_3.setDataValue("Ben");
 
-                org.eclipse.daanse.rolap.mapping.model.Row row1 =
-                    RolapMappingFactory.eINSTANCE.createRow();
-                row1.getRowValues().add(rowValue1_1);
-                row1.getRowValues().add(rowValue1_2);
-                row1.getRowValues().add(rowValue1_3);
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Row row1 =
+                    RelationalFactory.eINSTANCE.createRow();
+                row1.getSlot().add(rowValue1_1);
+                row1.getSlot().add(rowValue1_2);
+                row1.getSlot().add(rowValue1_3);
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue2_1 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue2_1.setColumn(idColumn);
-                rowValue2_1.setValue("3");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue2_1 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue2_1.setFeature(idColumn);
+                rowValue2_1.setDataValue("3");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue2_2 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue2_2.setColumn(binColumn);
-                rowValue2_2.setValue("X'424344'");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue2_2 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue2_2.setFeature(binColumn);
+                rowValue2_2.setDataValue("X'424344'");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue2_3 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue2_3.setColumn(nameColumn);
-                rowValue2_3.setValue("Bill");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue2_3 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue2_3.setFeature(nameColumn);
+                rowValue2_3.setDataValue("Bill");
 
-                org.eclipse.daanse.rolap.mapping.model.Row row2 =
-                    RolapMappingFactory.eINSTANCE.createRow();
-                row2.getRowValues().add(rowValue2_1);
-                row2.getRowValues().add(rowValue2_2);
-                row2.getRowValues().add(rowValue2_3);
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Row row2 =
+                    RelationalFactory.eINSTANCE.createRow();
+                row2.getSlot().add(rowValue2_1);
+                row2.getSlot().add(rowValue2_2);
+                row2.getSlot().add(rowValue2_3);
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue3_1 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue3_1.setColumn(idColumn);
-                rowValue3_1.setValue("4");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue3_1 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue3_1.setFeature(idColumn);
+                rowValue3_1.setDataValue("4");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue3_2 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue3_2.setColumn(binColumn);
-                rowValue3_2.setValue("X'424344'");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue3_2 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue3_2.setFeature(binColumn);
+                rowValue3_2.setDataValue("X'424344'");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue3_3 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue3_3.setColumn(nameColumn);
-                rowValue3_3.setValue("Bill");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue3_3 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue3_3.setFeature(nameColumn);
+                rowValue3_3.setDataValue("Bill");
 
-                org.eclipse.daanse.rolap.mapping.model.Row row3 =
-                    RolapMappingFactory.eINSTANCE.createRow();
-                row3.getRowValues().add(rowValue3_1);
-                row3.getRowValues().add(rowValue3_2);
-                row3.getRowValues().add(rowValue3_3);
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Row row3 =
+                    RelationalFactory.eINSTANCE.createRow();
+                row3.getSlot().add(rowValue3_1);
+                row3.getSlot().add(rowValue3_2);
+                row3.getSlot().add(rowValue3_3);
 
                 // Create InlineTable
-                org.eclipse.daanse.rolap.mapping.model.InlineTable inlineTable =
-                    RolapMappingFactory.eINSTANCE.createInlineTable();
-                inlineTable.getColumns().add(idColumn);
-                inlineTable.getColumns().add(binColumn);
-                inlineTable.getColumns().add(nameColumn);
-                inlineTable.getRows().add(row1);
-                inlineTable.getRows().add(row2);
-                inlineTable.getRows().add(row3);
+                org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable inlineTable =
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+        inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+        inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+        inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+                inlineTable.getFeature().add(idColumn);
+                inlineTable.getFeature().add(binColumn);
+                inlineTable.getFeature().add(nameColumn);
+                inlineTable.getExtent().getOwnedElement().add(row1);
+                inlineTable.getExtent().getOwnedElement().add(row2);
+                inlineTable.getExtent().getOwnedElement().add(row3);
 
-                // Create InlineTableQuery
-                org.eclipse.daanse.rolap.mapping.model.InlineTableQuery inlineTableQuery =
-                    RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                // Create InlineTableSource
+                org.eclipse.daanse.rolap.mapping.model.database.source.InlineTableSource inlineTableQuery =
+                    SourceFactory.eINSTANCE.createInlineTableSource();
                 inlineTableQuery.setAlias("binary");
                 inlineTableQuery.setTable(inlineTable);
-
-                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(nameColumn);
 
                 // Create levels
-                org.eclipse.daanse.rolap.mapping.model.Level level1 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 =
+                    LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Level1");
                 level1.setColumn(binColumn);
                 level1.setNameColumn(nameColumn);
                 level1.getOrdinalColumns().add(oc1);
 
-                org.eclipse.daanse.rolap.mapping.model.Level level2 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 =
+                    LevelFactory.eINSTANCE.createLevel();
                 level2.setName("Level2");
                 level2.setColumn(idColumn);
 
                 // Create Hierarchy
                 ExplicitHierarchy hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey(idColumn);
                 hierarchy.setQuery(inlineTableQuery);
@@ -11556,14 +11494,14 @@ class SchemaTest {
                 hierarchy.getLevels().add(level2);
 
                 // Create StandardDimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension standardDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension standardDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 standardDimension.setName("Binary");
                 standardDimension.getHierarchies().add(hierarchy);
 
                 // Create DimensionConnector
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Binary");
                 dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 dimensionConnector.setDimension(standardDimension);
@@ -11574,7 +11512,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11735,112 +11673,112 @@ class SchemaTest {
     }
 
     class TestLevelInternalTypeModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestLevelInternalTypeModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestLevelInternalTypeModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
                 // Create columns using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn idColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column idColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn bigNumColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column bigNumColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 bigNumColumn.setName("big_num");
-                bigNumColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+                bigNumColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn nameColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column nameColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nameColumn.setName("name");
-                nameColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.VARCHAR);
-                nameColumn.setCharOctetLength(20);
+                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                // nameColumn.setCharOctetLength(20);
 
                 // Create row 1
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_1 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_1.setColumn(idColumn);
-                rowValue1_1.setValue("0");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_1 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_1.setFeature(idColumn);
+                rowValue1_1.setDataValue("0");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_2 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_2.setColumn(bigNumColumn);
-                rowValue1_2.setValue("1234");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_2 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_2.setFeature(bigNumColumn);
+                rowValue1_2.setDataValue("1234");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_3 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_3.setColumn(nameColumn);
-                rowValue1_3.setValue("Ben");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_3 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_3.setFeature(nameColumn);
+                rowValue1_3.setDataValue("Ben");
 
-                org.eclipse.daanse.rolap.mapping.model.Row row1 =
-                    RolapMappingFactory.eINSTANCE.createRow();
-                row1.getRowValues().add(rowValue1_1);
-                row1.getRowValues().add(rowValue1_2);
-                row1.getRowValues().add(rowValue1_3);
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Row row1 =
+                    RelationalFactory.eINSTANCE.createRow();
+                row1.getSlot().add(rowValue1_1);
+                row1.getSlot().add(rowValue1_2);
+                row1.getSlot().add(rowValue1_3);
 
                 // Create row 2
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue2_1 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue2_1.setColumn(idColumn);
-                rowValue2_1.setValue("519");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue2_1 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue2_1.setFeature(idColumn);
+                rowValue2_1.setDataValue("519");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue2_2 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue2_2.setColumn(bigNumColumn);
-                rowValue2_2.setValue("1234567890123");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue2_2 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue2_2.setFeature(bigNumColumn);
+                rowValue2_2.setDataValue("1234567890123");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue2_3 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue2_3.setColumn(nameColumn);
-                rowValue2_3.setValue("Bill");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue2_3 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue2_3.setFeature(nameColumn);
+                rowValue2_3.setDataValue("Bill");
 
-                org.eclipse.daanse.rolap.mapping.model.Row row2 =
-                    RolapMappingFactory.eINSTANCE.createRow();
-                row2.getRowValues().add(rowValue2_1);
-                row2.getRowValues().add(rowValue2_2);
-                row2.getRowValues().add(rowValue2_3);
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Row row2 =
+                    RelationalFactory.eINSTANCE.createRow();
+                row2.getSlot().add(rowValue2_1);
+                row2.getSlot().add(rowValue2_2);
+                row2.getSlot().add(rowValue2_3);
 
                 // Create InlineTable
-                org.eclipse.daanse.rolap.mapping.model.InlineTable inlineTable =
-                    RolapMappingFactory.eINSTANCE.createInlineTable();
-                inlineTable.getColumns().add(idColumn);
-                inlineTable.getColumns().add(bigNumColumn);
-                inlineTable.getColumns().add(nameColumn);
-                inlineTable.getRows().add(row1);
-                inlineTable.getRows().add(row2);
+                org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable inlineTable =
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+                inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+                inlineTable.getFeature().add(idColumn);
+                inlineTable.getFeature().add(bigNumColumn);
+                inlineTable.getFeature().add(nameColumn);
+                inlineTable.getExtent().getOwnedElement().add(row1);
+                inlineTable.getExtent().getOwnedElement().add(row2);
 
-                // Create InlineTableQuery
-                org.eclipse.daanse.rolap.mapping.model.InlineTableQuery inlineTableQuery =
-                    RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                // Create InlineTableSource
+                org.eclipse.daanse.rolap.mapping.model.database.source.InlineTableSource inlineTableQuery =
+                    SourceFactory.eINSTANCE.createInlineTableSource();
                 inlineTableQuery.setAlias("binary");
                 inlineTableQuery.setTable(inlineTable);
-
                 // Create levels
-                org.eclipse.daanse.rolap.mapping.model.Level level1 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 =
+                    LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Level1");
                 level1.setColumn(bigNumColumn);
-                level1.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.INTEGER);
+                level1.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.INTEGER);
 
-                org.eclipse.daanse.rolap.mapping.model.Level level2 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 =
+                    LevelFactory.eINSTANCE.createLevel();
                 level2.setName("Level2");
                 level2.setColumn(idColumn);
 
                 // Create Hierarchy
                 ExplicitHierarchy hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey(idColumn);
                 hierarchy.setQuery(inlineTableQuery);
@@ -11848,14 +11786,14 @@ class SchemaTest {
                 hierarchy.getLevels().add(level2);
 
                 // Create StandardDimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension standardDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension standardDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 standardDimension.setName("Big numbers");
                 standardDimension.getHierarchies().add(hierarchy);
 
                 // Create DimensionConnector
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Big numbers");
                 dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 dimensionConnector.setDimension(standardDimension);
@@ -11866,7 +11804,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -11992,89 +11930,89 @@ class SchemaTest {
     }
 
     class TestLevelInternalTypeErrModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestLevelInternalTypeErrModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestLevelInternalTypeErrModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
                 // Create columns using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn idColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column idColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn bigNumColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column bigNumColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 bigNumColumn.setName("big_num");
-                bigNumColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.INTEGER);
+                bigNumColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn nameColumn =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column nameColumn =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nameColumn.setName("name");
-                nameColumn.setType(org.eclipse.daanse.rolap.mapping.model.ColumnType.VARCHAR);
-                nameColumn.setCharOctetLength(20);
+                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                // nameColumn.setCharOctetLength(20);
 
                 // Create row values
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_1 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_1.setColumn(idColumn);
-                rowValue1_1.setValue("0");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_1 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_1.setFeature(idColumn);
+                rowValue1_1.setDataValue("0");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_2 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_2.setColumn(bigNumColumn);
-                rowValue1_2.setValue("1234");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_2 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_2.setFeature(bigNumColumn);
+                rowValue1_2.setDataValue("1234");
 
-                org.eclipse.daanse.rolap.mapping.model.RowValue rowValue1_3 =
-                    RolapMappingFactory.eINSTANCE.createRowValue();
-                rowValue1_3.setColumn(nameColumn);
-                rowValue1_3.setValue("Ben");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot rowValue1_3 =
+                    InstanceFactory.eINSTANCE.createDataSlot();
+                rowValue1_3.setFeature(nameColumn);
+                rowValue1_3.setDataValue("Ben");
 
-                org.eclipse.daanse.rolap.mapping.model.Row row1 =
-                    RolapMappingFactory.eINSTANCE.createRow();
-                row1.getRowValues().add(rowValue1_1);
-                row1.getRowValues().add(rowValue1_2);
-                row1.getRowValues().add(rowValue1_3);
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Row row1 =
+                    RelationalFactory.eINSTANCE.createRow();
+                row1.getSlot().add(rowValue1_1);
+                row1.getSlot().add(rowValue1_2);
+                row1.getSlot().add(rowValue1_3);
 
                 // Create InlineTable
-                org.eclipse.daanse.rolap.mapping.model.InlineTable inlineTable =
-                    RolapMappingFactory.eINSTANCE.createInlineTable();
-                inlineTable.getColumns().add(idColumn);
-                inlineTable.getColumns().add(bigNumColumn);
-                inlineTable.getColumns().add(nameColumn);
-                inlineTable.getRows().add(row1);
+                org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable inlineTable =
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+                inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+                inlineTable.getFeature().add(idColumn);
+                inlineTable.getFeature().add(bigNumColumn);
+                inlineTable.getFeature().add(nameColumn);
+                inlineTable.getExtent().getOwnedElement().add(row1);
 
-                // Create InlineTableQuery
-                org.eclipse.daanse.rolap.mapping.model.InlineTableQuery inlineTableQuery =
-                    RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+                // Create InlineTableSource
+                org.eclipse.daanse.rolap.mapping.model.database.source.InlineTableSource inlineTableQuery =
+                    SourceFactory.eINSTANCE.createInlineTableSource();
                 inlineTableQuery.setAlias("binary");
                 inlineTableQuery.setTable(inlineTable);
-
                 // Create levels
-                org.eclipse.daanse.rolap.mapping.model.Level level1 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 =
+                    LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Level1");
                 level1.setColumn(bigNumColumn);
-                level1.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.INTEGER);
+                level1.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.INTEGER);
 
-                org.eclipse.daanse.rolap.mapping.model.Level level2 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 =
+                    LevelFactory.eINSTANCE.createLevel();
                 level2.setName("Level2");
                 level2.setColumn(idColumn);
 
                 // Create Hierarchy
                 ExplicitHierarchy hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey(idColumn);
                 hierarchy.setQuery(inlineTableQuery);
@@ -12082,14 +12020,14 @@ class SchemaTest {
                 hierarchy.getLevels().add(level2);
 
                 // Create StandardDimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension standardDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension standardDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 standardDimension.setName("Big numbers");
                 standardDimension.getHierarchies().add(hierarchy);
 
                 // Create DimensionConnector
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Big numbers");
                 dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 dimensionConnector.setDimension(standardDimension);
@@ -12100,7 +12038,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -12245,75 +12183,75 @@ class SchemaTest {
     }
 
     class TestScdJoinModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestScdJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestScdJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
-                // Create TableQuery for product table
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource for product table
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT));
 
                 // Create left JoinedQueryElement
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement leftElement =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement leftElement =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftElement.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
                 leftElement.setQuery(productTableQuery);
 
-                // Create TableQuery for product_class table
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productClassTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource for product_class table
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productClassTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT_CLASS));
 
                 // Create right JoinedQueryElement
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement rightElement =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement rightElement =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightElement.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
                 rightElement.setQuery(productClassTableQuery);
 
-                // Create JoinQuery
-                org.eclipse.daanse.rolap.mapping.model.JoinQuery joinQuery =
-                    RolapMappingFactory.eINSTANCE.createJoinQuery();
+                // Create JoinSource
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource joinQuery =
+                    SourceFactory.eINSTANCE.createJoinSource();
                 joinQuery.setLeft(leftElement);
                 joinQuery.setRight(rightElement);
 
                 // Create Level
-                org.eclipse.daanse.rolap.mapping.model.Level level =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                    LevelFactory.eINSTANCE.createLevel();
                 level.setName("Product Class");
                 level.setNameColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS));
                 level.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-                level.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                level.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 level.setUniqueMembers(true);
 
                 // Create Hierarchy
                 ExplicitHierarchy hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
                 hierarchy.setQuery(joinQuery);
                 hierarchy.getLevels().add(level);
 
                 // Create StandardDimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension standardDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension standardDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 standardDimension.setName("Product truncated");
                 standardDimension.getHierarchies().add(hierarchy);
 
                 // Create DimensionConnector
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Product truncated");
                 dimensionConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
                 dimensionConnector.setDimension(standardDimension);
@@ -12324,7 +12262,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -12409,76 +12347,75 @@ class SchemaTest {
     }
 
     class TestNonUniqueAliasModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestNonUniqueAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestNonUniqueAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Find Sales cube
-            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+            java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                 catalog.getCubes().stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
             if (oCube.isPresent()) {
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
-                // Create TableQuery for product table with alias "product_class"
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource for product table with alias "product_class"
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
                 productTableQuery.setAlias("product_class");
 
                 // Create left JoinedQueryElement
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement leftElement =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement leftElement =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftElement.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
                 leftElement.setQuery(productTableQuery);
 
-                // Create TableQuery for product_class table
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productClassTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                // Create TableSource for product_class table
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productClassTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT_CLASS);
-
                 // Create right JoinedQueryElement
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement rightElement =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement rightElement =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightElement.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
                 rightElement.setQuery(productClassTableQuery);
 
-                // Create JoinQuery
-                org.eclipse.daanse.rolap.mapping.model.JoinQuery joinQuery =
-                    RolapMappingFactory.eINSTANCE.createJoinQuery();
+                // Create JoinSource
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource joinQuery =
+                    SourceFactory.eINSTANCE.createJoinSource();
                 joinQuery.setLeft(leftElement);
                 joinQuery.setRight(rightElement);
 
                 // Create Level
-                org.eclipse.daanse.rolap.mapping.model.Level level =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level =
+                    LevelFactory.eINSTANCE.createLevel();
                 level.setName("Product Class");
                 level.setNameColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
                 level.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                level.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                level.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                 level.setUniqueMembers(true);
 
                 // Create Hierarchy
                 ExplicitHierarchy hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
                 hierarchy.setQuery(joinQuery);
                 hierarchy.getLevels().add(level);
 
                 // Create StandardDimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension standardDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension standardDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 standardDimension.setName("Product truncated");
                 standardDimension.getHierarchies().add(hierarchy);
 
                 // Create DimensionConnector
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Product truncated");
                 dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                 dimensionConnector.setDimension(standardDimension);
@@ -12489,7 +12426,7 @@ class SchemaTest {
             }
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -12584,61 +12521,61 @@ class SchemaTest {
      * MONDRIAN-482, "ClassCastException when obtaining RolapCubeLevel"</a>.
      */
     class TestBugMondrian482ModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-        public TestBugMondrian482ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestBugMondrian482ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
             // Create SqlStatement for table filter
-            org.eclipse.daanse.rolap.mapping.model.SqlStatement sqlStatement =
-                RolapMappingFactory.eINSTANCE.createSqlStatement();
+            org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
+                SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement.setSql("`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")");
             sqlStatement.getDialects().add("generic");
 
-            // Create TableQuery with SQL filter
-            org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                RolapMappingFactory.eINSTANCE.createTableQuery();
+            // Create TableSource with SQL filter
+            org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.setSqlWhereExpression(sqlStatement);
 
             // Create Store dimension connector
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector storeConnector =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector storeConnector =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setOverrideDimensionName("Store");
             storeConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             storeConnector.setDimension(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_STORE);
 
             // Create Product dimension connector
-            org.eclipse.daanse.rolap.mapping.model.DimensionConnector productConnector =
-                RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector productConnector =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product");
             productConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             productConnector.setDimension(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.DIMENSION_PRODUCT);
 
             // Create Unit Sales measure
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Store Sales measure
-            org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSalesMeasure =
-                RolapMappingFactory.eINSTANCE.createSumMeasure();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("Standard");
 
             // Create MeasureGroup
-            org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeSalesMeasure);
 
             // Create Sales2 cube
-            org.eclipse.daanse.rolap.mapping.model.PhysicalCube sales2Cube =
-                RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube sales2Cube =
+                CubeFactory.eINSTANCE.createPhysicalCube();
             sales2Cube.setName("Sales2");
             sales2Cube.setDefaultMeasure(unitSalesMeasure);
             sales2Cube.setQuery(tableQuery);
@@ -12650,7 +12587,7 @@ class SchemaTest {
             catalog.getCubes().add(sales2Cube);
         }
 
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -12861,64 +12798,64 @@ class SchemaTest {
         }
         */
         class CheckBugMondrian355Modifier1Emf implements CatalogMappingSupplier {
-            private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+            private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-            public CheckBugMondrian355Modifier1Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
-                EcoreUtil.Copier copier = EmfUtil.copier((org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+            public CheckBugMondrian355Modifier1Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+                EcoreUtil.Copier copier = EmfUtil.copier((org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
                 // Find Sales cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName()))
                         .findAny();
 
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
 
                     // Remove existing Time2 dimension connector if present
                     cube.getDimensionConnectors().removeIf(dc -> "Time2".equals(dc.getOverrideDimensionName()));
 
                     // Create levels
-                    org.eclipse.daanse.rolap.mapping.model.Level level1 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 =
+                        LevelFactory.eINSTANCE.createLevel();
                     level1.setName("Years");
                     level1.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY));
                     level1.setUniqueMembers(true);
-                    level1.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                    level1.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                     level1.setType(LevelDefinition.TIME_YEARS);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level level2 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 =
+                        LevelFactory.eINSTANCE.createLevel();
                     level2.setName("Half year");
                     level2.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY));
                     level2.setUniqueMembers(false);
                     level2.setType(LevelDefinition.getByName(timeHalfYear));
 
-                    org.eclipse.daanse.rolap.mapping.model.Level level3 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level3 =
+                        LevelFactory.eINSTANCE.createLevel();
                     level3.setName("Hours");
                     level3.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY));
                     level3.setUniqueMembers(false);
-                    level3.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                    level3.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                     level3.setType(LevelDefinition.TIME_HOURS);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level level4 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level4 =
+                        LevelFactory.eINSTANCE.createLevel();
                     level4.setName("Quarter hours");
                     level4.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
                     level4.setUniqueMembers(false);
-                    level4.setColumnType(org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType.NUMERIC);
+                    level4.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
                     level4.setType(LevelDefinition.TIME_UNDEFINED);
 
-                    // Create TableQuery
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    // Create TableSource
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY));
 
                     // Create Hierarchy
                     ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
                     hierarchy.setQuery(tableQuery);
@@ -12928,14 +12865,14 @@ class SchemaTest {
                     hierarchy.getLevels().add(level4);
 
                     // Create TimeDimension
-                    org.eclipse.daanse.rolap.mapping.model.TimeDimension timeDimension =
-                        RolapMappingFactory.eINSTANCE.createTimeDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension timeDimension =
+                        DimensionFactory.eINSTANCE.createTimeDimension();
                     timeDimension.setName("Time2");
                     timeDimension.getHierarchies().add(hierarchy);
 
                     // Create DimensionConnector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Time2");
                     dimensionConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
                     dimensionConnector.setDimension(timeDimension);
@@ -12947,63 +12884,63 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
         class CheckBugMondrian355Modifier2Emf implements CatalogMappingSupplier {
-            private org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl catalog;
+            private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
-            public CheckBugMondrian355Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
-                EcoreUtil.Copier copier = EmfUtil.copier((org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl) cat);
+            public CheckBugMondrian355Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+                EcoreUtil.Copier copier = EmfUtil.copier((org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
                 // Find Sales cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream()
                         .filter(c -> "Sales".equals(c.getName()))
                         .findAny();
 
                 if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube = (PhysicalCube) oCube.get();
-                    org.eclipse.daanse.rolap.mapping.model.Level l1 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 = LevelFactory.eINSTANCE.createLevel();
                     l1.setName("Years");
                     l1.setColumn(CatalogSupplier.COLUMN_THE_DATE_TIME_BY_DAY);
                     l1.setUniqueMembers(true);
                     l1.setColumnType(ColumnInternalDataType.NUMERIC);
                     l1.setType(LevelDefinition.TIME_YEARS);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l2 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l2 = LevelFactory.eINSTANCE.createLevel();
                     l2.setName("Half year");
                     l2.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
                     l2.setUniqueMembers(false);
                     l2.setType(LevelDefinition.getByName(timeHalfYear));
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l3 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 = LevelFactory.eINSTANCE.createLevel();
                     l3.setName("Hours");
                     l3.setColumnType(ColumnInternalDataType.NUMERIC);
                     l3.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
                     l3.setType(LevelDefinition.getByName(timeHalfYear));
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l4 = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 = LevelFactory.eINSTANCE.createLevel();
                     l4.setName("Quarter hours");
                     l4.setColumnType(ColumnInternalDataType.NUMERIC);
                     l4.setColumn(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
                     l4.setType(LevelDefinition.getByName("TimeUnspecified"));
 
-                    TableQuery query = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    TableSource query = SourceFactory.eINSTANCE.createTableSource();
                     query.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
 
-                    ExplicitHierarchy h = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy h = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     h.setHasAll(true);
                     h.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
                     h.setQuery(query);
                     h.getLevels().addAll(List.of(l1, l2, l3, l4));
 
-                    TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+                    TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
                     timeDimension.setName("Time2");
                     timeDimension.getHierarchies().add(h);
 
-                    DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Time2");
                     dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                     dimensionConnector.setDimension(timeDimension);
@@ -13015,7 +12952,7 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
 
@@ -13470,41 +13407,41 @@ class SchemaTest {
         }
         */
         class TestCaptionDescriptionAndAnnotationModifierEmf implements CatalogMappingSupplier {
-            private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
+            private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
 
-            public TestCaptionDescriptionAndAnnotationModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestCaptionDescriptionAndAnnotationModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
 
-                this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+                this.catalog = CatalogFactory.eINSTANCE.createCatalog();
 
 
                 // Create physical columns using RolapMappingFactory
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn region_id =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column region_id =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(ColumnType.INTEGER);
+                region_id.setType(SqlSimpleTypes.Sql99.integerType());
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn sales_region =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column sales_region =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(ColumnType.VARCHAR);
-                sales_region.setCharOctetLength(30);
+                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                // sales_region.setCharOctetLength(30);
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn sales_district_id =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column sales_district_id =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_district_id.setName("sales_district_id");
-                sales_district_id.setType(ColumnType.INTEGER);
+                sales_district_id.setType(SqlSimpleTypes.Sql99.integerType());
 
                 // Create physical table "region"
-                org.eclipse.daanse.rolap.mapping.model.PhysicalTable region =
-                    RolapMappingFactory.eINSTANCE.createPhysicalTable();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Table region =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
                 region.setName("region");
-                region.getColumns().add(region_id);
-                region.getColumns().add(sales_region);
-                region.getColumns().add(sales_district_id);
+                region.getFeature().add(region_id);
+                region.getFeature().add(sales_region);
+                region.getFeature().add(sales_district_id);
 
                 // Create Time dimension
-                org.eclipse.daanse.rolap.mapping.model.TimeDimension sd1 =
-                    RolapMappingFactory.eINSTANCE.createTimeDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension sd1 =
+                    DimensionFactory.eINSTANCE.createTimeDimension();
                 sd1.setName("Time");
                 sd1.setDescription("Time shared description");
 
@@ -13515,35 +13452,35 @@ class SchemaTest {
                 sd1.getAnnotations().add(timeAnnotation);
 
                 // Create Time hierarchy
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy timeHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy timeHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 timeHierarchy.setHasAll(false);
                 timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME);
                 timeHierarchy.setDescription("Time shared hierarchy description");
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery timeTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource timeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
                 timeHierarchy.setQuery(timeTableQuery);
 
                 // Create Time levels
-                org.eclipse.daanse.rolap.mapping.model.Level yearLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level yearLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 yearLevel.setName("Year");
                 yearLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
                 yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
                 yearLevel.setUniqueMembers(true);
                 yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level quarterLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level quarterLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 quarterLevel.setName("Quarter");
                 quarterLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
                 quarterLevel.setUniqueMembers(true);
                 quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level monthLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level monthLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 monthLevel.setName("Month");
                 monthLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
                 monthLevel.setUniqueMembers(false);
@@ -13556,41 +13493,41 @@ class SchemaTest {
                 sd1.getHierarchies().add(timeHierarchy);
 
                 // Create Warehouse dimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension sd2 =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd2 =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 sd2.setName("Warehouse");
 
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy warehouseHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy warehouseHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 warehouseHierarchy.setHasAll(false);
                 warehouseHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery warehouseTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource warehouseTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 warehouseTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_WAREHOUSE);
                 warehouseHierarchy.setQuery(warehouseTableQuery);
 
                 // Create Warehouse levels
-                org.eclipse.daanse.rolap.mapping.model.Level countryLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level countryLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 countryLevel.setName("Country");
                 countryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WAREHOUSE_COUNTRY_WAREHOUSE);
                 countryLevel.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level stateProvinceLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level stateProvinceLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 stateProvinceLevel.setName("State Province");
                 stateProvinceLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WAREHOUSE_STATE_PROVINCE_WAREHOUSE);
                 stateProvinceLevel.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level cityLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level cityLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 cityLevel.setName("City");
                 cityLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WAREHOUSE_CITY_WAREHOUSE);
                 cityLevel.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level warehouseNameLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level warehouseNameLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 warehouseNameLevel.setName("Warehouse Name");
                 warehouseNameLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WAREHOUSE_NAME_WAREHOUSE);
                 warehouseNameLevel.setUniqueMembers(true);
@@ -13602,51 +13539,48 @@ class SchemaTest {
                 sd2.getHierarchies().add(warehouseHierarchy);
 
                 // Create joins for Store dimension
-                org.eclipse.daanse.rolap.mapping.model.TableQuery regionTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource regionTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery.setTable(region);
-
-                org.eclipse.daanse.rolap.mapping.model.TableQuery promotionTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource promotionTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 promotionTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PROMOTION);
-
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j111Left =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j111Left =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j111Left.setKey(sales_district_id);
                 j111Left.setQuery(regionTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j111Right =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j111Right =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j111Right.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 j111Right.setQuery(promotionTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinQuery j111 =
-                    RolapMappingFactory.eINSTANCE.createJoinQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j111 =
+                    SourceFactory.eINSTANCE.createJoinSource();
                 j111.setLeft(j111Left);
                 j111.setRight(j111Right);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery storeTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j11Left =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j11Left =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j11Left.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE);
                 j11Left.setQuery(storeTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j11Right =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j11Right =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j11Right.setKey(region_id);
                 j11Right.setQuery(j111);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinQuery j11 =
-                    RolapMappingFactory.eINSTANCE.createJoinQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j11 =
+                    SourceFactory.eINSTANCE.createJoinSource();
                 j11.setLeft(j11Left);
                 j11.setRight(j11Right);
 
                 // Create Store hierarchy with annotations
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy h11 =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy h11 =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(true);
                 h11.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
                 h11.setDescription("Hierarchy description");
@@ -13659,8 +13593,8 @@ class SchemaTest {
                 h11.setQuery(j11);
 
                 // Create Store Country level with annotations
-                org.eclipse.daanse.rolap.mapping.model.Level storeCountryLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeCountryLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 storeCountryLevel.setName("Store Country");
                 storeCountryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 storeCountryLevel.setDescription("Level description");
@@ -13671,13 +13605,13 @@ class SchemaTest {
                 levelAnnotation.setValue("Level");
                 storeCountryLevel.getAnnotations().add(levelAnnotation);
 
-                org.eclipse.daanse.rolap.mapping.model.Level storeRegionLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeRegionLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 storeRegionLevel.setName("Store Region");
                 storeRegionLevel.setColumn(sales_region);
 
-                org.eclipse.daanse.rolap.mapping.model.Level storeNameLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeNameLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 storeNameLevel.setName("Store Name");
                 storeNameLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_NAME_STORE);
 
@@ -13686,8 +13620,8 @@ class SchemaTest {
                 h11.getLevels().add(storeNameLevel);
 
                 // Create Store dimension with annotations
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension storeDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension storeDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store");
                 storeDimension.setDescription("Dimension description");
 
@@ -13699,27 +13633,27 @@ class SchemaTest {
                 storeDimension.getHierarchies().add(h11);
 
                 // Create dimension connectors
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector d1 =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d1 =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 d1.setOverrideDimensionName("Store");
                 d1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 d1.setDimension(storeDimension);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector d2 =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d2 =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 d2.setOverrideDimensionName("Time1");
                 d2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 d2.setDimension(sd1);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector d3 =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector d3 =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 d3.setOverrideDimensionName("Time2");
                 d3.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 d3.setDimension(sd1);
 
                 // Create measure with annotations
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
@@ -13732,8 +13666,8 @@ class SchemaTest {
                 unitSalesMeasure.getAnnotations().add(measureAnnotation);
 
                 // Create calculated member with annotations
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember calcMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calcMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calcMember.setName("Foo");
                 //calcMember.setDimension("Measures");
                 calcMember.setDescription("Calc member description");
@@ -13745,24 +13679,23 @@ class SchemaTest {
                 calcMemberAnnotation.setValue("Calc member");
                 calcMember.getAnnotations().add(calcMemberAnnotation);
 
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty calcMemberProperty =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty calcMemberProperty =
+                        LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calcMemberProperty.setName("FORMAT_STRING");
                 calcMemberProperty.setValue("$#,##0.00");
                 calcMember.getCalculatedMemberProperties().add(calcMemberProperty);
 
                 // Create measure group
-                org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
 
                 // Create Sales cube with annotations
-                org.eclipse.daanse.rolap.mapping.model.TableQuery salesTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource salesTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 salesTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c1 =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c1 =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 c1.setName(salesCubeName);
                 c1.setDescription("Cube description");
 
@@ -13780,8 +13713,8 @@ class SchemaTest {
                 c1.getCalculatedMembers().add(calcMember);
 
                 // Create named set with annotations
-                org.eclipse.daanse.rolap.mapping.model.NamedSet namedSet =
-                    RolapMappingFactory.eINSTANCE.createNamedSet();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.NamedSet namedSet =
+                    DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Top Periods");
                 namedSet.setDescription("Named set description");
                 namedSet.setFormula("TopCount([Time1].MEMBERS, 5, [Measures].[Foo])");
@@ -13794,34 +13727,33 @@ class SchemaTest {
                 c1.getNamedSets().add(namedSet);
 
                 // Create Warehouse cube
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitsShippedMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsShippedMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitsShippedMeasure.setName("Units Shipped");
                 unitsShippedMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNITS_SHIPPED_INVENTORY_FACT);
                 unitsShippedMeasure.setFormatString("#.0");
 
-                org.eclipse.daanse.rolap.mapping.model.MeasureGroup warehouseMeasureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup warehouseMeasureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 warehouseMeasureGroup.getMeasures().add(unitsShippedMeasure);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector warehouseTimeConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector warehouseTimeConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 warehouseTimeConnector.setOverrideDimensionName("Time");
                 warehouseTimeConnector.setDimension(sd1);
                 warehouseTimeConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector warehouseConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector warehouseConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 warehouseConnector.setOverrideDimensionName("Warehouse");
                 warehouseConnector.setDimension(sd2);
                 warehouseConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery inventoryTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource inventoryTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 inventoryTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_INVENTORY_FACT);
-
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c2 =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c2 =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 c2.setName(warehouseCubeName);
                 c2.setQuery(inventoryTableQuery);
                 c2.getDimensionConnectors().add(warehouseTimeConnector);
@@ -13829,16 +13761,16 @@ class SchemaTest {
                 c2.getMeasureGroups().add(warehouseMeasureGroup);
 
                 // Create virtual cube with annotations
-                org.eclipse.daanse.rolap.mapping.model.CubeConnector cc1 =
-                    RolapMappingFactory.eINSTANCE.createCubeConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeConnector cc1 =
+                    CubeFactory.eINSTANCE.createCubeConnector();
                 cc1.setCube(c1);
 
-                org.eclipse.daanse.rolap.mapping.model.CubeConnector cc2 =
-                    RolapMappingFactory.eINSTANCE.createCubeConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeConnector cc2 =
+                    CubeFactory.eINSTANCE.createCubeConnector();
                 cc2.setCube(c2);
 
-                org.eclipse.daanse.rolap.mapping.model.VirtualCube vc1 =
-                    RolapMappingFactory.eINSTANCE.createVirtualCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc1 =
+                    CubeFactory.eINSTANCE.createVirtualCube();
                 vc1.setName(virtualCubeName);
                 vc1.setDescription("Virtual cube description");
 
@@ -13856,8 +13788,8 @@ class SchemaTest {
                 vc1.getReferencedMeasures().add(unitsShippedMeasure);
 
                 // Create virtual cube calculated member
-                org.eclipse.daanse.rolap.mapping.model.CalculatedMember vcCalcMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember vcCalcMember =
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 vcCalcMember.setName("Profit Per Unit Shipped");
                 //vcCalcMember.setDimension("Measures");
                 vcCalcMember.setFormula("1 / [Measures].[Units Shipped]");
@@ -13866,7 +13798,7 @@ class SchemaTest {
                 // Update catalog
                 catalog.setName(schemaName);
                 catalog.setDescription("Schema to test descriptions and captions");
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) cat.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
 
                 org.eclipse.daanse.rolap.mapping.model.Annotation schemaAnnotation1 =
                     RolapMappingFactory.eINSTANCE.createAnnotation();
@@ -13885,7 +13817,7 @@ class SchemaTest {
                 catalog.getCubes().add(vc1);
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -14259,59 +14191,59 @@ class SchemaTest {
         class TestCaptionModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestCaptionModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestCaptionModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
 
                 // Find Sales cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                        (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                     // Create SQL expression column for caption
-                    org.eclipse.daanse.rolap.mapping.model.SQLExpressionColumn captionColumn =
-                        RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-                    captionColumn.setType(ColumnType.VARCHAR);
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn captionColumn =
+                        org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+                    captionColumn.setType(SqlSimpleTypes.varcharType(255));
 
-                    org.eclipse.daanse.rolap.mapping.model.SqlStatement sqlStatement =
-                        RolapMappingFactory.eINSTANCE.createSqlStatement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
+                        SourceFactory.eINSTANCE.createSqlStatement();
                     sqlStatement.setSql("'foobar'");
                     sqlStatement.getDialects().add("generic");
                     captionColumn.getSqls().add(sqlStatement);
 
                     // Create Gender level
-                    org.eclipse.daanse.rolap.mapping.model.Level genderLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level genderLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     genderLevel.setName("Gender");
                     genderLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                     genderLevel.setUniqueMembers(true);
                     genderLevel.setCaptionColumn(captionColumn);
 
                     // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_CUSTOMER);
                     hierarchy.setQuery(tableQuery);
                     hierarchy.getLevels().add(genderLevel);
 
                     // Create dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName("Gender2");
                     dimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Gender2");
                     dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     dimensionConnector.setDimension(dimension);
@@ -14321,7 +14253,7 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -14586,29 +14518,29 @@ class SchemaTest {
         class TestBugMondrian747ModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestBugMondrian747ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestBugMondrian747ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
 
                 // Create Store dimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension sd1 =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd1 =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 sd1.setName("Store");
 
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy storeHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy storeHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 storeHierarchy.setHasAll(true);
                 storeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery storeTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
                 storeHierarchy.setQuery(storeTableQuery);
 
                 // Create Store levels
-                org.eclipse.daanse.rolap.mapping.model.Level countryLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level countryLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 countryLevel.setName("country");
                 countryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 countryLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -14616,8 +14548,8 @@ class SchemaTest {
                 countryLevel.setType(LevelDefinition.REGULAR);
                 countryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-                org.eclipse.daanse.rolap.mapping.model.Level stateLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level stateLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 stateLevel.setName("state");
                 stateLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_STATE_STORE);
                 stateLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -14625,8 +14557,8 @@ class SchemaTest {
                 stateLevel.setType(LevelDefinition.REGULAR);
                 stateLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-                org.eclipse.daanse.rolap.mapping.model.Level cityLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level cityLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 cityLevel.setName("city");
                 cityLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_CITY_STORE);
                 cityLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -14640,23 +14572,23 @@ class SchemaTest {
                 sd1.getHierarchies().add(storeHierarchy);
 
                 // Create Product dimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension sd2 =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd2 =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 sd2.setName("Product");
 
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy productHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy productHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 productHierarchy.setName("New Hierarchy 0");
                 productHierarchy.setHasAll(true);
                 productHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
                 productHierarchy.setQuery(productTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.Level productNameLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productNameLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("product_name");
                 productNameLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
                 productNameLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -14668,35 +14600,34 @@ class SchemaTest {
                 sd2.getHierarchies().add(productHierarchy);
 
                 // Create cube1
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitsales1Measure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsales1Measure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitsales1Measure.setName("unitsales1");
                 unitsales1Measure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitsales1Measure.setDataType(ColumnInternalDataType.NUMERIC);
                 unitsales1Measure.setVisible(true);
 
-                org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup1 =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup1 =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup1.getMeasures().add(unitsales1Measure);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dc1Store =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc1Store =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dc1Store.setDimension(sd1);
                 dc1Store.setOverrideDimensionName("Store");
                 dc1Store.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dc1Product =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc1Product =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dc1Product.setDimension(sd2);
                 dc1Product.setOverrideDimensionName("Product");
                 dc1Product.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery cube1TableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource cube1TableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 cube1TableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c1 =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c1 =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 c1.setName("cube1");
                 c1.setCache(true);
                 c1.setEnabled(true);
@@ -14706,62 +14637,62 @@ class SchemaTest {
                 c1.getMeasureGroups().add(measureGroup1);
 
                 // Create cube2 with SQL view
-                org.eclipse.daanse.rolap.mapping.model.PhysicalColumn salesStateProvince =
-                    RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column salesStateProvince =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 salesStateProvince.setName("sales_state_province");
 
-                org.eclipse.daanse.rolap.mapping.model.SqlView sqlView =
-                    RolapMappingFactory.eINSTANCE.createSqlView();
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
-                sqlView.getColumns().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
-                sqlView.getColumns().add(salesStateProvince);
+                org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlView =
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
+                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+                sqlView.getFeature().add(salesStateProvince);
 
-                org.eclipse.daanse.rolap.mapping.model.SqlStatement sqlStatement =
-                    RolapMappingFactory.eINSTANCE.createSqlStatement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
+                    SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
                     "\"store_id\", \"store_sales\", \"store_cost\", \"unit_sales\", (select \"store_state\" " +
                     "from \"store\" where \"store_id\" = \"sales_fact_1997\".\"store_id\") as " +
                     "\"sales_state_province\" from \"sales_fact_1997\"");
                 sqlStatement.getDialects().add("generic");
-                sqlView.getSqlStatements().add(sqlStatement);
+                sqlView.getDialectStatements().add(sqlStatement);
 
-                org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery vv =
-                    RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource vv =
+                    SourceFactory.eINSTANCE.createSqlSelectSource();
                 vv.setAlias("sales_fact_1997_test");
                 vv.setSql(sqlView);
 
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitsales2Measure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsales2Measure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitsales2Measure.setName("unitsales2");
                 unitsales2Measure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitsales2Measure.setDataType(ColumnInternalDataType.NUMERIC);
                 unitsales2Measure.setVisible(true);
 
-                org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup2 =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup2 =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup2.getMeasures().add(unitsales2Measure);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dc2Store =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc2Store =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dc2Store.setDimension(sd1);
                 dc2Store.setOverrideDimensionName("Store");
                 dc2Store.setForeignKey(salesStateProvince);
                 dc2Store.setLevel(stateLevel);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector dc2Product =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc2Product =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 dc2Product.setDimension(sd2);
                 dc2Product.setOverrideDimensionName("Product");
                 dc2Product.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube c2 =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c2 =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 c2.setName("cube2");
                 c2.setCache(true);
                 c2.setEnabled(true);
@@ -14771,16 +14702,16 @@ class SchemaTest {
                 c2.getMeasureGroups().add(measureGroup2);
 
                 // Create virtual cube
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector vcStoreConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcStoreConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 vcStoreConnector.setOverrideDimensionName("Store");
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector vcProductConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcProductConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 vcProductConnector.setOverrideDimensionName("Product");
 
-                org.eclipse.daanse.rolap.mapping.model.VirtualCube vc =
-                    RolapMappingFactory.eINSTANCE.createVirtualCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc =
+                    CubeFactory.eINSTANCE.createVirtualCube();
                 vc.setEnabled(true);
                 vc.setName("virtual_cube");
                 vc.getDimensionConnectors().add(vcStoreConnector);
@@ -14796,7 +14727,7 @@ class SchemaTest {
                 catalog.getCubes().add(vc);
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -15105,108 +15036,107 @@ class SchemaTest {
         class TestBugMondrian463Modifier1Emf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestBugMondrian463Modifier1Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestBugMondrian463Modifier1Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
                 catalog = (CatalogImpl) copier.get(cat);
 
                 // Find Sales cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                        (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                     // Create levels
-                    org.eclipse.daanse.rolap.mapping.model.Level l1 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l1.setName("Product Family");
                     l1.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS));
                     l1.setUniqueMembers(true);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l2 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l2 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l2.setName("Product Department");
                     l2.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS));
                     l2.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l3 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l3.setName("Product Category");
                     l3.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS));
                     l3.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l4 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l4.setName("Product Subcategory");
                     l4.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS));
                     l4.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l5 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l5 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l5.setName("Product Class");
                     l5.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE));
                     l5.setColumnType(ColumnInternalDataType.NUMERIC);
                     l5.setUniqueMembers(true);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l6 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l6 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l6.setName("Brand Name");
                     l6.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
                     l6.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l7 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l7 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l7.setName("Product Name");
                     l7.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT));
                     l7.setUniqueMembers(true);
 
                     // Create 3-way snowflake join: product -> store -> product_class
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery storeTableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     storeTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
 
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery productClassTableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     productClassTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT_CLASS);
-
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j1Left =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Left =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Left.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE));
                     j1Left.setQuery(storeTableQuery);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j1Right =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Right =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Right.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
                     j1Right.setQuery(productClassTableQuery);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinQuery j1 =
-                        RolapMappingFactory.eINSTANCE.createJoinQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j1 =
+                        SourceFactory.eINSTANCE.createJoinSource();
                     j1.setLeft(j1Left);
                     j1.setRight(j1Right);
 
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery productTableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     productTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT));
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement jLeft =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jLeft =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jLeft.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
                     jLeft.setQuery(productTableQuery);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement jRight =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jRight =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jRight.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE));
                     jRight.setQuery(j1);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinQuery j =
-                        RolapMappingFactory.eINSTANCE.createJoinQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j =
+                        SourceFactory.eINSTANCE.createJoinSource();
                     j.setLeft(jLeft);
                     j.setRight(jRight);
 
                     // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
                     hierarchy.setQuery(j);
@@ -15219,14 +15149,14 @@ class SchemaTest {
                     hierarchy.getLevels().add(l7);
 
                     // Create dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName("Product3");
                     dimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Product3");
                     dimensionConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
                     dimensionConnector.setDimension(dimension);
@@ -15236,7 +15166,7 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -15423,103 +15353,100 @@ class SchemaTest {
         }*/
 
         class TestBugMondrian463Modifier2Emf implements CatalogMappingSupplier {
-            private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
+            private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
 
-            public TestBugMondrian463Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestBugMondrian463Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
 
-                this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+                this.catalog = CatalogFactory.eINSTANCE.createCatalog();
 
 
                 // Create Product3 levels
-                org.eclipse.daanse.rolap.mapping.model.Level l1 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l1.setName("Product Family");
                 l1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
                 l1.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l2 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l2 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l2.setName("Product Department");
                 l2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
                 l2.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l3 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l3.setName("Product Category");
                 l3.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
                 l3.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l4 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l4.setName("Product Subcategory");
                 l4.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
                 l4.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l5 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l5 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l5.setName("Product Class");
                 l5.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
                 l5.setColumnType(ColumnInternalDataType.NUMERIC);
                 l5.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l6 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l6 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l6.setName("Brand Name");
                 l6.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
                 l6.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l7 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l7 =
+                    LevelFactory.eINSTANCE.createLevel();
                 l7.setName("Product Name");
                 l7.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
                 l7.setUniqueMembers(true);
 
                 // Create 3-way snowflake join
-                org.eclipse.daanse.rolap.mapping.model.TableQuery storeTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productClassTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productClassTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT_CLASS);
-
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j1Left =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Left =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Left.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE);
                 j1Left.setQuery(storeTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j1Right =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Right =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Right.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
                 j1Right.setQuery(productClassTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinQuery j1 =
-                    RolapMappingFactory.eINSTANCE.createJoinQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j1 =
+                    SourceFactory.eINSTANCE.createJoinSource();
                 j1.setLeft(j1Left);
                 j1.setRight(j1Right);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery productTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
-
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement jLeft =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jLeft =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 jLeft.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
                 jLeft.setQuery(productTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement jRight =
-                    RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jRight =
+                    SourceFactory.eINSTANCE.createJoinedQueryElement();
                 jRight.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
                 jRight.setQuery(j1);
 
-                org.eclipse.daanse.rolap.mapping.model.JoinQuery j =
-                    RolapMappingFactory.eINSTANCE.createJoinQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j =
+                    SourceFactory.eINSTANCE.createJoinSource();
                 j.setLeft(jLeft);
                 j.setRight(jRight);
 
                 // Create Product3 hierarchy
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy h1 =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy h1 =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h1.setHasAll(true);
                 h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
                 h1.setQuery(j);
@@ -15532,43 +15459,43 @@ class SchemaTest {
                 h1.getLevels().add(l7);
 
                 // Create Product3 dimension
-                org.eclipse.daanse.rolap.mapping.model.StandardDimension product3Dimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension product3Dimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 product3Dimension.setName("Product3");
                 product3Dimension.getHierarchies().add(h1);
 
                 // Create Time dimension
-                org.eclipse.daanse.rolap.mapping.model.TimeDimension timeDimension =
-                    RolapMappingFactory.eINSTANCE.createTimeDimension();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension timeDimension =
+                    DimensionFactory.eINSTANCE.createTimeDimension();
                 timeDimension.setName("Time");
 
-                org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy timeHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy timeHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 timeHierarchy.setHasAll(false);
                 timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-                org.eclipse.daanse.rolap.mapping.model.TableQuery timeTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource timeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
                 timeHierarchy.setQuery(timeTableQuery);
 
-                org.eclipse.daanse.rolap.mapping.model.Level yearLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level yearLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 yearLevel.setName("Year");
                 yearLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
                 yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
                 yearLevel.setUniqueMembers(true);
                 yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level quarterLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level quarterLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 quarterLevel.setName("Quarter");
                 quarterLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
                 quarterLevel.setUniqueMembers(false);
                 quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-                org.eclipse.daanse.rolap.mapping.model.Level monthLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level monthLevel =
+                    LevelFactory.eINSTANCE.createLevel();
                 monthLevel.setName("Month");
                 monthLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
                 monthLevel.setUniqueMembers(false);
@@ -15581,34 +15508,33 @@ class SchemaTest {
                 timeDimension.getHierarchies().add(timeHierarchy);
 
                 // Create Sales cube
-                org.eclipse.daanse.rolap.mapping.model.TableQuery salesTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource salesTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 salesTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector timeConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector timeConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 timeConnector.setOverrideDimensionName("Time");
                 timeConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 timeConnector.setDimension(timeDimension);
 
-                org.eclipse.daanse.rolap.mapping.model.DimensionConnector product3Connector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector product3Connector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 product3Connector.setOverrideDimensionName("Product3");
                 product3Connector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                 product3Connector.setDimension(product3Dimension);
 
-                org.eclipse.daanse.rolap.mapping.model.SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitSalesMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("#,###");
 
-                org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
 
-                org.eclipse.daanse.rolap.mapping.model.PhysicalCube salesCube =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 salesCube.setName("Sales");
                 salesCube.setQuery(salesTableQuery);
                 salesCube.getDimensionConnectors().add(timeConnector);
@@ -15620,7 +15546,7 @@ class SchemaTest {
                 catalog.getCubes().add(salesCube);
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -15796,112 +15722,109 @@ class SchemaTest {
         class TestLeftDeepJoinFailsModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestLeftDeepJoinFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestLeftDeepJoinFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
 
                 // Find Sales cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                        (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                     // Create levels
-                    org.eclipse.daanse.rolap.mapping.model.Level l1 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l1.setName("Product Family");
                     l1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
                     l1.setUniqueMembers(true);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l2 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l2 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l2.setName("Product Department");
                     l2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
                     l2.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l3 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l3.setName("Product Category");
                     l3.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
                     l3.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l4 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l4.setName("Product Subcategory");
                     l4.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
                     l4.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l5 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l5 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l5.setName("Product Class");
                     l5.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
                     l5.setColumnType(ColumnInternalDataType.NUMERIC);
                     l5.setUniqueMembers(true);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l6 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l6 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l6.setName("Brand Name");
                     l6.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
                     l6.setUniqueMembers(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level l7 =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l7 =
+                        LevelFactory.eINSTANCE.createLevel();
                     l7.setName("Product Name");
                     l7.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
                     l7.setUniqueMembers(true);
 
                     // Create LEFT-DEEP join (which should fail): (product -> store) -> product_class
                     // This is different from right-deep join
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery productTableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
-
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery storeTableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-
                     // First join: product -> store
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j1Left =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Left =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Left.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
                     j1Left.setQuery(productTableQuery);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement j1Right =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Right =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Right.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE);
                     j1Right.setQuery(storeTableQuery);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinQuery j1 =
-                        RolapMappingFactory.eINSTANCE.createJoinQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j1 =
+                        SourceFactory.eINSTANCE.createJoinSource();
                     j1.setLeft(j1Left);
                     j1.setRight(j1Right);
 
                     // Second join (LEFT-DEEP!): (product -> store) -> product_class
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery productClassTableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     productClassTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT_CLASS);
-
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement jLeft =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jLeft =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jLeft.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
                     jLeft.setQuery(j1);  // LEFT side is a JOIN - this should cause error!
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement jRight =
-                        RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jRight =
+                        SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jRight.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
                     jRight.setQuery(productClassTableQuery);
 
-                    org.eclipse.daanse.rolap.mapping.model.JoinQuery j =
-                        RolapMappingFactory.eINSTANCE.createJoinQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j =
+                        SourceFactory.eINSTANCE.createJoinSource();
                     j.setLeft(jLeft);
                     j.setRight(jRight);
 
                     // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
                     hierarchy.setQuery(j);
@@ -15914,14 +15837,14 @@ class SchemaTest {
                     hierarchy.getLevels().add(l7);
 
                     // Create dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName("Product3");
                     dimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Product3");
                     dimensionConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                     dimensionConnector.setDimension(dimension);
@@ -15931,7 +15854,7 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -16024,32 +15947,32 @@ class SchemaTest {
         class TestCaptionWithOrdinalColumnModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestCaptionWithOrdinalColumnModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestCaptionWithOrdinalColumnModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
 
                 // Find HR cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream().filter(c -> "HR".equals(c.getName())).findAny();
 
-                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube cube =
-                        (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) oCube.get();
+                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
 
                     // Create Management Role level
-                    org.eclipse.daanse.rolap.mapping.model.Level managementRoleLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level managementRoleLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     managementRoleLevel.setName("Management Role");
                     managementRoleLevel.setUniqueMembers(true);
                     managementRoleLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE));
 
-                    OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                    OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                     oc1.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE));
 
                     // Create Position Title level with ordinalColumn and captionColumn
-                    org.eclipse.daanse.rolap.mapping.model.Level positionTitleLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level positionTitleLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     positionTitleLevel.setName("Position Title");
                     positionTitleLevel.setUniqueMembers(false);
                     positionTitleLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
@@ -16057,14 +15980,14 @@ class SchemaTest {
                     positionTitleLevel.setCaptionColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
 
                     // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setAllMemberName("All Position");
                     hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
 
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_EMPLOYEE));
                     hierarchy.setQuery(tableQuery);
 
@@ -16072,14 +15995,14 @@ class SchemaTest {
                     hierarchy.getLevels().add(positionTitleLevel);
 
                     // Create dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName("Position");
                     dimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Position");
                     dimensionConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY));
                     dimensionConnector.setDimension(dimension);
@@ -16089,7 +16012,7 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -16193,52 +16116,52 @@ class SchemaTest {
         class TestBugMondrian923ModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestBugMondrian923ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestBugMondrian923ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
 
                 // Find "Warehouse and Sales" virtual cube
-                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> oCube =
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
                     catalog.getCubes().stream().filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
 
-                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.VirtualCube) {
-                    org.eclipse.daanse.rolap.mapping.model.VirtualCube virtualCube =
-                        (org.eclipse.daanse.rolap.mapping.model.VirtualCube) oCube.get();
+                if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube virtualCube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube) oCube.get();
 
                     // Create "Image Unit Sales" calculated member
-                    org.eclipse.daanse.rolap.mapping.model.CalculatedMember imageUnitSales =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember imageUnitSales =
+                        LevelFactory.eINSTANCE.createCalculatedMember();
                     imageUnitSales.setName("Image Unit Sales");
                     //imageUnitSales.setDimension("Measures");
                     imageUnitSales.setFormula("[Measures].[Unit Sales]");
 
-                    org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty imageProperty =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty imageProperty =
+                        LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     imageProperty.setName("FORMAT_STRING");
                     imageProperty.setValue("|$#,###.00|image=icon_chart\\.gif|link=http://www\\.pentaho\\.com");
                     imageUnitSales.getCalculatedMemberProperties().add(imageProperty);
 
                     // Create "Arrow Unit Sales" calculated member
-                    org.eclipse.daanse.rolap.mapping.model.CalculatedMember arrowUnitSales =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember arrowUnitSales =
+                        LevelFactory.eINSTANCE.createCalculatedMember();
                     arrowUnitSales.setName("Arrow Unit Sales");
                     //arrowUnitSales.setDimension("Measures");
                     arrowUnitSales.setFormula("[Measures].[Unit Sales]");
 
-                    org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty arrowProperty =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty arrowProperty =
+                        LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     arrowProperty.setName("FORMAT_STRING");
                     arrowProperty.setValue("IIf([Measures].[Unit Sales] > 10000,'|#,###|arrow=up',IIf([Measures].[Unit Sales] > 5000,'|#,###|arrow=down','|#,###|arrow=none'))");
                     arrowUnitSales.getCalculatedMemberProperties().add(arrowProperty);
 
                     // Create "Style Unit Sales" calculated member
-                    org.eclipse.daanse.rolap.mapping.model.CalculatedMember styleUnitSales =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember styleUnitSales =
+                        LevelFactory.eINSTANCE.createCalculatedMember();
                     styleUnitSales.setName("Style Unit Sales");
                     //styleUnitSales.setDimension("Measures");
                     styleUnitSales.setFormula("[Measures].[Unit Sales]");
 
-                    org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty styleProperty =
-                        RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty styleProperty =
+                        LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     styleProperty.setName("FORMAT_STRING");
                     styleProperty.setValue("IIf([Measures].[Unit Sales] > 100000,'|#,###|style=green',IIf([Measures].[Unit Sales] > 50000,'|#,###|style=yellow','|#,###|style=red'))");
                     styleUnitSales.getCalculatedMemberProperties().add(styleProperty);
@@ -16250,7 +16173,7 @@ class SchemaTest {
                 }
             }
 
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -16355,7 +16278,7 @@ class SchemaTest {
             class TestCubesVisibilityModifierEmf implements CatalogMappingSupplier {
                 private CatalogImpl catalog;
 
-                public TestCubesVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+                public TestCubesVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
 
@@ -16364,49 +16287,49 @@ class SchemaTest {
                     catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
 
                     // Create Store Type level
-                    org.eclipse.daanse.rolap.mapping.model.Level storeTypeLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     storeTypeLevel.setName("Store Type");
                     storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
                     storeTypeLevel.setUniqueMembers(true);
 
                     // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.getLevels().add(storeTypeLevel);
 
                     // Create dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension dimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName("Store Type");
                     dimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Store Type");
                     dimensionConnector.setDimension(dimension);
 
                     // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSqftMeasure =
-                        RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                        MeasureFactory.eINSTANCE.createSumMeasure();
                     storeSqftMeasure.setName("Store Sqft");
                     storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
                     storeSqftMeasure.setFormatString("#,###");
 
                     // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                        RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                        CubeFactory.eINSTANCE.createMeasureGroup();
                     measureGroup.getMeasures().add(storeSqftMeasure);
 
                     // Create Foo cube with visibility
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
 
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube fooCube =
-                        RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                        CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
                     fooCube.setVisible(testValue);
                     fooCube.setQuery(tableQuery);
@@ -16417,7 +16340,7 @@ class SchemaTest {
                     catalog.getCubes().add(0, fooCube);
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -16487,7 +16410,7 @@ class SchemaTest {
             class TestVirtualCubesVisibilityModifierEmf implements CatalogMappingSupplier {
                 private CatalogImpl catalog;
 
-                public TestVirtualCubesVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+                public TestVirtualCubesVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
 
@@ -16496,22 +16419,22 @@ class SchemaTest {
                     catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
 
                     // Find Sales cube for reference
-                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> salesCubeOpt =
+                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
                         catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                    if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                        org.eclipse.daanse.rolap.mapping.model.PhysicalCube salesCube =
-                            (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) salesCubeOpt.get();
+                    if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                        org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
+                            (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) salesCubeOpt.get();
 
                         // Find Customers dimension in Sales cube
-                        java.util.Optional<org.eclipse.daanse.rolap.mapping.model.DimensionConnector> customersDimConnOpt =
+                        java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector> customersDimConnOpt =
                             salesCube.getDimensionConnectors().stream()
                                 .filter(dc -> "Customers".equals(dc.getOverrideDimensionName()))
                                 .findAny();
 
                         // Find Store Sales measure in Sales cube
                         BaseMeasure storeSalesMeasure = null;
-                        for (org.eclipse.daanse.rolap.mapping.model.MeasureGroup mg : salesCube.getMeasureGroups()) {
+                        for (org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup mg : salesCube.getMeasureGroups()) {
                             for (BaseMeasure m : mg.getMeasures()) {
                                 if ("Store Sales".equals(m.getName())) {
                                     storeSalesMeasure = m;
@@ -16523,15 +16446,15 @@ class SchemaTest {
 
                         if (customersDimConnOpt.isPresent() && storeSalesMeasure != null) {
                             // Create dimension connector for virtual cube
-                            //org.eclipse.daanse.rolap.mapping.model.DimensionConnector vcDimensionConnector =
-                            //    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                            //org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector =
+                            //    DimensionFactory.eINSTANCE.createDimensionConnector();
                             //vcDimensionConnector.setOverrideDimensionName("Customers");
                             //vcDimensionConnector.setDimension(customersDimConnOpt.get().getDimension());
                             //vcDimensionConnector.setPhysicalCube(salesCube);
 
                             // Create virtual cube "Foo" with visibility
-                            org.eclipse.daanse.rolap.mapping.model.VirtualCube fooVirtualCube =
-                                RolapMappingFactory.eINSTANCE.createVirtualCube();
+                            org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube fooVirtualCube =
+                                CubeFactory.eINSTANCE.createVirtualCube();
                             fooVirtualCube.setName("Foo");
                             fooVirtualCube.setVisible(testValue);
                             fooVirtualCube.getDimensionConnectors().add(customersDimConnOpt.get());
@@ -16543,7 +16466,7 @@ class SchemaTest {
                     }
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -16628,7 +16551,7 @@ class SchemaTest {
             class TestDimensionVisibilityModifierEmf implements CatalogMappingSupplier {
                 private CatalogImpl catalog;
 
-                public TestDimensionVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+                public TestDimensionVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
 
@@ -16637,50 +16560,49 @@ class SchemaTest {
                     catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
 
                     // Create Store Type level
-                    org.eclipse.daanse.rolap.mapping.model.Level storeTypeLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     storeTypeLevel.setName("Store Type");
                     storeTypeLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE);
                     storeTypeLevel.setUniqueMembers(true);
 
                     // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy hierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.getLevels().add(storeTypeLevel);
 
                     // Create Bar dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension barDimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension barDimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     barDimension.setName("Bar");
                     barDimension.getHierarchies().add(hierarchy);
 
                     // Create dimension connector with visibility
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Bar");
                     dimensionConnector.setVisible(testValue);
                     dimensionConnector.setDimension(barDimension);
 
                     // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSqftMeasure =
-                        RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                        MeasureFactory.eINSTANCE.createSumMeasure();
                     storeSqftMeasure.setName("Store Sqft");
                     storeSqftMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE);
                     storeSqftMeasure.setFormatString("#,###");
 
                     // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                        RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                        CubeFactory.eINSTANCE.createMeasureGroup();
                     measureGroup.getMeasures().add(storeSqftMeasure);
 
                     // Create Foo cube
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube fooCube =
-                        RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                        CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
                     fooCube.setQuery(tableQuery);
                     fooCube.getDimensionConnectors().add(dimensionConnector);
@@ -16690,7 +16612,7 @@ class SchemaTest {
                     catalog.getCubes().add(0, fooCube);
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -16765,7 +16687,7 @@ class SchemaTest {
             class TestVirtualDimensionVisibilityModifierEmf implements CatalogMappingSupplier {
                 private CatalogImpl catalog;
 
-                public TestVirtualDimensionVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+                public TestVirtualDimensionVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
 
@@ -16774,16 +16696,16 @@ class SchemaTest {
                     catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
 
                     // Find Sales cube for reference
-                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.Cube> salesCubeOpt =
+                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
                         catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                    if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                        org.eclipse.daanse.rolap.mapping.model.PhysicalCube salesCube =
-                            (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) salesCubeOpt.get();
+                    if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                        org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
+                            (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) salesCubeOpt.get();
 
                         // Find Store Sales measure in Sales cube
                         BaseMeasure storeSalesMeasure = null;
-                        for (org.eclipse.daanse.rolap.mapping.model.MeasureGroup mg : salesCube.getMeasureGroups()) {
+                        for (org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup mg : salesCube.getMeasureGroups()) {
                             for (BaseMeasure m : mg.getMeasures()) {
                                 if ("Store Sales".equals(m.getName())) {
                                     storeSalesMeasure = m;
@@ -16795,17 +16717,17 @@ class SchemaTest {
 
                         if (storeSalesMeasure != null) {
                             // Create dimension connector for virtual cube with visibility
-                            //org.eclipse.daanse.rolap.mapping.model.DimensionConnector vcDimensionConnector =
-                            //    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                            //org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector =
+                            //    DimensionFactory.eINSTANCE.createDimensionConnector();
                             //vcDimensionConnector.setPhysicalCube(salesCube);
                             //vcDimensionConnector.setOverrideDimensionName("Customers");
                             //vcDimensionConnector.setVisible(testValue);
 
                             // Create virtual cube "Foo"
-                            org.eclipse.daanse.rolap.mapping.model.DimensionConnector vcDimensionConnector = (DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER);
+                            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector = (DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER);
                             vcDimensionConnector.setVisible(testValue);
-                            org.eclipse.daanse.rolap.mapping.model.VirtualCube fooVirtualCube =
-                                RolapMappingFactory.eINSTANCE.createVirtualCube();
+                            org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube fooVirtualCube =
+                                CubeFactory.eINSTANCE.createVirtualCube();
                             fooVirtualCube.setName("Foo");
                             fooVirtualCube.getDimensionConnectors().add(vcDimensionConnector);
                             fooVirtualCube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
@@ -16816,7 +16738,7 @@ class SchemaTest {
                     }
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -16917,7 +16839,7 @@ class SchemaTest {
                 private CatalogImpl catalog;
                 private Boolean value;
 
-                public TestDimensionUsageVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat, Boolean value) {
+                public TestDimensionUsageVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, Boolean value) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
                     this.value = value;
@@ -16926,13 +16848,13 @@ class SchemaTest {
                     catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
 
                     // Find Time dimension for shared usage
-                    org.eclipse.daanse.rolap.mapping.model.Dimension timeDimension = null;
-                    for (org.eclipse.daanse.rolap.mapping.model.Cube cube : catalog.getCubes()) {
-                        if (cube instanceof org.eclipse.daanse.rolap.mapping.model.PhysicalCube) {
-                            org.eclipse.daanse.rolap.mapping.model.PhysicalCube physCube =
-                                (org.eclipse.daanse.rolap.mapping.model.PhysicalCube) cube;
-                            for (org.eclipse.daanse.rolap.mapping.model.DimensionConnector dc : physCube.getDimensionConnectors()) {
-                                if (dc.getDimension() instanceof org.eclipse.daanse.rolap.mapping.model.TimeDimension) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension timeDimension = null;
+                    for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
+                        if (cube instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube physCube =
+                                (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) cube;
+                            for (org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc : physCube.getDimensionConnectors()) {
+                                if (dc.getDimension() instanceof org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension) {
                                     timeDimension = dc.getDimension();
                                     break;
                                 }
@@ -16942,33 +16864,33 @@ class SchemaTest {
                     }
 
                     // Create Store Type level for Bacon dimension
-                    org.eclipse.daanse.rolap.mapping.model.Level storeTypeLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     storeTypeLevel.setName("Store Type");
                     storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
                     storeTypeLevel.setUniqueMembers(true);
 
                     // Create hierarchy for Bacon dimension
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy baconHierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy baconHierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     baconHierarchy.setHasAll(true);
                     baconHierarchy.getLevels().add(storeTypeLevel);
 
                     // Create Bacon dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension baconDimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension baconDimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     baconDimension.setName("Bacon");
                     baconDimension.getHierarchies().add(baconHierarchy);
 
                     // Create dimension connector for Bacon
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector baconDimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector baconDimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     baconDimensionConnector.setOverrideDimensionName("Bacon");
                     baconDimensionConnector.setDimension(baconDimension);
 
                     // Create dimension connector for Bar (shared Time dimension) with visibility
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector barDimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector barDimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     barDimensionConnector.setOverrideDimensionName("Bar");
                     if (timeDimension != null) {
                         barDimensionConnector.setDimension(timeDimension);
@@ -16977,24 +16899,24 @@ class SchemaTest {
                     barDimensionConnector.setVisible(this.value);
 
                     // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSqftMeasure =
-                        RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                        MeasureFactory.eINSTANCE.createSumMeasure();
                     storeSqftMeasure.setName("Store Sqft");
                     storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
                     storeSqftMeasure.setFormatString("#,###");
 
                     // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                        RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                        CubeFactory.eINSTANCE.createMeasureGroup();
                     measureGroup.getMeasures().add(storeSqftMeasure);
 
                     // Create Foo cube
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
 
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube fooCube =
-                        RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                        CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
                     fooCube.setQuery(tableQuery);
                     fooCube.getDimensionConnectors().add(baconDimensionConnector);
@@ -17005,7 +16927,7 @@ class SchemaTest {
                     catalog.getCubes().add(fooCube);
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -17029,7 +16951,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
             context.getCatalogCache().clear();
-            org.eclipse.daanse.rolap.mapping.model.Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
+            org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
             TestDimensionUsageVisibilityModifierEmf testDimensionUsageVisibilityModifier =
             		new TestDimensionUsageVisibilityModifierEmf(catalogMapping, testValue);
             ((TestContext)context).setCatalogMappingSupplier(testDimensionUsageVisibilityModifier);
@@ -17110,7 +17032,7 @@ class SchemaTest {
             class TestHierarchyVisibilityModifierEmf implements CatalogMappingSupplier {
                 private CatalogImpl catalog;
 
-                public TestHierarchyVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+                public TestHierarchyVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
 
@@ -17119,51 +17041,51 @@ class SchemaTest {
                     catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
 
                     // Create Store Type level
-                    org.eclipse.daanse.rolap.mapping.model.Level storeTypeLevel =
-                        RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                        LevelFactory.eINSTANCE.createLevel();
                     storeTypeLevel.setName("Store Type");
                     storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
                     storeTypeLevel.setUniqueMembers(true);
 
                     // Create hierarchy "Bacon" with visibility
-                    org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy baconHierarchy =
-                        RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy baconHierarchy =
+                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     baconHierarchy.setName("Bacon");
                     baconHierarchy.setHasAll(true);
                     baconHierarchy.setVisible(testValue);
                     baconHierarchy.getLevels().add(storeTypeLevel);
 
                     // Create Bar dimension
-                    org.eclipse.daanse.rolap.mapping.model.StandardDimension barDimension =
-                        RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension barDimension =
+                        DimensionFactory.eINSTANCE.createStandardDimension();
                     barDimension.setName("Bar");
                     barDimension.getHierarchies().add(baconHierarchy);
 
                     // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.DimensionConnector dimensionConnector =
-                        RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                        DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimensionConnector.setOverrideDimensionName("Bar");
                     dimensionConnector.setDimension(barDimension);
 
                     // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.SumMeasure storeSqftMeasure =
-                        RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                        MeasureFactory.eINSTANCE.createSumMeasure();
                     storeSqftMeasure.setName("Store Sqft");
                     storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
                     storeSqftMeasure.setFormatString("#,###");
 
                     // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.MeasureGroup measureGroup =
-                        RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                        CubeFactory.eINSTANCE.createMeasureGroup();
                     measureGroup.getMeasures().add(storeSqftMeasure);
 
                     // Create Foo cube
-                    org.eclipse.daanse.rolap.mapping.model.TableQuery tableQuery =
-                        RolapMappingFactory.eINSTANCE.createTableQuery();
+                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                        SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
 
-                    org.eclipse.daanse.rolap.mapping.model.PhysicalCube fooCube =
-                        RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                        CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
                     fooCube.setQuery(tableQuery);
                     fooCube.getDimensionConnectors().add(dimensionConnector);
@@ -17173,7 +17095,7 @@ class SchemaTest {
                     catalog.getCubes().add(fooCube);
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -17273,28 +17195,28 @@ class SchemaTest {
             class TestLevelVisibilityModifierEmf implements CatalogMappingSupplier {
                 private CatalogImpl catalog;
 
-                public TestLevelVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+                public TestLevelVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                     EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                     this.catalog = (CatalogImpl) copier.get(cat);
 
 
-                    PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
 
-                    TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_STORE);
                     fooCube.setQuery(tableQuery);
 
-                    DimensionConnector dimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimConnector.setOverrideDimensionName("Bar");
 
-                    StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
 
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setName("Bacon");
                     hierarchy.setHasAll(false);
 
-                    org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Samosa");
                     level.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
                     level.setUniqueMembers(true);
@@ -17305,9 +17227,9 @@ class SchemaTest {
                     dimConnector.setDimension(dimension);
                     fooCube.getDimensionConnectors().add(dimConnector);
 
-                    MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-                    SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
                     measure.setName("Store Sqft");
                     measure.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
                     measure.setFormatString("#,###");
@@ -17319,7 +17241,7 @@ class SchemaTest {
                 }
 
                 @Override
-                public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                     return catalog;
                 }
             }
@@ -17502,136 +17424,135 @@ class SchemaTest {
         class TestNonCollapsedAggregateModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
-            public TestNonCollapsedAggregateModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public TestNonCollapsedAggregateModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-
-                AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude1.setName("agg_g_ms_pcat_sales_fact_1997");
                 tableQuery.getAggregationExcludes().add(aggExclude1);
 
-                AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude2.setName("agg_c_14_sales_fact_1997");
                 tableQuery.getAggregationExcludes().add(aggExclude2);
 
-                AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude3.setName("agg_pl_01_sales_fact_1997");
                 tableQuery.getAggregationExcludes().add(aggExclude3);
 
-                AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+                AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
                 aggExclude4.setName("agg_ll_01_sales_fact_1997");
                 tableQuery.getAggregationExcludes().add(aggExclude4);
 
-                AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+                AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
                 aggName.setName(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
 
-                AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggFactCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_L_05_SALES_FACT_1997);
                 aggName.setAggregationFactCount(aggFactCount);
 
-                AggregationColumnName aggIgnore1 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                AggregationColumnName aggIgnore1 = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggIgnore1.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationIgnoreColumns().add(aggIgnore1);
 
-                AggregationColumnName aggIgnore2 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                AggregationColumnName aggIgnore2 = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggIgnore2.setColumn(CatalogSupplier.COLUMN_STORE_ID_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationIgnoreColumns().add(aggIgnore2);
 
-                AggregationColumnName aggIgnore3 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                AggregationColumnName aggIgnore3 = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggIgnore3.setColumn(CatalogSupplier.COLUMN_PROMOTION_ID_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationIgnoreColumns().add(aggIgnore3);
 
-                AggregationColumnName aggIgnore4 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                AggregationColumnName aggIgnore4 = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggIgnore4.setColumn(CatalogSupplier.COLUMN_STORE_SALES_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationIgnoreColumns().add(aggIgnore4);
 
-                AggregationColumnName aggIgnore5 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+                AggregationColumnName aggIgnore5 = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggIgnore5.setColumn(CatalogSupplier.COLUMN_STORE_COST_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationIgnoreColumns().add(aggIgnore5);
 
-                AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+                AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
                 aggMeasure.setName("[Measures].[Unit Sales]");
                 aggMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationMeasures().add(aggMeasure);
 
-                AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+                AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
                 aggLevel.setName("[Product].[Product Id]");
                 aggLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_AGG_L_05_SALES_FACT_1997);
                 aggName.getAggregationLevels().add(aggLevel);
 
                 tableQuery.getAggregationTables().add(aggName);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l1 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 = LevelFactory.eINSTANCE.createLevel();
                 l1.setName("Product Family");
                 l1.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
                 l1.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l2 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l2 = LevelFactory.eINSTANCE.createLevel();
                 l2.setName("Product Department");
                 l2.setColumn(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
                 l2.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l3 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 = LevelFactory.eINSTANCE.createLevel();
                 l3.setName("Product Category");
                 l3.setColumn(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
                 l3.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l4 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 = LevelFactory.eINSTANCE.createLevel();
                 l4.setName("Product Subcategory");
                 l4.setColumn(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
                 l4.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l5 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l5 = LevelFactory.eINSTANCE.createLevel();
                 l5.setName("Brand Name");
                 l5.setColumn(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
                 l5.setUniqueMembers(false);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l6 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l6 = LevelFactory.eINSTANCE.createLevel();
                 l6.setName("Product Name");
                 l6.setColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
                 l6.setUniqueMembers(true);
 
-                org.eclipse.daanse.rolap.mapping.model.Level l7 = RolapMappingFactory.eINSTANCE.createLevel();
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l7 = LevelFactory.eINSTANCE.createLevel();
                 l7.setName("Product Id");
                 l7.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
                 l7.setUniqueMembers(true);
 
-                SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
                 measure.setName("Unit Sales");
                 measure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 measure.setFormatString("Standard");
 
-                PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
                 fooCube.setName("Foo");
                 fooCube.setDefaultMeasure(measure);
                 fooCube.setQuery(tableQuery);
 
-                DimensionConnector dimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
                 dimConnector.setOverrideDimensionName("Product");
 
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Product");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-                JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
 
-                JoinedQueryElement left = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 left.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-                TableQuery leftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
                 leftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
                 left.setQuery(leftTable);
 
-                JoinedQueryElement right = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 right.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                TableQuery rightTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
                 rightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
                 right.setQuery(rightTable);
 
@@ -17651,7 +17572,7 @@ class SchemaTest {
                 dimConnector.setDimension(dimension);
                 fooCube.getDimensionConnectors().add(dimConnector);
 
-                MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(measure);
                 fooCube.getMeasureGroups().add(measureGroup);
 
@@ -17659,7 +17580,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }
@@ -17730,92 +17651,91 @@ class SchemaTest {
 
 
     public static class TestMondrian1499ModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
 
-        public TestMondrian1499ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestMondrian1499ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             // Create SQL WHERE expressions
-            SqlStatement sqlWhere1 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlWhere1 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlWhere1.setSql("1 = 1");
             sqlWhere1.getDialects().add("generic");
 
-            SqlStatement sqlWhere2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlWhere2 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlWhere2.setSql("1 = 1");
 
             // Dimension 1: Store
-            TableQuery employeeTableWithWhere1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeTableWithWhere1 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere1.setTable(CatalogSupplier.TABLE_EMPLOYEE);
             employeeTableWithWhere1.setSqlWhereExpression(sqlWhere1);
 
-            JoinedQueryElement storeJoinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement storeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeJoinLeft.setKey(CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
             storeJoinLeft.setQuery(employeeTableWithWhere1);
 
-            TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-
-            JoinedQueryElement storeJoinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement storeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeJoinRight.setKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             storeJoinRight.setQuery(storeTableQuery);
 
-            JoinQuery storeJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource storeJoin = SourceFactory.eINSTANCE.createJoinSource();
             storeJoin.setLeft(storeJoinLeft);
             storeJoin.setRight(storeJoinRight);
 
             // Store dimension levels with member properties
-            MemberProperty storeMemberProp1 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp1 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp1.setName("Store Type");
             storeMemberProp1.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
 
-            MemberProperty storeMemberProp2 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp2 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp2.setName("Store Manager");
             storeMemberProp2.setColumn(CatalogSupplier.COLUMN_STORE_MANAGER_STORE);
 
-            MemberProperty storeMemberProp3 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp3 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp3.setName("Store Sqft");
             storeMemberProp3.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             storeMemberProp3.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            MemberProperty storeMemberProp4 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp4 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp4.setName("Grocery Sqft");
             storeMemberProp4.setColumn(CatalogSupplier.COLUMN_GROCERY_SQFT_STORE);
             storeMemberProp4.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            MemberProperty storeMemberProp5 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp5 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp5.setName("Frozen Sqft");
             storeMemberProp5.setColumn(CatalogSupplier.COLUMN_FROZEN_SQFT_STORE);
             storeMemberProp5.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            MemberProperty storeMemberProp6 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp6 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp6.setName("Meat Sqft");
             storeMemberProp6.setColumn(CatalogSupplier.COLUMN_MEAT_SQFT_STORE);
             storeMemberProp6.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            MemberProperty storeMemberProp7 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp7 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp7.setName("Has coffee bar");
             storeMemberProp7.setColumn(CatalogSupplier.COLUMN_COFFEE_BAR_STORE);
             storeMemberProp7.setPropertyType(ColumnInternalDataType.BOOLEAN);
 
-            MemberProperty storeMemberProp8 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeMemberProp8 = LevelFactory.eINSTANCE.createMemberProperty();
             storeMemberProp8.setName("Street address");
             storeMemberProp8.setColumn(CatalogSupplier.COLUMN_STREET_ADDRESS_STORE);
             storeMemberProp8.setPropertyType(ColumnInternalDataType.STRING);
 
-            org.eclipse.daanse.rolap.mapping.model.Level storeLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeLevel1 = LevelFactory.eINSTANCE.createLevel();
             storeLevel1.setName("Store Country");
             storeLevel1.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             storeLevel1.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level storeLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeLevel2 = LevelFactory.eINSTANCE.createLevel();
             storeLevel2.setName("Store State");
             storeLevel2.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
             storeLevel2.setUniqueMembers(true);
 
-            org.eclipse.daanse.rolap.mapping.model.Level storeLevel3 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeLevel3 = LevelFactory.eINSTANCE.createLevel();
             storeLevel3.setName("Store City");
             storeLevel3.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
             storeLevel3.setUniqueMembers(false);
 
-            org.eclipse.daanse.rolap.mapping.model.Level storeLevel4 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeLevel4 = LevelFactory.eINSTANCE.createLevel();
             storeLevel4.setName("Store Name");
             storeLevel4.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
             storeLevel4.setUniqueMembers(true);
@@ -17828,7 +17748,7 @@ class SchemaTest {
             storeLevel4.getMemberProperties().add(storeMemberProp7);
             storeLevel4.getMemberProperties().add(storeMemberProp8);
 
-            ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
             storeHierarchy.setQuery(storeJoin);
@@ -17837,123 +17757,121 @@ class SchemaTest {
             storeHierarchy.getLevels().add(storeLevel3);
             storeHierarchy.getLevels().add(storeLevel4);
 
-            StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeDimension.setName("Store");
             storeDimension.getHierarchies().add(storeHierarchy);
 
-            DimensionConnector d1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Store");
             d1.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
             d1.setDimension(storeDimension);
 
             // Dimension 2: Pay Type
-            SqlStatement sqlWhere3 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlWhere3 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlWhere3.setSql("1 = 1");
 
-            TableQuery employeeTableWithWhere2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeTableWithWhere2 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere2.setTable(CatalogSupplier.TABLE_EMPLOYEE);
             employeeTableWithWhere2.setSqlWhereExpression(sqlWhere3);
 
-            JoinedQueryElement payTypeJoinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement payTypeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             payTypeJoinLeft.setKey(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
             payTypeJoinLeft.setQuery(employeeTableWithWhere2);
 
-            TableQuery positionTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource positionTableQuery = SourceFactory.eINSTANCE.createTableSource();
             positionTableQuery.setTable(CatalogSupplier.TABLE_POSITION);
-
-            JoinedQueryElement payTypeJoinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement payTypeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             payTypeJoinRight.setKey(CatalogSupplier.COLUMN_POSITION_ID_POSITION);
             payTypeJoinRight.setQuery(positionTableQuery);
 
-            JoinQuery payTypeJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource payTypeJoin = SourceFactory.eINSTANCE.createJoinSource();
             payTypeJoin.setLeft(payTypeJoinLeft);
             payTypeJoin.setRight(payTypeJoinRight);
 
-            org.eclipse.daanse.rolap.mapping.model.Level payTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level payTypeLevel = LevelFactory.eINSTANCE.createLevel();
             payTypeLevel.setName("Pay Type");
             payTypeLevel.setColumn(CatalogSupplier.COLUMN_PAY_TYPE_POSITION);
             payTypeLevel.setUniqueMembers(true);
 
-            ExplicitHierarchy payTypeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy payTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             payTypeHierarchy.setHasAll(true);
             payTypeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
             payTypeHierarchy.setQuery(payTypeJoin);
             payTypeHierarchy.getLevels().add(payTypeLevel);
 
-            StandardDimension payTypeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension payTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             payTypeDimension.setName("Pay Type");
             payTypeDimension.getHierarchies().add(payTypeHierarchy);
 
-            DimensionConnector d2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Pay Type");
             d2.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
             d2.setDimension(payTypeDimension);
 
             // Dimension 3: Store Type
-            SqlStatement sqlWhere4 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlWhere4 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlWhere4.setSql("1 = 1");
 
-            TableQuery employeeTableWithWhere3 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeTableWithWhere3 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere3.setTable(CatalogSupplier.TABLE_EMPLOYEE);
             employeeTableWithWhere3.setSqlWhereExpression(sqlWhere4);
 
-            JoinedQueryElement storeTypeJoinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement storeTypeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeTypeJoinLeft.setKey(CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
             storeTypeJoinLeft.setQuery(employeeTableWithWhere3);
 
-            TableQuery storeTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery2.setTable(CatalogSupplier.TABLE_STORE);
-
-            JoinedQueryElement storeTypeJoinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement storeTypeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeTypeJoinRight.setKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             storeTypeJoinRight.setQuery(storeTableQuery2);
 
-            JoinQuery storeTypeJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource storeTypeJoin = SourceFactory.eINSTANCE.createJoinSource();
             storeTypeJoin.setLeft(storeTypeJoinLeft);
             storeTypeJoin.setRight(storeTypeJoinRight);
 
-            org.eclipse.daanse.rolap.mapping.model.Level storeTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel = LevelFactory.eINSTANCE.createLevel();
             storeTypeLevel.setName("Store Type");
             storeTypeLevel.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
 
-            ExplicitHierarchy storeTypeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storeTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeTypeHierarchy.setHasAll(true);
             storeTypeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
             storeTypeHierarchy.setQuery(storeTypeJoin);
             storeTypeHierarchy.getLevels().add(storeTypeLevel);
 
-            StandardDimension storeTypeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeTypeDimension.setName("Store Type");
             storeTypeDimension.getHierarchies().add(storeTypeHierarchy);
 
-            DimensionConnector d3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store Type");
             d3.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
             d3.setDimension(storeTypeDimension);
 
             // Dimension 4: Position
-            SqlStatement sqlWhere5 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlWhere5 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlWhere5.setSql("1 = 1");
 
-            TableQuery employeeTableWithWhere4 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeTableWithWhere4 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere4.setTable(CatalogSupplier.TABLE_EMPLOYEE);
             employeeTableWithWhere4.setSqlWhereExpression(sqlWhere5);
 
-            org.eclipse.daanse.rolap.mapping.model.Level positionLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level positionLevel1 = LevelFactory.eINSTANCE.createLevel();
             positionLevel1.setName("Management Role");
             positionLevel1.setUniqueMembers(true);
             positionLevel1.setColumn(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
 
-            org.eclipse.daanse.rolap.mapping.model.Level positionLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level positionLevel2 = LevelFactory.eINSTANCE.createLevel();
             positionLevel2.setName("Position Title");
             positionLevel2.setUniqueMembers(false);
             positionLevel2.setColumn(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE);
             positionLevel2.getOrdinalColumns().add(oc1);
 
-            ExplicitHierarchy positionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy positionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             positionHierarchy.setHasAll(true);
             positionHierarchy.setAllMemberName("All Position");
             positionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
@@ -17961,56 +17879,55 @@ class SchemaTest {
             positionHierarchy.getLevels().add(positionLevel1);
             positionHierarchy.getLevels().add(positionLevel2);
 
-            StandardDimension positionDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension positionDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             positionDimension.setName("Position");
             positionDimension.getHierarchies().add(positionHierarchy);
 
-            DimensionConnector d4 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d4 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d4.setOverrideDimensionName("Position");
             d4.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
             d4.setDimension(positionDimension);
 
             // Dimension 5: Employees (Parent-Child)
-            SqlStatement sqlWhere6 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlWhere6 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlWhere6.setSql("1 = 1");
 
-            TableQuery employeeTableWithWhere5 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeTableWithWhere5 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere5.setTable(CatalogSupplier.TABLE_EMPLOYEE);
             employeeTableWithWhere5.setSqlWhereExpression(sqlWhere6);
 
-            TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
             employeeClosureTableQuery.setTable(CatalogSupplier.TABLE_EMPLOYEE_CLOSURE);
-
-            ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE.createParentChildLink();
+            ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
             parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setTable(employeeClosureTableQuery);
 
-            MemberProperty empMemberProp1 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty empMemberProp1 = LevelFactory.eINSTANCE.createMemberProperty();
             empMemberProp1.setName("Marital Status");
             empMemberProp1.setColumn(CatalogSupplier.COLUMN_MARITAL_STATUS_EMPLOYEE);
 
-            MemberProperty empMemberProp2 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty empMemberProp2 = LevelFactory.eINSTANCE.createMemberProperty();
             empMemberProp2.setName("Position Title");
             empMemberProp2.setColumn(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE);
 
-            MemberProperty empMemberProp3 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty empMemberProp3 = LevelFactory.eINSTANCE.createMemberProperty();
             empMemberProp3.setName("Gender");
             empMemberProp3.setColumn(CatalogSupplier.COLUMN_GENDER_EMPLOYEE);
 
-            MemberProperty empMemberProp4 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty empMemberProp4 = LevelFactory.eINSTANCE.createMemberProperty();
             empMemberProp4.setName("Salary");
             empMemberProp4.setColumn(CatalogSupplier.COLUMN_SALARY_EMPLOYEE);
 
-            MemberProperty empMemberProp5 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty empMemberProp5 = LevelFactory.eINSTANCE.createMemberProperty();
             empMemberProp5.setName("Education Level");
             empMemberProp5.setColumn(CatalogSupplier.COLUMN_EDUCATION_LEVEL_EMPLOYEE);
 
-            MemberProperty empMemberProp6 = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty empMemberProp6 = LevelFactory.eINSTANCE.createMemberProperty();
             empMemberProp6.setName("Management Role");
             empMemberProp6.setColumn(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE);
 
-            org.eclipse.daanse.rolap.mapping.model.Level employeeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level employeeLevel = LevelFactory.eINSTANCE.createLevel();
             employeeLevel.setName("Employee Id");
             employeeLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             employeeLevel.setUniqueMembers(true);
@@ -18023,7 +17940,7 @@ class SchemaTest {
             employeeLevel.getMemberProperties().add(empMemberProp5);
             employeeLevel.getMemberProperties().add(empMemberProp6);
 
-            ParentChildHierarchy employeeHierarchy = RolapMappingFactory.eINSTANCE.createParentChildHierarchy();
+            ParentChildHierarchy employeeHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
             employeeHierarchy.setHasAll(true);
             employeeHierarchy.setAllMemberName("All Employees");
             employeeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
@@ -18033,28 +17950,27 @@ class SchemaTest {
             employeeHierarchy.setParentChildLink(parentChildLink);
             employeeHierarchy.setLevel(employeeLevel);
 
-            StandardDimension employeeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension employeeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             employeeDimension.setName("Employees");
             employeeDimension.getHierarchies().add(employeeHierarchy);
 
-            DimensionConnector d5 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector d5 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d5.setOverrideDimensionName("Employees");
             d5.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
             d5.setDimension(employeeDimension);
 
             // Create HR cube
-            TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salaryTableQuery.setTable(CatalogSupplier.TABLE_SALARY);
-
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
             measure.setName("Org Salary");
             measure.setColumn(CatalogSupplier.COLUMN_SALARY_PAID_SALARY);
             measure.setFormatString("Currency");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure);
 
-            PhysicalCube hrCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube hrCube = CubeFactory.eINSTANCE.createPhysicalCube();
             hrCube.setName("HR");
             hrCube.setQuery(salaryTableQuery);
             hrCube.getDimensionConnectors().add(d1);
@@ -18065,12 +17981,12 @@ class SchemaTest {
             hrCube.getMeasureGroups().add(measureGroup);
 
             // Create new catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
 
             // Copy database schemas from original catalog
             CatalogImpl originalCatalog = (CatalogImpl) cat;
-            for (DatabaseSchema dbSchema : originalCatalog.getDbschemas()) {
+            for (Schema dbSchema : originalCatalog.getDbschemas()) {
                 catalog.getDbschemas().add(dbSchema);
             }
 
@@ -18078,7 +17994,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -18086,159 +18002,159 @@ class SchemaTest {
     public static class TestBugMondrian1065ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        private final PhysicalColumn lvl1IdColumn;
-        private final PhysicalColumn lvl1NameColumn;
-        private final PhysicalColumn lvl2IdColumn;
-        private final PhysicalColumn lvl2NameColumn;
-        private final PhysicalColumn lvl3IdColumn;
-        private final PhysicalColumn lvl3NameColumn;
+        private final Column lvl1IdColumn;
+        private final Column lvl1NameColumn;
+        private final Column lvl2IdColumn;
+        private final Column lvl2NameColumn;
+        private final Column lvl3IdColumn;
+        private final Column lvl3NameColumn;
 
         private final InlineTable inlineTable;
-        private final InlineTableQuery inlineTableQuery;
+        private final InlineTableSource inlineTableQuery;
 
-        private final org.eclipse.daanse.rolap.mapping.model.Level level1;
-        private final org.eclipse.daanse.rolap.mapping.model.Level level2;
-        private final org.eclipse.daanse.rolap.mapping.model.Level level3;
+        private final org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1;
+        private final org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2;
+        private final org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level3;
 
         private final ExplicitHierarchy hierarchy;
         private final StandardDimension dimension;
         private final DimensionConnector dimensionConnector;
 
-        public TestBugMondrian1065ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestBugMondrian1065ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             // Copy catalog and add dimension to Sales cube
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
             // Create columns for inline table
-            lvl1IdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            lvl1IdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl1IdColumn.setName("lvl_1_id");
-            lvl1IdColumn.setType(ColumnType.INTEGER);
+            lvl1IdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-            lvl1NameColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            lvl1NameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl1NameColumn.setName("lvl_1_name");
-            lvl1NameColumn.setType(ColumnType.VARCHAR);
-            lvl1NameColumn.setCharOctetLength(20);
+            lvl1NameColumn.setType(SqlSimpleTypes.varcharType(255));
+            // lvl1NameColumn.setCharOctetLength(20);
 
-            lvl2IdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            lvl2IdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl2IdColumn.setName("lvl_2_id");
-            lvl2IdColumn.setType(ColumnType.INTEGER);
+            lvl2IdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-            lvl2NameColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            lvl2NameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl2NameColumn.setName("lvl_2_name");
-            lvl2NameColumn.setType(ColumnType.VARCHAR);
-            lvl2NameColumn.setCharOctetLength(20);
+            lvl2NameColumn.setType(SqlSimpleTypes.varcharType(255));
+            // lvl2NameColumn.setCharOctetLength(20);
 
-            lvl3IdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            lvl3IdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl3IdColumn.setName("lvl_3_id");
-            lvl3IdColumn.setType(ColumnType.INTEGER);
+            lvl3IdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-            lvl3NameColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            lvl3NameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl3NameColumn.setName("lvl_3_name");
-            lvl3NameColumn.setType(ColumnType.VARCHAR);
-            lvl3NameColumn.setCharOctetLength(20);
+            lvl3NameColumn.setType(SqlSimpleTypes.varcharType(255));
+            // lvl3NameColumn.setCharOctetLength(20);
 
             // Create inline table
-            inlineTable = RolapMappingFactory.eINSTANCE.createInlineTable();
-            inlineTable.getColumns().add(lvl1IdColumn);
-            inlineTable.getColumns().add(lvl1NameColumn);
-            inlineTable.getColumns().add(lvl2IdColumn);
-            inlineTable.getColumns().add(lvl2NameColumn);
-            inlineTable.getColumns().add(lvl3IdColumn);
-            inlineTable.getColumns().add(lvl3NameColumn);
+            inlineTable = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+            inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+            inlineTable.getFeature().add(lvl1IdColumn);
+            inlineTable.getFeature().add(lvl1NameColumn);
+            inlineTable.getFeature().add(lvl2IdColumn);
+            inlineTable.getFeature().add(lvl2NameColumn);
+            inlineTable.getFeature().add(lvl3IdColumn);
+            inlineTable.getFeature().add(lvl3NameColumn);
 
             // Create first row
-            Row row1 = RolapMappingFactory.eINSTANCE.createRow();
+            Row row1 = RelationalFactory.eINSTANCE.createRow();
 
-            RowValue row1_val1 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row1_val1.setColumn(lvl1IdColumn);
-            row1_val1.setValue("1");
-            row1.getRowValues().add(row1_val1);
+            DataSlot row1_val1 = InstanceFactory.eINSTANCE.createDataSlot();
+            row1_val1.setFeature(lvl1IdColumn);
+            row1_val1.setDataValue("1");
+            row1.getSlot().add(row1_val1);
 
-            RowValue row1_val2 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row1_val2.setColumn(lvl1NameColumn);
-            row1_val2.setValue("level 1");
-            row1.getRowValues().add(row1_val2);
+            DataSlot row1_val2 = InstanceFactory.eINSTANCE.createDataSlot();
+            row1_val2.setFeature(lvl1NameColumn);
+            row1_val2.setDataValue("level 1");
+            row1.getSlot().add(row1_val2);
 
-            RowValue row1_val3 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row1_val3.setColumn(lvl2IdColumn);
-            row1_val3.setValue("1");
-            row1.getRowValues().add(row1_val3);
+            DataSlot row1_val3 = InstanceFactory.eINSTANCE.createDataSlot();
+            row1_val3.setFeature(lvl2IdColumn);
+            row1_val3.setDataValue("1");
+            row1.getSlot().add(row1_val3);
 
-            RowValue row1_val4 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row1_val4.setColumn(lvl2NameColumn);
-            row1_val4.setValue("level 2 - 1");
-            row1.getRowValues().add(row1_val4);
+            DataSlot row1_val4 = InstanceFactory.eINSTANCE.createDataSlot();
+            row1_val4.setFeature(lvl2NameColumn);
+            row1_val4.setDataValue("level 2 - 1");
+            row1.getSlot().add(row1_val4);
 
-            RowValue row1_val5 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row1_val5.setColumn(lvl3IdColumn);
-            row1_val5.setValue("112");
-            row1.getRowValues().add(row1_val5);
+            DataSlot row1_val5 = InstanceFactory.eINSTANCE.createDataSlot();
+            row1_val5.setFeature(lvl3IdColumn);
+            row1_val5.setDataValue("112");
+            row1.getSlot().add(row1_val5);
 
-            RowValue row1_val6 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row1_val6.setColumn(lvl3NameColumn);
-            row1_val6.setValue("level 3 - 1");
-            row1.getRowValues().add(row1_val6);
+            DataSlot row1_val6 = InstanceFactory.eINSTANCE.createDataSlot();
+            row1_val6.setFeature(lvl3NameColumn);
+            row1_val6.setDataValue("level 3 - 1");
+            row1.getSlot().add(row1_val6);
 
-            inlineTable.getRows().add(row1);
+            inlineTable.getExtent().getOwnedElement().add(row1);
 
             // Create second row
-            Row row2 = RolapMappingFactory.eINSTANCE.createRow();
+            Row row2 = RelationalFactory.eINSTANCE.createRow();
 
-            RowValue row2_val1 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row2_val1.setColumn(lvl1IdColumn);
-            row2_val1.setValue("1");
-            row2.getRowValues().add(row2_val1);
+            DataSlot row2_val1 = InstanceFactory.eINSTANCE.createDataSlot();
+            row2_val1.setFeature(lvl1IdColumn);
+            row2_val1.setDataValue("1");
+            row2.getSlot().add(row2_val1);
 
-            RowValue row2_val2 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row2_val2.setColumn(lvl1NameColumn);
-            row2_val2.setValue("level 1");
-            row2.getRowValues().add(row2_val2);
+            DataSlot row2_val2 = InstanceFactory.eINSTANCE.createDataSlot();
+            row2_val2.setFeature(lvl1NameColumn);
+            row2_val2.setDataValue("level 1");
+            row2.getSlot().add(row2_val2);
 
-            RowValue row2_val3 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row2_val3.setColumn(lvl2IdColumn);
-            row2_val3.setValue("1");
-            row2.getRowValues().add(row2_val3);
+            DataSlot row2_val3 = InstanceFactory.eINSTANCE.createDataSlot();
+            row2_val3.setFeature(lvl2IdColumn);
+            row2_val3.setDataValue("1");
+            row2.getSlot().add(row2_val3);
 
-            RowValue row2_val4 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row2_val4.setColumn(lvl2NameColumn);
-            row2_val4.setValue("level 2 - 1");
-            row2.getRowValues().add(row2_val4);
+            DataSlot row2_val4 = InstanceFactory.eINSTANCE.createDataSlot();
+            row2_val4.setFeature(lvl2NameColumn);
+            row2_val4.setDataValue("level 2 - 1");
+            row2.getSlot().add(row2_val4);
 
-            RowValue row2_val5 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row2_val5.setColumn(lvl3IdColumn);
-            row2_val5.setValue("114");
-            row2.getRowValues().add(row2_val5);
+            DataSlot row2_val5 = InstanceFactory.eINSTANCE.createDataSlot();
+            row2_val5.setFeature(lvl3IdColumn);
+            row2_val5.setDataValue("114");
+            row2.getSlot().add(row2_val5);
 
-            RowValue row2_val6 = RolapMappingFactory.eINSTANCE.createRowValue();
-            row2_val6.setColumn(lvl3NameColumn);
-            row2_val6.setValue("level 3 - 2");
-            row2.getRowValues().add(row2_val6);
+            DataSlot row2_val6 = InstanceFactory.eINSTANCE.createDataSlot();
+            row2_val6.setFeature(lvl3NameColumn);
+            row2_val6.setDataValue("level 3 - 2");
+            row2.getSlot().add(row2_val6);
 
-            inlineTable.getRows().add(row2);
+            inlineTable.getExtent().getOwnedElement().add(row2);
 
             // Create inline table query
-            inlineTableQuery = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+            inlineTableQuery = SourceFactory.eINSTANCE.createInlineTableSource();
             inlineTableQuery.setAlias("meatShack");
             inlineTableQuery.setTable(inlineTable);
-
             // Create levels
-            level1 = RolapMappingFactory.eINSTANCE.createLevel();
+            level1 = LevelFactory.eINSTANCE.createLevel();
             level1.setName("Level1");
             level1.setColumn(lvl1IdColumn);
             level1.setNameColumn(lvl1NameColumn);
 
-            level2 = RolapMappingFactory.eINSTANCE.createLevel();
+            level2 = LevelFactory.eINSTANCE.createLevel();
             level2.setName("Level2");
             level2.setColumn(lvl2IdColumn);
             level2.setNameColumn(lvl2NameColumn);
 
-            level3 = RolapMappingFactory.eINSTANCE.createLevel();
+            level3 = LevelFactory.eINSTANCE.createLevel();
             level3.setName("Level3");
             level3.setColumn(lvl3IdColumn);
             level3.setNameColumn(lvl3NameColumn);
 
             // Create hierarchy
-            hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(false);
             hierarchy.setPrimaryKey(lvl3IdColumn);
             hierarchy.getLevels().add(level1);
@@ -18247,12 +18163,12 @@ class SchemaTest {
             hierarchy.setQuery(inlineTableQuery);
 
             // Create dimension
-            dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("PandaSteak");
             dimension.getHierarchies().add(hierarchy);
 
             // Create dimension connector
-            dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimensionConnector.setOverrideDimensionName("PandaSteak");
             dimensionConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
             dimensionConnector.setDimension(dimension);
@@ -18260,7 +18176,7 @@ class SchemaTest {
 
 
             // Find Sales cube and add the dimension connector
-            for (org.eclipse.daanse.rolap.mapping.model.Cube cube : catalog.getCubes()) {
+            for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
                 if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
                     PhysicalCube salesCube = (PhysicalCube) cube;
                     salesCube.getDimensionConnectors().add(dimensionConnector);
@@ -18270,7 +18186,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -18279,50 +18195,50 @@ class SchemaTest {
     public static class TestCollapsedErrorModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        public TestCollapsedErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestCollapsedErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-            AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreCustomerId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnorePromotionId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreSales = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreCost = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreCustomerId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnorePromotionId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreSales = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreCost = AggregationFactory.eINSTANCE.createAggregationColumnName();
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
-            AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
+            AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-            org.eclipse.daanse.rolap.mapping.model.Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level3 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level4 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level5 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level6 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level7 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level3 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level4 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level5 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level6 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level7 = LevelFactory.eINSTANCE.createLevel();
 
-            JoinedQueryElement joinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinedQueryElement joinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
-            TableQuery tableQueryProduct = RolapMappingFactory.eINSTANCE.createTableQuery();
-            TableQuery tableQueryProductClass = RolapMappingFactory.eINSTANCE.createTableQuery();
+            JoinedQueryElement joinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement joinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
+            TableSource tableQueryProduct = SourceFactory.eINSTANCE.createTableSource();
+            TableSource tableQueryProductClass = SourceFactory.eINSTANCE.createTableSource();
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-            DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
 
             // Aggregation excludes
             aggExclude1.setName("agg_g_ms_pcat_sales_fact_1997");
@@ -18450,7 +18366,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -18458,93 +18374,93 @@ class SchemaTest {
     public static class TestTwoNonCollapsedAggregateModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        public TestTwoNonCollapsedAggregateModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestTwoNonCollapsedAggregateModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-            AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreCustomerId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnorePromotionId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreSales = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreCost = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreCustomerId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnorePromotionId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreSales = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreCost = AggregationFactory.eINSTANCE.createAggregationColumnName();
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
-            AggregationLevel aggLevelProduct = RolapMappingFactory.eINSTANCE.createAggregationLevel();
-            AggregationLevel aggLevelStore = RolapMappingFactory.eINSTANCE.createAggregationLevel();
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
+            AggregationLevel aggLevelProduct = AggregationFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggLevelStore = AggregationFactory.eINSTANCE.createAggregationLevel();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
 
             // Product levels
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel3 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel4 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel5 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel6 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level productLevel7 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel1 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel2 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel3 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel4 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel5 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel6 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productLevel7 = LevelFactory.eINSTANCE.createLevel();
 
             // Store levels
-            org.eclipse.daanse.rolap.mapping.model.Level storeLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level storeLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeLevel1 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeLevel2 = LevelFactory.eINSTANCE.createLevel();
 
             // Region table and columns
-            PhysicalColumn regionIdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-            PhysicalColumn salesRegionColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-            PhysicalColumn salesCityColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-            PhysicalColumn salesDistrictIdColumn = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-            PhysicalTable regionTable = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Column regionIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+            Column salesRegionColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+            Column salesCityColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+            Column salesDistrictIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+            Table regionTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
             // Product join query
-            JoinedQueryElement productJoinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinedQueryElement productJoinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinQuery productJoinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
-            TableQuery tableQueryProduct = RolapMappingFactory.eINSTANCE.createTableQuery();
-            TableQuery tableQueryProductClass = RolapMappingFactory.eINSTANCE.createTableQuery();
+            JoinedQueryElement productJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement productJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinSource productJoinQuery = SourceFactory.eINSTANCE.createJoinSource();
+            TableSource tableQueryProduct = SourceFactory.eINSTANCE.createTableSource();
+            TableSource tableQueryProductClass = SourceFactory.eINSTANCE.createTableSource();
 
             // Store join query
-            JoinedQueryElement storeJoinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinedQueryElement storeJoinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinQuery storeJoinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
-            TableQuery tableQueryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
-            TableQuery tableQueryRegion = RolapMappingFactory.eINSTANCE.createTableQuery();
+            JoinedQueryElement storeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement storeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinSource storeJoinQuery = SourceFactory.eINSTANCE.createJoinSource();
+            TableSource tableQueryStore = SourceFactory.eINSTANCE.createTableSource();
+            TableSource tableQueryRegion = SourceFactory.eINSTANCE.createTableSource();
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-            DimensionConnector productDimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            DimensionConnector productDimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-            StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-            DimensionConnector storeDimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            DimensionConnector storeDimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
 
             // Region table and columns
             regionIdColumn.setName("region_id");
-            regionIdColumn.setType(ColumnType.INTEGER);
+            regionIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
             salesRegionColumn.setName("sales_region");
-            salesRegionColumn.setType(ColumnType.VARCHAR);
-            salesRegionColumn.setCharOctetLength(30);
+            salesRegionColumn.setType(SqlSimpleTypes.varcharType(255));
+            // salesRegionColumn.setCharOctetLength(30);
 
             salesCityColumn.setName("sales_city");
-            salesCityColumn.setType(ColumnType.VARCHAR);
-            salesCityColumn.setCharOctetLength(30);
+            salesCityColumn.setType(SqlSimpleTypes.varcharType(255));
+            // salesCityColumn.setCharOctetLength(30);
 
             salesDistrictIdColumn.setName("sales_district_id");
-            salesDistrictIdColumn.setType(ColumnType.INTEGER);
+            salesDistrictIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
             regionTable.setName("region");
-            regionTable.getColumns().add(regionIdColumn);
-            regionTable.getColumns().add(salesRegionColumn);
-            regionTable.getColumns().add(salesDistrictIdColumn);
+            regionTable.getFeature().add(regionIdColumn);
+            regionTable.getFeature().add(salesRegionColumn);
+            regionTable.getFeature().add(salesDistrictIdColumn);
 
             // Aggregation excludes
             aggExclude1.setName("agg_g_ms_pcat_sales_fact_1997");
@@ -18624,7 +18540,6 @@ class SchemaTest {
             // Product join query
             tableQueryProduct.setTable(CatalogSupplier.TABLE_PRODUCT);
             tableQueryProductClass.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-
             productJoinLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             productJoinLeft.setQuery(tableQueryProduct);
 
@@ -18667,7 +18582,6 @@ class SchemaTest {
             // Store join query
             tableQueryStore.setTable(CatalogSupplier.TABLE_STORE);
             tableQueryRegion.setTable(regionTable);
-
             storeJoinLeft.setKey(CatalogSupplier.COLUMN_REGION_ID_STORE);
             storeJoinLeft.setQuery(tableQueryStore);
 
@@ -18714,7 +18628,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -18722,50 +18636,50 @@ class SchemaTest {
     public static class TestNonCollapsedAggregateOnNonUniqueLevelFailsModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        public TestNonCollapsedAggregateOnNonUniqueLevelFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestNonCollapsedAggregateOnNonUniqueLevelFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-            AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreCustomerId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnorePromotionId = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreSales = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
-            AggregationColumnName aggIgnoreStoreCost = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreCustomerId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnorePromotionId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreSales = AggregationFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggIgnoreStoreCost = AggregationFactory.eINSTANCE.createAggregationColumnName();
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
-            AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
+            AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-            org.eclipse.daanse.rolap.mapping.model.Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level3 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level4 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level5 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level6 = RolapMappingFactory.eINSTANCE.createLevel();
-            org.eclipse.daanse.rolap.mapping.model.Level level7 = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level1 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level2 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level3 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level4 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level5 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level6 = LevelFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level7 = LevelFactory.eINSTANCE.createLevel();
 
-            JoinedQueryElement joinLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinedQueryElement joinRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-            JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
-            TableQuery tableQueryProduct = RolapMappingFactory.eINSTANCE.createTableQuery();
-            TableQuery tableQueryProductClass = RolapMappingFactory.eINSTANCE.createTableQuery();
+            JoinedQueryElement joinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement joinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
+            TableSource tableQueryProduct = SourceFactory.eINSTANCE.createTableSource();
+            TableSource tableQueryProductClass = SourceFactory.eINSTANCE.createTableSource();
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-            DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
 
             // Aggregation excludes
             aggExclude1.setName("agg_g_ms_pcat_sales_fact_1997");
@@ -18893,7 +18807,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -18901,19 +18815,19 @@ class SchemaTest {
     public static class TestMultiByteSchemaReadFromFileEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
-        public TestMultiByteSchemaReadFromFileEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestMultiByteSchemaReadFromFileEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
 
             // Find and modify the hierarchy with specific conditions
-            for (org.eclipse.daanse.rolap.mapping.model.Cube cube : catalog.getCubes()) {
+            for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
                 if (cube instanceof PhysicalCube) {
                     PhysicalCube physicalCube = (PhysicalCube) cube;
                     for (DimensionConnector dc : physicalCube.getDimensionConnectors()) {
                         if (dc.getDimension() instanceof StandardDimension) {
                             StandardDimension dimension = (StandardDimension) dc.getDimension();
-                            for (org.eclipse.daanse.rolap.mapping.model.Hierarchy hierarchy : dimension.getHierarchies()) {
+                            for (org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy hierarchy : dimension.getHierarchies()) {
                                 if (hierarchy.isHasAll()
                                     && "All Gender".equals(hierarchy.getAllMemberName())
                                     && hierarchy.getPrimaryKey() != null
@@ -18928,7 +18842,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -18939,30 +18853,30 @@ class SchemaTest {
         static {
         }
 
-        public TestMondrian1073ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestMondrian1073ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            SumMeasure measureA = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            SumMeasure measureB = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            CountMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-            CountMeasure promotionCountMeasureA = RolapMappingFactory.eINSTANCE.createCountMeasure();
-            CountMeasure promotionCountMeasureB = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            SumMeasure measureA = MeasureFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measureB = MeasureFactory.eINSTANCE.createSumMeasure();
+            CountMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+            CountMeasure promotionCountMeasureA = MeasureFactory.eINSTANCE.createCountMeasure();
+            CountMeasure promotionCountMeasureB = MeasureFactory.eINSTANCE.createCountMeasure();
 
-            SqlStatement sqlWhereA = RolapMappingFactory.eINSTANCE.createSqlStatement();
-            TableQuery tableQueryA = RolapMappingFactory.eINSTANCE.createTableQuery();
+            SqlStatement sqlWhereA = SourceFactory.eINSTANCE.createSqlStatement();
+            TableSource tableQueryA = SourceFactory.eINSTANCE.createTableSource();
 
-            SqlStatement sqlWhereB = RolapMappingFactory.eINSTANCE.createSqlStatement();
-            TableQuery tableQueryB = RolapMappingFactory.eINSTANCE.createTableQuery();
+            SqlStatement sqlWhereB = SourceFactory.eINSTANCE.createSqlStatement();
+            TableSource tableQueryB = SourceFactory.eINSTANCE.createTableSource();
 
-            DimensionConnector dimensionConnectorA = RolapMappingFactory.eINSTANCE.createDimensionConnector();
-            DimensionConnector dimensionConnectorB = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimensionConnectorA = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimensionConnectorB = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            MeasureGroup measureGroupA = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            MeasureGroup measureGroupB = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroupA = CubeFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroupB = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            PhysicalCube cubeA = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-            PhysicalCube cubeB = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeA = CubeFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeB = CubeFactory.eINSTANCE.createPhysicalCube();
 
             // Measure A
             measureA.setName("Unit Sales");
@@ -19011,7 +18925,7 @@ class SchemaTest {
             // Dimension Connector A (Store Type)
             dimensionConnectorA.setOverrideDimensionName("Store Type");
             dimensionConnectorA.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
-            dimensionConnectorA.setDimension((org.eclipse.daanse.rolap.mapping.model.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
+            dimensionConnectorA.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
 
             // Dimension Connector B (Store Type)
             dimensionConnectorB.setOverrideDimensionName("Store Type");
@@ -19046,27 +18960,27 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     public static class TestBugMonrian2528ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
-        public TestBugMonrian2528ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestBugMonrian2528ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
-            AccessMemberGrant memberGrantStoreCost = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantStoreSales = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantSalesCount = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantStoreCost = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantStoreSales = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantSalesCount = OlapFactory.eINSTANCE.createAccessMemberGrant();
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-            AccessCatalogGrant catalogGrantDev = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-            AccessCatalogGrant catalogGrantAdmin = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCatalogGrant catalogGrantDev = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrantAdmin = CommonFactory.eINSTANCE.createAccessCatalogGrant();
 
-            AccessRole roleAdmin = RolapMappingFactory.eINSTANCE.createAccessRole();
-            AccessRole roleDev = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole roleAdmin = CommonFactory.eINSTANCE.createAccessRole();
+            AccessRole roleDev = CommonFactory.eINSTANCE.createAccessRole();
 
             // Member grants
             memberGrantStoreCost.setMember("[Measures].[Store Cost]");
@@ -19085,7 +18999,7 @@ class SchemaTest {
             hierarchyGrant.getMemberGrants().add(memberGrantSalesCount);
 
             // Cube grant for Sales cube
-            cubeGrant.setCube((org.eclipse.daanse.rolap.mapping.model.Cube) copier.get(CatalogSupplier.CUBE_SALES));
+            cubeGrant.setCube((org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
 
@@ -19109,63 +19023,62 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
 
     public static class TestMondrian1275ModifierEmf implements CatalogMappingSupplier {
-        private org.eclipse.daanse.rolap.mapping.model.Catalog catalog;
+        private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
 
-        public TestMondrian1275ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+        public TestMondrian1275ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             // Create annotation
             Annotation annotation = RolapMappingFactory.eINSTANCE.createAnnotation();
             annotation.setName("foo");
             annotation.setValue("bar");
 
             // Create level
-            org.eclipse.daanse.rolap.mapping.model.Level level = RolapMappingFactory.eINSTANCE.createLevel();
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
             level.setName("Store Type");
             level.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
             level.setUniqueMembers(true);
 
             // Create hierarchy
-            TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             hierarchy.setQuery(storeTableQuery);
             hierarchy.getLevels().add(level);
 
             // Create dimension with annotation
-            StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Store Type");
             dimension.getAnnotations().add(annotation);
             dimension.getHierarchies().add(hierarchy);
 
             // Create dimension connector
-            DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimensionConnector.setOverrideDimensionName("Store Type");
             dimensionConnector.setDimension(dimension);
             dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create aggregation excludes
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_special_sales_fact_1997");
 
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_lc_100_sales_fact_1997");
 
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude3.setName("agg_lc_10_sales_fact_1997");
 
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude4.setName("agg_pc_10_sales_fact_1997");
 
             // Create table query with aggregation excludes
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesTableQuery.getAggregationExcludes().add(aggExclude1);
             salesTableQuery.getAggregationExcludes().add(aggExclude2);
@@ -19173,17 +19086,17 @@ class SchemaTest {
             salesTableQuery.getAggregationExcludes().add(aggExclude4);
 
             // Create measure
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
             measure.setName("Unit Sales");
             measure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure.setFormatString("Standard");
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(measure);
             salesCube.setQuery(salesTableQuery);
@@ -19191,12 +19104,12 @@ class SchemaTest {
             salesCube.getMeasureGroups().add(measureGroup);
 
             // Create new catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
 
             // Copy database schemas from original catalog
             CatalogImpl originalCatalog = (CatalogImpl) cat;
-            for (DatabaseSchema dbSchema : originalCatalog.getDbschemas()) {
+            for (Schema dbSchema : originalCatalog.getDbschemas()) {
                 catalog.getDbschemas().add(dbSchema);
             }
 
@@ -19204,7 +19117,7 @@ class SchemaTest {
         }
 
         @Override
-        public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+        public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
         }
     }
@@ -20066,50 +19979,49 @@ class SchemaTest {
             private CatalogImpl catalog;
 
 
-            private final SQLExpressionColumn sqlExpressionColumn;
-            private final org.eclipse.daanse.rolap.mapping.model.Level level;
-            private final TableQuery tableQuery;
+            private final ExpressionColumn sqlExpressionColumn;
+            private final org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level;
+            private final TableSource tableQuery;
             private final ExplicitHierarchy hierarchy;
             private final StandardDimension dimension;
             private final DimensionConnector dimensionConnector;
 
-            public CheckBugMondrian1047ModifierEmf(org.eclipse.daanse.rolap.mapping.model.Catalog cat) {
+            public CheckBugMondrian1047ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
                 // Create objects dynamically based on n
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("`position_title` + " + n);
                 sqlStatement.getDialects().add("generic");
 
-                sqlExpressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                sqlExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 sqlExpressionColumn.getSqls().add(sqlStatement);
-                sqlExpressionColumn.setType(ColumnType.VARCHAR);
+                sqlExpressionColumn.setType(SqlSimpleTypes.varcharType(255));
 
-                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
 
-                level = RolapMappingFactory.eINSTANCE.createLevel();
+                level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Position Title");
                 level.setUniqueMembers(false);
                 level.getOrdinalColumns().add(oc1);
                 level.setColumn(sqlExpressionColumn);
 
-                tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(CatalogSupplier.TABLE_EMPLOYEE);
-
-                hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Position");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
                 hierarchy.getLevels().add(level);
                 hierarchy.setQuery(tableQuery);
 
-                dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Position" + n);
                 dimension.getHierarchies().add(hierarchy);
 
-                dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimensionConnector.setOverrideDimensionName("Position" + n);
                 dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
                 dimensionConnector.setDimension(dimension);
@@ -20117,7 +20029,7 @@ class SchemaTest {
 
 
                 // Find HR cube and add the dimension connector
-                for (org.eclipse.daanse.rolap.mapping.model.Cube cube : catalog.getCubes()) {
+                for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
                     if ("HR".equals(cube.getName()) && cube instanceof PhysicalCube) {
                         PhysicalCube hrCube = (PhysicalCube) cube;
                         hrCube.getDimensionConnectors().add(dimensionConnector);
@@ -20127,7 +20039,7 @@ class SchemaTest {
             }
 
             @Override
-            public org.eclipse.daanse.rolap.mapping.model.Catalog get() {
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
                 return catalog;
             }
         }

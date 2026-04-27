@@ -11,26 +11,30 @@ package mondrian.olap.fun;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.TimeDimension;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * Tests the CachedExists function.
  *
@@ -449,34 +453,34 @@ class CachedExistsTest{
 
                 // Create cube
                 PhysicalCube cube =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 cube.setName("Alternate Sales");
 
                 // Set up query
-                TableQuery tableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
                 cube.setQuery(tableQuery);
 
                 // Create Time Dimension with three hierarchies
                 TimeDimension timeDimension =
-                    RolapMappingFactory.eINSTANCE.createTimeDimension();
+                    DimensionFactory.eINSTANCE.createTimeDimension();
                 timeDimension.setName("Time");
 
                 // Create first hierarchy: "Time"
                 ExplicitHierarchy timeHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 timeHierarchy.setName("Time");
                 timeHierarchy.setHasAll(true);
                 timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-                TableQuery timeTableQuery1 =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource timeTableQuery1 =
+                    SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery1.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
                 timeHierarchy.setQuery(timeTableQuery1);
 
                 Level yearLevel1 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 yearLevel1.setName("Year");
                 yearLevel1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
                 yearLevel1.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -486,18 +490,18 @@ class CachedExistsTest{
 
                 // Create second hierarchy: "Weekly"
                 ExplicitHierarchy weeklyHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 weeklyHierarchy.setName("Weekly");
                 weeklyHierarchy.setHasAll(true);
                 weeklyHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-                TableQuery timeTableQuery2 =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource timeTableQuery2 =
+                    SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery2.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
                 weeklyHierarchy.setQuery(timeTableQuery2);
 
                 Level yearLevel2 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 yearLevel2.setName("Year");
                 yearLevel2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
                 yearLevel2.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -507,18 +511,18 @@ class CachedExistsTest{
 
                 // Create third hierarchy: "Weekly2"
                 ExplicitHierarchy weekly2Hierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 weekly2Hierarchy.setName("Weekly2");
                 weekly2Hierarchy.setHasAll(true);
                 weekly2Hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-                TableQuery timeTableQuery3 =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource timeTableQuery3 =
+                    SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery3.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
                 weekly2Hierarchy.setQuery(timeTableQuery3);
 
                 Level yearLevel3 =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 yearLevel3.setName("Year");
                 yearLevel3.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
                 yearLevel3.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -533,7 +537,7 @@ class CachedExistsTest{
 
                 // Create dimension connector
                 DimensionConnector timeDimConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 timeDimConnector.setOverrideDimensionName("Time");
                 timeDimConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 timeDimConnector.setDimension(timeDimension);
@@ -542,14 +546,14 @@ class CachedExistsTest{
 
                 // Create measure
                 SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
 
                 // Create measure group
                 MeasureGroup measureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
 
                 cube.getMeasureGroups().add(measureGroup);

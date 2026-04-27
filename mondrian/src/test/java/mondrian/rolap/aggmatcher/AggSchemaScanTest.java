@@ -35,11 +35,11 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
@@ -69,8 +69,8 @@ class AggSchemaScanTest {
       sqlConnection = dataSource.getConnection();
 
       Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
-      DatabaseSchema databaseSchema = schemas.getFirst();
+      List<? extends Schema> schemas = catalogMapping.getDbschemas();
+      Schema databaseSchema = schemas.getFirst();
 
       //RolapConnectionPropsR rc = new ConnectionProps(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
@@ -158,8 +158,8 @@ class AggSchemaScanTest {
         return;
       }
       Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
-      DatabaseSchema databaseSchema = schemas.getFirst();
+      List<? extends Schema> schemas = catalogMapping.getDbschemas();
+      Schema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //The foodmart schema has 26 tables in module.
       assertEquals( 22, jdbcSchema.getTablesMap().size() );

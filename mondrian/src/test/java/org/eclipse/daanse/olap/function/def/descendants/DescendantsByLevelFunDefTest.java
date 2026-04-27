@@ -13,8 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.descendants;
 
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
-import static mondrian.olap.fun.FunctionTest.*;
+import static mondrian.olap.fun.FunctionTest.assertExprReturns;
 import static mondrian.olap.fun.FunctionTest.hierarchized1997;
 import static mondrian.olap.fun.FunctionTest.months;
 import static mondrian.olap.fun.FunctionTest.quarters;
@@ -22,18 +21,18 @@ import static mondrian.olap.fun.FunctionTest.year1997;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertAxisThrows;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
+import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import  org.eclipse.daanse.olap.util.Bug;
 
 
 class DescendantsByLevelFunDefTest {

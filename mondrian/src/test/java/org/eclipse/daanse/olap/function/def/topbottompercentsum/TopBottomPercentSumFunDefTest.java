@@ -13,7 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.topbottompercentsum;
 
-import static org.opencube.junit5.TestUtil.*;
+import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;

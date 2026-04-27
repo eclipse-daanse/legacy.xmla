@@ -14,17 +14,16 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
-
 /**
  * EMF version of TestDefaultMeasureInVCForIncorrectMeasureNameModifier from
  * VirtualCubeTest. Creates a virtual cube "Sales vs Warehouse" without setting
@@ -51,7 +50,7 @@ public class TestDefaultMeasureInVCForIncorrectMeasureNameModifier implements Ca
         VirtualCube VIRTUAL_CUBE_SALES_VS_WAREHOUSE;
 
         // Create virtual cube
-        VIRTUAL_CUBE_SALES_VS_WAREHOUSE = RolapMappingFactory.eINSTANCE.createVirtualCube();
+        VIRTUAL_CUBE_SALES_VS_WAREHOUSE = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.setName("Sales vs Warehouse");
 
         // Note: No default measure set (commented out in original:

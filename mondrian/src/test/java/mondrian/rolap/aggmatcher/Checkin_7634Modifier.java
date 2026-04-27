@@ -13,23 +13,27 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /*
 "<Cube name='Checkin_7634'>\n"
 + "<Table name='table7634'/>\n"
@@ -243,117 +247,117 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         Catalog catalogCopy = org.opencube.junit5.EmfUtil.copy((CatalogImpl) originalCatalog);
 
         // Create columns for geography7631 table using RolapMappingFactory
-        PhysicalColumn cust_loc_id_geography7631 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column cust_loc_id_geography7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         cust_loc_id_geography7631.setName("cust_loc_id");
-        cust_loc_id_geography7631.setType(ColumnType.INTEGER);
+        cust_loc_id_geography7631.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn state_cd = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column state_cd = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         state_cd.setName("state_cd");
-        state_cd.setType(ColumnType.VARCHAR);
-        state_cd.setCharOctetLength(20);
+        state_cd.setType(SqlSimpleTypes.varcharType(255));
+        // state_cd.setCharOctetLength(20);
 
-        PhysicalColumn city_nm = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column city_nm = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         city_nm.setName("city_nm");
-        city_nm.setType(ColumnType.VARCHAR);
-        city_nm.setCharOctetLength(20);
+        city_nm.setType(SqlSimpleTypes.varcharType(255));
+        // city_nm.setCharOctetLength(20);
 
-        PhysicalColumn zip_cd = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column zip_cd = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         zip_cd.setName("zip_cd");
-        zip_cd.setType(ColumnType.VARCHAR);
-        zip_cd.setCharOctetLength(20);
+        zip_cd.setType(SqlSimpleTypes.varcharType(255));
+        // zip_cd.setCharOctetLength(20);
 
         // Create geography7631 table using RolapMappingFactory
-        PhysicalTable geography7631 = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table geography7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         geography7631.setName("geography7631");
-        geography7631.getColumns().add(cust_loc_id_geography7631);
-        geography7631.getColumns().add(state_cd);
-        geography7631.getColumns().add(city_nm);
-        geography7631.getColumns().add(zip_cd);
+        geography7631.getFeature().add(cust_loc_id_geography7631);
+        geography7631.getFeature().add(state_cd);
+        geography7631.getFeature().add(city_nm);
+        geography7631.getFeature().add(zip_cd);
 
         // Create columns for table7634 using RolapMappingFactory
-        PhysicalColumn cust_loc_id_table7634 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column cust_loc_id_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         cust_loc_id_table7634.setName("cust_loc_id");
-        cust_loc_id_table7634.setType(ColumnType.INTEGER);
+        cust_loc_id_table7634.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn prod_id_table7634 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prod_id_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_table7634.setName("prod_id");
-        prod_id_table7634.setType(ColumnType.INTEGER);
+        prod_id_table7634.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn first_table7634 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column first_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         first_table7634.setName("first");
-        first_table7634.setType(ColumnType.DECIMAL);
-        first_table7634.setColumnSize(10);
-        first_table7634.setDecimalDigits(2);
+        first_table7634.setType(SqlSimpleTypes.decimalType(18, 4));
+        // first_table7634.setColumnSize(10);
+        // first_table7634.setDecimalDigits(2);
 
-        PhysicalColumn request_value_table7634 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column request_value_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         request_value_table7634.setName("request_value");
-        request_value_table7634.setType(ColumnType.DECIMAL);
-        request_value_table7634.setColumnSize(10);
-        request_value_table7634.setDecimalDigits(2);
+        request_value_table7634.setType(SqlSimpleTypes.decimalType(18, 4));
+        // request_value_table7634.setColumnSize(10);
+        // request_value_table7634.setDecimalDigits(2);
 
-        PhysicalColumn shipped_value_table7634 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column shipped_value_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         shipped_value_table7634.setName("shipped_value");
-        shipped_value_table7634.setType(ColumnType.DECIMAL);
-        shipped_value_table7634.setColumnSize(10);
-        shipped_value_table7634.setDecimalDigits(2);
+        shipped_value_table7634.setType(SqlSimpleTypes.decimalType(18, 4));
+        // shipped_value_table7634.setColumnSize(10);
+        // shipped_value_table7634.setDecimalDigits(2);
 
         // Create table7634 using RolapMappingFactory
-        PhysicalTable table7634 = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         table7634.setName("table7634");
-        table7634.getColumns().add(cust_loc_id_table7634);
-        table7634.getColumns().add(prod_id_table7634);
-        table7634.getColumns().add(first_table7634);
-        table7634.getColumns().add(request_value_table7634);
-        table7634.getColumns().add(shipped_value_table7634);
+        table7634.getFeature().add(cust_loc_id_table7634);
+        table7634.getFeature().add(prod_id_table7634);
+        table7634.getFeature().add(first_table7634);
+        table7634.getFeature().add(request_value_table7634);
+        table7634.getFeature().add(shipped_value_table7634);
 
         // Create columns for prod7631 table using RolapMappingFactory
-        PhysicalColumn prod_id_prod7631 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prod_id_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_prod7631.setName("prod_id");
-        prod_id_prod7631.setType(ColumnType.INTEGER);
+        prod_id_prod7631.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn class_prod7631 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column class_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         class_prod7631.setName("class");
-        class_prod7631.setType(ColumnType.INTEGER);
+        class_prod7631.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn brand_prod7631 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column brand_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         brand_prod7631.setName("brand");
-        brand_prod7631.setType(ColumnType.INTEGER);
+        brand_prod7631.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn item_prod7631 = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column item_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         item_prod7631.setName("item");
-        item_prod7631.setType(ColumnType.INTEGER);
+        item_prod7631.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create prod7631 table using RolapMappingFactory
-        PhysicalTable prod7631 = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         prod7631.setName("prod7631");
-        prod7631.getColumns().add(prod_id_prod7631);
-        prod7631.getColumns().add(class_prod7631);
-        prod7631.getColumns().add(brand_prod7631);
-        prod7631.getColumns().add(item_prod7631);
+        prod7631.getFeature().add(prod_id_prod7631);
+        prod7631.getFeature().add(class_prod7631);
+        prod7631.getFeature().add(brand_prod7631);
+        prod7631.getFeature().add(item_prod7631);
 
         // Create Geography hierarchy using RolapMappingFactory
-        Level stateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level stateLevel = LevelFactory.eINSTANCE.createLevel();
         stateLevel.setColumn(state_cd);
         stateLevel.setName("State");
         stateLevel.setColumnType(ColumnInternalDataType.STRING);
         stateLevel.setUniqueMembers(true);
 
-        Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level cityLevel = LevelFactory.eINSTANCE.createLevel();
         cityLevel.setColumn(city_nm);
         cityLevel.setName("City");
         cityLevel.setColumnType(ColumnInternalDataType.STRING);
         cityLevel.setUniqueMembers(true);
 
-        Level zipCodeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level zipCodeLevel = LevelFactory.eINSTANCE.createLevel();
         zipCodeLevel.setColumn(zip_cd);
         zipCodeLevel.setName("Zip Code");
         zipCodeLevel.setColumnType(ColumnInternalDataType.STRING);
         zipCodeLevel.setUniqueMembers(true);
 
-        TableQuery geographyQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource geographyQuery = SourceFactory.eINSTANCE.createTableSource();
         geographyQuery.setTable(geography7631);
 
-        ExplicitHierarchy geographyHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy geographyHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         geographyHierarchy.setHasAll(true);
         geographyHierarchy.setAllMemberName("All Regions");
         geographyHierarchy.setPrimaryKey(cust_loc_id_geography7631);
@@ -362,38 +366,38 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         geographyHierarchy.getLevels().add(cityLevel);
         geographyHierarchy.getLevels().add(zipCodeLevel);
 
-        StandardDimension geographyDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension geographyDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         geographyDimension.setName("Geography");
         geographyDimension.getHierarchies().add(geographyHierarchy);
 
-        DimensionConnector geographyConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector geographyConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         geographyConnector.setOverrideDimensionName("Geography");
         geographyConnector.setForeignKey(cust_loc_id_table7634);
         geographyConnector.setDimension(geographyDimension);
 
         // Create Product hierarchy using RolapMappingFactory
-        Level classLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level classLevel = LevelFactory.eINSTANCE.createLevel();
         classLevel.setColumn(class_prod7631);
         classLevel.setName("Class");
         classLevel.setColumnType(ColumnInternalDataType.STRING);
         classLevel.setUniqueMembers(true);
 
-        Level brandLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level brandLevel = LevelFactory.eINSTANCE.createLevel();
         brandLevel.setColumn(brand_prod7631);
         brandLevel.setName("Brand");
         brandLevel.setColumnType(ColumnInternalDataType.STRING);
         brandLevel.setUniqueMembers(true);
 
-        Level itemLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level itemLevel = LevelFactory.eINSTANCE.createLevel();
         itemLevel.setColumn(item_prod7631);
         itemLevel.setName("Item");
         itemLevel.setColumnType(ColumnInternalDataType.STRING);
         itemLevel.setUniqueMembers(true);
 
-        TableQuery productQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
         productQuery.setTable(prod7631);
 
-        ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setAllMemberName("All Products");
         productHierarchy.setPrimaryKey(prod_id_prod7631);
@@ -402,43 +406,43 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         productHierarchy.getLevels().add(brandLevel);
         productHierarchy.getLevels().add(itemLevel);
 
-        StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         productDimension.setName("Product");
         productDimension.getHierarchies().add(productHierarchy);
 
-        DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         productConnector.setOverrideDimensionName("Product");
         productConnector.setForeignKey(prod_id_table7634);
         productConnector.setDimension(productDimension);
 
         // Create measures using RolapMappingFactory
-        SumMeasure firstMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        SumMeasure firstMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         firstMeasure.setName("First Measure");
         firstMeasure.setColumn(first_table7634);
         firstMeasure.setFormatString("#,###");
 
-        SumMeasure requestedValueMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        SumMeasure requestedValueMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         requestedValueMeasure.setName("Requested Value");
         requestedValueMeasure.setColumn(request_value_table7634);
         requestedValueMeasure.setFormatString("#,###");
 
-        SumMeasure shippedValueMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        SumMeasure shippedValueMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         shippedValueMeasure.setName("Shipped Value");
         shippedValueMeasure.setColumn(shipped_value_table7634);
         shippedValueMeasure.setFormatString("#,###");
 
         // Create measure group using RolapMappingFactory
-        MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         measureGroup.getMeasures().add(firstMeasure);
         measureGroup.getMeasures().add(requestedValueMeasure);
         measureGroup.getMeasures().add(shippedValueMeasure);
 
         // Create cube query using RolapMappingFactory
-        TableQuery cubeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
         cubeQuery.setTable(table7634);
 
         // Create cube using RolapMappingFactory
-        PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("Checkin_7634");
         cube.setQuery(cubeQuery);
         cube.getDimensionConnectors().add(geographyConnector);

@@ -14,16 +14,15 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
-
 /**
  * EMF version of TestNoTimeDimensionModifier from VirtualCubeTest. Creates a
  * virtual cube "Sales vs Warehouse" with only Product dimension (no Time
@@ -46,7 +45,7 @@ public class TestNoTimeDimensionModifier implements CatalogMappingSupplier {
         VirtualCube VIRTUAL_CUBE_SALES_VS_WAREHOUSE;
 
         // Create virtual cube
-        VIRTUAL_CUBE_SALES_VS_WAREHOUSE = RolapMappingFactory.eINSTANCE.createVirtualCube();
+        VIRTUAL_CUBE_SALES_VS_WAREHOUSE = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.setName("Sales vs Warehouse");
 
         // Add dimension connector (only Product)

@@ -13,17 +13,16 @@
  */
 package org.eclipse.daanse.olap.function.def.logical;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
+import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
+
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import  org.eclipse.daanse.olap.util.Bug;
-
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
 
 class IsEmptyFunDefTest {
     @ParameterizedTest

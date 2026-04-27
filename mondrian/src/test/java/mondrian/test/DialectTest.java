@@ -56,7 +56,6 @@ import org.opentest4j.AssertionFailedError;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
-
 /**
  * Unit test which checks that {@link Dialect} accurately represents the capabilities of the underlying
  * database.

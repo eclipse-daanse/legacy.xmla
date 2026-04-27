@@ -14,17 +14,17 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
-
 /**
  * EMF version of TestMemberVisibilityModifier from VirtualCubeTest.
  * Creates a virtual cube "Warehouse and Sales Member Visibility" with measures and calculated members
@@ -65,23 +65,23 @@ public class TestMemberVisibilityModifier implements CatalogMappingSupplier {
         VirtualCube VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY;
 
         // Create dimension connector for Customers (references Sales cube)
-        //CONNECTOR_CUSTOMERS = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        //CONNECTOR_CUSTOMERS = DimensionFactory.eINSTANCE.createDimensionConnector();
         //CONNECTOR_CUSTOMERS.setOverrideDimensionName("Customers");
         //CONNECTOR_CUSTOMERS.setPhysicalCube(CatalogSupplier.CUBE_SALES);
 
         // Create dimension connector for Time (references dimension directly)
-        //CONNECTOR_TIME = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        //CONNECTOR_TIME = DimensionFactory.eINSTANCE.createDimensionConnector();
         //CONNECTOR_TIME.setOverrideDimensionName("Time");
         //CONNECTOR_TIME.setDimension(CatalogSupplier.DIMENSION_TIME);
 
         // Create calculated member Profit with visible=false
-        CALCULATED_MEMBER_PROFIT = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+        CALCULATED_MEMBER_PROFIT = LevelFactory.eINSTANCE.createCalculatedMember();
         CALCULATED_MEMBER_PROFIT.setName("Profit");
         CALCULATED_MEMBER_PROFIT.setVisible(false);
         CALCULATED_MEMBER_PROFIT.setFormula("[Measures].[Store Sales] - [Measures].[Store Cost]");
 
         // Create virtual cube
-        VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY = RolapMappingFactory.eINSTANCE.createVirtualCube();
+        VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY.setName("Warehouse and Sales Member Visibility");
 
         // Add dimension connectors

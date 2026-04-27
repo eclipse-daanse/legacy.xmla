@@ -29,21 +29,22 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessDimensionGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.Cube;
-import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.Dimension;
-import org.eclipse.daanse.rolap.mapping.model.DimensionAccess;
-import org.eclipse.daanse.rolap.mapping.model.Hierarchy;
-import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessDimensionGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.DimensionAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,7 +52,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * Unit test for {@link CatalogReader}.
  */
@@ -230,25 +230,25 @@ class RolapCatalogReaderTest {
 
                 // Create dimension grant for Store (access = NONE) using RolapMappingFactory
                 AccessDimensionGrant dimensionGrant =
-                    RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+                    OlapFactory.eINSTANCE.createAccessDimensionGrant();
                 dimensionGrant.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
                 dimensionGrant.setDimensionAccess(DimensionAccess.NONE);
 
                 // Create hierarchy grant for Time (access = NONE) using RolapMappingFactory
                 AccessHierarchyGrant hierarchyGrant1 =
-                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                    OlapFactory.eINSTANCE.createAccessHierarchyGrant();
                 hierarchyGrant1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
                 hierarchyGrant1.setHierarchyAccess(HierarchyAccess.NONE);
 
                 // Create hierarchy grant for Weekly (access = ALL) using RolapMappingFactory
                 AccessHierarchyGrant hierarchyGrant2 =
-                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                    OlapFactory.eINSTANCE.createAccessHierarchyGrant();
                 hierarchyGrant2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME2));
                 hierarchyGrant2.setHierarchyAccess(HierarchyAccess.ALL);
 
                 // Create cube grant using RolapMappingFactory
                 AccessCubeGrant cubeGrant =
-                    RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+                    OlapFactory.eINSTANCE.createAccessCubeGrant();
                 cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
                 cubeGrant.setCubeAccess(CubeAccess.ALL);
                 cubeGrant.getDimensionGrants().add(dimensionGrant);
@@ -257,13 +257,13 @@ class RolapCatalogReaderTest {
 
                 // Create catalog grant using RolapMappingFactory
                 AccessCatalogGrant catalogGrant =
-                    RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                    CommonFactory.eINSTANCE.createAccessCatalogGrant();
                 catalogGrant.setCatalogAccess(CatalogAccess.NONE);
                 catalogGrant.getCubeGrants().add(cubeGrant);
 
                 // Create role using RolapMappingFactory
                 AccessRole role =
-                    RolapMappingFactory.eINSTANCE.createAccessRole();
+                    CommonFactory.eINSTANCE.createAccessRole();
                 role.setName("REG1");
                 role.getAccessCatalogGrants().add(catalogGrant);
 

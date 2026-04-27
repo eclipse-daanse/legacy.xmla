@@ -328,7 +328,7 @@ import org.eclipse.daanse.rolap.common.result.RolapResultShepherd;
 import org.eclipse.daanse.rolap.core.internal.BasicContext;
 import org.eclipse.daanse.rolap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 

@@ -13,16 +13,14 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import java.util.List;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +29,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * @author Andrey Khayrutdinov
  */
@@ -40,22 +37,22 @@ class AggregationOverAggTableTest extends AggTableTestCase {
 	//## TableName:  agg_c_avg_sales_fact_1997
 	//## ColumnNames:  the_year,quarter,month_of_year,gender,unit_sales,fact_count
 	//## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),INTEGER:NULL,INTEGER
-    private static PhysicalColumn theYearAggCAvgSalesFact1997 = createColumn("the_year", ColumnType.INTEGER, null, null, null);
-    private static PhysicalColumn quarterAggCAvgSalesFact1997 = createColumn("quarter", ColumnType.VARCHAR, 30, null, null);
-    private static PhysicalColumn monthOfYearAggCAvgSalesFact1997 = createColumn("month_of_year", ColumnType.INTEGER, null, null, null);
-    private static PhysicalColumn genderAggCAvgSalesFact1997 = createColumn("gender", ColumnType.VARCHAR, 30, null, null);
-    private static PhysicalColumn unitSalesAggCAvgSalesFact1997 = createColumn("unit_sales", ColumnType.INTEGER, null, null, null);
-    private static PhysicalColumn factCountAggCAvgSalesFact1997 = createColumn("fact_count", ColumnType.INTEGER, null, null, null);
+    private static Column theYearAggCAvgSalesFact1997 = createColumn("the_year", SqlSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column quarterAggCAvgSalesFact1997 = createColumn("quarter", SqlSimpleTypes.varcharType(255), 30, null, null);
+    private static Column monthOfYearAggCAvgSalesFact1997 = createColumn("month_of_year", SqlSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column genderAggCAvgSalesFact1997 = createColumn("gender", SqlSimpleTypes.varcharType(255), 30, null, null);
+    private static Column unitSalesAggCAvgSalesFact1997 = createColumn("unit_sales", SqlSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column factCountAggCAvgSalesFact1997 = createColumn("fact_count", SqlSimpleTypes.Sql99.integerType(), null, null, null);
 
-    private static PhysicalTable aggCAvgSalesFact1997 = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+    private static Table aggCAvgSalesFact1997 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
     static {
         aggCAvgSalesFact1997.setName("agg_c_avg_sales_fact_1997");
-        aggCAvgSalesFact1997.getColumns().add(theYearAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getColumns().add(quarterAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getColumns().add(monthOfYearAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getColumns().add(genderAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getColumns().add(unitSalesAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getColumns().add(factCountAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getFeature().add(theYearAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getFeature().add(quarterAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getFeature().add(monthOfYearAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getFeature().add(genderAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getFeature().add(unitSalesAggCAvgSalesFact1997);
+        aggCAvgSalesFact1997.getFeature().add(factCountAggCAvgSalesFact1997);
     }
 
 
@@ -137,20 +134,20 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             false, false, true);
     }
 
-    private static PhysicalColumn createColumn(String name, ColumnType dataType, Integer charOctetLength, Integer columnSize, Integer decimalDigits) {
-        PhysicalColumn column = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+    private static Column createColumn(String name, org.eclipse.daanse.cwm.model.cwm.resource.relational.SQLSimpleType dataType, Integer charOctetLength, Integer columnSize, Integer decimalDigits) {
+        Column column = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         column.setName(name);
 
         column.setType(dataType);
 
         if (charOctetLength != null) {
-            column.setCharOctetLength(charOctetLength);
+            // column.setCharOctetLength(charOctetLength);
         }
         if (columnSize != null) {
-            column.setColumnSize(columnSize);
+            // column.setColumnSize(columnSize);
         }
         if (decimalDigits != null) {
-            column.setDecimalDigits(decimalDigits);
+            // column.setDecimalDigits(decimalDigits);
         }
 
         return column;

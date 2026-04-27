@@ -13,28 +13,33 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationForeignKey;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.AggregationName;
-import org.eclipse.daanse.rolap.mapping.model.AvgMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.CountMeasure;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationForeignKey;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.AvgMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.CountMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /*
 return "<Cube name='Cheques'>\n"
        + "<Table name='cheques'>\n"
@@ -269,194 +274,194 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         // Create columns for cheques table using RolapMappingFactory
         // ColumnNames: prod_id,store_id,amount
         // ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
-        PhysicalColumn store_id_cheques = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column store_id_cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         store_id_cheques.setName("store_id");
-        store_id_cheques.setType(ColumnType.INTEGER);
+        store_id_cheques.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn prod_id_cheques = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prod_id_cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_cheques.setName("prod_id");
-        prod_id_cheques.setType(ColumnType.INTEGER);
+        prod_id_cheques.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn amount_cheques = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column amount_cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amount_cheques.setName("amount");
-        amount_cheques.setType(ColumnType.DECIMAL);
-        amount_cheques.setColumnSize(10);
-        amount_cheques.setDecimalDigits(2);
+        amount_cheques.setType(SqlSimpleTypes.decimalType(18, 4));
+        // amount_cheques.setColumnSize(10);
+        // amount_cheques.setDecimalDigits(2);
 
         // Create cheques table using RolapMappingFactory
-        PhysicalTable cheques = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         cheques.setName("cheques");
-        cheques.getColumns().add(store_id_cheques);
-        cheques.getColumns().add(prod_id_cheques);
-        cheques.getColumns().add(amount_cheques);
+        cheques.getFeature().add(store_id_cheques);
+        cheques.getFeature().add(prod_id_cheques);
+        cheques.getFeature().add(amount_cheques);
 
         // Create columns for store_x table using RolapMappingFactory
         // ColumnNames: store_id,value
         // ColumnTypes: INTEGER,DECIMAL(10,2)
-        PhysicalColumn store_id_store_x = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column store_id_store_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         store_id_store_x.setName("store_id");
-        store_id_store_x.setType(ColumnType.INTEGER);
+        store_id_store_x.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn value_store_x = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column value_store_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         value_store_x.setName("value");
-        value_store_x.setType(ColumnType.DECIMAL);
-        value_store_x.setColumnSize(10);
-        value_store_x.setDecimalDigits(2);
+        value_store_x.setType(SqlSimpleTypes.decimalType(18, 4));
+        // value_store_x.setColumnSize(10);
+        // value_store_x.setDecimalDigits(2);
 
         // Create store_x table using RolapMappingFactory
-        PhysicalTable store_x = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table store_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         store_x.setName("store_x");
-        store_x.getColumns().add(store_id_store_x);
-        store_x.getColumns().add(value_store_x);
+        store_x.getFeature().add(store_id_store_x);
+        store_x.getFeature().add(value_store_x);
 
         // Create columns for product_x table using RolapMappingFactory
         // ColumnNames: prod_id,name
         // ColumnTypes: INTEGER,VARCHAR(30)
-        PhysicalColumn prod_id_product_x = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prod_id_product_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_product_x.setName("prod_id");
-        prod_id_product_x.setType(ColumnType.INTEGER);
+        prod_id_product_x.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn name_product_x = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column name_product_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name_product_x.setName("name");
-        name_product_x.setType(ColumnType.VARCHAR);
-        name_product_x.setCharOctetLength(30);
+        name_product_x.setType(SqlSimpleTypes.varcharType(255));
+        // name_product_x.setCharOctetLength(30);
 
         // Create product_x table using RolapMappingFactory
-        PhysicalTable product_x = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table product_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         product_x.setName("product_x");
-        product_x.getColumns().add(prod_id_product_x);
-        product_x.getColumns().add(name_product_x);
+        product_x.getFeature().add(prod_id_product_x);
+        product_x.getFeature().add(name_product_x);
 
         // Create columns for agg_lp_xxx_cheques table using RolapMappingFactory
         // TableName: agg_lp_xxx_cheques
         // ColumnNames: store_id,amount_AVG,FACT_COUNT
         // ColumnTypes: INTEGER,DECIMAL(10,2),INTEGER
-        PhysicalColumn storeId = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column storeId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeId.setName("store_id");
-        storeId.setType(ColumnType.INTEGER);
+        storeId.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn amountAvg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column amountAvg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountAvg.setName("amount_AVG");
-        amountAvg.setType(ColumnType.DECIMAL);
-        amountAvg.setColumnSize(10);
-        amountAvg.setDecimalDigits(2);
+        amountAvg.setType(SqlSimpleTypes.decimalType(18, 4));
+        // amountAvg.setColumnSize(10);
+        // amountAvg.setDecimalDigits(2);
 
-        PhysicalColumn factCount = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column factCount = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCount.setName("FACT_COUNT");
-        factCount.setType(ColumnType.INTEGER);
+        factCount.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create agg_lp_xxx_cheques table using RolapMappingFactory
-        PhysicalTable aggLpXxxCheques = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table aggLpXxxCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggLpXxxCheques.setName("agg_lp_xxx_cheques");
-        aggLpXxxCheques.getColumns().add(storeId);
-        aggLpXxxCheques.getColumns().add(amountAvg);
-        aggLpXxxCheques.getColumns().add(factCount);
+        aggLpXxxCheques.getFeature().add(storeId);
+        aggLpXxxCheques.getFeature().add(amountAvg);
+        aggLpXxxCheques.getFeature().add(factCount);
 
         // Create aggregation column name for fact count using RolapMappingFactory
-        AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+        AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(factCount);
 
         // Create aggregation foreign key using RolapMappingFactory
-        AggregationForeignKey aggForeignKey = RolapMappingFactory.eINSTANCE.createAggregationForeignKey();
+        AggregationForeignKey aggForeignKey = AggregationFactory.eINSTANCE.createAggregationForeignKey();
         aggForeignKey.setFactColumn(store_id_cheques);
         aggForeignKey.setAggregationColumn(storeId);
 
         // Create aggregation measure using RolapMappingFactory
-        AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+        AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggMeasure.setName("[Measures].[Avg Amount]");
         aggMeasure.setColumn(amountAvg);
 
         // Create aggregation name using RolapMappingFactory
-        AggregationName aggregationName = RolapMappingFactory.eINSTANCE.createAggregationName();
+        AggregationName aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(aggLpXxxCheques);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationForeignKeys().add(aggForeignKey);
         aggregationName.getAggregationMeasures().add(aggMeasure);
 
         // Create table query with aggregation using RolapMappingFactory
-        TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
         tableQuery.setTable(cheques);
         tableQuery.getAggregationTables().add(aggregationName);
 
         // Create StoreX hierarchy using RolapMappingFactory
-        Level storeValueLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeValueLevel = LevelFactory.eINSTANCE.createLevel();
         storeValueLevel.setName("Store Value");
         storeValueLevel.setColumn(value_store_x);
         storeValueLevel.setUniqueMembers(true);
 
-        TableQuery storeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
         storeQuery.setTable(store_x);
 
-        ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
         storeHierarchy.setPrimaryKey(store_id_store_x);
         storeHierarchy.setQuery(storeQuery);
         storeHierarchy.getLevels().add(storeValueLevel);
 
-        StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         storeDimension.setName("StoreX");
         storeDimension.getHierarchies().add(storeHierarchy);
 
-        DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         storeConnector.setOverrideDimensionName("StoreX");
         storeConnector.setForeignKey(store_id_cheques);
         storeConnector.setDimension(storeDimension);
 
         // Create ProductX hierarchy using RolapMappingFactory
-        Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
         storeNameLevel.setName("Store Name");
         storeNameLevel.setColumn(name_product_x);
         storeNameLevel.setUniqueMembers(true);
 
-        TableQuery productQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
         productQuery.setTable(product_x);
 
-        ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setPrimaryKey(prod_id_product_x);
         productHierarchy.setQuery(productQuery);
         productHierarchy.getLevels().add(storeNameLevel);
 
-        StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         productDimension.setName("ProductX");
         productDimension.getHierarchies().add(productHierarchy);
 
-        DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         productConnector.setOverrideDimensionName("ProductX");
         productConnector.setForeignKey(prod_id_cheques);
         productConnector.setDimension(productDimension);
 
         // Create measures using RolapMappingFactory
-        CountMeasure salesCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+        CountMeasure salesCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
         salesCountMeasure.setName("Sales Count");
         salesCountMeasure.setColumn(prod_id_cheques);
         salesCountMeasure.setFormatString("#,###");
 
-        CountMeasure storeCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+        CountMeasure storeCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
         storeCountMeasure.setName("Store Count");
         storeCountMeasure.setColumn(store_id_cheques);
         storeCountMeasure.setDistinct(true);
         storeCountMeasure.setFormatString("#,###");
 
-        SumMeasure totalAmountMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        SumMeasure totalAmountMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         totalAmountMeasure.setName("Total Amount");
         totalAmountMeasure.setColumn(amount_cheques);
         totalAmountMeasure.setFormatString("#,###");
 
-        AvgMeasure avgAmountMeasure = RolapMappingFactory.eINSTANCE.createAvgMeasure();
+        AvgMeasure avgAmountMeasure = MeasureFactory.eINSTANCE.createAvgMeasure();
         avgAmountMeasure.setName("Avg Amount");
         avgAmountMeasure.setColumn(amount_cheques);
         avgAmountMeasure.setFormatString("00.0");
 
         // Create measure group using RolapMappingFactory
-        MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         measureGroup.getMeasures().add(salesCountMeasure);
         measureGroup.getMeasures().add(storeCountMeasure);
         measureGroup.getMeasures().add(totalAmountMeasure);
         measureGroup.getMeasures().add(avgAmountMeasure);
 
         // Create cube using RolapMappingFactory
-        PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("Cheques");
         cube.setQuery(tableQuery);
         cube.getDimensionConnectors().add(storeConnector);

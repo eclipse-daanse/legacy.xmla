@@ -13,28 +13,34 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.AggregationName;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /**
  * EMF version of TestSsasCompatNamingInAggModifier from NonCollapsedAggTest.
  */
@@ -50,246 +56,246 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         RolapMappingFactory factory = RolapMappingFactory.eINSTANCE;
 
         // Create foo_fact table with columns
-        PhysicalColumn lineIdFooFact = factory.createPhysicalColumn();
+        Column lineIdFooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdFooFact.setName("line_id");
-        lineIdFooFact.setType(ColumnType.INTEGER);
+        lineIdFooFact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn unitSalesFooFact = factory.createPhysicalColumn();
+        Column unitSalesFooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesFooFact.setName("unit_sales");
-        unitSalesFooFact.setType(ColumnType.INTEGER);
+        unitSalesFooFact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable fooFact = factory.createPhysicalTable();
+        Table fooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         fooFact.setName("foo_fact");
-        fooFact.getColumns().add(lineIdFooFact);
-        fooFact.getColumns().add(unitSalesFooFact);
+        fooFact.getFeature().add(lineIdFooFact);
+        fooFact.getFeature().add(unitSalesFooFact);
 
         // Create line table
-        PhysicalColumn lineIdLine = factory.createPhysicalColumn();
+        Column lineIdLine = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdLine.setName("line_id");
-        lineIdLine.setType(ColumnType.INTEGER);
+        lineIdLine.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn lineNameLine = factory.createPhysicalColumn();
+        Column lineNameLine = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineNameLine.setName("line_name");
-        lineNameLine.setType(ColumnType.VARCHAR);
-        lineNameLine.setCharOctetLength(30);
+        lineNameLine.setType(SqlSimpleTypes.varcharType(255));
+        // lineNameLine.setCharOctetLength(30);
 
-        PhysicalTable line = factory.createPhysicalTable();
+        Table line = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         line.setName("line");
-        line.getColumns().add(lineIdLine);
-        line.getColumns().add(lineNameLine);
+        line.getFeature().add(lineIdLine);
+        line.getFeature().add(lineNameLine);
 
         // Create line_tenant table
-        PhysicalColumn lineIdLineTenant = factory.createPhysicalColumn();
+        Column lineIdLineTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdLineTenant.setName("line_id");
-        lineIdLineTenant.setType(ColumnType.INTEGER);
+        lineIdLineTenant.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn tenantIdLineTenant = factory.createPhysicalColumn();
+        Column tenantIdLineTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantIdLineTenant.setName("tenant_id");
-        tenantIdLineTenant.setType(ColumnType.INTEGER);
+        tenantIdLineTenant.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable lineTenant = factory.createPhysicalTable();
+        Table lineTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineTenant.setName("line_tenant");
-        lineTenant.getColumns().add(lineIdLineTenant);
-        lineTenant.getColumns().add(tenantIdLineTenant);
+        lineTenant.getFeature().add(lineIdLineTenant);
+        lineTenant.getFeature().add(tenantIdLineTenant);
 
         // Create tenant table
-        PhysicalColumn tenantIdTenant = factory.createPhysicalColumn();
+        Column tenantIdTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantIdTenant.setName("tenant_id");
-        tenantIdTenant.setType(ColumnType.INTEGER);
+        tenantIdTenant.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn tenantNameTenant = factory.createPhysicalColumn();
+        Column tenantNameTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantNameTenant.setName("tenant_name");
-        tenantNameTenant.setType(ColumnType.VARCHAR);
-        tenantNameTenant.setCharOctetLength(30);
+        tenantNameTenant.setType(SqlSimpleTypes.varcharType(255));
+        // tenantNameTenant.setCharOctetLength(30);
 
-        PhysicalTable tenant = factory.createPhysicalTable();
+        Table tenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         tenant.setName("tenant");
-        tenant.getColumns().add(tenantIdTenant);
-        tenant.getColumns().add(tenantNameTenant);
+        tenant.getFeature().add(tenantIdTenant);
+        tenant.getFeature().add(tenantNameTenant);
 
         // Create line_line_class table
-        PhysicalColumn lineIdLineLineClass = factory.createPhysicalColumn();
+        Column lineIdLineLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdLineLineClass.setName("line_id");
-        lineIdLineLineClass.setType(ColumnType.INTEGER);
+        lineIdLineLineClass.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn lineClassIdLineLineClass = factory.createPhysicalColumn();
+        Column lineClassIdLineLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineLineClass.setName("line_class_id");
-        lineClassIdLineLineClass.setType(ColumnType.INTEGER);
+        lineClassIdLineLineClass.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable lineLineClass = factory.createPhysicalTable();
+        Table lineLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineLineClass.setName("line_line_class");
-        lineLineClass.getColumns().add(lineIdLineLineClass);
-        lineLineClass.getColumns().add(lineClassIdLineLineClass);
+        lineLineClass.getFeature().add(lineIdLineLineClass);
+        lineLineClass.getFeature().add(lineClassIdLineLineClass);
 
         // Create distributor table
-        PhysicalColumn distributorIdDistributor = factory.createPhysicalColumn();
+        Column distributorIdDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         distributorIdDistributor.setName("distributor_id");
-        distributorIdDistributor.setType(ColumnType.INTEGER);
+        distributorIdDistributor.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn distributorNameDistributor = factory.createPhysicalColumn();
+        Column distributorNameDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         distributorNameDistributor.setName("distributor_name");
-        distributorNameDistributor.setType(ColumnType.VARCHAR);
-        distributorNameDistributor.setCharOctetLength(30);
+        distributorNameDistributor.setType(SqlSimpleTypes.varcharType(255));
+        // distributorNameDistributor.setCharOctetLength(30);
 
-        PhysicalTable distributor = factory.createPhysicalTable();
+        Table distributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         distributor.setName("distributor");
-        distributor.getColumns().add(distributorIdDistributor);
-        distributor.getColumns().add(distributorNameDistributor);
+        distributor.getFeature().add(distributorIdDistributor);
+        distributor.getFeature().add(distributorNameDistributor);
 
         // Create line_class_distributor table
-        PhysicalColumn lineClassIdLineClassDistributor = factory.createPhysicalColumn();
+        Column lineClassIdLineClassDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineClassDistributor.setName("line_class_id");
-        lineClassIdLineClassDistributor.setType(ColumnType.INTEGER);
+        lineClassIdLineClassDistributor.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn distributorIdLineClassDistributor = factory.createPhysicalColumn();
+        Column distributorIdLineClassDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         distributorIdLineClassDistributor.setName("distributor_id");
-        distributorIdLineClassDistributor.setType(ColumnType.INTEGER);
+        distributorIdLineClassDistributor.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable lineClassDistributor = factory.createPhysicalTable();
+        Table lineClassDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineClassDistributor.setName("line_class_distributor");
-        lineClassDistributor.getColumns().add(lineClassIdLineClassDistributor);
-        lineClassDistributor.getColumns().add(distributorIdLineClassDistributor);
+        lineClassDistributor.getFeature().add(lineClassIdLineClassDistributor);
+        lineClassDistributor.getFeature().add(distributorIdLineClassDistributor);
 
         // Create line_class table
-        PhysicalColumn lineClassIdLineClass = factory.createPhysicalColumn();
+        Column lineClassIdLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineClass.setName("line_class_id");
-        lineClassIdLineClass.setType(ColumnType.INTEGER);
+        lineClassIdLineClass.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn lineClassNameLineClass = factory.createPhysicalColumn();
+        Column lineClassNameLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassNameLineClass.setName("line_class_name");
-        lineClassNameLineClass.setType(ColumnType.VARCHAR);
-        lineClassNameLineClass.setCharOctetLength(30);
+        lineClassNameLineClass.setType(SqlSimpleTypes.varcharType(255));
+        // lineClassNameLineClass.setCharOctetLength(30);
 
-        PhysicalTable lineClass = factory.createPhysicalTable();
+        Table lineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineClass.setName("line_class");
-        lineClass.getColumns().add(lineClassIdLineClass);
-        lineClass.getColumns().add(lineClassNameLineClass);
+        lineClass.getFeature().add(lineClassIdLineClass);
+        lineClass.getFeature().add(lineClassNameLineClass);
 
         // Create network table
-        PhysicalColumn networkIdNetwork = factory.createPhysicalColumn();
+        Column networkIdNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         networkIdNetwork.setName("network_id");
-        networkIdNetwork.setType(ColumnType.INTEGER);
+        networkIdNetwork.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn networkNameNetwork = factory.createPhysicalColumn();
+        Column networkNameNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         networkNameNetwork.setName("network_name");
-        networkNameNetwork.setType(ColumnType.VARCHAR);
-        networkNameNetwork.setCharOctetLength(30);
+        networkNameNetwork.setType(SqlSimpleTypes.varcharType(255));
+        // networkNameNetwork.setCharOctetLength(30);
 
-        PhysicalTable network = factory.createPhysicalTable();
+        Table network = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         network.setName("network");
-        network.getColumns().add(networkIdNetwork);
-        network.getColumns().add(networkNameNetwork);
+        network.getFeature().add(networkIdNetwork);
+        network.getFeature().add(networkNameNetwork);
 
         // Create line_class_network table
-        PhysicalColumn lineClassIdLineClassNetwork = factory.createPhysicalColumn();
+        Column lineClassIdLineClassNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineClassNetwork.setName("line_class_id");
-        lineClassIdLineClassNetwork.setType(ColumnType.INTEGER);
+        lineClassIdLineClassNetwork.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn networkIdLineClassNetwork = factory.createPhysicalColumn();
+        Column networkIdLineClassNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         networkIdLineClassNetwork.setName("network_id");
-        networkIdLineClassNetwork.setType(ColumnType.INTEGER);
+        networkIdLineClassNetwork.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable lineClassNetwork = factory.createPhysicalTable();
+        Table lineClassNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineClassNetwork.setName("line_class_network");
-        lineClassNetwork.getColumns().add(lineClassIdLineClassNetwork);
-        lineClassNetwork.getColumns().add(networkIdLineClassNetwork);
+        lineClassNetwork.getFeature().add(lineClassIdLineClassNetwork);
+        lineClassNetwork.getFeature().add(networkIdLineClassNetwork);
 
         // Create aggregation tables
         // agg_tenant
-        PhysicalColumn tenantIdAggTenant = factory.createPhysicalColumn();
+        Column tenantIdAggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantIdAggTenant.setName("tenant_id");
-        tenantIdAggTenant.setType(ColumnType.INTEGER);
+        tenantIdAggTenant.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn unitSalesAggTenant = factory.createPhysicalColumn();
+        Column unitSalesAggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggTenant.setName("unit_sales");
-        unitSalesAggTenant.setType(ColumnType.INTEGER);
+        unitSalesAggTenant.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn factCountAggTenant = factory.createPhysicalColumn();
+        Column factCountAggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggTenant.setName("fact_count");
-        factCountAggTenant.setType(ColumnType.INTEGER);
+        factCountAggTenant.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable aggTenant = factory.createPhysicalTable();
+        Table aggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggTenant.setName("agg_tenant");
-        aggTenant.getColumns().add(tenantIdAggTenant);
-        aggTenant.getColumns().add(unitSalesAggTenant);
-        aggTenant.getColumns().add(factCountAggTenant);
+        aggTenant.getFeature().add(tenantIdAggTenant);
+        aggTenant.getFeature().add(unitSalesAggTenant);
+        aggTenant.getFeature().add(factCountAggTenant);
 
         // agg_line_class
-        PhysicalColumn lineClassIdAggLineClass = factory.createPhysicalColumn();
+        Column lineClassIdAggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdAggLineClass.setName("line_class_id");
-        lineClassIdAggLineClass.setType(ColumnType.INTEGER);
+        lineClassIdAggLineClass.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn unitSalesAggLineClass = factory.createPhysicalColumn();
+        Column unitSalesAggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggLineClass.setName("unit_sales");
-        unitSalesAggLineClass.setType(ColumnType.INTEGER);
+        unitSalesAggLineClass.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn factCountAggLineClass = factory.createPhysicalColumn();
+        Column factCountAggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggLineClass.setName("fact_count");
-        factCountAggLineClass.setType(ColumnType.INTEGER);
+        factCountAggLineClass.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalTable aggLineClass = factory.createPhysicalTable();
+        Table aggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggLineClass.setName("agg_line_class");
-        aggLineClass.getColumns().add(lineClassIdAggLineClass);
-        aggLineClass.getColumns().add(unitSalesAggLineClass);
-        aggLineClass.getColumns().add(factCountAggLineClass);
+        aggLineClass.getFeature().add(lineClassIdAggLineClass);
+        aggLineClass.getFeature().add(unitSalesAggLineClass);
+        aggLineClass.getFeature().add(factCountAggLineClass);
 
-        // Create TableQuery for fooFact with aggregation tables
-        TableQuery fooFactQuery = factory.createTableQuery();
+        // Create TableSource for fooFact with aggregation tables
+        TableSource fooFactQuery = SourceFactory.eINSTANCE.createTableSource();
         fooFactQuery.setTable(fooFact);
 
         // Create aggregation definitions
         // Aggregation 1: agg_tenant
-        AggregationColumnName aggTenantFactCount = factory.createAggregationColumnName();
+        AggregationColumnName aggTenantFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggTenantFactCount.setColumn(factCountAggTenant);
 
-        AggregationMeasure aggTenantMeasure = factory.createAggregationMeasure();
+        AggregationMeasure aggTenantMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggTenantMeasure.setName("[Measures].[Unit Sales]");
         aggTenantMeasure.setColumn(unitSalesAggTenant);
 
-        AggregationLevel aggTenantLevel = factory.createAggregationLevel();
+        AggregationLevel aggTenantLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggTenantLevel.setName("[dimension].[tenant].[tenant]");
         aggTenantLevel.setColumn(tenantIdAggTenant);
         aggTenantLevel.setCollapsed(false);
 
-        AggregationName aggName1 = factory.createAggregationName();
+        AggregationName aggName1 = AggregationFactory.eINSTANCE.createAggregationName();
         aggName1.setName(aggTenant);
         aggName1.setAggregationFactCount(aggTenantFactCount);
         aggName1.getAggregationMeasures().add(aggTenantMeasure);
         aggName1.getAggregationLevels().add(aggTenantLevel);
 
         // Aggregation 2: agg_line_class for distributor
-        AggregationColumnName aggLineClassFactCount = factory.createAggregationColumnName();
+        AggregationColumnName aggLineClassFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggLineClassFactCount.setColumn(factCountAggLineClass);
 
-        AggregationMeasure aggLineClassMeasure1 = factory.createAggregationMeasure();
+        AggregationMeasure aggLineClassMeasure1 = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggLineClassMeasure1.setName("[Measures].[Unit Sales]");
         aggLineClassMeasure1.setColumn(unitSalesAggLineClass);
 
-        AggregationLevel aggLineClassLevel1 = factory.createAggregationLevel();
+        AggregationLevel aggLineClassLevel1 = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggLineClassLevel1.setName("[dimension].[distributor].[line class]");
         aggLineClassLevel1.setColumn(lineClassIdAggLineClass);
         aggLineClassLevel1.setCollapsed(false);
 
-        AggregationName aggName2 = factory.createAggregationName();
+        AggregationName aggName2 = AggregationFactory.eINSTANCE.createAggregationName();
         aggName2.setName(aggLineClass);
         aggName2.setAggregationFactCount(aggLineClassFactCount);
         aggName2.getAggregationMeasures().add(aggLineClassMeasure1);
         aggName2.getAggregationLevels().add(aggLineClassLevel1);
 
         // Aggregation 3: agg_line_class for network
-        AggregationColumnName aggLineClassFactCount2 = factory.createAggregationColumnName();
+        AggregationColumnName aggLineClassFactCount2 = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggLineClassFactCount2.setColumn(factCountAggLineClass);
 
-        AggregationMeasure aggLineClassMeasure2 = factory.createAggregationMeasure();
+        AggregationMeasure aggLineClassMeasure2 = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggLineClassMeasure2.setName("[Measures].[Unit Sales]");
         aggLineClassMeasure2.setColumn(unitSalesAggLineClass);
 
-        AggregationLevel aggLineClassLevel2 = factory.createAggregationLevel();
+        AggregationLevel aggLineClassLevel2 = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggLineClassLevel2.setName("[dimension].[network].[line class]");
         aggLineClassLevel2.setColumn(lineClassIdAggLineClass);
         aggLineClassLevel2.setCollapsed(false);
 
-        AggregationName aggName3 = factory.createAggregationName();
+        AggregationName aggName3 = AggregationFactory.eINSTANCE.createAggregationName();
         aggName3.setName(aggLineClass);
         aggName3.setAggregationFactCount(aggLineClassFactCount2);
         aggName3.getAggregationMeasures().add(aggLineClassMeasure2);
@@ -301,52 +307,52 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         // Create hierarchies
         // Tenant hierarchy
-        TableQuery lineTenantQuery = factory.createTableQuery();
+        TableSource lineTenantQuery = SourceFactory.eINSTANCE.createTableSource();
         lineTenantQuery.setTable(lineTenant);
 
-        TableQuery tenantQuery = factory.createTableQuery();
+        TableSource tenantQuery = SourceFactory.eINSTANCE.createTableSource();
         tenantQuery.setTable(tenant);
 
-        JoinedQueryElement tenantJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement tenantJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         tenantJoinRight.setKey(tenantIdTenant);
         tenantJoinRight.setQuery(tenantQuery);
 
-        JoinedQueryElement tenantLineJoinLeft = factory.createJoinedQueryElement();
+        JoinedQueryElement tenantLineJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         tenantLineJoinLeft.setKey(tenantIdLineTenant);
         tenantLineJoinLeft.setQuery(lineTenantQuery);
 
-        JoinQuery lineTenantToTenant = factory.createJoinQuery();
+        JoinSource lineTenantToTenant = SourceFactory.eINSTANCE.createJoinSource();
         lineTenantToTenant.setLeft(tenantLineJoinLeft);
         lineTenantToTenant.setRight(tenantJoinRight);
 
-        JoinedQueryElement lineTenantJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement lineTenantJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineTenantJoinRight.setKey(lineIdLineTenant);
         lineTenantJoinRight.setAlias("line_tenant");
         lineTenantJoinRight.setQuery(lineTenantToTenant);
 
-        TableQuery lineQuery1 = factory.createTableQuery();
+        TableSource lineQuery1 = SourceFactory.eINSTANCE.createTableSource();
         lineQuery1.setTable(line);
 
-        JoinedQueryElement lineJoinLeft = factory.createJoinedQueryElement();
+        JoinedQueryElement lineJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinLeft.setKey(lineIdLine);
         lineJoinLeft.setQuery(lineQuery1);
 
-        JoinQuery tenantHierarchyJoin = factory.createJoinQuery();
+        JoinSource tenantHierarchyJoin = SourceFactory.eINSTANCE.createJoinSource();
         tenantHierarchyJoin.setLeft(lineJoinLeft);
         tenantHierarchyJoin.setRight(lineTenantJoinRight);
 
-        Level tenantLevel = factory.createLevel();
+        Level tenantLevel = LevelFactory.eINSTANCE.createLevel();
         tenantLevel.setName("tenant");
         tenantLevel.setColumn(tenantIdTenant);
         tenantLevel.setNameColumn(tenantNameTenant);
         tenantLevel.setUniqueMembers(true);
 
-        Level lineLevel1 = factory.createLevel();
+        Level lineLevel1 = LevelFactory.eINSTANCE.createLevel();
         lineLevel1.setName("line");
         lineLevel1.setColumn(lineIdLine);
         lineLevel1.setNameColumn(lineNameLine);
 
-        ExplicitHierarchy tenantHierarchy = factory.createExplicitHierarchy();
+        ExplicitHierarchy tenantHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         tenantHierarchy.setName("tenant");
         tenantHierarchy.setHasAll(true);
         tenantHierarchy.setAllMemberName("All tenants");
@@ -356,90 +362,90 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         tenantHierarchy.getLevels().add(lineLevel1);
 
         // Distributor hierarchy (complex multi-level join)
-        TableQuery lineQuery2 = factory.createTableQuery();
+        TableSource lineQuery2 = SourceFactory.eINSTANCE.createTableSource();
         lineQuery2.setTable(line);
 
-        TableQuery lineLineClassQuery = factory.createTableQuery();
+        TableSource lineLineClassQuery = SourceFactory.eINSTANCE.createTableSource();
         lineLineClassQuery.setTable(lineLineClass);
 
-        TableQuery lineClassQuery1 = factory.createTableQuery();
+        TableSource lineClassQuery1 = SourceFactory.eINSTANCE.createTableSource();
         lineClassQuery1.setTable(lineClass);
 
-        TableQuery lineClassDistributorQuery = factory.createTableQuery();
+        TableSource lineClassDistributorQuery = SourceFactory.eINSTANCE.createTableSource();
         lineClassDistributorQuery.setTable(lineClassDistributor);
 
-        TableQuery distributorQuery = factory.createTableQuery();
+        TableSource distributorQuery = SourceFactory.eINSTANCE.createTableSource();
         distributorQuery.setTable(distributor);
 
         // Build distributor hierarchy join (innermost to outermost)
-        JoinedQueryElement distributorJoinLeft = factory.createJoinedQueryElement();
+        JoinedQueryElement distributorJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         distributorJoinLeft.setKey(distributorIdLineClassDistributor);
         distributorJoinLeft.setQuery(lineClassDistributorQuery);
 
-        JoinedQueryElement distributorJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement distributorJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         distributorJoinRight.setKey(distributorIdDistributor);
         distributorJoinRight.setQuery(distributorQuery);
 
-        JoinQuery lineClassDistributorToDistributor = factory.createJoinQuery();
+        JoinSource lineClassDistributorToDistributor = SourceFactory.eINSTANCE.createJoinSource();
         lineClassDistributorToDistributor.setLeft(distributorJoinLeft);
         lineClassDistributorToDistributor.setRight(distributorJoinRight);
 
-        JoinedQueryElement lineClassJoinLeft = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinLeft.setKey(lineClassIdLineClass);
         lineClassJoinLeft.setQuery(lineClassQuery1);
 
-        JoinedQueryElement lineClassDistributorJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassDistributorJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassDistributorJoinRight.setKey(lineClassIdLineClassDistributor);
         lineClassDistributorJoinRight.setAlias("line_class_distributor");
         lineClassDistributorJoinRight.setQuery(lineClassDistributorToDistributor);
 
-        JoinQuery lineClassToDistributor = factory.createJoinQuery();
+        JoinSource lineClassToDistributor = SourceFactory.eINSTANCE.createJoinSource();
         lineClassToDistributor.setLeft(lineClassJoinLeft);
         lineClassToDistributor.setRight(lineClassDistributorJoinRight);
 
-        JoinedQueryElement lineLineClassJoinLeft = factory.createJoinedQueryElement();
+        JoinedQueryElement lineLineClassJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinLeft.setKey(lineClassIdLineLineClass);
         lineLineClassJoinLeft.setQuery(lineLineClassQuery);
 
-        JoinedQueryElement lineClassJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinRight.setKey(lineClassIdLineClassDistributor);
         lineClassJoinRight.setAlias("line_class");
         lineClassJoinRight.setQuery(lineClassToDistributor);
 
-        JoinQuery lineLineClassToLineClass = factory.createJoinQuery();
+        JoinSource lineLineClassToLineClass = SourceFactory.eINSTANCE.createJoinSource();
         lineLineClassToLineClass.setLeft(lineLineClassJoinLeft);
         lineLineClassToLineClass.setRight(lineClassJoinRight);
 
-        JoinedQueryElement lineJoinLeft2 = factory.createJoinedQueryElement();
+        JoinedQueryElement lineJoinLeft2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinLeft2.setKey(lineIdLine);
         lineJoinLeft2.setQuery(lineQuery2);
 
-        JoinedQueryElement lineLineClassJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement lineLineClassJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinRight.setKey(lineIdLineLineClass);
         lineLineClassJoinRight.setAlias("line_line_class");
         lineLineClassJoinRight.setQuery(lineLineClassToLineClass);
 
-        JoinQuery distributorHierarchyJoin = factory.createJoinQuery();
+        JoinSource distributorHierarchyJoin = SourceFactory.eINSTANCE.createJoinSource();
         distributorHierarchyJoin.setLeft(lineJoinLeft2);
         distributorHierarchyJoin.setRight(lineLineClassJoinRight);
 
-        Level distributorLevel = factory.createLevel();
+        Level distributorLevel = LevelFactory.eINSTANCE.createLevel();
         distributorLevel.setName("distributor");
         distributorLevel.setColumn(distributorIdDistributor);
         distributorLevel.setNameColumn(distributorNameDistributor);
 
-        Level lineClassLevel1 = factory.createLevel();
+        Level lineClassLevel1 = LevelFactory.eINSTANCE.createLevel();
         lineClassLevel1.setName("line class");
         lineClassLevel1.setColumn(lineClassIdLineClass);
         lineClassLevel1.setNameColumn(lineClassNameLineClass);
         lineClassLevel1.setUniqueMembers(true);
 
-        Level lineLevel2 = factory.createLevel();
+        Level lineLevel2 = LevelFactory.eINSTANCE.createLevel();
         lineLevel2.setName("line");
         lineLevel2.setColumn(lineIdLine);
         lineLevel2.setNameColumn(lineNameLine);
 
-        ExplicitHierarchy distributorHierarchy = factory.createExplicitHierarchy();
+        ExplicitHierarchy distributorHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         distributorHierarchy.setName("distributor");
         distributorHierarchy.setHasAll(true);
         distributorHierarchy.setAllMemberName("All distributors");
@@ -450,90 +456,90 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         distributorHierarchy.getLevels().add(lineLevel2);
 
         // Network hierarchy (complex multi-level join)
-        TableQuery lineQuery3 = factory.createTableQuery();
+        TableSource lineQuery3 = SourceFactory.eINSTANCE.createTableSource();
         lineQuery3.setTable(line);
 
-        TableQuery lineLineClassQuery2 = factory.createTableQuery();
+        TableSource lineLineClassQuery2 = SourceFactory.eINSTANCE.createTableSource();
         lineLineClassQuery2.setTable(lineLineClass);
 
-        TableQuery lineClassQuery2 = factory.createTableQuery();
+        TableSource lineClassQuery2 = SourceFactory.eINSTANCE.createTableSource();
         lineClassQuery2.setTable(lineClass);
 
-        TableQuery lineClassNetworkQuery = factory.createTableQuery();
+        TableSource lineClassNetworkQuery = SourceFactory.eINSTANCE.createTableSource();
         lineClassNetworkQuery.setTable(lineClassNetwork);
 
-        TableQuery networkQuery = factory.createTableQuery();
+        TableSource networkQuery = SourceFactory.eINSTANCE.createTableSource();
         networkQuery.setTable(network);
 
         // Build network hierarchy join
-        JoinedQueryElement lineClassNetworkJoinLeft = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassNetworkJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassNetworkJoinLeft.setKey(networkIdLineClassNetwork);
         lineClassNetworkJoinLeft.setQuery(lineClassNetworkQuery);
 
-        JoinedQueryElement networkJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement networkJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         networkJoinRight.setKey(networkIdNetwork);
         networkJoinRight.setQuery(networkQuery);
 
-        JoinQuery lineClassNetworkToNetwork = factory.createJoinQuery();
+        JoinSource lineClassNetworkToNetwork = SourceFactory.eINSTANCE.createJoinSource();
         lineClassNetworkToNetwork.setLeft(lineClassNetworkJoinLeft);
         lineClassNetworkToNetwork.setRight(networkJoinRight);
 
-        JoinedQueryElement lineClassJoinLeft2 = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassJoinLeft2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinLeft2.setKey(lineClassIdLineClass);
         lineClassJoinLeft2.setQuery(lineClassQuery2);
 
-        JoinedQueryElement lineClassNetworkJoinRight = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassNetworkJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassNetworkJoinRight.setKey(lineClassIdLineClassNetwork);
         lineClassNetworkJoinRight.setAlias("line_class_network");
         lineClassNetworkJoinRight.setQuery(lineClassNetworkToNetwork);
 
-        JoinQuery lineClassToNetwork = factory.createJoinQuery();
+        JoinSource lineClassToNetwork = SourceFactory.eINSTANCE.createJoinSource();
         lineClassToNetwork.setLeft(lineClassJoinLeft2);
         lineClassToNetwork.setRight(lineClassNetworkJoinRight);
 
-        JoinedQueryElement lineLineClassJoinLeft2 = factory.createJoinedQueryElement();
+        JoinedQueryElement lineLineClassJoinLeft2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinLeft2.setKey(lineClassIdLineLineClass);
         lineLineClassJoinLeft2.setQuery(lineLineClassQuery2);
 
-        JoinedQueryElement lineClassJoinRight2 = factory.createJoinedQueryElement();
+        JoinedQueryElement lineClassJoinRight2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinRight2.setKey(lineClassIdLineClass);
         lineClassJoinRight2.setAlias("line_class");
         lineClassJoinRight2.setQuery(lineClassToNetwork);
 
-        JoinQuery lineLineClassToLineClass2 = factory.createJoinQuery();
+        JoinSource lineLineClassToLineClass2 = SourceFactory.eINSTANCE.createJoinSource();
         lineLineClassToLineClass2.setLeft(lineLineClassJoinLeft2);
         lineLineClassToLineClass2.setRight(lineClassJoinRight2);
 
-        JoinedQueryElement lineJoinLeft3 = factory.createJoinedQueryElement();
+        JoinedQueryElement lineJoinLeft3 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinLeft3.setKey(lineIdLine);
         lineJoinLeft3.setQuery(lineQuery3);
 
-        JoinedQueryElement lineLineClassJoinRight2 = factory.createJoinedQueryElement();
+        JoinedQueryElement lineLineClassJoinRight2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinRight2.setKey(lineIdLineLineClass);
         lineLineClassJoinRight2.setAlias("line_line_class");
         lineLineClassJoinRight2.setQuery(lineLineClassToLineClass2);
 
-        JoinQuery networkHierarchyJoin = factory.createJoinQuery();
+        JoinSource networkHierarchyJoin = SourceFactory.eINSTANCE.createJoinSource();
         networkHierarchyJoin.setLeft(lineJoinLeft3);
         networkHierarchyJoin.setRight(lineLineClassJoinRight2);
 
-        Level networkLevel = factory.createLevel();
+        Level networkLevel = LevelFactory.eINSTANCE.createLevel();
         networkLevel.setName("network");
         networkLevel.setColumn(networkIdNetwork);
         networkLevel.setNameColumn(networkNameNetwork);
 
-        Level lineClassLevel2 = factory.createLevel();
+        Level lineClassLevel2 = LevelFactory.eINSTANCE.createLevel();
         lineClassLevel2.setName("line class");
         lineClassLevel2.setColumn(lineClassIdLineClass);
         lineClassLevel2.setNameColumn(lineClassNameLineClass);
         lineClassLevel2.setUniqueMembers(true);
 
-        Level lineLevel3 = factory.createLevel();
+        Level lineLevel3 = LevelFactory.eINSTANCE.createLevel();
         lineLevel3.setName("line");
         lineLevel3.setColumn(lineIdLine);
         lineLevel3.setNameColumn(lineNameLine);
 
-        ExplicitHierarchy networkHierarchy = factory.createExplicitHierarchy();
+        ExplicitHierarchy networkHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         networkHierarchy.setName("network");
         networkHierarchy.setHasAll(true);
         networkHierarchy.setAllMemberName("All networks");
@@ -544,30 +550,30 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         networkHierarchy.getLevels().add(lineLevel3);
 
         // Create dimension
-        StandardDimension dimension = factory.createStandardDimension();
+        StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
         dimension.setName("dimension");
         dimension.getHierarchies().add(tenantHierarchy);
         dimension.getHierarchies().add(distributorHierarchy);
         dimension.getHierarchies().add(networkHierarchy);
 
         // Create dimension connector
-        DimensionConnector dimensionConnector = factory.createDimensionConnector();
+        DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         dimensionConnector.setOverrideDimensionName("dimension");
         dimensionConnector.setForeignKey(lineIdFooFact);
         dimensionConnector.setDimension(dimension);
 
         // Create measure
-        SumMeasure unitSalesMeasure = factory.createSumMeasure();
+        SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         unitSalesMeasure.setName("Unit Sales");
         unitSalesMeasure.setColumn(unitSalesFooFact);
         unitSalesMeasure.setFormatString("Standard");
 
         // Create measure group
-        MeasureGroup measureGroup = factory.createMeasureGroup();
+        MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         measureGroup.getMeasures().add(unitSalesMeasure);
 
         // Create cube
-        PhysicalCube testSsasCube = factory.createPhysicalCube();
+        PhysicalCube testSsasCube = CubeFactory.eINSTANCE.createPhysicalCube();
         testSsasCube.setName("testSsas");
         testSsasCube.setQuery(fooFactQuery);
         testSsasCube.getDimensionConnectors().add(dimensionConnector);

@@ -13,31 +13,37 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.AggregationName;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.OrderedColumn;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupplier {
 
     private final CatalogImpl originalCatalog;
@@ -45,189 +51,189 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
     public MultipleColsInTupleAggTestModifierEmf(Catalog catalog) {
         this.originalCatalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) catalog);
         // Create fact table columns
-        PhysicalColumn prodIdFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prodIdFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodIdFact.setName("prod_id");
-        prodIdFact.setType(ColumnType.INTEGER);
+        prodIdFact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn storeIdFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column storeIdFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeIdFact.setName("store_id");
-        storeIdFact.setType(ColumnType.INTEGER);
+        storeIdFact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn amountFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column amountFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountFact.setName("amount");
-        amountFact.setType(ColumnType.INTEGER);
+        amountFact.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create fact table
-        PhysicalTable fact = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         fact.setName("fact");
-        fact.getColumns().add(prodIdFact);
-        fact.getColumns().add(storeIdFact);
-        fact.getColumns().add(amountFact);
+        fact.getFeature().add(prodIdFact);
+        fact.getFeature().add(storeIdFact);
+        fact.getFeature().add(amountFact);
 
         // Create store_csv table columns
-        PhysicalColumn storeIdStoreCsv = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column storeIdStoreCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeIdStoreCsv.setName("store_id");
-        storeIdStoreCsv.setType(ColumnType.INTEGER);
+        storeIdStoreCsv.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn valueStoreCsv = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column valueStoreCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         valueStoreCsv.setName("value");
-        valueStoreCsv.setType(ColumnType.INTEGER);
+        valueStoreCsv.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create store_csv table
-        PhysicalTable storeCsv = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table storeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         storeCsv.setName("store_csv");
-        storeCsv.getColumns().add(storeIdStoreCsv);
-        storeCsv.getColumns().add(valueStoreCsv);
+        storeCsv.getFeature().add(storeIdStoreCsv);
+        storeCsv.getFeature().add(valueStoreCsv);
 
         // Create product_csv table columns
-        PhysicalColumn prodIdProductCsv = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prodIdProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodIdProductCsv.setName("prod_id");
-        prodIdProductCsv.setType(ColumnType.INTEGER);
+        prodIdProductCsv.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn prodCatProductCsv = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prodCatProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodCatProductCsv.setName("prod_cat");
-        prodCatProductCsv.setType(ColumnType.INTEGER);
+        prodCatProductCsv.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn name1ProductCsv = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column name1ProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name1ProductCsv.setName("name1");
-        name1ProductCsv.setType(ColumnType.VARCHAR);
-        name1ProductCsv.setCharOctetLength(30);
+        name1ProductCsv.setType(SqlSimpleTypes.varcharType(255));
+        // name1ProductCsv.setCharOctetLength(30);
 
-        PhysicalColumn colorProductCsv = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column colorProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         colorProductCsv.setName("color");
-        colorProductCsv.setType(ColumnType.VARCHAR);
-        colorProductCsv.setCharOctetLength(30);
+        colorProductCsv.setType(SqlSimpleTypes.varcharType(255));
+        // colorProductCsv.setCharOctetLength(30);
 
         // Create product_csv table
-        PhysicalTable productCsv = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table productCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         productCsv.setName("product_csv");
-        productCsv.getColumns().add(prodIdProductCsv);
-        productCsv.getColumns().add(prodCatProductCsv);
-        productCsv.getColumns().add(name1ProductCsv);
-        productCsv.getColumns().add(colorProductCsv);
+        productCsv.getFeature().add(prodIdProductCsv);
+        productCsv.getFeature().add(prodCatProductCsv);
+        productCsv.getFeature().add(name1ProductCsv);
+        productCsv.getFeature().add(colorProductCsv);
 
         // Create cat table columns
-        PhysicalColumn catCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column catCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         catCat.setName("cat");
-        catCat.setType(ColumnType.INTEGER);
+        catCat.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn name3Cat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column name3Cat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name3Cat.setName("name3");
-        name3Cat.setType(ColumnType.VARCHAR);
-        name3Cat.setCharOctetLength(30);
+        name3Cat.setType(SqlSimpleTypes.varcharType(255));
+        // name3Cat.setCharOctetLength(30);
 
-        PhysicalColumn ordCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column ordCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         ordCat.setName("ord");
-        ordCat.setType(ColumnType.INTEGER);
+        ordCat.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn capCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column capCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         capCat.setName("cap");
-        capCat.setType(ColumnType.VARCHAR);
-        capCat.setCharOctetLength(30);
+        capCat.setType(SqlSimpleTypes.varcharType(255));
+        // capCat.setCharOctetLength(30);
 
         // Create cat table
-        PhysicalTable cat = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table cat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         cat.setName("cat");
-        cat.getColumns().add(catCat);
-        cat.getColumns().add(name3Cat);
-        cat.getColumns().add(ordCat);
-        cat.getColumns().add(capCat);
+        cat.getFeature().add(catCat);
+        cat.getFeature().add(name3Cat);
+        cat.getFeature().add(ordCat);
+        cat.getFeature().add(capCat);
 
         // Create product_cat table columns
-        PhysicalColumn prodCatProductCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prodCatProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodCatProductCat.setName("prod_cat");
-        prodCatProductCat.setType(ColumnType.INTEGER);
+        prodCatProductCat.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn catProductCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column catProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         catProductCat.setName("cat");
-        catProductCat.setType(ColumnType.INTEGER);
+        catProductCat.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn name2ProductCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column name2ProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name2ProductCat.setName("name2");
-        name2ProductCat.setType(ColumnType.VARCHAR);
-        name2ProductCat.setCharOctetLength(30);
+        name2ProductCat.setType(SqlSimpleTypes.varcharType(255));
+        // name2ProductCat.setCharOctetLength(30);
 
-        PhysicalColumn ordProductCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column ordProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         ordProductCat.setName("ord");
-        ordProductCat.setType(ColumnType.INTEGER);
+        ordProductCat.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn capProductCat = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column capProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         capProductCat.setName("cap");
-        capProductCat.setType(ColumnType.INTEGER);
+        capProductCat.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create product_cat table
-        PhysicalTable productCat = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table productCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         productCat.setName("product_cat");
-        productCat.getColumns().add(prodCatProductCat);
-        productCat.getColumns().add(catProductCat);
-        productCat.getColumns().add(name2ProductCat);
-        productCat.getColumns().add(ordProductCat);
-        productCat.getColumns().add(capProductCat);
+        productCat.getFeature().add(prodCatProductCat);
+        productCat.getFeature().add(catProductCat);
+        productCat.getFeature().add(name2ProductCat);
+        productCat.getFeature().add(ordProductCat);
+        productCat.getFeature().add(capProductCat);
 
         // Create test_lp_xxx_fact aggregation table columns
-        PhysicalColumn categoryTestLpXxxFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column categoryTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         categoryTestLpXxxFact.setName("category");
-        categoryTestLpXxxFact.setType(ColumnType.INTEGER);
+        categoryTestLpXxxFact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn productCategoryTestLpXxxFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column productCategoryTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productCategoryTestLpXxxFact.setName("product_category");
-        productCategoryTestLpXxxFact.setType(ColumnType.VARCHAR);
-        productCategoryTestLpXxxFact.setCharOctetLength(30);
+        productCategoryTestLpXxxFact.setType(SqlSimpleTypes.varcharType(255));
+        // productCategoryTestLpXxxFact.setCharOctetLength(30);
 
-        PhysicalColumn amountTestLpXxxFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column amountTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountTestLpXxxFact.setName("amount");
-        amountTestLpXxxFact.setType(ColumnType.INTEGER);
+        amountTestLpXxxFact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn factCountTestLpXxxFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column factCountTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountTestLpXxxFact.setName("fact_count");
-        factCountTestLpXxxFact.setType(ColumnType.INTEGER);
+        factCountTestLpXxxFact.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create test_lp_xxx_fact aggregation table
-        PhysicalTable testLpXxxFact = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table testLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         testLpXxxFact.setName("test_lp_xxx_fact");
-        testLpXxxFact.getColumns().add(categoryTestLpXxxFact);
-        testLpXxxFact.getColumns().add(productCategoryTestLpXxxFact);
-        testLpXxxFact.getColumns().add(amountTestLpXxxFact);
-        testLpXxxFact.getColumns().add(factCountTestLpXxxFact);
+        testLpXxxFact.getFeature().add(categoryTestLpXxxFact);
+        testLpXxxFact.getFeature().add(productCategoryTestLpXxxFact);
+        testLpXxxFact.getFeature().add(amountTestLpXxxFact);
+        testLpXxxFact.getFeature().add(factCountTestLpXxxFact);
 
         // Create test_lp_xx2_fact aggregation table columns
-        PhysicalColumn prodnameTestLpXx2Fact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column prodnameTestLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodnameTestLpXx2Fact.setName("prodname");
-        prodnameTestLpXx2Fact.setType(ColumnType.VARCHAR);
-        prodnameTestLpXx2Fact.setCharOctetLength(30);
+        prodnameTestLpXx2Fact.setType(SqlSimpleTypes.varcharType(255));
+        // prodnameTestLpXx2Fact.setCharOctetLength(30);
 
-        PhysicalColumn amountTestLpXx2Fact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column amountTestLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountTestLpXx2Fact.setName("amount");
-        amountTestLpXx2Fact.setType(ColumnType.INTEGER);
+        amountTestLpXx2Fact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        PhysicalColumn factCountTestLpXx2Fact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        Column factCountTestLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountTestLpXx2Fact.setName("fact_count");
-        factCountTestLpXx2Fact.setType(ColumnType.INTEGER);
+        factCountTestLpXx2Fact.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create test_lp_xx2_fact aggregation table
-        PhysicalTable testLpXx2Fact = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        Table testLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         testLpXx2Fact.setName("test_lp_xx2_fact");
-        testLpXx2Fact.getColumns().add(prodnameTestLpXx2Fact);
-        testLpXx2Fact.getColumns().add(amountTestLpXx2Fact);
-        testLpXx2Fact.getColumns().add(factCountTestLpXx2Fact);
+        testLpXx2Fact.getFeature().add(prodnameTestLpXx2Fact);
+        testLpXx2Fact.getFeature().add(amountTestLpXx2Fact);
+        testLpXx2Fact.getFeature().add(factCountTestLpXx2Fact);
 
         // Create first aggregation name (test_lp_xxx_fact)
-        AggregationColumnName aggFactCount1 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+        AggregationColumnName aggFactCount1 = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount1.setColumn(factCountTestLpXxxFact);
 
-        AggregationMeasure aggMeasure1 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+        AggregationMeasure aggMeasure1 = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggMeasure1.setColumn(amountTestLpXxxFact);
         aggMeasure1.setName("[Measures].[Total]");
 
-        AggregationLevel aggLevel1 = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        AggregationLevel aggLevel1 = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggLevel1.setColumn(categoryTestLpXxxFact);
         aggLevel1.setName("[Product].[Product].[Category]");
 
-        AggregationLevel aggLevel2 = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        AggregationLevel aggLevel2 = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggLevel2.setColumn(productCategoryTestLpXxxFact);
         aggLevel2.setName("[Product].[Product].[Product Category]");
 
-        AggregationName aggregationName1 = RolapMappingFactory.eINSTANCE.createAggregationName();
+        AggregationName aggregationName1 = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName1.setName(testLpXxxFact);
         aggregationName1.setAggregationFactCount(aggFactCount1);
         aggregationName1.getAggregationMeasures().add(aggMeasure1);
@@ -235,80 +241,80 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         aggregationName1.getAggregationLevels().add(aggLevel2);
 
         // Create second aggregation name (test_lp_xx2_fact)
-        AggregationColumnName aggFactCount2 = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+        AggregationColumnName aggFactCount2 = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount2.setColumn(factCountTestLpXx2Fact);
 
-        AggregationMeasure aggMeasure2 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+        AggregationMeasure aggMeasure2 = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggMeasure2.setColumn(amountTestLpXx2Fact);
         aggMeasure2.setName("[Measures].[Total]");
 
-        AggregationLevel aggLevel3 = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        AggregationLevel aggLevel3 = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggLevel3.setColumn(prodnameTestLpXx2Fact);
         aggLevel3.setName("[Product].[Product].[Product Name]");
         aggLevel3.setCollapsed(false);
 
-        AggregationName aggregationName2 = RolapMappingFactory.eINSTANCE.createAggregationName();
+        AggregationName aggregationName2 = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName2.setName(testLpXx2Fact);
         aggregationName2.setAggregationFactCount(aggFactCount2);
         aggregationName2.getAggregationMeasures().add(aggMeasure2);
         aggregationName2.getAggregationLevels().add(aggLevel3);
 
         // Create table query with aggregations
-        TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
         tableQuery.setTable(fact);
         tableQuery.getAggregationTables().add(aggregationName1);
         tableQuery.getAggregationTables().add(aggregationName2);
 
         // Create Store dimension hierarchy
-        Level storeValueLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeValueLevel = LevelFactory.eINSTANCE.createLevel();
         storeValueLevel.setName("Store Value");
         storeValueLevel.setColumn(valueStoreCsv);
         storeValueLevel.setUniqueMembers(true);
 
-        TableQuery storeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
         storeQuery.setTable(storeCsv);
 
-        ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
         storeHierarchy.setPrimaryKey(storeIdStoreCsv);
         storeHierarchy.setQuery(storeQuery);
         storeHierarchy.getLevels().add(storeValueLevel);
 
-        StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         storeDimension.setName("Store");
         storeDimension.getHierarchies().add(storeHierarchy);
 
-        DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         storeConnector.setOverrideDimensionName("Store");
         storeConnector.setForeignKey(storeIdFact);
         storeConnector.setDimension(storeDimension);
 
         // Create Product dimension with complex joins
         // Create Product Name level with property
-        MemberProperty productColorProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+        MemberProperty productColorProperty = LevelFactory.eINSTANCE.createMemberProperty();
         productColorProperty.setName("Product Color");
         productColorProperty.setColumn(colorProductCsv);
 
-        Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
         productNameLevel.setName("Product Name");
         productNameLevel.setColumn(name1ProductCsv);
         productNameLevel.setUniqueMembers(true);
         productNameLevel.getMemberProperties().add(productColorProperty);
 
-        OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+        OrderedColumn oc1 = RelationalFactory.eINSTANCE.createOrderedColumn();
         oc1.setColumn(ordProductCat);
 
-        Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
         productCategoryLevel.setName("Product Category");
         productCategoryLevel.setColumn(name2ProductCat);
         productCategoryLevel.getOrdinalColumns().add(oc1);
         productCategoryLevel.setCaptionColumn(capProductCat);
         productCategoryLevel.setUniqueMembers(false);
 
-        OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+        OrderedColumn oc2 = RelationalFactory.eINSTANCE.createOrderedColumn();
         oc2.setColumn(ordCat);
 
-        Level categoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level categoryLevel = LevelFactory.eINSTANCE.createLevel();
         categoryLevel.setName("Category");
         categoryLevel.setColumn(catCat);
         categoryLevel.getOrdinalColumns().add(oc2);
@@ -318,42 +324,42 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         categoryLevel.setColumnType(ColumnInternalDataType.NUMERIC);
 
         // Create join: product_cat JOIN cat
-        TableQuery catQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource catQuery = SourceFactory.eINSTANCE.createTableSource();
         catQuery.setTable(cat);
 
-        JoinedQueryElement catJoinedElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        JoinedQueryElement catJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         catJoinedElement.setKey(catCat);
         catJoinedElement.setQuery(catQuery);
 
-        TableQuery productCatQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productCatQuery = SourceFactory.eINSTANCE.createTableSource();
         productCatQuery.setTable(productCat);
 
-        JoinedQueryElement productCatJoinedElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        JoinedQueryElement productCatJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productCatJoinedElement.setKey(catProductCat);
         productCatJoinedElement.setQuery(productCatQuery);
 
-        JoinQuery innerJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+        JoinSource innerJoin = SourceFactory.eINSTANCE.createJoinSource();
         innerJoin.setLeft(productCatJoinedElement);
         innerJoin.setRight(catJoinedElement);
 
         // Create join: product_csv JOIN (product_cat JOIN cat)
-        TableQuery productCsvQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productCsvQuery = SourceFactory.eINSTANCE.createTableSource();
         productCsvQuery.setTable(productCsv);
 
-        JoinedQueryElement productCsvJoinedElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        JoinedQueryElement productCsvJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productCsvJoinedElement.setKey(prodCatProductCsv);
         productCsvJoinedElement.setQuery(productCsvQuery);
 
-        JoinedQueryElement innerJoinElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        JoinedQueryElement innerJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         innerJoinElement.setAlias("product_cat");
         innerJoinElement.setKey(prodCatProductCat);
         innerJoinElement.setQuery(innerJoin);
 
-        JoinQuery outerJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+        JoinSource outerJoin = SourceFactory.eINSTANCE.createJoinSource();
         outerJoin.setLeft(productCsvJoinedElement);
         outerJoin.setRight(innerJoinElement);
 
-        ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setPrimaryKey(prodIdProductCsv);
         productHierarchy.setQuery(outerJoin);
@@ -361,27 +367,27 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         productHierarchy.getLevels().add(productCategoryLevel);
         productHierarchy.getLevels().add(productNameLevel);
 
-        StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         productDimension.setName("Product");
         productDimension.getHierarchies().add(productHierarchy);
 
-        DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         productConnector.setOverrideDimensionName("Product");
         productConnector.setForeignKey(prodIdFact);
         productConnector.setDimension(productDimension);
 
         // Create measures
-        SumMeasure totalMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        SumMeasure totalMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         totalMeasure.setName("Total");
         totalMeasure.setColumn(amountFact);
         totalMeasure.setFormatString("#,###");
 
         // Create measure group
-        MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         measureGroup.getMeasures().add(totalMeasure);
 
         // Create cube
-        PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("Fact");
         cube.setQuery(tableQuery);
         cube.getDimensionConnectors().add(storeConnector);
@@ -390,13 +396,13 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
 
         // Add tables to database schema
         if (originalCatalog.getDbschemas().size() > 0) {
-            originalCatalog.getDbschemas().get(0).getTables().add(fact);
-            originalCatalog.getDbschemas().get(0).getTables().add(storeCsv);
-            originalCatalog.getDbschemas().get(0).getTables().add(productCsv);
-            originalCatalog.getDbschemas().get(0).getTables().add(cat);
-            originalCatalog.getDbschemas().get(0).getTables().add(productCat);
-            originalCatalog.getDbschemas().get(0).getTables().add(testLpXxxFact);
-            originalCatalog.getDbschemas().get(0).getTables().add(testLpXx2Fact);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(fact);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(storeCsv);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(productCsv);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(cat);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(productCat);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(testLpXxxFact);
+            originalCatalog.getDbschemas().get(0).getOwnedElement().add(testLpXx2Fact);
         }
 
         // Add the cube to the catalog copy

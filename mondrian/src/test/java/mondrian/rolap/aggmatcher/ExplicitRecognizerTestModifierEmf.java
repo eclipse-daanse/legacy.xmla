@@ -16,37 +16,41 @@ package mondrian.rolap.aggmatcher;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.AggregationExclude;
-import org.eclipse.daanse.rolap.mapping.model.AggregationTable;
-import org.eclipse.daanse.rolap.mapping.model.AvgMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.CountMeasure;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.Member;
-import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Table;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.CatalogFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationTable;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.OrderedColumn;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.AvgMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.CountMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-
 public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier {
 
     protected final Catalog catalog;
@@ -60,8 +64,8 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
     public ExplicitRecognizerTestModifierEmf(Catalog catalogMapping, EcoreUtil.Copier copier) {
         this.copier = copier;
-        this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
-        catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalogMapping.getDbschemas());
+        this.catalog = CatalogFactory.eINSTANCE.createCatalog();
+        catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
         createCatalog();
     }
 
@@ -133,9 +137,9 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     protected void createCatalog() {
         // Add custom tables to database schema if any
         if (catalog.getDbschemas().size() > 0) {
-            DatabaseSchema dbSchema = catalog.getDbschemas().get(0);
-            List<PhysicalTable> customTables = getDatabaseSchemaTables();
-            dbSchema.getTables().addAll(customTables);
+            Schema dbSchema = catalog.getDbschemas().get(0);
+            List<Table> customTables = getDatabaseSchemaTables();
+            dbSchema.getOwnedElement().addAll(customTables);
         }
 
         // Create shared Store dimension
@@ -154,43 +158,43 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     }
 
     protected StandardDimension createStoreDimension() {
-        StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         storeDimension.setName("Store");
 
-        ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
         storeHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
 
-        TableQuery storeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
         storeQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
         storeHierarchy.setQuery(storeQuery);
 
         // Store Country level
-        Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
         storeCountryLevel.setName("Store Country");
         storeCountryLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
         storeCountryLevel.setUniqueMembers(true);
 
         // Store State level
-        Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
         storeStateLevel.setName("Store State");
         storeStateLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STATE_STORE));
         storeStateLevel.setUniqueMembers(true);
 
         // Store City level
-        Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
         storeCityLevel.setName("Store City");
         storeCityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE));
         storeCityLevel.setUniqueMembers(false);
 
         // Store Name level with property
-        Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
         storeNameLevel.setName("Store Name");
         storeNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
         storeNameLevel.setUniqueMembers(true);
 
         // Street address property
-        MemberProperty streetAddressProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+        MemberProperty streetAddressProp = LevelFactory.eINSTANCE.createMemberProperty();
         streetAddressProp.setName("Street address");
         streetAddressProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STREET_ADDRESS_STORE));
         streetAddressProp.setPropertyType(ColumnInternalDataType.STRING);
@@ -209,48 +213,48 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     }
 
     protected StandardDimension createProductDimension() {
-        StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         productDimension.setName("Product");
 
-        ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
 
         // Create join: product JOIN product_class
-        TableQuery productQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
         productQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
 
-        JoinedQueryElement productElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        JoinedQueryElement productElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productElement.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
         productElement.setQuery(productQuery);
 
-        TableQuery productClassQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productClassQuery = SourceFactory.eINSTANCE.createTableSource();
         productClassQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
 
-        JoinedQueryElement productClassElement = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+        JoinedQueryElement productClassElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productClassElement.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
         productClassElement.setQuery(productClassQuery);
 
-        JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+        JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
         joinQuery.setLeft(productElement);
         joinQuery.setRight(productClassElement);
 
         productHierarchy.setQuery(joinQuery);
 
         // Product Family level
-        Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
         productFamilyLevel.setName("Product Family");
         productFamilyLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS));
         productFamilyLevel.setUniqueMembers(true);
 
         // Product Department level
-        Level productDepartmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level productDepartmentLevel = LevelFactory.eINSTANCE.createLevel();
         productDepartmentLevel.setName("Product Department");
         productDepartmentLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS));
         productDepartmentLevel.setUniqueMembers(false);
 
         // Product Category level
-        Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
         productCategoryLevel.setName("Product Category");
         productCategoryLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS));
         productCategoryLevel.setUniqueMembers(false);
@@ -266,7 +270,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     }
 
     protected PhysicalCube createExtraColCube(StandardDimension storeDimension, StandardDimension productDimension) {
-        PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("ExtraCol");
 
         // Set default measure if provided
@@ -279,7 +283,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         }
 
         // Create table query with aggregations
-        TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
         tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
         tableQuery.getAggregationExcludes().addAll(getAggExcludes());
         tableQuery.getAggregationTables().addAll(getAggTables());
@@ -294,14 +298,14 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         cube.getDimensionConnectors().add(genderConnector);
 
         // Add Store dimension usage
-        DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         storeConnector.setOverrideDimensionName("Store");
         storeConnector.setDimension(storeDimension);
         storeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
         cube.getDimensionConnectors().add(storeConnector);
 
         // Add Product dimension usage
-        DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         productConnector.setOverrideDimensionName("Product");
         productConnector.setDimension(productDimension);
         productConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
@@ -310,7 +314,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         // Create measures
         createMeasures();
 
-        MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         measureGroup.getMeasures().add(unitSales);
         measureGroup.getMeasures().add(avgUnitSales);
         measureGroup.getMeasures().add(storeCost);
@@ -323,27 +327,27 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
     protected void createMeasures() {
         // Unit Sales measure
-        unitSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        unitSales = MeasureFactory.eINSTANCE.createSumMeasure();
         unitSales.setName("Unit Sales");
         unitSales.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
         unitSales.setFormatString("Standard");
         unitSales.setVisible(false);
 
         // Avg Unit Sales measure
-        avgUnitSales = RolapMappingFactory.eINSTANCE.createAvgMeasure();
+        avgUnitSales = MeasureFactory.eINSTANCE.createAvgMeasure();
         avgUnitSales.setName("Avg Unit Sales");
         avgUnitSales.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
         avgUnitSales.setFormatString("Standard");
         avgUnitSales.setVisible(false);
 
         // Store Cost measure
-        storeCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        storeCost = MeasureFactory.eINSTANCE.createSumMeasure();
         storeCost.setName("Store Cost");
         storeCost.setColumn((CatalogSupplier.COLUMN_STORE_COST_SALESFACT));
         storeCost.setFormatString("#,###.00");
 
         // Customer Count measure
-        customerCount = RolapMappingFactory.eINSTANCE.createCountMeasure();
+        customerCount = MeasureFactory.eINSTANCE.createCountMeasure();
         customerCount.setName("Customer Count");
         customerCount.setColumn((CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
         customerCount.setDistinct(true);
@@ -351,25 +355,25 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     }
 
     protected DimensionConnector createTimeExtraDimension() {
-        DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
         connector.setOverrideDimensionName("TimeExtra");
         connector.setForeignKey((CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
 
-        TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+        TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
         timeDimension.setName("TimeExtra");
 
-        ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         timeHierarchy.setHasAll(false);
         timeHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
 
-        TableQuery timeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource timeQuery = SourceFactory.eINSTANCE.createTableSource();
         timeQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
         timeHierarchy.setQuery(timeQuery);
 
         // Year level
-        Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level yearLevel = LevelFactory.eINSTANCE.createLevel();
         yearLevel.setName("Year");
-        PhysicalColumn yearCol = (PhysicalColumn) getYearCol();
+        Column yearCol = (Column) getYearCol();
         if (yearCol != null) {
             yearLevel.setColumn(yearCol);
         }
@@ -378,9 +382,9 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         yearLevel.setType(LevelDefinition.TIME_YEARS);
 
         // Quarter level
-        Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
         quarterLevel.setName("Quarter");
-        PhysicalColumn quarterCol = (PhysicalColumn) getQuarterCol();
+        Column quarterCol = (Column) getQuarterCol();
         if (quarterCol != null) {
             quarterLevel.setColumn(quarterCol);
         }
@@ -388,23 +392,23 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
         // Month level
-        Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level monthLevel = LevelFactory.eINSTANCE.createLevel();
         monthLevel.setName("Month");
-        PhysicalColumn monthCol = (PhysicalColumn) getMonthCol();
+        Column monthCol = (Column) getMonthCol();
         if (monthCol != null) {
             monthLevel.setColumn(monthCol);
         }
-        PhysicalColumn monthCaptionCol = (PhysicalColumn) getMonthCaptionCol();
+        Column monthCaptionCol = (Column) getMonthCaptionCol();
         if (monthCaptionCol != null) {
             monthLevel.setCaptionColumn(monthCaptionCol);
         }
-        PhysicalColumn monthOrdinalCol = (PhysicalColumn) getMonthOrdinalCol();
+        Column monthOrdinalCol = (Column) getMonthOrdinalCol();
         if (monthOrdinalCol != null) {
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(monthOrdinalCol);
             monthLevel.getOrdinalColumns().add(oc1);
         }
-        PhysicalColumn monthNameCol = (PhysicalColumn) getMonthNameCol();
+        Column monthNameCol = (Column) getMonthNameCol();
         if (monthNameCol != null) {
             monthLevel.setNameColumn(monthNameCol);
         }
@@ -425,23 +429,23 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     }
 
     protected DimensionConnector createGenderDimension() {
-        DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
         connector.setOverrideDimensionName("Gender");
         connector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
 
-        StandardDimension genderDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         genderDimension.setName("Gender");
 
-        ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         genderHierarchy.setHasAll(true);
         genderHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-        TableQuery customerQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource customerQuery = SourceFactory.eINSTANCE.createTableSource();
         customerQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
         genderHierarchy.setQuery(customerQuery);
 
         // Gender level
-        Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level genderLevel = LevelFactory.eINSTANCE.createLevel();
         genderLevel.setName("Gender");
         genderLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
         genderLevel.setUniqueMembers(true);
@@ -509,7 +513,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         return null;
     }
 
-    protected List<PhysicalTable> getDatabaseSchemaTables() {
+    protected List<Table> getDatabaseSchemaTables() {
         return List.of();
     }
 

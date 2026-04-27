@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.caption.member;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
+
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;

@@ -16,15 +16,13 @@ package mondrian.rolap;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 /**
  * EMF version of TestVirtualCubeMeasureInvalidCubeNameModifier from VirtualCubeTest.
  * Creates a virtual cube "Sales vs Warehouse" with measures from different cubes.
@@ -52,11 +50,11 @@ public class TestVirtualCubeMeasureInvalidCubeNameModifier implements CatalogMap
 
     static {
         // Create dimension connector for Product (no dimension reference, just override name)
-        CONNECTOR_PRODUCT = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_PRODUCT = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_PRODUCT.setOverrideDimensionName("Product");
 
         // Create virtual cube
-        VIRTUAL_CUBE_SALES_VS_WAREHOUSE = RolapMappingFactory.eINSTANCE.createVirtualCube();
+        VIRTUAL_CUBE_SALES_VS_WAREHOUSE = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.setName("Sales vs Warehouse");
 
         // Add dimension connector

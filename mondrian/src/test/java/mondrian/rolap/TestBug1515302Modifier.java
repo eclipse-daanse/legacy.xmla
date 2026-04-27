@@ -15,23 +15,27 @@ package mondrian.rolap;
 
 import java.util.List;
 
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
-
 /**
  * EMF version of TestBug1515302Modifier from NonEmptyTest. Creates a cube
  * "Bug1515302" with Promotions and Customers dimensions.
@@ -67,7 +71,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
 
         // Static hierarchy for Promotions
         ExplicitHierarchy HIERARCHY_PROMOTIONS;
-        TableQuery TABLE_QUERY_PROMOTION;
+        TableSource TABLE_QUERY_PROMOTION;
 
         // Static dimension Promotions
         StandardDimension DIMENSION_PROMOTIONS;
@@ -83,7 +87,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
 
         // Static hierarchy for Customers
         ExplicitHierarchy HIERARCHY_CUSTOMERS;
-        TableQuery TABLE_QUERY_CUSTOMER;
+        TableSource TABLE_QUERY_CUSTOMER;
 
         // Static dimension Customers
         StandardDimension DIMENSION_CUSTOMERS;
@@ -92,7 +96,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
         DimensionConnector CONNECTOR_CUSTOMERS;
 
         // Static table query for fact table
-        TableQuery TABLE_QUERY_SALES_FACT;
+        TableSource TABLE_QUERY_SALES_FACT;
 
         // Static measure
         SumMeasure MEASURE_UNIT_SALES;
@@ -104,85 +108,85 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
         PhysicalCube CUBE_BUG1515302;
 
         // Create Promotions dimension
-        LEVEL_PROMOTION_NAME = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_PROMOTION_NAME = LevelFactory.eINSTANCE.createLevel();
         LEVEL_PROMOTION_NAME.setName("Promotion Name");
         LEVEL_PROMOTION_NAME.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
         LEVEL_PROMOTION_NAME.setUniqueMembers(true);
 
-        TABLE_QUERY_PROMOTION = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_PROMOTION = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_PROMOTION.setTable(CatalogSupplier.TABLE_PROMOTION);
 
-        HIERARCHY_PROMOTIONS = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_PROMOTIONS = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_PROMOTIONS.setHasAll(false);
         HIERARCHY_PROMOTIONS.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
         HIERARCHY_PROMOTIONS.setQuery(TABLE_QUERY_PROMOTION);
         HIERARCHY_PROMOTIONS.getLevels().add(LEVEL_PROMOTION_NAME);
 
-        DIMENSION_PROMOTIONS = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        DIMENSION_PROMOTIONS = DimensionFactory.eINSTANCE.createStandardDimension();
         DIMENSION_PROMOTIONS.setName("Promotions");
         DIMENSION_PROMOTIONS.getHierarchies().add(HIERARCHY_PROMOTIONS);
 
-        CONNECTOR_PROMOTIONS = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_PROMOTIONS = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_PROMOTIONS.setOverrideDimensionName("Promotions");
         CONNECTOR_PROMOTIONS.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
         CONNECTOR_PROMOTIONS.setDimension(DIMENSION_PROMOTIONS);
 
         // Create Customers dimension
-        LEVEL_COUNTRY = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_COUNTRY = LevelFactory.eINSTANCE.createLevel();
         LEVEL_COUNTRY.setName("Country");
         LEVEL_COUNTRY.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
         LEVEL_COUNTRY.setUniqueMembers(true);
 
-        LEVEL_STATE_PROVINCE = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STATE_PROVINCE = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STATE_PROVINCE.setName("State Province");
         LEVEL_STATE_PROVINCE.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
         LEVEL_STATE_PROVINCE.setUniqueMembers(true);
 
-        LEVEL_CITY = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_CITY = LevelFactory.eINSTANCE.createLevel();
         LEVEL_CITY.setName("City");
         LEVEL_CITY.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
         LEVEL_CITY.setUniqueMembers(false);
 
-        LEVEL_NAME = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_NAME = LevelFactory.eINSTANCE.createLevel();
         LEVEL_NAME.setName("Name");
         LEVEL_NAME.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
         LEVEL_NAME.setColumnType(ColumnInternalDataType.NUMERIC);
         LEVEL_NAME.setUniqueMembers(true);
 
-        TABLE_QUERY_CUSTOMER = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_CUSTOMER = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_CUSTOMER.setTable(CatalogSupplier.TABLE_CUSTOMER);
 
-        HIERARCHY_CUSTOMERS = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_CUSTOMERS = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_CUSTOMERS.setHasAll(true);
         HIERARCHY_CUSTOMERS.setAllMemberName("All Customers");
         HIERARCHY_CUSTOMERS.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
         HIERARCHY_CUSTOMERS.setQuery(TABLE_QUERY_CUSTOMER);
         HIERARCHY_CUSTOMERS.getLevels().addAll(List.of(LEVEL_COUNTRY, LEVEL_STATE_PROVINCE, LEVEL_CITY, LEVEL_NAME));
 
-        DIMENSION_CUSTOMERS = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        DIMENSION_CUSTOMERS = DimensionFactory.eINSTANCE.createStandardDimension();
         DIMENSION_CUSTOMERS.setName("Customers");
         DIMENSION_CUSTOMERS.getHierarchies().add(HIERARCHY_CUSTOMERS);
 
-        CONNECTOR_CUSTOMERS = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_CUSTOMERS = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_CUSTOMERS.setOverrideDimensionName("Customers");
         CONNECTOR_CUSTOMERS.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
         CONNECTOR_CUSTOMERS.setDimension(DIMENSION_CUSTOMERS);
 
         // Create fact table query
-        TABLE_QUERY_SALES_FACT = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_SALES_FACT = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_SALES_FACT.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
         // Create measure
-        MEASURE_UNIT_SALES = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        MEASURE_UNIT_SALES = MeasureFactory.eINSTANCE.createSumMeasure();
         MEASURE_UNIT_SALES.setName("Unit Sales");
         MEASURE_UNIT_SALES.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
 
         // Create measure group
-        MEASURE_GROUP = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MEASURE_GROUP = CubeFactory.eINSTANCE.createMeasureGroup();
         MEASURE_GROUP.getMeasures().add(MEASURE_UNIT_SALES);
 
         // Create cube
-        CUBE_BUG1515302 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        CUBE_BUG1515302 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_BUG1515302.setName("Bug1515302");
         CUBE_BUG1515302.setQuery(TABLE_QUERY_SALES_FACT);
         CUBE_BUG1515302.getDimensionConnectors().addAll(List.of(CONNECTOR_PROMOTIONS, CONNECTOR_CUSTOMERS));
