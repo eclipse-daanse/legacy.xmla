@@ -15,19 +15,19 @@ package mondrian.rolap.aggmatcher;
 
 import java.util.Optional;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.Cube;
-import org.eclipse.daanse.rolap.mapping.model.MaxMeasure;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.impl.PhysicalCubeImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.impl.PhysicalCubeImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MaxMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-
 /**
  * EMF version of TestMondrian1325Modifier from NonCollapsedAggTest.
  * Adds a "Bogus Number" measure to the Sales cube.
@@ -47,14 +47,14 @@ public class TestMondrian1325Modifier implements CatalogMappingSupplier {
         // Static measure
         MaxMeasure MEASURE_BOGUS_NUMBER;
         MeasureGroup MEASURE_GROUP;
-        MEASURE_BOGUS_NUMBER = RolapMappingFactory.eINSTANCE.createMaxMeasure();
+        MEASURE_BOGUS_NUMBER = MeasureFactory.eINSTANCE.createMaxMeasure();
         MEASURE_BOGUS_NUMBER.setName("Bogus Number");
         MEASURE_BOGUS_NUMBER.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
         MEASURE_BOGUS_NUMBER.setDataType(ColumnInternalDataType.NUMERIC);
         MEASURE_BOGUS_NUMBER.setVisible(true);
 
         // Create measure group
-        MEASURE_GROUP = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MEASURE_GROUP = CubeFactory.eINSTANCE.createMeasureGroup();
         MEASURE_GROUP.getMeasures().add(MEASURE_BOGUS_NUMBER);
 
         // Find the Sales cube and add the measure group

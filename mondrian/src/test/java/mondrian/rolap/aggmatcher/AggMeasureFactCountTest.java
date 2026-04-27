@@ -20,18 +20,19 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 import java.util.List;
 import java.util.function.Function;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationExclude;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasureFactCount;
-import org.eclipse.daanse.rolap.mapping.model.AggregationTable;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
 import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasureFactCount;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
 import mondrian.test.loader.CsvDBTestCase;
-
 class AggMeasureFactCountTest extends CsvDBTestCase {
 
     private final String QUERY = ""
@@ -113,50 +113,50 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        AggregationColumnName aggFactCount = factory.createAggregationColumnName();
+        AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
 
         // Create AggregationMeasureFactCount elements
-        AggregationMeasureFactCount storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        AggregationMeasureFactCount storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
         storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
         storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
         unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -220,50 +220,50 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
 
         // Create AggregationMeasureFactCount elements WITHOUT factColumn (это ключевое отличие этого теста)
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
         // НЕ устанавливаем factColumn - это тест на отсутствие factColumn
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
         // НЕ устанавливаем factColumn
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
         // НЕ устанавливаем factColumn
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -318,50 +318,50 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
 
         // Create AggregationMeasureFactCount elements
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
         storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
         storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
         unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -424,55 +424,55 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         // Create aggTables using RolapMappingFactory.eINSTANCE
         var factory = RolapMappingFactory.eINSTANCE;
 
-        PhysicalColumn notExist = factory.createPhysicalColumn();
+        Column notExist = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         notExist.setName("not_exist");
-        notExist.setType(ColumnType.INTEGER);
+        notExist.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
 
         // Create AggregationMeasureFactCount elements
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
         storeSalesFactCount.setFactColumn(notExist);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
         storeCostFactCount.setFactColumn(notExist);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
         unitSalesFactCount.setFactColumn(notExist);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -578,37 +578,37 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasures().add(unitSalesMeasure);
@@ -663,55 +663,55 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         // Create aggTables using RolapMappingFactory.eINSTANCE
         var factory = RolapMappingFactory.eINSTANCE;
 
-        PhysicalColumn notExist = factory.createPhysicalColumn();
+        Column notExist = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         notExist.setName("not_exist");
-        notExist.setType(ColumnType.INTEGER);
+        notExist.setType(SqlSimpleTypes.Sql99.integerType());
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(notExist);
 
         // Create AggregationMeasureFactCount elements
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
         storeSalesFactCount.setFactColumn(notExist);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
         storeCostFactCount.setFactColumn(notExist);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
         unitSalesFactCount.setFactColumn(notExist);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggC6FactCsv2016);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -810,50 +810,50 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggCsvDifferentColumnNames);
 
         // Create AggregationMeasureFactCount elements
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.ssFcAggCsvDifferentColumnNames);
         storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.scFcAggCsvDifferentColumnNames);
         storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.usFcAggCsvDifferentColumnNames);
         unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggCsvDifferentColumnNames);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggCsvDifferentColumnNames);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggCsvDifferentColumnNames);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggCsvDifferentColumnNames);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggCsvDifferentColumnNames);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggCsvDifferentColumnNames);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggCsvDifferentColumnNames);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -868,7 +868,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
         List<AggregationTable> aggTables = List.of(aggregationName);
 
-        AggregationExclude aggregationExclude = factory.createAggregationExclude();
+        AggregationExclude aggregationExclude = AggregationFactory.eINSTANCE.createAggregationExclude();
         aggregationExclude.setName("agg_c_6_fact_csv_2016");
         List<AggregationExclude> aggExcludes = List.of(aggregationExclude);
 
@@ -969,50 +969,50 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggCsvDivideByZero);
 
         // Create AggregationMeasureFactCount elements
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggCsvDivideByZero);
         storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggCsvDivideByZero);
         storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggCsvDivideByZero);
         unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggCsvDivideByZero);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggCsvDivideByZero);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggCsvDivideByZero);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggCsvDivideByZero);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggCsvDivideByZero);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggCsvDivideByZero);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationName();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
         aggregationName.setName(AggMeasureFactCountTestModifierEmf.aggCsvDivideByZero);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);
@@ -1027,7 +1027,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
         List<AggregationTable> aggTables = List.of(aggregationName);
 
-        AggregationExclude aggregationExclude = factory.createAggregationExclude();
+        AggregationExclude aggregationExclude = AggregationFactory.eINSTANCE.createAggregationExclude();
         aggregationExclude.setName("agg_c_6_fact_csv_2016");
         List<AggregationExclude> aggExcludes = List.of(aggregationExclude);
 
@@ -1123,50 +1123,50 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         var factory = RolapMappingFactory.eINSTANCE;
 
         // Create AggregationColumnName for fact count
-        var aggFactCount = factory.createAggregationColumnName();
+        var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(AggMeasureFactCountTestModifierEmf.factCountAggC6FactCsv2016);
 
         // Create AggregationMeasureFactCount elements
-        var storeSalesFactCount = factory.createAggregationMeasureFactCount();
+        var storeSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesFactCountAggC6FactCsv2016);
         storeSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeSalesColumnInFactCsv2016);
 
-        var storeCostFactCount = factory.createAggregationMeasureFactCount();
+        var storeCostFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         storeCostFactCount.setColumn(AggMeasureFactCountTestModifierEmf.storeCostFactCountAggC6FactCsv2016);
         storeCostFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.storeCostColumnInFactCsv2016);
 
-        var unitSalesFactCount = factory.createAggregationMeasureFactCount();
+        var unitSalesFactCount = AggregationFactory.eINSTANCE.createAggregationMeasureFactCount();
         unitSalesFactCount.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesFactCountAggC6FactCsv2016);
         unitSalesFactCount.setFactColumn(AggMeasureFactCountTestModifierEmf.unitSalesColumnInFactCsv2016);
 
         // Create AggregationMeasure elements
-        var unitSalesMeasure = factory.createAggregationMeasure();
+        var unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         unitSalesMeasure.setName("[Measures].[Unit Sales]");
         unitSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.unitSalesAggC6FactCsv2016);
 
-        var storeCostMeasure = factory.createAggregationMeasure();
+        var storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeCostMeasure.setName("[Measures].[Store Cost]");
         storeCostMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeCostAggC6FactCsv2016);
 
-        var storeSalesMeasure = factory.createAggregationMeasure();
+        var storeSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         storeSalesMeasure.setName("[Measures].[Store Sales]");
         storeSalesMeasure.setColumn(AggMeasureFactCountTestModifierEmf.storeSalesAggC6FactCsv2016);
 
         // Create AggregationLevel elements
-        var yearLevel = factory.createAggregationLevel();
+        var yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         yearLevel.setName("[Time].[Time].[Year]");
         yearLevel.setColumn(AggMeasureFactCountTestModifierEmf.theYearAggC6FactCsv2016);
 
-        var quarterLevel = factory.createAggregationLevel();
+        var quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         quarterLevel.setName("[Time].[Time].[Quarter]");
         quarterLevel.setColumn(AggMeasureFactCountTestModifierEmf.quarterAggC6FactCsv2016);
 
-        var monthLevel = factory.createAggregationLevel();
+        var monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         monthLevel.setName("[Time].[Time].[Month]");
         monthLevel.setColumn(AggMeasureFactCountTestModifierEmf.monthOfYearAggC6FactCsv2016);
 
         // Create AggregationName
-        var aggregationName = factory.createAggregationPattern();
+        var aggregationName = AggregationFactory.eINSTANCE.createAggregationPattern();
         aggregationName.setPattern("agg_c_6_fact_csv_2016");
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationMeasureFactCounts().add(storeSalesFactCount);

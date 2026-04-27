@@ -17,25 +17,28 @@ package mondrian.test.clearview;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.InstanceFactory;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.InlineTable;
-import org.eclipse.daanse.rolap.mapping.model.InlineTableQuery;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.Row;
-import org.eclipse.daanse.rolap.mapping.model.RowValue;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable;
+import org.eclipse.daanse.rolap.mapping.model.database.source.InlineTableSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-
 public class HangerDimensionTestModifiers {
 
     /*
@@ -118,49 +121,50 @@ public class HangerDimensionTestModifiers {
 
 
             // Create column for inline table using RolapMappingFactory
-            PhysicalColumn hangerKey = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column hangerKey = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             hangerKey.setName("HANGER_KEY");
-            hangerKey.setType(ColumnType.NUMERIC);
+            hangerKey.setType(SqlSimpleTypes.numericType(18, 4));
 
             // Create row value using RolapMappingFactory
-            RowValue rowValue = RolapMappingFactory.eINSTANCE.createRowValue();
-            rowValue.setColumn(hangerKey);
-            rowValue.setValue("1");
+            DataSlot rowValue = InstanceFactory.eINSTANCE.createDataSlot();
+            rowValue.setFeature(hangerKey);
+            rowValue.setDataValue("1");
 
             // Create row using RolapMappingFactory
-            Row row = RolapMappingFactory.eINSTANCE.createRow();
-            row.getRowValues().add(rowValue);
+            Row row = RelationalFactory.eINSTANCE.createRow();
+            row.getSlot().add(rowValue);
 
             // Create inline table using RolapMappingFactory
-            InlineTable inlineTable = RolapMappingFactory.eINSTANCE.createInlineTable();
-            inlineTable.getColumns().add(hangerKey);
-            inlineTable.getRows().add(row);
+            InlineTable inlineTable = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+        inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+            inlineTable.getFeature().add(hangerKey);
+            inlineTable.getExtent().getOwnedElement().add(row);
 
             // Create inline table query using RolapMappingFactory
-            InlineTableQuery inlineTableQuery = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+            InlineTableSource inlineTableQuery = SourceFactory.eINSTANCE.createInlineTableSource();
             inlineTableQuery.setAlias("LE_SYSTEM_TREND_HANGER");
             inlineTableQuery.setTable(inlineTable);
 
             // Create level using RolapMappingFactory
-            Level hangerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level hangerLevel = LevelFactory.eINSTANCE.createLevel();
             hangerLevel.setName("Hanger Level");
             hangerLevel.setColumn(hangerKey);
             hangerLevel.setUniqueMembers(true);
 
             // Create hierarchy using RolapMappingFactory
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(hangerKey);
             hierarchy.setQuery(inlineTableQuery);
             hierarchy.getLevels().add(hangerLevel);
 
             // Create dimension using RolapMappingFactory
-            StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Le System-Trend Hanger");
             dimension.getHierarchies().add(hierarchy);
 
             // Create dimension connector using RolapMappingFactory
-            DimensionConnector dimensionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimensionConnector.setOverrideDimensionName("Le System-Trend Hanger");
             dimensionConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
             dimensionConnector.setDimension(dimension);

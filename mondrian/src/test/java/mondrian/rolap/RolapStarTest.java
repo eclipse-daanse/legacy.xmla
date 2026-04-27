@@ -12,24 +12,22 @@ package mondrian.rolap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.common.util.RelationUtil;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.Query;
-import org.eclipse.daanse.rolap.mapping.model.RelationalQuery;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
+import org.eclipse.daanse.rolap.mapping.model.database.source.RelationalSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * Unit test for {@link RolapStar}.
  *
@@ -41,13 +39,13 @@ class RolapStarTest {
         public RolapStarForTests(
             final RolapCatalog schema,
             final Context<?> context,
-            final RelationalQuery fact)
+            final RelationalSource fact)
         {
             super(schema, context, fact);
         }
 
-        public Query cloneRelationForTests(
-            RelationalQuery rel,
+        public RelationalSource cloneRelationForTests(
+            RelationalSource rel,
             String possibleName)
         {
             return cloneRelation(rel, possibleName);
@@ -77,21 +75,21 @@ class RolapStarTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCloneRelationWithFilteredTable(Context<?> context) {
       RolapStarForTests rs = getStar(context.getConnectionWithDefaultRole(), "sales");
-      DatabaseSchema ds = RolapMappingFactory.eINSTANCE.createDatabaseSchema();
+      Schema ds = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createSchema();
       ds.setName("Sechema");
-      PhysicalTable pt = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+      Table pt = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
       pt.setName("TestTable");
-      pt.setSchema(ds);
-      SqlStatement ss = RolapMappingFactory.eINSTANCE.createSqlStatement();
+      ds.getOwnedElement().add(pt);
+      SqlStatement ss = SourceFactory.eINSTANCE.createSqlStatement();
       ss.setSql("Alias.clicked = 'true'");
       ss.getDialects().add("generic");
-      TableQuery original = RolapMappingFactory.eINSTANCE.createTableQuery();
+      TableSource original = SourceFactory.eINSTANCE.createTableSource();
       original.setTable(pt);
       original.setAlias("Alias");
       original.setSqlWhereExpression(ss);
 
 
-      TableQuery cloned = (TableQuery)rs.cloneRelationForTests(
+      TableSource cloned = (TableSource)rs.cloneRelationForTests(
           original,
           "NewAlias");
 

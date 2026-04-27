@@ -19,82 +19,93 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.InstanceFactory;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessDimensionGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationExclude;
-import org.eclipse.daanse.rolap.mapping.model.AggregationForeignKey;
-import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.AggregationName;
-import org.eclipse.daanse.rolap.mapping.model.Annotation;
-import org.eclipse.daanse.rolap.mapping.model.AvgMeasure;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.CellFormatter;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.CountMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Cube;
-import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.CubeConnector;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
-import org.eclipse.daanse.rolap.mapping.model.Dimension;
-import org.eclipse.daanse.rolap.mapping.model.DimensionAccess;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.HideMemberIf;
-import org.eclipse.daanse.rolap.mapping.model.Hierarchy;
-import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.InlineTable;
-import org.eclipse.daanse.rolap.mapping.model.InlineTableQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinQuery;
-import org.eclipse.daanse.rolap.mapping.model.JoinedQueryElement;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
-import org.eclipse.daanse.rolap.mapping.model.MaxMeasure;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.Member;
-import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
-import org.eclipse.daanse.rolap.mapping.model.MemberFormatter;
-import org.eclipse.daanse.rolap.mapping.model.MemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.MemberPropertyFormatter;
-import org.eclipse.daanse.rolap.mapping.model.OrderedColumn;
-import org.eclipse.daanse.rolap.mapping.model.ParentChildHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.ParentChildLink;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.RollupPolicy;
-import org.eclipse.daanse.rolap.mapping.model.Row;
-import org.eclipse.daanse.rolap.mapping.model.RowValue;
-import org.eclipse.daanse.rolap.mapping.model.SQLExpressionColumn;
-import org.eclipse.daanse.rolap.mapping.model.SqlSelectQuery;
-import org.eclipse.daanse.rolap.mapping.model.SqlStatement;
-import org.eclipse.daanse.rolap.mapping.model.SqlView;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Table;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.TimeDimension;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.impl.CubeImpl;
-import org.eclipse.daanse.rolap.mapping.model.impl.PhysicalCubeImpl;
-import org.eclipse.daanse.rolap.mapping.model.impl.VirtualCubeImpl;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.Annotation;
+import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessDimensionGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.DimensionAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.CatalogFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationForeignKey;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.OrderedColumn;
+import org.eclipse.daanse.rolap.mapping.model.database.source.InlineTableSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.impl.CubeImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.impl.PhysicalCubeImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.impl.VirtualCubeImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.AvgMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.CountMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MaxMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ParentChildHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ParentChildLink;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.RollupPolicy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.HideMemberIf;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.olap.format.CellFormatter;
+import org.eclipse.daanse.rolap.mapping.model.olap.format.FormatFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.format.MemberFormatter;
+import org.eclipse.daanse.rolap.mapping.model.olap.format.MemberPropertyFormatter;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -102,7 +113,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
 
 import mondrian.test.FormatterUtil;
-
 public class SchemaModifiersEmf {
 
     public static class NonEmptyTestModifier6 implements CatalogMappingSupplier {
@@ -152,32 +162,27 @@ public class SchemaModifiersEmf {
          * "</Role> \n" + "</Schema>\n";
          */
 
-        private static final StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final ExplicitHierarchy storyHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+        private static final StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy storyHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
 
-        private static final SumMeasure m = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure m = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreCost = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
 
-        private static final AggregationExclude aggregationExclude = RolapMappingFactory.eINSTANCE
-                .createAggregationExclude();
-        private static final TableQuery querySales1Cube = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final PhysicalCube sales1Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorStore = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final DimensionConnector dimensionConnectorTime = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final AggregationExclude aggregationExclude = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final TableSource querySales1Cube = SourceFactory.eINSTANCE.createTableSource();
+        private static final PhysicalCube sales1Cube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorStore = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final DimensionConnector dimensionConnectorTime = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant accessCatalogGrant = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             storyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
@@ -252,9 +257,9 @@ public class SchemaModifiersEmf {
         }
 
         public NonEmptyTestModifier6(Catalog cat) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) cat.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
             catalog.getCubes().add(sales1Cube);
             catalog.getAccessRoles().add(role1);
         }
@@ -286,19 +291,15 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            AccessMemberGrant memberGrantWA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantOR = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantCanada = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessMemberGrant memberGrantMexico = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-            AccessCatalogGrant accessCatalogGrant = RolapMappingFactory.eINSTANCE
-                    .createAccessCatalogGrant();
-            AccessRole roleNoWAState = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessMemberGrant memberGrantWA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantMexico = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessRole roleNoWAState = CommonFactory.eINSTANCE.createAccessRole();
 
             memberGrantWA.setMember("[Customers].[USA].[WA]");
             memberGrantWA.setMemberAccess(MemberAccess.NONE);
@@ -360,19 +361,15 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (Catalog) copier.get(cat);
 
-            AccessMemberGrant memberGrantWA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantOR = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-            AccessMemberGrant memberGrantCanada = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessMemberGrant memberGrantMexicoDF = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-            AccessCatalogGrant accessCatalogGrant = RolapMappingFactory.eINSTANCE
-                    .createAccessCatalogGrant();
-            AccessRole roleOnlyDFState = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessMemberGrant memberGrantWA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantMexicoDF = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessRole roleOnlyDFState = CommonFactory.eINSTANCE.createAccessRole();
             memberGrantWA.setMember("[Customers].[USA].[WA]");
             memberGrantWA.setMemberAccess(MemberAccess.ALL);
 
@@ -422,33 +419,26 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(cat);
 
 
-            StandardDimension storeTypeDimension = RolapMappingFactory.eINSTANCE
-                    .createStandardDimension();
-            ExplicitHierarchy storeTypeHierarchy = RolapMappingFactory.eINSTANCE
-                    .createExplicitHierarchy();
-            Level storeTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            StandardDimension storeTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            ExplicitHierarchy storeTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            Level storeTypeLevel = LevelFactory.eINSTANCE.createLevel();
 
-            StandardDimension hasCoffeeBarDimension = RolapMappingFactory.eINSTANCE
-                    .createStandardDimension();
-            ExplicitHierarchy hasCoffeeBarHierarchy = RolapMappingFactory.eINSTANCE
-                    .createExplicitHierarchy();
-            Level hasCoffeeBarLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            StandardDimension hasCoffeeBarDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            ExplicitHierarchy hasCoffeeBarHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            Level hasCoffeeBarLevel = LevelFactory.eINSTANCE.createLevel();
 
-            SumMeasure storeSqftMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            SumMeasure grocerySqftMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            SumMeasure storeSqftMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+            SumMeasure grocerySqftMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+            CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            TableQuery storeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
+            TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
 
-            DimensionConnector storeTypeConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector hasCoffeeBarConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
+            DimensionConnector storeTypeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector hasCoffeeBarConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            PhysicalCube storeWithCountMCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube storeWithCountMCube = CubeFactory.eINSTANCE.createPhysicalCube();
 
             // Store Type Level
             storeTypeLevel.setName("Store Type");
@@ -579,71 +569,67 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             this.catalog = (CatalogImpl) copier.get(cat);
 
-            SumMeasure measureEmployeeStoreSalesA = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            SumMeasure measureEmployeeStoreCostA = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            SumMeasure measureEmployeeStoreSalesB = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            SumMeasure measureEmployeeStoreCostB = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measureEmployeeStoreSalesA = MeasureFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measureEmployeeStoreCostA = MeasureFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measureEmployeeStoreSalesB = MeasureFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measureEmployeeStoreCostB = MeasureFactory.eINSTANCE.createSumMeasure();
 
-            MeasureGroup measureGroupA = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            MeasureGroup measureGroupB = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroupA = CubeFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroupB = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            TableQuery inventoryQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource inventoryQuery = SourceFactory.eINSTANCE.createTableSource();
 
-            TableQuery employeeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeQuery = SourceFactory.eINSTANCE.createTableSource();
             employeeQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_EMPLOYEE));
             employeeQuery.setAlias("employee");
 
-            TableQuery employeeManagerQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeManagerQuery = SourceFactory.eINSTANCE.createTableSource();
             employeeManagerQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_EMPLOYEE));
             employeeManagerQuery.setAlias("employee_manager");
 
-            JoinedQueryElement queryHierarchyEmployeeLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement queryHierarchyEmployeeLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             queryHierarchyEmployeeLeft.setKey((Column) copier.get(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE));
             queryHierarchyEmployeeLeft.setQuery(employeeQuery);
 
-            JoinedQueryElement queryHierarchyEmployeeRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement queryHierarchyEmployeeRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             queryHierarchyEmployeeRight.setKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
             queryHierarchyEmployeeRight.setQuery(employeeManagerQuery);
 
-            JoinQuery queryHierarchyEmployee = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource queryHierarchyEmployee = SourceFactory.eINSTANCE.createJoinSource();
             queryHierarchyEmployee.setId("_queryHierarchyEmployee");
             queryHierarchyEmployee.setLeft(queryHierarchyEmployeeLeft);
             queryHierarchyEmployee.setRight(queryHierarchyEmployeeRight);
 
-            Level levelRole = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelRole = LevelFactory.eINSTANCE.createLevel();
             levelRole.setName("Role");
             levelRole.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE));
             levelRole.setUniqueMembers(true);
 
-            Level levelTitle = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelTitle = LevelFactory.eINSTANCE.createLevel();
             levelTitle.setName("Title");
             levelTitle.setColumn((Column) copier.get(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
             levelTitle.setUniqueMembers(false);
 
-            ExplicitHierarchy hierarchyEmployee = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchyEmployee = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchyEmployee.setHasAll(true);
             hierarchyEmployee.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
             hierarchyEmployee.setQuery(queryHierarchyEmployee);
             hierarchyEmployee.getLevels().add(levelRole);
             hierarchyEmployee.getLevels().add(levelTitle);
 
-            StandardDimension dimensionEmployee = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimensionEmployee = DimensionFactory.eINSTANCE.createStandardDimension();
             dimensionEmployee.setName("Employee");
             dimensionEmployee.getHierarchies().add(hierarchyEmployee);
 
 
-            DimensionConnector employeeConnectorA = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector storeTypeConnectorA = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector employeeConnectorB = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector storeTypeConnectorB = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
+            DimensionConnector employeeConnectorA = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeTypeConnectorA = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector employeeConnectorB = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeTypeConnectorB = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            PhysicalCube cubeAnalysisA = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-            PhysicalCube cubeAnalysisB = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-            VirtualCube virtualCubeAnalysis = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            PhysicalCube cubeAnalysisA = CubeFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeAnalysisB = CubeFactory.eINSTANCE.createPhysicalCube();
+            VirtualCube virtualCubeAnalysis = CubeFactory.eINSTANCE.createVirtualCube();
 
             // Measures for Cube A
             measureEmployeeStoreSalesA.setName("Employee Store Sales");
@@ -749,26 +735,19 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(cat);
 
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
+            TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
 
-            DimensionConnector storeTypeConnector1 = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector buyerConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector buyerTwoConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector storeSizeConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector storeTypeConnector2 = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
+            DimensionConnector storeTypeConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector buyerConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector buyerTwoConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeSizeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeTypeConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            PhysicalCube alternateSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube alternateSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
 
             // Unit Sales Measure
             unitSalesMeasure.setName("Unit Sales");
@@ -830,25 +809,22 @@ public class SchemaModifiersEmf {
 
     public static class SelectNotInGroupByTestModifier2 implements CatalogMappingSupplier {
 
-        private static final StandardDimension customStoreDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy customStoreHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final MemberProperty storeStateProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+        private static final StandardDimension customStoreDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy customStoreHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final MemberProperty storeStateProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-        private static final SumMeasure customStoreSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure customStoreCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure salesCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure customStoreSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure customStoreCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure salesCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery storeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector customStoreConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final PhysicalCube customSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector customStoreConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final PhysicalCube customSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
         private Catalog catalog;
 
         static {
@@ -933,8 +909,8 @@ public class SchemaModifiersEmf {
         public AggregationOnDistinctCountMeasuresTestModifier(Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (Catalog) copier.get(cat);
-            VirtualCube warehouseAndSales2 = RolapMappingFactory.eINSTANCE.createVirtualCube();
-            VirtualCube warehouseAndSales3 = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube warehouseAndSales2 = CubeFactory.eINSTANCE.createVirtualCube();
+            VirtualCube warehouseAndSales3 = CubeFactory.eINSTANCE.createVirtualCube();
 
             //DimensionConnector genderConnector1 = RolapMappingFactory.eINSTANCE
             //        .createDimensionConnector();
@@ -954,7 +930,7 @@ public class SchemaModifiersEmf {
             //DimensionConnector warehouseConnector2 = RolapMappingFactory.eINSTANCE
             //        .createDimensionConnector();
 
-            CubeConnector salesCubeUsage = RolapMappingFactory.eINSTANCE.createCubeConnector();
+            CubeConnector salesCubeUsage = CubeFactory.eINSTANCE.createCubeConnector();
 
             // Dimension Connectors for Warehouse and Sales2
             //genderConnector1.setOverrideDimensionName("Gender");
@@ -975,7 +951,7 @@ public class SchemaModifiersEmf {
 
             // Warehouse and Sales2 Virtual Cube
             warehouseAndSales2.setName("Warehouse and Sales2");
-            warehouseAndSales2.setDefaultMeasure( (org.eclipse.daanse.rolap.mapping.model.Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
+            warehouseAndSales2.setDefaultMeasure( (org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_GENDER));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_STORE));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_PRODUCT));
@@ -1020,26 +996,23 @@ public class SchemaModifiersEmf {
     // cubeA,
     public static class SelectNotInGroupByTestModifier1 implements CatalogMappingSupplier {
 
-        private static final StandardDimension customStoreDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy customStoreHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelStoreCountry = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level levelStoreCity = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final MemberProperty propertyStoreState = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final Level levelStoreName = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension customStoreDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy customStoreHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreCountry = LevelFactory.eINSTANCE.createLevel();
+        private static final Level levelStoreCity = LevelFactory.eINSTANCE.createLevel();
+        private static final MemberProperty propertyStoreState = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final Level levelStoreName = LevelFactory.eINSTANCE.createLevel();
 
-        private static final TableQuery queryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery querySalesFact = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource querySalesFact = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final SumMeasure measureStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure measureSalesCount = RolapMappingFactory.eINSTANCE.createCountMeasure();
+        private static final SumMeasure measureStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreCost = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure measureSalesCount = MeasureFactory.eINSTANCE.createCountMeasure();
 
-        private static final PhysicalCube customSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorStore = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube customSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorStore = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         private Catalog catalog;
         static {
             // Configure Store Country level
@@ -1121,26 +1094,23 @@ public class SchemaModifiersEmf {
     // cubeA
     public static class SelectNotInGroupByTestModifier3 implements CatalogMappingSupplier {
 
-        private static final StandardDimension customStoreDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy customStoreHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelStoreCountry = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level levelStoreCity = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final MemberProperty propertyStoreState = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final Level levelStoreName = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension customStoreDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy customStoreHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreCountry = LevelFactory.eINSTANCE.createLevel();
+        private static final Level levelStoreCity = LevelFactory.eINSTANCE.createLevel();
+        private static final MemberProperty propertyStoreState = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final Level levelStoreName = LevelFactory.eINSTANCE.createLevel();
 
-        private static final TableQuery queryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery querySalesFact = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource querySalesFact = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final SumMeasure measureStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure measureSalesCount = RolapMappingFactory.eINSTANCE.createCountMeasure();
+        private static final SumMeasure measureStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreCost = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure measureSalesCount = MeasureFactory.eINSTANCE.createCountMeasure();
 
-        private static final PhysicalCube customSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorStore = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube customSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorStore = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         private Catalog catalog;
 
         static {
@@ -1224,26 +1194,23 @@ public class SchemaModifiersEmf {
     // cubeA
     public static class SelectNotInGroupByTestModifier4 implements CatalogMappingSupplier {
 
-        private static final StandardDimension customStoreDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy customStoreHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelStoreCountry = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level levelStoreCity = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final MemberProperty propertyStoreState = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final Level levelStoreName = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension customStoreDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy customStoreHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreCountry = LevelFactory.eINSTANCE.createLevel();
+        private static final Level levelStoreCity = LevelFactory.eINSTANCE.createLevel();
+        private static final MemberProperty propertyStoreState = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final Level levelStoreName = LevelFactory.eINSTANCE.createLevel();
 
-        private static final TableQuery queryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery querySalesFact = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource querySalesFact = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final SumMeasure measureStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure measureSalesCount = RolapMappingFactory.eINSTANCE.createCountMeasure();
+        private static final SumMeasure measureStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreCost = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure measureSalesCount = MeasureFactory.eINSTANCE.createCountMeasure();
 
-        private static final PhysicalCube customSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorStore = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube customSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorStore = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         private Catalog catalog;
 
         static {
@@ -1366,10 +1333,10 @@ public class SchemaModifiersEmf {
         public IgnoreUnrelatedDimensionsTestModifier(Catalog catalog) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (Catalog) copier.get(catalog);
-            VirtualCube warehouseAndSales2 = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube warehouseAndSales2 = CubeFactory.eINSTANCE.createVirtualCube();
 
-            CubeConnector salesCubeUsage = RolapMappingFactory.eINSTANCE.createCubeConnector();
-            CubeConnector warehouseCubeUsage = RolapMappingFactory.eINSTANCE.createCubeConnector();
+            CubeConnector salesCubeUsage = CubeFactory.eINSTANCE.createCubeConnector();
+            CubeConnector warehouseCubeUsage = CubeFactory.eINSTANCE.createCubeConnector();
 
             // Configure cube usages
             salesCubeUsage.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
@@ -1425,7 +1392,7 @@ public class SchemaModifiersEmf {
 
             // Configure virtual cube
             warehouseAndSales2.setName("Warehouse and Sales2");
-            warehouseAndSales2.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
+            warehouseAndSales2.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
             warehouseAndSales2.getCubeUsages().addAll(List.of(salesCubeUsage, warehouseCubeUsage));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_EDUCATION_LEVEL));
@@ -1474,37 +1441,29 @@ public class SchemaModifiersEmf {
         public IgnoreUnrelatedDimensionsTestModifier1(Catalog catalog) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (Catalog) copier.get(catalog);
-            StandardDimension educationLevelDimension = RolapMappingFactory.eINSTANCE
-                    .createStandardDimension();
-            ExplicitHierarchy educationLevelHierarchy = RolapMappingFactory.eINSTANCE
-                    .createExplicitHierarchy();
-            Level educationLevelLevel = RolapMappingFactory.eINSTANCE.createLevel();
-            TableQuery customerTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            StandardDimension educationLevelDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            ExplicitHierarchy educationLevelHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            Level educationLevelLevel = LevelFactory.eINSTANCE.createLevel();
+            TableSource customerTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
 
-            StandardDimension genderDimension = RolapMappingFactory.eINSTANCE
-                    .createStandardDimension();
-            ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE
-                    .createExplicitHierarchy();
-            Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
-            TableQuery customerTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            Level genderLevel = LevelFactory.eINSTANCE.createLevel();
+            TableSource customerTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-            TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+            TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            PhysicalCube sales3Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector educationLevelConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
-            DimensionConnector genderConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
+            PhysicalCube sales3Cube = CubeFactory.eINSTANCE.createPhysicalCube();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector educationLevelConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector genderConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-            VirtualCube warehouseAndSales3 = RolapMappingFactory.eINSTANCE.createVirtualCube();
-            CubeConnector sales3CubeUsage = RolapMappingFactory.eINSTANCE.createCubeConnector();
-            CubeConnector warehouseCubeUsage = RolapMappingFactory.eINSTANCE.createCubeConnector();
+            VirtualCube warehouseAndSales3 = CubeFactory.eINSTANCE.createVirtualCube();
+            CubeConnector sales3CubeUsage = CubeFactory.eINSTANCE.createCubeConnector();
+            CubeConnector warehouseCubeUsage = CubeFactory.eINSTANCE.createCubeConnector();
 
             // Configure Education Level dimension
             educationLevelLevel.setName("Education Level");
@@ -1603,7 +1562,7 @@ public class SchemaModifiersEmf {
 
             // Configure virtual cube
             warehouseAndSales3.setName("Warehouse and Sales 3");
-            warehouseAndSales3.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.Member) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_STORE_INVOICE));
+            warehouseAndSales3.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_STORE_INVOICE));
             warehouseAndSales3.getCubeUsages().addAll(List.of(sales3CubeUsage, warehouseCubeUsage));
             warehouseAndSales3.getDimensionConnectors().add(genderConnector);
             warehouseAndSales3.getDimensionConnectors().add(educationLevelConnector);
@@ -1634,24 +1593,18 @@ public class SchemaModifiersEmf {
             this.catalog = (Catalog) copier.get(catalog);
 
 
-            StandardDimension employeesClosureDimension = RolapMappingFactory.eINSTANCE
-                    .createStandardDimension();
-            ExplicitHierarchy employeesClosureHierarchy = RolapMappingFactory.eINSTANCE
-                    .createExplicitHierarchy();
-            Level closureLevel = RolapMappingFactory.eINSTANCE.createLevel();
-            Level employeeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            StandardDimension employeesClosureDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+            ExplicitHierarchy employeesClosureHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            Level closureLevel = LevelFactory.eINSTANCE.createLevel();
+            Level employeeLevel = LevelFactory.eINSTANCE.createLevel();
 
-            JoinQuery joinQuery = RolapMappingFactory.eINSTANCE
-                    .createJoinQuery();
-            JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE
-                    .createJoinedQueryElement();
-            JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE
-                    .createJoinedQueryElement();
-            TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-            TableQuery employee2TableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
+            JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+            TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
+            TableSource employee2TableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-            DimensionConnector employeesClosureConnector = RolapMappingFactory.eINSTANCE
-                    .createDimensionConnector();
+            DimensionConnector employeesClosureConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
             // Configure closure level
             closureLevel.setName("Closure");
@@ -1725,33 +1678,27 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
                 List connectors = cube.getDimensionConnectors();
-                StandardDimension employeeSnowFlakeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                ParentChildHierarchy hierarchy = RolapMappingFactory.eINSTANCE
-                        .createParentChildHierarchy();
-                Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                StandardDimension employeeSnowFlakeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                ParentChildHierarchy hierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+                Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
 
-                MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty positionTitleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty salaryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty educationLevelProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty managementRoleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty positionTitleProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty salaryProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty educationLevelProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty managementRoleProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-                JoinQuery joinQuery = RolapMappingFactory.eINSTANCE
-                        .createJoinQuery();
-                JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE
-                        .createJoinedQueryElement();
-                JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE
-                        .createJoinedQueryElement();
-                TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
+                JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+                TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
+                TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-                ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                        .createParentChildLink();
-                TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
+                TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-                DimensionConnector employeeSnowFlakeConnector = RolapMappingFactory.eINSTANCE
-                        .createDimensionConnector();
+                DimensionConnector employeeSnowFlakeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 // Configure member properties
                 maritalStatusProperty.setName("Marital Status");
@@ -1801,7 +1748,6 @@ public class SchemaModifiersEmf {
                 parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
                 parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
                 parentChildLink.setTable(employeeClosureTableQuery);
-
                 // Configure parent-child hierarchy
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Employees");
@@ -1834,56 +1780,40 @@ public class SchemaModifiersEmf {
     public static class ParentChildHierarchyTestModifier3 implements CatalogMappingSupplier {
 
         private Catalog catalog;
-        private static final StandardDimension sharedEmployeeDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ParentChildHierarchy sharedEmployeeHierarchy = RolapMappingFactory.eINSTANCE
-                .createParentChildHierarchy();
-        private static final Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension sharedEmployeeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ParentChildHierarchy sharedEmployeeHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+        private static final Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
 
-        private static final MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
-        private static final MemberProperty positionTitleProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
-        private static final MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final MemberProperty salaryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final MemberProperty educationLevelProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
-        private static final MemberProperty managementRoleProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
+        private static final MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty positionTitleProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty salaryProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty educationLevelProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty managementRoleProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-        private static final JoinQuery joinQuery = RolapMappingFactory.eINSTANCE
-                .createJoinQuery();
-        private static final JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE
-                .createJoinedQueryElement();
-        private static final JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE
-                .createJoinedQueryElement();
-        private static final TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
+        private static final JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                .createParentChildLink();
-        private static final TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
+        private static final TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final StandardDimension departmentDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy departmentHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level departmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery departmentTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension departmentDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy departmentHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level departmentLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource departmentTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final PhysicalCube employeeSharedClosureCube = RolapMappingFactory.eINSTANCE
-                .createPhysicalCube();
-        private static final TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector sharedEmployeeConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final DimensionConnector departmentConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final DimensionConnector storeTypeConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final PhysicalCube employeeSharedClosureCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector sharedEmployeeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final DimensionConnector departmentConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final DimensionConnector storeTypeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final SumMeasure orgSalaryMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure orgSalaryMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             // Configure member properties
@@ -1934,7 +1864,6 @@ public class SchemaModifiersEmf {
             parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setTable(employeeClosureTableQuery);
-
             // Configure shared employee hierarchy
             sharedEmployeeHierarchy.setHasAll(true);
             sharedEmployeeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
@@ -2000,9 +1929,9 @@ public class SchemaModifiersEmf {
         }
 
         public ParentChildHierarchyTestModifier3(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(employeeSharedClosureCube);
             catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
@@ -2027,23 +1956,20 @@ public class SchemaModifiersEmf {
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension employeesNonClosureDimension = RolapMappingFactory.eINSTANCE
-                        .createStandardDimension();
-                ParentChildHierarchy hierarchy = RolapMappingFactory.eINSTANCE
-                        .createParentChildHierarchy();
-                Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                StandardDimension employeesNonClosureDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                ParentChildHierarchy hierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+                Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
 
-                MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty positionTitleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty salaryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty educationLevelProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty managementRoleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty positionTitleProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty salaryProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty educationLevelProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty managementRoleProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-                TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-                DimensionConnector employeesNonClosureConnector = RolapMappingFactory.eINSTANCE
-                        .createDimensionConnector();
+                DimensionConnector employeesNonClosureConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 // Configure member properties
                 maritalStatusProperty.setName("Marital Status");
@@ -2118,22 +2044,20 @@ public class SchemaModifiersEmf {
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension employeesNoClosureDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                ParentChildHierarchy hierarchy = RolapMappingFactory.eINSTANCE
-                        .createParentChildHierarchy();
-                Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                StandardDimension employeesNoClosureDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                ParentChildHierarchy hierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+                Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
 
-                MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty positionTitleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty salaryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty educationLevelProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberProperty managementRoleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty positionTitleProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty salaryProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty educationLevelProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberProperty managementRoleProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-                TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-                DimensionConnector employeesNoClosureConnector = RolapMappingFactory.eINSTANCE
-                        .createDimensionConnector();
+                DimensionConnector employeesNoClosureConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 // Configure member properties
                 maritalStatusProperty.setName("Marital Status");
@@ -2200,41 +2124,31 @@ public class SchemaModifiersEmf {
     public static class ParentChildHierarchyTestModifier6 implements CatalogMappingSupplier {
 
         private Catalog catalog;
-        private static final StandardDimension departmentDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy departmentHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level departmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery departmentTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension departmentDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy departmentHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level departmentLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource departmentTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final StandardDimension employeesDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ParentChildHierarchy employeesHierarchy = RolapMappingFactory.eINSTANCE
-                .createParentChildHierarchy();
-        private static final Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension employeesDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ParentChildHierarchy employeesHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+        private static final Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
-        private static final MemberProperty positionTitleProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
-        private static final MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final MemberProperty salaryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-        private static final MemberProperty educationLevelProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
-        private static final MemberProperty managementRoleProperty = RolapMappingFactory.eINSTANCE
-                .createMemberProperty();
+        private static final MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty positionTitleProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty salaryProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty educationLevelProperty = LevelFactory.eINSTANCE.createMemberProperty();
+        private static final MemberProperty managementRoleProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-        private static final PhysicalCube hrFewerDimsCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector departmentConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final DimensionConnector employeesConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final PhysicalCube hrFewerDimsCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector departmentConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final DimensionConnector employeesConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final SumMeasure orgSalaryMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure orgSalaryMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             // Configure Department dimension
@@ -2326,9 +2240,9 @@ public class SchemaModifiersEmf {
         }
 
         public ParentChildHierarchyTestModifier6(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(hrFewerDimsCube);
             catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
@@ -2345,27 +2259,23 @@ public class SchemaModifiersEmf {
     public static class ParentChildHierarchyTestModifier7 implements CatalogMappingSupplier {
 
         private Catalog catalog;
-        private static final StandardDimension employeesDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ParentChildHierarchy employeesHierarchy = RolapMappingFactory.eINSTANCE
-                .createParentChildHierarchy();
-        private static final Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final MemberProperty firstNameProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+        private static final StandardDimension employeesDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ParentChildHierarchy employeesHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+        private static final Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final MemberProperty firstNameProperty = LevelFactory.eINSTANCE.createMemberProperty();
 
-        private static final TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                .createParentChildLink();
-        private static final TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
+        private static final TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final PhysicalCube hrOrderedCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector employeesConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final PhysicalCube hrOrderedCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector employeesConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final SumMeasure orgSalaryMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-        private static final OrderedColumn ORDERED_COLUMN_LAST_NAME_EMPLOYEE = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+        private static final SumMeasure orgSalaryMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
+        private static final OrderedColumn ORDERED_COLUMN_LAST_NAME_EMPLOYEE = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
 
         static {
             // Configure First Name property
@@ -2390,7 +2300,6 @@ public class SchemaModifiersEmf {
             parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setTable(employeeClosureTableQuery);
-
             // Configure Employees parent-child hierarchy with closure
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All Employees");
@@ -2431,9 +2340,9 @@ public class SchemaModifiersEmf {
         }
 
         public ParentChildHierarchyTestModifier7(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(hrOrderedCube);
             catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
@@ -2449,36 +2358,29 @@ public class SchemaModifiersEmf {
     public static class ParentChildHierarchyTestModifier8 implements CatalogMappingSupplier {
 
         private Catalog catalog;
-        private static final StandardDimension employeesDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ParentChildHierarchy employeesHierarchy = RolapMappingFactory.eINSTANCE
-                .createParentChildHierarchy();
-        private static final Level employeeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension employeesDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ParentChildHierarchy employeesHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+        private static final Level employeeNameLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                .createParentChildLink();
-        private static final TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
+        private static final TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final PhysicalCube customSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salesFactTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector employeesConnector1 = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup1 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube customSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salesFactTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector employeesConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup1 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final PhysicalCube customHRCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector employeesConnector2 = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final SumMeasure orgSalaryMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup2 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube customHRCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector employeesConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final SumMeasure orgSalaryMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup2 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final VirtualCube customSalesAndHRCube = RolapMappingFactory.eINSTANCE.createVirtualCube();
-        private static final DimensionConnector employeesConnector3 = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
+        private static final VirtualCube customSalesAndHRCube = CubeFactory.eINSTANCE.createVirtualCube();
+        private static final DimensionConnector employeesConnector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
 
         static {
             // Configure Employee Name level
@@ -2497,7 +2399,6 @@ public class SchemaModifiersEmf {
             parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setTable(employeeClosureTableQuery);
-
             // Configure Employees parent-child hierarchy
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All Employees");
@@ -2560,9 +2461,9 @@ public class SchemaModifiersEmf {
         }
 
         public ParentChildHierarchyTestModifier8(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(customSalesCube);
             catalog.getCubes().add(customHRCube);
@@ -2580,23 +2481,19 @@ public class SchemaModifiersEmf {
     public static class ParentChildHierarchyTestModifier9 implements CatalogMappingSupplier {
 
         private Catalog catalog;
-        private static final StandardDimension employeesDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ParentChildHierarchy employeesHierarchy = RolapMappingFactory.eINSTANCE
-                .createParentChildHierarchy();
-        private static final Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension employeesDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ParentChildHierarchy employeesHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+        private static final Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                .createParentChildLink();
-        private static final TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
+        private static final TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final PhysicalCube hr4cCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector employeesConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube hr4cCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector employeesConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             // Configure Employee Id level
@@ -2615,7 +2512,6 @@ public class SchemaModifiersEmf {
             parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setTable(employeeClosureTableQuery);
-
             // Configure Employees parent-child hierarchy
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All");
@@ -2651,9 +2547,9 @@ public class SchemaModifiersEmf {
         }
 
         public ParentChildHierarchyTestModifier9(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(hr4cCube);
             catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
@@ -2669,19 +2565,16 @@ public class SchemaModifiersEmf {
     public static class ParentChildHierarchyTestModifier10 implements CatalogMappingSupplier {
 
         private Catalog catalog;
-        private static final StandardDimension employeesDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ParentChildHierarchy employeesHierarchy = RolapMappingFactory.eINSTANCE
-                .createParentChildHierarchy();
-        private static final Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension employeesDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ParentChildHierarchy employeesHierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
+        private static final Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final PhysicalCube hr4cCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salaryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector employeesConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube hr4cCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salaryTableQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector employeesConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             // Configure Employee Id level
@@ -2728,9 +2621,9 @@ public class SchemaModifiersEmf {
         }
 
         public ParentChildHierarchyTestModifier10(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(hr4cCube);
             catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
@@ -2748,123 +2641,103 @@ public class SchemaModifiersEmf {
 
         public ParentChildHierarchyTestModifier11(Catalog catalog2) {
             // Create inline table columns
-            PhysicalColumn storeIdColumn = RolapMappingFactory.eINSTANCE
-                    .createPhysicalColumn();
+            Column storeIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeIdColumn.setName("store_id");
-            storeIdColumn.setType(ColumnType.INTEGER);
+            storeIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
-            PhysicalColumn employeeIdColumn = RolapMappingFactory.eINSTANCE
-                    .createPhysicalColumn();
+            Column employeeIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             employeeIdColumn.setName("employee_id");
-            employeeIdColumn.setType(ColumnType.INTEGER);
+            employeeIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
 
             // Create inline table rows
-            InlineTable inlineTable = RolapMappingFactory.eINSTANCE
-                    .createInlineTable();
-            inlineTable.getColumns().addAll(List.of(storeIdColumn, employeeIdColumn));
+            InlineTable inlineTable = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+            inlineTable.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+            inlineTable.getFeature().addAll(List.of(storeIdColumn, employeeIdColumn));
 
             // Add rows to inline table
-            Row row1 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv1_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv1_1.setColumn(storeIdColumn);
-            rv1_1.setValue("2");
-            RowValue rv1_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv1_2.setColumn(employeeIdColumn);
-            rv1_2.setValue("o");
-            row1.getRowValues().addAll(List.of(rv1_1, rv1_2));
+            Row row1 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv1_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv1_1.setFeature(storeIdColumn);
+            rv1_1.setDataValue("2");
+            DataSlot rv1_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv1_2.setFeature(employeeIdColumn);
+            rv1_2.setDataValue("o");
+            row1.getSlot().addAll(List.of(rv1_1, rv1_2));
 
-            Row row2 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv2_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv2_1.setColumn(storeIdColumn);
-            rv2_1.setValue("2");
-            RowValue rv2_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv2_2.setColumn(employeeIdColumn);
-            rv2_2.setValue("1");
-            row2.getRowValues().addAll(List.of(rv2_1, rv2_2));
+            Row row2 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv2_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv2_1.setFeature(storeIdColumn);
+            rv2_1.setDataValue("2");
+            DataSlot rv2_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv2_2.setFeature(employeeIdColumn);
+            rv2_2.setDataValue("1");
+            row2.getSlot().addAll(List.of(rv2_1, rv2_2));
 
-            Row row3 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv3_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv3_1.setColumn(storeIdColumn);
-            rv3_1.setValue("2");
-            RowValue rv3_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv3_2.setColumn(employeeIdColumn);
-            rv3_2.setValue("2");
-            row3.getRowValues().addAll(List.of(rv3_1, rv3_2));
+            Row row3 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv3_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv3_1.setFeature(storeIdColumn);
+            rv3_1.setDataValue("2");
+            DataSlot rv3_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv3_2.setFeature(employeeIdColumn);
+            rv3_2.setDataValue("2");
+            row3.getSlot().addAll(List.of(rv3_1, rv3_2));
 
-            Row row4 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv4_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv4_1.setColumn(storeIdColumn);
-            rv4_1.setValue("2");
-            RowValue rv4_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv4_2.setColumn(employeeIdColumn);
-            rv4_2.setValue("22");
-            row4.getRowValues().addAll(List.of(rv4_1, rv4_2));
+            Row row4 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv4_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv4_1.setFeature(storeIdColumn);
+            rv4_1.setDataValue("2");
+            DataSlot rv4_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv4_2.setFeature(employeeIdColumn);
+            rv4_2.setDataValue("22");
+            row4.getSlot().addAll(List.of(rv4_1, rv4_2));
 
-            Row row5 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv5_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv5_1.setColumn(storeIdColumn);
-            rv5_1.setValue("2");
-            RowValue rv5_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv5_2.setColumn(employeeIdColumn);
-            rv5_2.setValue("22");
-            row5.getRowValues().addAll(List.of(rv5_1, rv5_2));
+            Row row5 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv5_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv5_1.setFeature(storeIdColumn);
+            rv5_1.setDataValue("2");
+            DataSlot rv5_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv5_2.setFeature(employeeIdColumn);
+            rv5_2.setDataValue("22");
+            row5.getSlot().addAll(List.of(rv5_1, rv5_2));
 
-            Row row6 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv6_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv6_1.setColumn(storeIdColumn);
-            rv6_1.setValue("2");
-            RowValue rv6_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv6_2.setColumn(employeeIdColumn);
-            rv6_2.setValue("32");
-            row6.getRowValues().addAll(List.of(rv6_1, rv6_2));
+            Row row6 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv6_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv6_1.setFeature(storeIdColumn);
+            rv6_1.setDataValue("2");
+            DataSlot rv6_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv6_2.setFeature(employeeIdColumn);
+            rv6_2.setDataValue("32");
+            row6.getSlot().addAll(List.of(rv6_1, rv6_2));
 
-            Row row7 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv7_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv7_1.setColumn(storeIdColumn);
-            rv7_1.setValue("2");
-            RowValue rv7_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv7_2.setColumn(employeeIdColumn);
-            rv7_2.setValue("484");
-            row7.getRowValues().addAll(List.of(rv7_1, rv7_2));
+            Row row7 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv7_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv7_1.setFeature(storeIdColumn);
+            rv7_1.setDataValue("2");
+            DataSlot rv7_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv7_2.setFeature(employeeIdColumn);
+            rv7_2.setDataValue("484");
+            row7.getSlot().addAll(List.of(rv7_1, rv7_2));
 
-            inlineTable.getRows().addAll(List.of(row1, row2, row3, row4, row5, row6, row7));
+            inlineTable.getExtent().getOwnedElement().addAll(List.of(row1, row2, row3, row4, row5, row6, row7));
 
             // Create inline table query
-            InlineTableQuery inlineTableQuery = RolapMappingFactory.eINSTANCE
-                    .createInlineTableQuery();
+            InlineTableSource inlineTableQuery = SourceFactory.eINSTANCE.createInlineTableSource();
             inlineTableQuery.setAlias("bri_store_employee");
             inlineTableQuery.setTable(inlineTable);
 
             // Create employee table query
-            TableQuery employeeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             employeeTableQuery.setTable(CatalogSupplier.TABLE_EMPLOYEE);
             employeeTableQuery.setAlias("employee");
 
             // Create join query
-            JoinQuery joinQuery = RolapMappingFactory.eINSTANCE
-                    .createJoinQuery();
+            JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
 
-            JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE
-                    .createJoinedQueryElement();
+            JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin.setKey(employeeIdColumn);
             leftJoin.setQuery(inlineTableQuery);
 
-            JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE
-                    .createJoinedQueryElement();
+            JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin.setKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
             rightJoin.setQuery(employeeTableQuery);
 
@@ -2872,17 +2745,15 @@ public class SchemaModifiersEmf {
             joinQuery.setRight(rightJoin);
 
             // Create parent-child link (closure)
-            TableQuery employeeClosureTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource employeeClosureTableQuery = SourceFactory.eINSTANCE.createTableSource();
             employeeClosureTableQuery.setTable(CatalogSupplier.TABLE_EMPLOYEE_CLOSURE);
 
-            ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                    .createParentChildLink();
+            ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
             parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
             parentChildLink.setTable(employeeClosureTableQuery);
-
             // Create level
-            Level employeeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level employeeLevel = LevelFactory.eINSTANCE.createLevel();
             employeeLevel.setName("Employee");
             employeeLevel.setColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
             employeeLevel.setNameColumn(CatalogSupplier.COLUMN_FULL_NAME_EMPLOYEE);
@@ -2892,8 +2763,7 @@ public class SchemaModifiersEmf {
             employeeLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Create parent-child hierarchy
-            ParentChildHierarchy hierarchy = RolapMappingFactory.eINSTANCE
-                    .createParentChildHierarchy();
+            ParentChildHierarchy hierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
             hierarchy.setName("Employee");
             hierarchy.setHasAll(false);
             hierarchy.setPrimaryKey(storeIdColumn);
@@ -2904,32 +2774,32 @@ public class SchemaModifiersEmf {
             hierarchy.setLevel(employeeLevel);
 
             // Create dimension
-            StandardDimension employeeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension employeeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             employeeDimension.setName("Employee");
             employeeDimension.getHierarchies().add(hierarchy);
 
             // Create measure
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setDataType(ColumnInternalDataType.NUMERIC);
             storeSalesMeasure.setFormatString("#,###.00");
             storeSalesMeasure.setVisible(true);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(storeSalesMeasure);
 
             // Create dimension connector
-            DimensionConnector employeeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector employeeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             employeeConnector.setOverrideDimensionName("Employee");
             employeeConnector.setDimension(employeeDimension);
             employeeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create cube
-            TableQuery salesFactTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesFactTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            PhysicalCube salesBug441Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesBug441Cube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesBug441Cube.setName("Sales_Bug_441");
             salesBug441Cube.setCache(true);
             salesBug441Cube.setEnabled(true);
@@ -2938,9 +2808,9 @@ public class SchemaModifiersEmf {
             salesBug441Cube.getMeasureGroups().add(measureGroup);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesBug441Cube);
         }
 
@@ -2953,48 +2823,37 @@ public class SchemaModifiersEmf {
 
     public static class ValidMeasureFunDefTestModifier implements CatalogMappingSupplier {
 
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
 
-        private static final StandardDimension productDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy defaultHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy brandOnlyHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level productLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy defaultHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy brandOnlyHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level productLevel = LevelFactory.eINSTANCE.createLevel();
 
-        private static final JoinQuery joinQuery1 = RolapMappingFactory.eINSTANCE
-                .createJoinQuery();
-        private static final JoinedQueryElement leftJoin1 = RolapMappingFactory.eINSTANCE
-                .createJoinedQueryElement();
-        private static final JoinedQueryElement rightJoin1 = RolapMappingFactory.eINSTANCE
-                .createJoinedQueryElement();
-        private static final TableQuery productTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery productClassTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final JoinSource joinQuery1 = SourceFactory.eINSTANCE.createJoinSource();
+        private static final JoinedQueryElement leftJoin1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final JoinedQueryElement rightJoin1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final TableSource productTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource productClassTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final JoinQuery joinQuery2 = RolapMappingFactory.eINSTANCE
-                .createJoinQuery();
-        private static final JoinedQueryElement leftJoin2 = RolapMappingFactory.eINSTANCE
-                .createJoinedQueryElement();
-        private static final JoinedQueryElement rightJoin2 = RolapMappingFactory.eINSTANCE
-                .createJoinedQueryElement();
-        private static final TableQuery productTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery productClassTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final JoinSource joinQuery2 = SourceFactory.eINSTANCE.createJoinSource();
+        private static final JoinedQueryElement leftJoin2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final JoinedQueryElement rightJoin2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final TableSource productTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource productClassTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salesFactTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final DimensionConnector productConnector1 = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salesFactTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
+        private static final DimensionConnector productConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube sales1Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final TableQuery salesFactTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final SumMeasure unitSales1Measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final PhysicalCube sales1Cube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final TableSource salesFactTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
+        private static final SumMeasure unitSales1Measure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final VirtualCube virtualCube = RolapMappingFactory.eINSTANCE.createVirtualCube();
-        private static final DimensionConnector productConnector2 = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final VirtualCube virtualCube = CubeFactory.eINSTANCE.createVirtualCube();
+        private static final DimensionConnector productConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
 
         static {
             // Configure Unit Sales measure
@@ -3097,9 +2956,9 @@ public class SchemaModifiersEmf {
 
         public ValidMeasureFunDefTestModifier(Catalog cat) {
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) cat.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
             catalog.getCubes().add(salesCube);
             catalog.getCubes().add(sales1Cube);
             catalog.getCubes().add(virtualCube);
@@ -3128,7 +2987,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 CubeImpl cube = (CubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("H1 1997");
                 calculatedMember.setFormula("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])");
                 calculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
@@ -3160,13 +3019,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 CubeImpl cube = (CubeImpl) oCube.get();
-                CalculatedMember calculatedMember1 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember1 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember1.setName("H1 1997");
                 calculatedMember1.setFormula("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])");
                 calculatedMember1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
                 cube.getCalculatedMembers().add(calculatedMember1);
 
-                CalculatedMember calculatedMember2 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember2 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember2.setName("Partial");
                 calculatedMember2.setFormula(
                         "Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])");
@@ -3213,42 +3072,42 @@ public class SchemaModifiersEmf {
         public FunctionTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales_Hierarchize");
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             cube.setQuery(tableQuery);
 
             // Time_Alphabetical dimension
-            TimeDimension timeAlphaDim = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeAlphaDim = DimensionFactory.eINSTANCE.createTimeDimension();
             timeAlphaDim.setName("Time_Alphabetical");
 
-            ExplicitHierarchy timeAlphaHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeAlphaHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeAlphaHierarchy.setHasAll(false);
             timeAlphaHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
 
-            TableQuery timeByDayQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeByDayQuery = SourceFactory.eINSTANCE.createTableSource();
             timeByDayQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
             timeAlphaHierarchy.setQuery(timeByDayQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY));
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY));
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-            OrderedColumn oc = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
 
-            Level monthLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthLevel1 = LevelFactory.eINSTANCE.createLevel();
             monthLevel1.setName("Month");
             monthLevel1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthLevel1.setUniqueMembers(false);
@@ -3261,27 +3120,27 @@ public class SchemaModifiersEmf {
             timeAlphaHierarchy.getLevels().add(monthLevel1);
             timeAlphaDim.getHierarchies().add(timeAlphaHierarchy);
 
-            DimensionConnector timeAlphaConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeAlphaConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeAlphaConnector.setOverrideDimensionName("Time_Alphabetical");
             timeAlphaConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeAlphaConnector.setDimension(timeAlphaDim);
 
             // Month_Alphabetical dimension
-            TimeDimension monthAlphaDim = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension monthAlphaDim = DimensionFactory.eINSTANCE.createTimeDimension();
             monthAlphaDim.setName("Month_Alphabetical");
 
-            ExplicitHierarchy monthAlphaHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy monthAlphaHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             monthAlphaHierarchy.setHasAll(false);
             monthAlphaHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
 
-            TableQuery timeByDayQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeByDayQuery2 = SourceFactory.eINSTANCE.createTableSource();
             timeByDayQuery2.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
             monthAlphaHierarchy.setQuery(timeByDayQuery2);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
 
-            Level monthLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthLevel2 = LevelFactory.eINSTANCE.createLevel();
             monthLevel2.setName("Month");
             monthLevel2.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY));
             monthLevel2.setUniqueMembers(false);
@@ -3292,7 +3151,7 @@ public class SchemaModifiersEmf {
             monthAlphaHierarchy.getLevels().add(monthLevel2);
             monthAlphaDim.getHierarchies().add(monthAlphaHierarchy);
 
-            DimensionConnector monthAlphaConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector monthAlphaConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             monthAlphaConnector.setOverrideDimensionName("Month_Alphabetical");
             monthAlphaConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             monthAlphaConnector.setDimension(monthAlphaDim);
@@ -3301,9 +3160,9 @@ public class SchemaModifiersEmf {
             cube.getDimensionConnectors().add(monthAlphaConnector);
 
             // Measure Group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             unitSalesMeasure.setFormatString("Standard");
@@ -3357,33 +3216,33 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create Store dimension
-                StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store");
 
-                ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 storeHierarchy.setHasAll(true);
                 storeHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
 
-                TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
                 storeHierarchy.setQuery(storeTableQuery);
 
-                Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
                 storeCountryLevel.setName("Store Country");
                 storeCountryLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
                 storeCountryLevel.setUniqueMembers(true);
 
-                Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
                 storeStateLevel.setName("Store State");
                 storeStateLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STATE_STORE));
                 storeStateLevel.setUniqueMembers(true);
 
-                Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
                 storeCityLevel.setName("Store City");
                 storeCityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE));
                 storeCityLevel.setUniqueMembers(false);
 
-                Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
                 storeNameLevel.setName("Store Name");
                 storeNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
                 storeNameLevel.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -3397,7 +3256,7 @@ public class SchemaModifiersEmf {
 
                 storeDimension.getHierarchies().add(storeHierarchy);
 
-                DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 storeConnector.setOverrideDimensionName("Store");
                 storeConnector.setDimension(storeDimension);
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
@@ -3411,15 +3270,15 @@ public class SchemaModifiersEmf {
                     i = cube.getDimensionConnectors().indexOf(o.get());
                 }
 
-                StandardDimension storeTypeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension storeTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 storeTypeDimension.setName("Store Type");
 
-                ExplicitHierarchy storeTypeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy storeTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 storeTypeHierarchy.setName("Store Types Hierarchy");
                 storeTypeHierarchy.setAllMemberName("All Store Types Member Name");
                 storeTypeHierarchy.setHasAll(true);
 
-                Level storeTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level storeTypeLevel = LevelFactory.eINSTANCE.createLevel();
                 storeTypeLevel.setName("Store Type");
                 storeTypeLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_TYPE_STORE));
                 storeTypeLevel.setUniqueMembers(true);
@@ -3427,7 +3286,7 @@ public class SchemaModifiersEmf {
                 storeTypeHierarchy.getLevels().add(storeTypeLevel);
                 storeTypeDimension.getHierarchies().add(storeTypeHierarchy);
 
-                DimensionConnector storeTypeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector storeTypeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 storeTypeConnector.setOverrideDimensionName("Store Type");
                 storeTypeConnector.setDimension(storeTypeDimension);
 
@@ -3476,63 +3335,63 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
-                StandardDimension retailDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector retailConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension retailDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector retailConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 retailDimension.setName("Retail");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
                 hierarchy.setQuery(tableQuery);
 
-                Level stateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level stateLevel = LevelFactory.eINSTANCE.createLevel();
                 stateLevel.setName("State");
                 stateLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STATE_STORE));
                 stateLevel.setUniqueMembers(true);
 
-                MemberProperty countryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty countryProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 countryProperty.setName("Country");
                 countryProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
                 stateLevel.getMemberProperties().add(countryProperty);
 
-                Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level cityLevel = LevelFactory.eINSTANCE.createLevel();
                 cityLevel.setName("City");
                 cityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE));
                 cityLevel.setUniqueMembers(true);
 
-                MemberProperty populationProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty populationProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 populationProperty.setName("Population");
                 populationProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_POSTAL_CODE_STORE));
                 cityLevel.getMemberProperties().add(populationProperty);
 
-                Level nameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level nameLevel = LevelFactory.eINSTANCE.createLevel();
                 nameLevel.setName("Name");
                 nameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
                 nameLevel.setUniqueMembers(true);
 
-                MemberProperty storeTypeProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty storeTypeProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 storeTypeProperty.setName("Store Type");
                 storeTypeProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_TYPE_STORE));
 
-                MemberProperty storeManagerProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty storeManagerProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 storeManagerProperty.setName("Store Manager");
                 storeManagerProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_MANAGER_STORE));
 
-                MemberProperty storeSqftProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty storeSqftProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 storeSqftProperty.setName("Store Sqft");
                 storeSqftProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SQFT_STORE));
                 storeSqftProperty.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-                MemberProperty coffeeBarProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty coffeeBarProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 coffeeBarProperty.setName("Has coffee bar");
                 coffeeBarProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_COFFEE_BAR_STORE));
                 coffeeBarProperty.setPropertyType(ColumnInternalDataType.BOOLEAN);
 
-                MemberProperty streetAddressProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty streetAddressProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 streetAddressProperty.setName("Street address");
                 streetAddressProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STREET_ADDRESS_STORE));
                 streetAddressProperty.setPropertyType(ColumnInternalDataType.STRING);
@@ -3586,25 +3445,25 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
-                StandardDimension productRaggedDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector productRaggedConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension productRaggedDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector productRaggedConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 productRaggedDimension.setName("Product Ragged");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
                 hierarchy.setQuery(tableQuery);
 
-                Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
                 brandNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT));
                 brandNameLevel.setUniqueMembers(false);
 
-                Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("Product Name");
                 productNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT));
                 productNameLevel.setUniqueMembers(true);
@@ -3652,23 +3511,23 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension productRaggedDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension productRaggedDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 productRaggedDimension.setName("Product Ragged");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
                 hierarchy.setQuery(tableQuery);
 
-                Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
                 brandNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT));
                 brandNameLevel.setUniqueMembers(false);
 
-                Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("Product Name");
                 productNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT));
                 productNameLevel.setUniqueMembers(true);
@@ -3679,7 +3538,7 @@ public class SchemaModifiersEmf {
 
                 productRaggedDimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector productRaggedConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector productRaggedConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 productRaggedConnector.setOverrideDimensionName("Product Ragged");
                 productRaggedConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
                 productRaggedConnector.setDimension(productRaggedDimension);
@@ -3718,26 +3577,26 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension productRaggedDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector productRaggedConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension productRaggedDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector productRaggedConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 productRaggedDimension.setName("Product Ragged");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
                 hierarchy.setQuery(tableQuery);
 
-                Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
                 brandNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT));
                 brandNameLevel.setUniqueMembers(false);
                 brandNameLevel.setHideMemberIf(HideMemberIf.IF_BLANK_NAME);
 
-                Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("Product Name");
                 productNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT));
                 productNameLevel.setUniqueMembers(true);
@@ -3786,34 +3645,34 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
-                DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
+                DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 timeDimension.setName("Time");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
                 hierarchy.setDefaultMember("[Time].[1997].[Q1].[1]");
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
                 hierarchy.setQuery(tableQuery);
 
-                Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level yearLevel = LevelFactory.eINSTANCE.createLevel();
                 yearLevel.setName("Year");
                 yearLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY));
                 yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
                 yearLevel.setUniqueMembers(true);
                 yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-                Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
                 quarterLevel.setName("Quarter");
                 quarterLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY));
                 quarterLevel.setUniqueMembers(true);
                 quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-                Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level monthLevel = LevelFactory.eINSTANCE.createLevel();
                 monthLevel.setName("Month");
                 monthLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY));
                 monthLevel.setUniqueMembers(false);
@@ -3865,31 +3724,31 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension store2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector store2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension store2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector store2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 store2Dimension.setName("Store2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
                 hierarchy.setDefaultMember("[Store2].[USA].[OR]");
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
                 hierarchy.setQuery(tableQuery);
 
-                Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level countryLevel = LevelFactory.eINSTANCE.createLevel();
                 countryLevel.setName("Store Country");
                 countryLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
                 countryLevel.setUniqueMembers(true);
 
-                Level stateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level stateLevel = LevelFactory.eINSTANCE.createLevel();
                 stateLevel.setName("Store State");
                 stateLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STATE_STORE));
                 stateLevel.setUniqueMembers(true);
 
-                Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level cityLevel = LevelFactory.eINSTANCE.createLevel();
                 cityLevel.setName("Store City");
                 cityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE));
                 cityLevel.setUniqueMembers(false);
@@ -3955,33 +3814,33 @@ public class SchemaModifiersEmf {
          * + "  </VirtualCube>" + "</Schema>" );
          */
 
-        private static final StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
-        private static final ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CalculatedMember cmDummyMeasure = RolapMappingFactory.eINSTANCE.createCalculatedMember();
-        private static final CalculatedMember dummyMeasure2Cm = RolapMappingFactory.eINSTANCE.createCalculatedMember();
-        private static final PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final VirtualCube virtualCube = RolapMappingFactory.eINSTANCE.createVirtualCube();
+        private static final StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
+        private static final ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CalculatedMember cmDummyMeasure = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMember dummyMeasure2Cm = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final VirtualCube virtualCube = CubeFactory.eINSTANCE.createVirtualCube();
         private final Catalog catalog;
         static {
             // Store Dimension
             storeDimension.setName("Store");
 
-            ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-            TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
             storeHierarchy.setQuery(storeTableQuery);
 
-            Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
             storeCountryLevel.setName("Store Country");
             storeCountryLevel.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             storeCountryLevel.setUniqueMembers(true);
 
-            Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
             storeStateLevel.setName("Store State");
             storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
             storeStateLevel.setUniqueMembers(true);
@@ -3997,18 +3856,18 @@ public class SchemaModifiersEmf {
             timeHierarchy.setHasAll(true);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.setUniqueMembers(false);
@@ -4035,16 +3894,16 @@ public class SchemaModifiersEmf {
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
 
-            TableQuery cubeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesCube.setQuery(cubeTableQuery);
 
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setOverrideDimensionName("Store");
             storeConnector.setDimension(storeDimension);
             storeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setDimension(timeDimension);
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
@@ -4052,7 +3911,7 @@ public class SchemaModifiersEmf {
             salesCube.getDimensionConnectors().add(storeConnector);
             salesCube.getDimensionConnectors().add(timeConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             salesCube.getMeasureGroups().add(measureGroup);
 
@@ -4063,11 +3922,11 @@ public class SchemaModifiersEmf {
             virtualCube.setName("virtual");
             virtualCube.setDefaultMeasure(cmDummyMeasure);
 
-            DimensionConnector virtualStoreConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector virtualStoreConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             virtualStoreConnector.setOverrideDimensionName("Store");
             virtualStoreConnector.setDimension(storeDimension);
 
-            DimensionConnector virtualTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector virtualTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             virtualTimeConnector.setOverrideDimensionName("Time");
             virtualTimeConnector.setDimension(timeDimension);
 
@@ -4078,9 +3937,9 @@ public class SchemaModifiersEmf {
         }
 
         public NonEmptyTestModifier7(Catalog cat) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) cat.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
             catalog.getCubes().add(salesCube);
             catalog.getCubes().add(virtualCube);
         }
@@ -4128,29 +3987,29 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                PhysicalColumn CUSTOMER_ID_COLUMN_IN_CUSTOMER = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-                PhysicalColumn GENDER_COLUMN_IN_CUSTOMER = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-                SqlSelectQuery sqlSelectQuery = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
-                StandardDimension gender2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector gender2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                Column CUSTOMER_ID_COLUMN_IN_CUSTOMER = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                Column GENDER_COLUMN_IN_CUSTOMER = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                SqlSelectSource sqlSelectQuery = SourceFactory.eINSTANCE.createSqlSelectSource();
+                StandardDimension gender2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector gender2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 CUSTOMER_ID_COLUMN_IN_CUSTOMER.setName("customer_id");
-                CUSTOMER_ID_COLUMN_IN_CUSTOMER.setType(ColumnType.INTEGER);
+                CUSTOMER_ID_COLUMN_IN_CUSTOMER.setType(SqlSimpleTypes.Sql99.integerType());
 
                 GENDER_COLUMN_IN_CUSTOMER.setName("gender");
-                GENDER_COLUMN_IN_CUSTOMER.setType(ColumnType.VARCHAR);
-                GENDER_COLUMN_IN_CUSTOMER.setColumnSize(30);
+                GENDER_COLUMN_IN_CUSTOMER.setType(SqlSimpleTypes.varcharType(255));
+                // GENDER_COLUMN_IN_CUSTOMER.setColumnSize(30);
 
-                SqlView sqlView = RolapMappingFactory.eINSTANCE.createSqlView();
+                DialectSqlView sqlView = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
                 sqlView.setName("gender2");
-                sqlView.getColumns().add(CUSTOMER_ID_COLUMN_IN_CUSTOMER);
-                sqlView.getColumns().add(GENDER_COLUMN_IN_CUSTOMER);
+                sqlView.getFeature().add(CUSTOMER_ID_COLUMN_IN_CUSTOMER);
+                sqlView.getFeature().add(GENDER_COLUMN_IN_CUSTOMER);
 
-                SqlStatement sqlStatement1 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement1 = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement1.getDialects().add("generic");
                 sqlStatement1.setSql("SELECT * FROM customer");
 
-                SqlStatement sqlStatement2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement2 = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement2.getDialects().add("oracle");
                 sqlStatement2.getDialects().add("hsqldb");
                 sqlStatement2.getDialects().add("derby");
@@ -4161,21 +4020,21 @@ public class SchemaModifiersEmf {
                 sqlStatement2.getDialects().add("snowflake");
                 sqlStatement2.setSql("SELECT * FROM \"customer\"");
 
-                sqlView.getSqlStatements().add(sqlStatement1);
-                sqlView.getSqlStatements().add(sqlStatement2);
+                sqlView.getDialectStatements().add(sqlStatement1);
+                sqlView.getDialectStatements().add(sqlStatement2);
 
                 sqlSelectQuery.setAlias("gender2");
                 sqlSelectQuery.setSql(sqlView);
 
                 gender2Dimension.setName("Gender2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Gender");
                 hierarchy.setPrimaryKey(CUSTOMER_ID_COLUMN_IN_CUSTOMER);
                 hierarchy.setQuery(sqlSelectQuery);
 
-                Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level genderLevel = LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("Gender");
                 genderLevel.setColumn(GENDER_COLUMN_IN_CUSTOMER);
                 genderLevel.setUniqueMembers(true);
@@ -4226,26 +4085,26 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension prodAmbiguousDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector prodAmbiguousConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension prodAmbiguousDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector prodAmbiguousConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 prodAmbiguousDimension.setName("ProdAmbiguousLevelName");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-                JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
 
-                JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-                TableQuery leftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
                 leftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
                 leftJoin.setQuery(leftTable);
 
-                JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                TableQuery rightTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
                 rightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
                 rightJoin.setQuery(rightTable);
 
@@ -4254,17 +4113,17 @@ public class SchemaModifiersEmf {
 
                 hierarchy.setQuery(joinQuery);
 
-                Level drinkLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level drinkLevel = LevelFactory.eINSTANCE.createLevel();
                 drinkLevel.setName("Drink");
                 drinkLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
                 drinkLevel.setUniqueMembers(true);
 
-                Level beveragesLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level beveragesLevel = LevelFactory.eINSTANCE.createLevel();
                 beveragesLevel.setName("Beverages");
                 beveragesLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
                 beveragesLevel.setUniqueMembers(false);
 
-                Level categoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level categoryLevel = LevelFactory.eINSTANCE.createLevel();
                 categoryLevel.setName("Product Category");
                 categoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
                 categoryLevel.setUniqueMembers(false);
@@ -4358,25 +4217,25 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension productViewDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector productViewConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension productViewDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector productViewConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 productViewDimension.setName("ProductView");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-                SqlView sqlView = RolapMappingFactory.eINSTANCE.createSqlView();
+                DialectSqlView sqlView = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
 
                 // DB2 SQL
-                SqlStatement db2Sql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement db2Sql = SourceFactory.eINSTANCE.createSqlStatement();
                 db2Sql.getDialects().add("db2");
                 db2Sql.setSql(
                         "SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"");
 
                 // MSSQL SQL
-                SqlStatement mssqlSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement mssqlSql = SourceFactory.eINSTANCE.createSqlStatement();
                 mssqlSql.getDialects().add("mssql");
                 mssqlSql.setSql("SELECT \"product\".\"product_id\",\n" + "\"product\".\"brand_name\",\n"
                         + "\"product\".\"product_name\",\n" + "\"product\".\"SKU\",\n" + "\"product\".\"SRP\",\n"
@@ -4391,7 +4250,7 @@ public class SchemaModifiersEmf {
                         + "ON \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"\n");
 
                 // MySQL SQL
-                SqlStatement mysqlSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement mysqlSql = SourceFactory.eINSTANCE.createSqlStatement();
                 mysqlSql.getDialects().add("mysql");
                 mysqlSql.setSql("SELECT `product`.`product_id`,\n" + "`product`.`brand_name`,\n"
                         + "`product`.`product_name`,\n" + "`product`.`SKU`,\n" + "`product`.`SRP`,\n"
@@ -4404,49 +4263,49 @@ public class SchemaModifiersEmf {
                         + "`product_class`.`product_subcategory` \n" + "FROM `product`, `product_class`\n"
                         + "WHERE `product`.`product_class_id` = `product_class`.`product_class_id`\n");
 
-                sqlView.getSqlStatements().add(db2Sql);
-                sqlView.getSqlStatements().add(mssqlSql);
-                sqlView.getSqlStatements().add(mysqlSql);
+                sqlView.getDialectStatements().add(db2Sql);
+                sqlView.getDialectStatements().add(mssqlSql);
+                sqlView.getDialectStatements().add(mysqlSql);
 
-                sqlView.getColumns().add(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                sqlView.getColumns().add(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
-                sqlView.getColumns().add(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
-                sqlView.getColumns().add(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
-                sqlView.getColumns().add(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
-                sqlView.getColumns().add(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
+                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
+                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
+                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
+                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
+                sqlView.getFeature().add(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
+                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
 
-                SqlSelectQuery selectQuery = RolapMappingFactory.eINSTANCE.createSqlSelectQuery();
+                SqlSelectSource selectQuery = SourceFactory.eINSTANCE.createSqlSelectSource();
                 selectQuery.setAlias("productView");
                 selectQuery.setSql(sqlView);
 
                 hierarchy.setQuery(selectQuery);
 
-                Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
                 productFamilyLevel.setName("Product Family");
                 productFamilyLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
                 productFamilyLevel.setUniqueMembers(true);
 
-                Level productDepartmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productDepartmentLevel = LevelFactory.eINSTANCE.createLevel();
                 productDepartmentLevel.setName("Product Department");
                 productDepartmentLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
                 productDepartmentLevel.setUniqueMembers(false);
 
-                Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
                 productCategoryLevel.setName("Product Category");
                 productCategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
                 productCategoryLevel.setUniqueMembers(false);
 
-                Level productSubcategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
                 productSubcategoryLevel.setName("Product Subcategory");
                 productSubcategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
                 productSubcategoryLevel.setUniqueMembers(false);
 
-                Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
                 brandNameLevel.setColumn(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
                 brandNameLevel.setUniqueMembers(false);
 
-                Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("Product Name");
                 productNameLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
                 productNameLevel.setUniqueMembers(false);
@@ -4499,7 +4358,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                DimensionConnector otherStoreConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector otherStoreConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 otherStoreConnector.setOverrideDimensionName("Other Store");
                 otherStoreConnector
                         .setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
@@ -4537,22 +4396,22 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension gender3Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector gender3Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension gender3Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector gender3Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 gender3Dimension.setName("Gender3");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Gender");
                 hierarchy.setAllMemberCaption("Frauen und Maenner");
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
                 hierarchy.setQuery(tableQuery);
 
-                Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level genderLevel = LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("Gender");
                 genderLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
                 genderLevel.setUniqueMembers(true);
@@ -4598,29 +4457,29 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
-                StandardDimension position2608Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector position2608Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension position2608Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector position2608Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 position2608Dimension.setName("Position2608");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Position");
                 hierarchy.setAllMemberCaption("Frauen und Maenner");
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_EMPLOYEE));
                 hierarchy.setQuery(tableQuery);
 
-                Level managementRoleLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level managementRoleLevel = LevelFactory.eINSTANCE.createLevel();
                 managementRoleLevel.setName("Management Role");
                 managementRoleLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE));
                 managementRoleLevel.setUniqueMembers(true);
 
-                OrderedColumn oc = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                OrderedColumn oc = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc.setColumn((Column) copier.get(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE));
 
-                Level positionTitleLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level positionTitleLevel = LevelFactory.eINSTANCE.createLevel();
                 positionTitleLevel.setName("Position Title");
                 positionTitleLevel.setUniqueMembers(false);
                 positionTitleLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE));
@@ -4665,21 +4524,21 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                SumMeasure zeroMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure zeroMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
                 zeroMeasure.setName("zero");
                 zeroMeasure.setMeasureGroup(mg);
 
-                SQLExpressionColumn expressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn expressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 expressionColumn.setName("_zero_expression");
 
-                SqlStatement genericSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
                 genericSql.getDialects().add("generic");
                 genericSql.setSql(" NULL ");
 
-                SqlStatement verticaSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement verticaSql = SourceFactory.eINSTANCE.createSqlStatement();
                 verticaSql.getDialects().add("vertica");
                 verticaSql.setSql(" NULL::FLOAT ");
 
@@ -4745,11 +4604,11 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension exampleDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension exampleDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 exampleDimension.setName("Example");
                 exampleDimension.setVisible(true);
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setName("Example Hierarchy");
                 hierarchy.setVisible(true);
                 hierarchy.setHasAll(true);
@@ -4757,17 +4616,17 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberCaption("All");
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
 
-                JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+                JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
 
-                JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-                TableQuery leftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
                 leftTable.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
                 leftJoin.setQuery(leftTable);
 
-                JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+                JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-                TableQuery rightTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
                 rightTable.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
                 rightJoin.setQuery(rightTable);
 
@@ -4777,7 +4636,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setQuery(joinQuery);
 
                 // IsZero Level
-                Level isZeroLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level isZeroLevel = LevelFactory.eINSTANCE.createLevel();
                 isZeroLevel.setName("IsZero");
                 isZeroLevel.setVisible(true);
                 isZeroLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
@@ -4785,9 +4644,9 @@ public class SchemaModifiersEmf {
                 isZeroLevel.setUniqueMembers(false);
                 isZeroLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-                SQLExpressionColumn isZeroNameColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn isZeroNameColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 isZeroNameColumn.setName("_isZero_name_expression");
-                SqlStatement isZeroSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement isZeroSql = SourceFactory.eINSTANCE.createSqlStatement();
                 isZeroSql.getDialects().add("generic");
                 isZeroSql.setSql("case when " + dialect.quoteIdentifier("product", "product_id")
                         + "=0 then 'Zero' else 'Non-Zero' end");
@@ -4795,7 +4654,7 @@ public class SchemaModifiersEmf {
                 isZeroLevel.setNameColumn(isZeroNameColumn);
 
                 // SubCat Level
-                Level subCatLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level subCatLevel = LevelFactory.eINSTANCE.createLevel();
                 subCatLevel.setName("SubCat");
                 subCatLevel.setVisible(true);
                 subCatLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
@@ -4803,16 +4662,16 @@ public class SchemaModifiersEmf {
                 subCatLevel.setUniqueMembers(false);
                 subCatLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-                SQLExpressionColumn subCatNameColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn subCatNameColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 subCatNameColumn.setName("_subCat_name_expression");
-                SqlStatement subCatSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement subCatSql = SourceFactory.eINSTANCE.createSqlStatement();
                 subCatSql.getDialects().add("generic");
                 subCatSql.setSql(dialect.quoteIdentifier("product_class", "product_subcategory"));
                 subCatNameColumn.getSqls().add(subCatSql);
                 subCatLevel.setNameColumn(subCatNameColumn);
 
                 // ProductName Level
-                Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("ProductName");
                 productNameLevel.setVisible(true);
                 productNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
@@ -4820,9 +4679,9 @@ public class SchemaModifiersEmf {
                 productNameLevel.setUniqueMembers(false);
                 productNameLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-                SQLExpressionColumn productNameColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn productNameColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 productNameColumn.setName("_productName_name_expression");
-                SqlStatement productNameSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement productNameSql = SourceFactory.eINSTANCE.createSqlStatement();
                 productNameSql.getDialects().add("generic");
                 productNameSql.setSql(dialect.quoteIdentifier("product", "product_name"));
                 productNameColumn.getSqls().add(productNameSql);
@@ -4834,7 +4693,7 @@ public class SchemaModifiersEmf {
 
                 exampleDimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector exampleConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector exampleConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 exampleConnector.setOverrideDimensionName("Example");
                 exampleConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
                 exampleConnector.setDimension(exampleDimension);
@@ -4866,7 +4725,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                 calculatedMember.setVisible(true);
                 calculatedMember.setName("last");
@@ -4901,22 +4760,22 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension gender4Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector gender4Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension gender4Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector gender4Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 gender4Dimension.setName("Gender4");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Gender");
                 hierarchy.setAllLevelName("GenderLevel");
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
                 hierarchy.setQuery(tableQuery);
 
-                Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level genderLevel = LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("Gender");
                 genderLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
                 genderLevel.setUniqueMembers(true);
@@ -4962,26 +4821,26 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension customer2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector customer2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                StandardDimension customer2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector customer2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 customer2Dimension.setName("Customer_2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Customers");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
                 hierarchy.setQuery(tableQuery);
 
-                Level name1Level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level name1Level = LevelFactory.eINSTANCE.createLevel();
                 name1Level.setName("Name1");
                 name1Level.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
                 name1Level.setUniqueMembers(true);
 
-                Level name2Level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level name2Level = LevelFactory.eINSTANCE.createLevel();
                 name2Level.setName("Name2");
                 name2Level.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 name2Level.setUniqueMembers(true);
@@ -5024,17 +4883,17 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                SumMeasure zeroMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure zeroMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
                 zeroMeasure.setName("zero");
                 zeroMeasure.setMeasureGroup(mg);
 
-                SQLExpressionColumn expressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn expressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 expressionColumn.setName("_zero_expression");
 
-                SqlStatement genericSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
                 genericSql.getDialects().add("generic");
                 genericSql.setSql("0");
 
@@ -5089,27 +4948,27 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public BasicQueryTestModifier14(Catalog catalogMapping) {
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setNameColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
@@ -5118,10 +4977,10 @@ public class SchemaModifiersEmf {
             yearLevel.setType(LevelDefinition.TIME_YEARS);
             yearLevel.setUniqueMembers(true);
 
-            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc2.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.getOrdinalColumns().addAll(List.of(oc2));
@@ -5133,46 +4992,46 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create dimension connector for Time
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
             // Create aggregation table
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
 
-            AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.setAggregationFactCount(factCount);
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure.setName("[Measures].[Unit Sales]");
             aggMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SUM_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationMeasures().add(aggMeasure);
 
-            AggregationLevel aggYearLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggYearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggYearLevel.setName("[Time].[Year]");
             aggYearLevel.setColumn(CatalogSupplier.COLUMN_TIME_YEAR_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggYearLevel);
 
-            AggregationLevel aggQuarterLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggQuarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggQuarterLevel.setName("[Time].[Quarter]");
             aggQuarterLevel.setColumn(CatalogSupplier.COLUMN_TIME_QUARTER_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggQuarterLevel);
 
             // Create table query with aggregation
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.getAggregationTables().add(aggName);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             unitSalesMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
             salesCube.setQuery(tableQuery);
@@ -5181,10 +5040,10 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesCube);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2442");
             catalog.getCubes().add(salesCube);
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalogMapping.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
         }
 
         @Override
@@ -5229,29 +5088,29 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier15(Catalog cat) {
             // Create Unit Sales measure
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create Product dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-            JoinQuery productJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
-            JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
+            JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            TableQuery leftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
             leftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
             leftJoin.setQuery(leftTable);
 
-            JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            TableQuery rightTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
             rightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
             rightJoin.setQuery(rightTable);
 
@@ -5259,7 +5118,7 @@ public class SchemaModifiersEmf {
             productJoin.setRight(rightJoin);
             productHierarchy.setQuery(productJoin);
 
-            Level productSubcategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productSubcategoryLevel.setName("Product Subcategory");
             productSubcategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             productSubcategoryLevel.setUniqueMembers(false);
@@ -5267,24 +5126,24 @@ public class SchemaModifiersEmf {
             productHierarchy.getLevels().add(productSubcategoryLevel);
             productDimension.getHierarchies().add(productHierarchy);
 
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product");
             productConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             productConnector.setDimension(productDimension);
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            Level monthUpperLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthUpperLevel = LevelFactory.eINSTANCE.createLevel();
             monthUpperLevel.setName("Month Upper");
             monthUpperLevel.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthUpperLevel.setNameColumn(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY);
@@ -5292,7 +5151,7 @@ public class SchemaModifiersEmf {
             monthUpperLevel.setUniqueMembers(false);
             monthUpperLevel.setColumnType(ColumnInternalDataType.NUMERIC);
 
-            Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthLevel = LevelFactory.eINSTANCE.createLevel();
             monthLevel.setName("Month");
             monthLevel.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthLevel.setNameColumn(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY);
@@ -5304,27 +5163,27 @@ public class SchemaModifiersEmf {
             timeHierarchy.getLevels().add(monthLevel);
             timeDimension.getHierarchies().add(timeHierarchy);
 
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
             // Create aggregation exclude
-            AggregationExclude aggExclude = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude.setName("agg_c_special_sales_fact_1997");
 
             // Create table query with aggregation exclude
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.getAggregationExcludes().add(aggExclude);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             unitSalesMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
             salesCube.setQuery(tableQuery);
@@ -5334,11 +5193,11 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesCube);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2285");
             catalog.getCubes().add(salesCube);
             if (cat != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) cat.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
             }
 
         }
@@ -5417,32 +5276,32 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier16(Catalog catalog2) {
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-            SQLExpressionColumn quarterColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn quarterColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
             quarterColumn.setName("_quarter_key");
-            SqlStatement quarterSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement quarterSql = SourceFactory.eINSTANCE.createSqlStatement();
             quarterSql.getDialects().add("generic");
             quarterSql.setSql("RTRIM(quarter)");
             quarterColumn.getSqls().add(quarterSql);
@@ -5453,23 +5312,23 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create Product dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-            JoinQuery productJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
-            JoinedQueryElement productLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
+            JoinedQueryElement productLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            TableQuery productLeftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productLeftTable = SourceFactory.eINSTANCE.createTableSource();
             productLeftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
             productLeft.setQuery(productLeftTable);
 
-            JoinedQueryElement productRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement productRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            TableQuery productRightTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productRightTable = SourceFactory.eINSTANCE.createTableSource();
             productRightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
             productRight.setQuery(productRightTable);
 
@@ -5477,7 +5336,7 @@ public class SchemaModifiersEmf {
             productJoin.setRight(productRight);
             productHierarchy.setQuery(productJoin);
 
-            Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevel.setName("Product Family");
             productFamilyLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
             productFamilyLevel.setUniqueMembers(true);
@@ -5486,33 +5345,33 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Warehouse dimension
-            StandardDimension warehouseDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension warehouseDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             warehouseDimension.setName("Warehouse");
 
-            ExplicitHierarchy warehouseHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy warehouseHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             warehouseHierarchy.setHasAll(true);
             warehouseHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
 
-            TableQuery warehouseTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseTableQuery.setTable(CatalogSupplier.TABLE_WAREHOUSE);
             warehouseHierarchy.setQuery(warehouseTableQuery);
 
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COUNTRY_WAREHOUSE);
             countryLevel.setUniqueMembers(true);
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_STATE_PROVINCE_WAREHOUSE);
             stateProvinceLevel.setUniqueMembers(true);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_CITY_WAREHOUSE);
             cityLevel.setUniqueMembers(false);
 
-            Level warehouseNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level warehouseNameLevel = LevelFactory.eINSTANCE.createLevel();
             warehouseNameLevel.setName("Warehouse Name");
             warehouseNameLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_NAME_WAREHOUSE);
             warehouseNameLevel.setUniqueMembers(true);
@@ -5524,19 +5383,19 @@ public class SchemaModifiersEmf {
             warehouseDimension.getHierarchies().add(warehouseHierarchy);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesCube.setQuery(salesTableQuery);
 
-            DimensionConnector salesTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector salesTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             salesTimeConnector.setOverrideDimensionName("Time");
             salesTimeConnector.setDimension(timeDimension);
             salesTimeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            DimensionConnector salesProductConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector salesProductConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             salesProductConnector.setOverrideDimensionName("Product");
             salesProductConnector.setDimension(productDimension);
             salesProductConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
@@ -5544,36 +5403,36 @@ public class SchemaModifiersEmf {
             salesCube.getDimensionConnectors().add(salesTimeConnector);
             salesCube.getDimensionConnectors().add(salesProductConnector);
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
-            MeasureGroup salesMeasureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup salesMeasureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             salesMeasureGroup.getMeasures().add(unitSalesMeasure);
             unitSalesMeasure.setMeasureGroup(salesMeasureGroup);
             salesMeasureGroup.setPhysicalCube(salesCube);
             salesCube.getMeasureGroups().add(salesMeasureGroup);
 
             // Create Warehouse cube
-            PhysicalCube warehouseCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube warehouseCube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouseCube.setName("Warehouse");
 
-            TableQuery warehouseFactTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouseFactTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseFactTableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
             warehouseCube.setQuery(warehouseFactTableQuery);
 
-            DimensionConnector whTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector whTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             whTimeConnector.setOverrideDimensionName("Time");
             whTimeConnector.setDimension(timeDimension);
             whTimeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
-            DimensionConnector whProductConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector whProductConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             whProductConnector.setOverrideDimensionName("Product");
             whProductConnector.setDimension(productDimension);
             whProductConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
 
-            DimensionConnector whWarehouseConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector whWarehouseConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             whWarehouseConnector.setOverrideDimensionName("Warehouse");
             whWarehouseConnector.setDimension(warehouseDimension);
             whWarehouseConnector.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
@@ -5582,35 +5441,35 @@ public class SchemaModifiersEmf {
             warehouseCube.getDimensionConnectors().add(whProductConnector);
             warehouseCube.getDimensionConnectors().add(whWarehouseConnector);
 
-            SumMeasure warehouseSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure warehouseSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             warehouseSalesMeasure.setName("Warehouse Sales");
             warehouseSalesMeasure.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
             warehouseSalesMeasure.setFormatString("Standard");
 
-            MeasureGroup warehouseMeasureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup warehouseMeasureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             warehouseMeasureGroup.getMeasures().add(warehouseSalesMeasure);
             warehouseSalesMeasure.setMeasureGroup(warehouseMeasureGroup);
             warehouseMeasureGroup.setPhysicalCube(warehouseCube);
             warehouseCube.getMeasureGroups().add(warehouseMeasureGroup);
 
-            CalculatedMember warehouseSalesCalc = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            CalculatedMember warehouseSalesCalc = LevelFactory.eINSTANCE.createCalculatedMember();
             warehouseSalesCalc.setName("Warehouse Sales Calc");
             warehouseSalesCalc.setFormula("[Measures].[Warehouse Sales]");
             warehouseCube.getCalculatedMembers().add(warehouseSalesCalc);
 
             // Create Virtual Cube
-            VirtualCube virtualCube = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube virtualCube = CubeFactory.eINSTANCE.createVirtualCube();
             virtualCube.setName("Warehouse and Sales");
 
-            //DimensionConnector vcTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector vcTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             //vcTimeConnector.setOverrideDimensionName("Time");
             //vcTimeConnector.setDimension(timeDimension);
 
-            //DimensionConnector vcProductConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector vcProductConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             //vcProductConnector.setOverrideDimensionName("Product");
             //vcProductConnector.setDimension(productDimension);
 
-            //DimensionConnector vcWarehouseConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector vcWarehouseConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             //vcWarehouseConnector.setOverrideDimensionName("Warehouse");
             //vcWarehouseConnector.setPhysicalCube(warehouseCube);
             //vcWarehouseConnector.setDimension(warehouseDimension);
@@ -5623,13 +5482,13 @@ public class SchemaModifiersEmf {
             virtualCube.getReferencedCalculatedMembers().add(warehouseSalesCalc);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("tiny");
             catalog.getCubes().add(salesCube);
             catalog.getCubes().add(warehouseCube);
             catalog.getCubes().add(virtualCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
         }
 
@@ -5677,30 +5536,30 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier17(Catalog catalogMapping) {
             // Create Unit Sales measure
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
             yearLevel.setUniqueMembers(true);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
@@ -5711,62 +5570,62 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create aggregation excludes
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_14_sales_fact_1997");
 
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_g_ms_pcat_sales_fact_1997");
 
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude3.setName("agg_l_03_sales_fact_1997");
 
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude4.setName("agg_l_04_sales_fact_1997");
 
-            AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude5.setName("agg_l_05_sales_fact_1997");
 
-            AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude6.setName("agg_lc_06_sales_fact_1997");
 
-            AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude7.setName("agg_lc_100_sales_fact_1997");
 
-            AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude8.setName("agg_ll_01_sales_fact_1997");
 
-            AggregationExclude aggExclude9 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude9.setName("agg_pl_01_sales_fact_1997");
 
-            AggregationExclude aggExclude10 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude10 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude10.setName("agg_c_special_sales_fact_1997");
 
             // Create aggregation table with rollup type
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
 
-            AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
             aggName.setAggregationFactCount(factCount);
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure.setName("[Measures].[Unit Sales]");
             aggMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_C_10_SALES_FACT_1997);
             aggMeasure.setRollupType("AvgFromSum");
             aggName.getAggregationMeasures().add(aggMeasure);
 
-            AggregationLevel aggYearLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggYearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggYearLevel.setName("[Time].[Time].[Year]");
             aggYearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_AGG_C_10_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggYearLevel);
 
-            AggregationLevel aggQuarterLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggQuarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggQuarterLevel.setName("[Time].[Time].[Quarter]");
             aggQuarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_AGG_C_10_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggQuarterLevel);
 
             // Create table query with aggregation excludes and table
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.getAggregationExcludes().add(aggExclude1);
             tableQuery.getAggregationExcludes().add(aggExclude2);
@@ -5781,18 +5640,18 @@ public class SchemaModifiersEmf {
             tableQuery.getAggregationTables().add(aggName);
 
             // Create dimension connector for Time
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             unitSalesMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
             salesCube.setQuery(tableQuery);
@@ -5801,11 +5660,11 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesCube);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2399 Rollup Type");
             catalog.getCubes().add(salesCube);
             if (catalogMapping != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalogMapping.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
             }
 
         }
@@ -5855,30 +5714,30 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier18(Catalog catalog2) {
             // Create Unit Sales measure with AVG aggregator
-            AvgMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createAvgMeasure();
+            AvgMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createAvgMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.setUniqueMembers(false);
@@ -5889,62 +5748,62 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create aggregation excludes
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_14_sales_fact_1997");
 
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_g_ms_pcat_sales_fact_1997");
 
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude3.setName("agg_l_03_sales_fact_1997");
 
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude4.setName("agg_l_04_sales_fact_1997");
 
-            AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude5.setName("agg_l_05_sales_fact_1997");
 
-            AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude6.setName("agg_lc_06_sales_fact_1997");
 
-            AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude7.setName("agg_lc_100_sales_fact_1997");
 
-            AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude8.setName("agg_ll_01_sales_fact_1997");
 
-            AggregationExclude aggExclude9 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude9.setName("agg_pl_01_sales_fact_1997");
 
-            AggregationExclude aggExclude10 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude10 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude10.setName("agg_c_special_sales_fact_1997");
 
             // Create aggregation table with rollup type SumFromAvg
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
 
-            AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
             aggName.setAggregationFactCount(factCount);
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure.setName("[Measures].[Unit Sales]");
             aggMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_C_10_SALES_FACT_1997);
             aggMeasure.setRollupType("SumFromAvg");
             aggName.getAggregationMeasures().add(aggMeasure);
 
-            AggregationLevel aggYearLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggYearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggYearLevel.setName("[Time].[Time].[Year]");
             aggYearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_AGG_C_10_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggYearLevel);
 
-            AggregationLevel aggQuarterLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggQuarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggQuarterLevel.setName("[Time].[Time].[Quarter]");
             aggQuarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_AGG_C_10_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggQuarterLevel);
 
             // Create table query with aggregation excludes and table
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.getAggregationExcludes().add(aggExclude1);
             tableQuery.getAggregationExcludes().add(aggExclude2);
@@ -5959,18 +5818,18 @@ public class SchemaModifiersEmf {
             tableQuery.getAggregationTables().add(aggName);
 
             // Create dimension connector for Time
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             unitSalesMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
             salesCube.setQuery(tableQuery);
@@ -5979,11 +5838,11 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesCube);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2399 Rollup Type");
             catalog.getCubes().add(salesCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
 
         }
@@ -6033,30 +5892,30 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier19(Catalog catalog2) {
             // Create Unit Sales measure with AVG aggregator
-            AvgMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createAvgMeasure();
+            AvgMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createAvgMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
             yearLevel.setUniqueMembers(true);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
@@ -6067,62 +5926,62 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create aggregation excludes
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_14_sales_fact_1997");
 
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_g_ms_pcat_sales_fact_1997");
 
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude3.setName("agg_l_03_sales_fact_1997");
 
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude4.setName("agg_l_04_sales_fact_1997");
 
-            AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude5.setName("agg_l_05_sales_fact_1997");
 
-            AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude6.setName("agg_lc_06_sales_fact_1997");
 
-            AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude7.setName("agg_lc_100_sales_fact_1997");
 
-            AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude8.setName("agg_ll_01_sales_fact_1997");
 
-            AggregationExclude aggExclude9 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude9.setName("agg_pl_01_sales_fact_1997");
 
-            AggregationExclude aggExclude10 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude10 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude10.setName("agg_c_special_sales_fact_1997");
 
             // Create aggregation table WITHOUT rollup type (default)
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
 
-            AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
             aggName.setAggregationFactCount(factCount);
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure.setName("[Measures].[Unit Sales]");
             aggMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_C_10_SALES_FACT_1997);
             // Note: No rollupType set (default behavior)
             aggName.getAggregationMeasures().add(aggMeasure);
 
-            AggregationLevel aggYearLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggYearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggYearLevel.setName("[Time].[Time].[Year]");
             aggYearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_AGG_C_10_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggYearLevel);
 
-            AggregationLevel aggQuarterLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggQuarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggQuarterLevel.setName("[Time].[Time].[Quarter]");
             aggQuarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_AGG_C_10_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggQuarterLevel);
 
             // Create table query with aggregation excludes and table
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             tableQuery.getAggregationExcludes().add(aggExclude1);
             tableQuery.getAggregationExcludes().add(aggExclude2);
@@ -6137,18 +5996,18 @@ public class SchemaModifiersEmf {
             tableQuery.getAggregationTables().add(aggName);
 
             // Create dimension connector for Time
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             unitSalesMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
             salesCube.setQuery(tableQuery);
@@ -6157,11 +6016,11 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesCube);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2399 Rollup Type");
             catalog.getCubes().add(salesCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
         }
 
@@ -6201,43 +6060,43 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
 
             // Create Sales_MemberVis cube
-            PhysicalCube salesMemberVisCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesMemberVisCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesMemberVisCube.setName("Sales_MemberVis");
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             salesMemberVisCube.setQuery(tableQuery);
 
             // Create measures
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             unitSalesMeasure.setFormatString("Standard");
             unitSalesMeasure.setVisible(false);
 
-            SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("#,###.00");
 
-            CountMeasure salesCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            CountMeasure salesCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
             salesCountMeasure.setName("Sales Count");
             salesCountMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
             salesCountMeasure.setFormatString("#,###");
 
-            CountMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            CountMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
             customerCountMeasure.setName("Customer Count");
             customerCountMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             customerCountMeasure.setFormatString("#,###");
             customerCountMeasure.setDistinct(true);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
             measureGroup.getMeasures().add(storeSalesMeasure);
@@ -6254,12 +6113,12 @@ public class SchemaModifiersEmf {
             salesMemberVisCube.getMeasureGroups().add(measureGroup);
 
             // Create calculated member
-            CalculatedMember profitMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            CalculatedMember profitMember = LevelFactory.eINSTANCE.createCalculatedMember();
             profitMember.setName("Profit");
             profitMember.setVisible(false);
             profitMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
 
-            CalculatedMemberProperty formatProperty = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+            CalculatedMemberProperty formatProperty = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
             formatProperty.setName("FORMAT_STRING");
             formatProperty.setValue("$#,##0.00");
             profitMember.getCalculatedMemberProperties().add(formatProperty);
@@ -6319,25 +6178,25 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Create Product dimension with hierarchy
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(false);
             productHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
 
             // Create join query for product tables
-            JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
 
-            JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-            TableQuery productTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTableQuery = SourceFactory.eINSTANCE.createTableSource();
             productTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
             leftJoin.setQuery(productTableQuery);
 
-            JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-            TableQuery productClassTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTableQuery = SourceFactory.eINSTANCE.createTableSource();
             productClassTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
             rightJoin.setQuery(productClassTableQuery);
 
@@ -6346,34 +6205,34 @@ public class SchemaModifiersEmf {
             productHierarchy.setQuery(joinQuery);
 
             // Create Product levels
-            Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevel.setName("Product Family");
             productFamilyLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS));
             productFamilyLevel.setUniqueMembers(true);
 
-            Level productDepartmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productDepartmentLevel = LevelFactory.eINSTANCE.createLevel();
             productDepartmentLevel.setName("Product Department");
             productDepartmentLevel
                     .setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS));
             productDepartmentLevel.setUniqueMembers(false);
 
-            Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productCategoryLevel.setName("Product Category");
             productCategoryLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS));
             productCategoryLevel.setUniqueMembers(false);
 
-            Level productSubcategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productSubcategoryLevel.setName("Product Subcategory");
             productSubcategoryLevel
                     .setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS));
             productSubcategoryLevel.setUniqueMembers(false);
 
-            Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
             brandNameLevel.setName("Brand Name");
             brandNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT));
             brandNameLevel.setUniqueMembers(false);
 
-            Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
             productNameLevel.setName("Product Name");
             productNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT));
             productNameLevel.setUniqueMembers(true);
@@ -6387,18 +6246,18 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Gender dimension
-            StandardDimension genderDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             genderDimension.setName("Gender");
 
-            ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             genderHierarchy.setHasAll(false);
             genderHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-            TableQuery customerTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customerTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
             genderHierarchy.setQuery(customerTableQuery);
 
-            Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
             genderLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
             genderLevel.setUniqueMembers(true);
@@ -6407,30 +6266,30 @@ public class SchemaModifiersEmf {
             genderDimension.getHierarchies().add(genderHierarchy);
 
             // Create dimension connectors
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product");
             productConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
             productConnector.setDimension(productDimension);
 
-            DimensionConnector genderConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector genderConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             genderConnector.setOverrideDimensionName("Gender");
             genderConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             genderConnector.setDimension(genderDimension);
 
             // Create measures
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             unitSalesMeasure.setFormatString("Standard");
             unitSalesMeasure.setVisible(false);
 
-            SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COST_SALESFACT));
             storeCostMeasure.setFormatString("#,###.00");
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
 
@@ -6438,10 +6297,10 @@ public class SchemaModifiersEmf {
             storeCostMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales_DimWithoutAll cube
-            PhysicalCube salesDimWithoutAllCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesDimWithoutAllCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesDimWithoutAllCube.setName("Sales_DimWithoutAll");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             salesDimWithoutAllCube.setQuery(salesTableQuery);
 
@@ -6505,19 +6364,19 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Create Cities dimension
-            StandardDimension citiesDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension citiesDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             citiesDimension.setName("Cities");
 
-            ExplicitHierarchy citiesHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy citiesHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             citiesHierarchy.setHasAll(true);
             citiesHierarchy.setAllMemberName("All Cities");
             citiesHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-            TableQuery citiesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource citiesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             citiesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
             citiesHierarchy.setQuery(citiesTableQuery);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CITY_CUSTOMER));
             cityLevel.setUniqueMembers(false);
@@ -6526,52 +6385,52 @@ public class SchemaModifiersEmf {
             citiesDimension.getHierarchies().add(citiesHierarchy);
 
             // Create Customers dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-            TableQuery customersTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customersTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
             customersHierarchy.setQuery(customersTableQuery);
 
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER));
             countryLevel.setUniqueMembers(true);
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER));
             stateProvinceLevel.setUniqueMembers(true);
 
-            Level customerCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerCityLevel = LevelFactory.eINSTANCE.createLevel();
             customerCityLevel.setName("City");
             customerCityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_CITY_CUSTOMER));
             customerCityLevel.setUniqueMembers(false);
 
-            Level nameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level nameLevel = LevelFactory.eINSTANCE.createLevel();
             nameLevel.setName("Name");
             nameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_FULLNAME_CUSTOMER));
             nameLevel.setUniqueMembers(true);
 
             // Create member properties for Name level
-            MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
             genderProperty.setName("Gender");
             genderProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
 
-            MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
             maritalStatusProperty.setName("Marital Status");
             maritalStatusProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MARITAL_STATUS_CUSTOMER));
 
-            MemberProperty educationProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty educationProperty = LevelFactory.eINSTANCE.createMemberProperty();
             educationProperty.setName("Education");
             educationProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_EDUCATION_CUSTOMER));
 
-            MemberProperty yearlyIncomeProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty yearlyIncomeProperty = LevelFactory.eINSTANCE.createMemberProperty();
             yearlyIncomeProperty.setName("Yearly Income");
             yearlyIncomeProperty.setColumn((Column) copier.get(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER));
 
@@ -6587,18 +6446,18 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Create Gender dimension
-            StandardDimension genderDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             genderDimension.setName("Gender");
 
-            ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             genderHierarchy.setHasAll(true);
             genderHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
 
-            TableQuery genderTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource genderTableQuery = SourceFactory.eINSTANCE.createTableSource();
             genderTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
             genderHierarchy.setQuery(genderTableQuery);
 
-            Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
             genderLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_CUSTOMER));
             genderLevel.setUniqueMembers(true);
@@ -6607,40 +6466,40 @@ public class SchemaModifiersEmf {
             genderDimension.getHierarchies().add(genderHierarchy);
 
             // Create dimension connectors
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
             timeConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
 
-            DimensionConnector citiesConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector citiesConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             citiesConnector.setOverrideDimensionName("Cities");
             citiesConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             citiesConnector.setDimension(citiesDimension);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers");
             customersConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             customersConnector.setDimension(customersDimension);
 
-            DimensionConnector genderConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector genderConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             genderConnector.setOverrideDimensionName("Gender");
             genderConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
             genderConnector.setDimension(genderDimension);
 
             // Create measures
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             unitSalesMeasure.setFormatString("Standard");
             unitSalesMeasure.setVisible(false);
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT));
             storeSalesMeasure.setFormatString("#,###.00");
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeSalesMeasure);
 
@@ -6648,10 +6507,10 @@ public class SchemaModifiersEmf {
             storeSalesMeasure.setMeasureGroup(measureGroup);
 
             // Create Sales_withCities cube
-            PhysicalCube salesWithCitiesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesWithCitiesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesWithCitiesCube.setName("Sales_withCities");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             salesWithCitiesCube.setQuery(salesTableQuery);
 
@@ -6689,26 +6548,26 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Create dimension connector for Time
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
             timeConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
 
             // Create Bad Measure (without column - intentionally bad)
-            SumMeasure badMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure badMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             badMeasure.setName("Bad Measure");
             badMeasure.setFormatString("Standard");
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(badMeasure);
             badMeasure.setMeasureGroup(measureGroup);
 
             // Create SalesWithBadMeasure cube
-            PhysicalCube salesWithBadMeasureCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesWithBadMeasureCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesWithBadMeasureCube.setName("SalesWithBadMeasure");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesWithBadMeasureCube.setQuery(salesTableQuery);
 
@@ -6748,14 +6607,14 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
 
             // Create dimension connector for Time
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
             timeConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
 
             // Create Bad Measure with both column and SQL expression (intentionally bad -
             // has both)
-            SumMeasure badMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure badMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             badMeasure.setName("Bad Measure");
             badMeasure.setFormatString("Standard");
 
@@ -6764,9 +6623,9 @@ public class SchemaModifiersEmf {
 
             // Then also set SQL expression (this makes it bad - having both column and
             // expression)
-            SQLExpressionColumn expressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn expressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
 
-            SqlStatement genericSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
             genericSql.getDialects().add("generic");
             genericSql.setSql("unit_sales");
 
@@ -6776,15 +6635,15 @@ public class SchemaModifiersEmf {
             badMeasure.setColumn(expressionColumn);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(badMeasure);
             badMeasure.setMeasureGroup(measureGroup);
 
             // Create SalesWithBadMeasure2 cube
-            PhysicalCube salesWithBadMeasure2Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesWithBadMeasure2Cube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesWithBadMeasure2Cube.setName("SalesWithBadMeasure2");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             salesWithBadMeasure2Cube.setQuery(salesTableQuery);
 
@@ -6862,31 +6721,31 @@ public class SchemaModifiersEmf {
 
             // Create Supply Time measure as instance field so it can be referenced as
             // default measure
-            mSupplyTime = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            mSupplyTime = MeasureFactory.eINSTANCE.createSumMeasure();
             mSupplyTime.setName("Supply Time");
             mSupplyTime.setColumn((Column) copier.get(CatalogSupplier.COLUMN_SUPPLY_TIME_INVENTORY_FACT));
 
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setOverrideDimensionName("Store");
             storeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
             storeConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
 
-            DimensionConnector storeTypeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeTypeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeTypeConnector.setOverrideDimensionName("Store Type");
             storeTypeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
             storeTypeConnector.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE));
 
             // Create measures
-            SumMeasure storeInvoiceMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeInvoiceMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeInvoiceMeasure.setName("Store Invoice");
             storeInvoiceMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_INVOICE_INVENTORY_FACT));
 
-            SumMeasure warehouseCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure warehouseCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             warehouseCostMeasure.setName("Warehouse Cost");
             warehouseCostMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT));
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(storeInvoiceMeasure);
             measureGroup.getMeasures().add(mSupplyTime);
             measureGroup.getMeasures().add(warehouseCostMeasure);
@@ -6896,11 +6755,11 @@ public class SchemaModifiersEmf {
             warehouseCostMeasure.setMeasureGroup(measureGroup);
 
             // Create DefaultMeasureTesting cube
-            PhysicalCube defaultMeasureTestingCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube defaultMeasureTestingCube = CubeFactory.eINSTANCE.createPhysicalCube();
             defaultMeasureTestingCube.setName("DefaultMeasureTesting");
             defaultMeasureTestingCube.setDefaultMeasure(mSupplyTime);
 
-            TableQuery inventoryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource inventoryTableQuery = SourceFactory.eINSTANCE.createTableSource();
             inventoryTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_INVENTORY_FACT));
             defaultMeasureTestingCube.setQuery(inventoryTableQuery);
 
@@ -6949,15 +6808,15 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
 
             // Create measures as instance fields
-            mStoreInvoice = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            mStoreInvoice = MeasureFactory.eINSTANCE.createSumMeasure();
             mStoreInvoice.setName("Store Invoice");
             mStoreInvoice.setColumn(CatalogSupplier.COLUMN_STORE_INVOICE_INVENTORY_FACT);
 
-            mSupplyTime = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            mSupplyTime = MeasureFactory.eINSTANCE.createSumMeasure();
             mSupplyTime.setName("Supply Time");
             mSupplyTime.setColumn(CatalogSupplier.COLUMN_SUPPLY_TIME_INVENTORY_FACT);
 
-            mWarehouseCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            mWarehouseCost = MeasureFactory.eINSTANCE.createSumMeasure();
             mWarehouseCost.setName("Warehouse Cost");
             mWarehouseCost.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
 
@@ -6973,18 +6832,18 @@ public class SchemaModifiersEmf {
             }
 
             // Create dimension connectors
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setOverrideDimensionName("Store");
             storeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             storeConnector.setDimension(CatalogSupplier.DIMENSION_STORE);
 
-            DimensionConnector storeTypeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeTypeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeTypeConnector.setOverrideDimensionName("Store Type");
             storeTypeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             storeTypeConnector.setDimension(CatalogSupplier.DIMENSION_STORE_TYPE);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(mStoreInvoice);
             measureGroup.getMeasures().add(mSupplyTime);
             measureGroup.getMeasures().add(mWarehouseCost);
@@ -6994,11 +6853,11 @@ public class SchemaModifiersEmf {
             mWarehouseCost.setMeasureGroup(measureGroup);
 
             // Create DefaultMeasureTesting cube
-            PhysicalCube defaultMeasureTestingCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube defaultMeasureTestingCube = CubeFactory.eINSTANCE.createPhysicalCube();
             defaultMeasureTestingCube.setName("DefaultMeasureTesting");
             defaultMeasureTestingCube.setDefaultMeasure(this.defaultMeasure);
 
-            TableQuery inventoryTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource inventoryTableQuery = SourceFactory.eINSTANCE.createTableSource();
             inventoryTableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
             defaultMeasureTestingCube.setQuery(inventoryTableQuery);
 
@@ -7038,19 +6897,19 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Create Gender dimension
-            StandardDimension genderDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             genderDimension.setName("Gender");
 
-            ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             genderHierarchy.setHasAll(true);
             genderHierarchy.setAllMemberName("All Gender");
             genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-            TableQuery customerTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customerTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
             genderHierarchy.setQuery(customerTableQuery);
 
-            Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
             genderLevel.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
             genderLevel.setUniqueMembers(true);
@@ -7059,18 +6918,18 @@ public class SchemaModifiersEmf {
             genderDimension.getHierarchies().add(genderHierarchy);
 
             // Create dimension connector
-            DimensionConnector genderConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector genderConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             genderConnector.setOverrideDimensionName("Gender");
             genderConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             genderConnector.setDimension(genderDimension);
 
             // Create zero measure with SQL expression
-            SumMeasure zeroMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure zeroMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             zeroMeasure.setName("zero");
 
-            SQLExpressionColumn expressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn expressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
 
-            SqlStatement genericSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
             genericSql.getDialects().add("generic");
             genericSql.setSql("0");
 
@@ -7078,15 +6937,15 @@ public class SchemaModifiersEmf {
             zeroMeasure.setColumn(expressionColumn);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(zeroMeasure);
             zeroMeasure.setMeasureGroup(measureGroup);
 
             // Create FooBarZerOneAnything cube
-            PhysicalCube fooBarZerOneAnythingCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube fooBarZerOneAnythingCube = CubeFactory.eINSTANCE.createPhysicalCube();
             fooBarZerOneAnythingCube.setName("FooBarZerOneAnything");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             fooBarZerOneAnythingCube.setQuery(salesTableQuery);
 
@@ -7155,13 +7014,13 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier30(Catalog catalog2) {
             // Create Dim dimension
-            StandardDimension dimDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             dimDimension.setName("Dim");
 
-            ExplicitHierarchy dimHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy dimHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             dimHierarchy.setHasAll(true);
 
-            Level levelLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelLevel = LevelFactory.eINSTANCE.createLevel();
             levelLevel.setName("Level");
             levelLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
 
@@ -7169,17 +7028,17 @@ public class SchemaModifiersEmf {
             dimDimension.getHierarchies().add(dimHierarchy);
 
             // Create dimension connector
-            DimensionConnector dimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimConnector.setOverrideDimensionName("Dim");
             dimConnector.setDimension(dimDimension);
 
             // Create Measure with SQL expression
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
             measure.setName("Measure");
 
-            SQLExpressionColumn expressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn expressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
 
-            SqlStatement genericSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
             genericSql.getDialects().add("generic");
             genericSql.setSql("1");
 
@@ -7187,19 +7046,19 @@ public class SchemaModifiersEmf {
             measure.setColumn(expressionColumn);
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure);
             measure.setMeasureGroup(measureGroup);
 
             // Create Bar cube with SQL WHERE clause
-            PhysicalCube barCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube barCube = CubeFactory.eINSTANCE.createPhysicalCube();
             barCube.setName("Bar");
 
-            TableQuery warehouseTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseTableQuery.setTable(CatalogSupplier.TABLE_WAREHOUSE);
 
             // Add SQL WHERE expression
-            SqlStatement whereClause = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement whereClause = SourceFactory.eINSTANCE.createSqlStatement();
             whereClause.getDialects().add("generic");
             whereClause.setSql("sleep(0.1) = 0");
             warehouseTableQuery.setSqlWhereExpression(whereClause);
@@ -7211,11 +7070,11 @@ public class SchemaModifiersEmf {
             barCube.getMeasureGroups().add(measureGroup);
 
             // Create new catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("Foo");
             catalog.getCubes().add(barCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
 
         }
@@ -7266,145 +7125,145 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier31(Catalog catalog2) {
             // Create tables
-            TableQuery salesFactTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTable = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            TableQuery productClassTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTable = SourceFactory.eINSTANCE.createTableSource();
             productClassTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
             productClassTable.setAlias("product_class");
 
-            TableQuery productTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
             productTable.setAlias("product");
 
             // Create join for "Bug" cube
-            JoinedQueryElement leftBug = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement leftBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftBug.setAlias("product_class");
             leftBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             leftBug.setQuery(productClassTable);
 
-            JoinedQueryElement rightBug = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightBug.setAlias("product");
             rightBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             rightBug.setQuery(productTable);
 
-            JoinQuery joinBug = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource joinBug = SourceFactory.eINSTANCE.createJoinSource();
             joinBug.setLeft(leftBug);
             joinBug.setRight(rightBug);
 
             // Create level for "Bug" cube
-            Level productFamilyLevelBug = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevelBug = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevelBug.setName("Product Family");
             productFamilyLevelBug.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
             productFamilyLevelBug.setUniqueMembers(false);
 
             // Create hierarchy for "Bug" cube
-            ExplicitHierarchy hierarchyBug = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchyBug = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchyBug.setHasAll(true);
             hierarchyBug.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             hierarchyBug.setQuery(joinBug);
             hierarchyBug.getLevels().add(productFamilyLevelBug);
 
             // Create dimension for "Bug" cube
-            StandardDimension dimensionBug = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimensionBug = DimensionFactory.eINSTANCE.createStandardDimension();
             dimensionBug.setName("Product - Bug");
             dimensionBug.getHierarchies().add(hierarchyBug);
 
             // Create dimension connector for "Bug" cube
-            DimensionConnector connectorBug = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector connectorBug = DimensionFactory.eINSTANCE.createDimensionConnector();
             connectorBug.setOverrideDimensionName("Product - Bug");
             connectorBug.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             connectorBug.setDimension(dimensionBug);
 
             // Create measure for "Bug" cube
-            SumMeasure salesMeasureBug = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure salesMeasureBug = MeasureFactory.eINSTANCE.createSumMeasure();
             salesMeasureBug.setName("Sales");
             salesMeasureBug.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
 
             // Create measure group for "Bug" cube
-            MeasureGroup measureGroupBug = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroupBug = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroupBug.getMeasures().add(salesMeasureBug);
 
             // Create "Bug" cube
-            PhysicalCube bugCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube bugCube = CubeFactory.eINSTANCE.createPhysicalCube();
             bugCube.setName("Bug");
             bugCube.setQuery(salesFactTable);
             bugCube.getDimensionConnectors().add(connectorBug);
             bugCube.getMeasureGroups().add(measureGroupBug);
 
             // Create tables for "No Bug" cube (reuse or create new)
-            TableQuery salesFactTable2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTable2 = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable2.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            TableQuery productTable2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTable2 = SourceFactory.eINSTANCE.createTableSource();
             productTable2.setTable(CatalogSupplier.TABLE_PRODUCT);
             productTable2.setAlias("product");
 
-            TableQuery productClassTable2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTable2 = SourceFactory.eINSTANCE.createTableSource();
             productClassTable2.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
             productClassTable2.setAlias("product_class");
 
             // Create join for "No Bug" cube (reversed order)
-            JoinedQueryElement leftNoBug = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement leftNoBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftNoBug.setAlias("product");
             leftNoBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             leftNoBug.setQuery(productTable2);
 
-            JoinedQueryElement rightNoBug = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightNoBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightNoBug.setAlias("product_class");
             rightNoBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             rightNoBug.setQuery(productClassTable2);
 
-            JoinQuery joinNoBug = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource joinNoBug = SourceFactory.eINSTANCE.createJoinSource();
             joinNoBug.setLeft(leftNoBug);
             joinNoBug.setRight(rightNoBug);
 
             // Create level for "No Bug" cube
-            Level productFamilyLevelNoBug = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevelNoBug = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevelNoBug.setName("Product Family");
             productFamilyLevelNoBug.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
 
             // Create hierarchy for "No Bug" cube
-            ExplicitHierarchy hierarchyNoBug = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchyNoBug = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchyNoBug.setHasAll(true);
             hierarchyNoBug.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             hierarchyNoBug.setQuery(joinNoBug);
             hierarchyNoBug.getLevels().add(productFamilyLevelNoBug);
 
             // Create dimension for "No Bug" cube
-            StandardDimension dimensionNoBug = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimensionNoBug = DimensionFactory.eINSTANCE.createStandardDimension();
             dimensionNoBug.setName("Product - no Bug");
             dimensionNoBug.getHierarchies().add(hierarchyNoBug);
 
             // Create dimension connector for "No Bug" cube
-            DimensionConnector connectorNoBug = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector connectorNoBug = DimensionFactory.eINSTANCE.createDimensionConnector();
             connectorNoBug.setOverrideDimensionName("Product - no Bug");
             connectorNoBug.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             connectorNoBug.setDimension(dimensionNoBug);
 
             // Create measure for "No Bug" cube
-            SumMeasure salesMeasureNoBug = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure salesMeasureNoBug = MeasureFactory.eINSTANCE.createSumMeasure();
             salesMeasureNoBug.setName("Sales");
             salesMeasureNoBug.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
 
             // Create measure group for "No Bug" cube
-            MeasureGroup measureGroupNoBug = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroupNoBug = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroupNoBug.getMeasures().add(salesMeasureNoBug);
 
             // Create "No Bug" cube
-            PhysicalCube noBugCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube noBugCube = CubeFactory.eINSTANCE.createPhysicalCube();
             noBugCube.setName("No Bug");
             noBugCube.setQuery(salesFactTable2);
             noBugCube.getDimensionConnectors().add(connectorNoBug);
             noBugCube.getMeasureGroups().add(measureGroupNoBug);
 
             // Create new catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("snowflake bug");
             catalog.getCubes().add(bugCube);
             catalog.getCubes().add(noBugCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
 
         }
@@ -7439,54 +7298,54 @@ public class SchemaModifiersEmf {
 
         public BasicQueryTestModifier32(Catalog catalog2) {
             // Create table
-            TableQuery storeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTable = SourceFactory.eINSTANCE.createTableSource();
             storeTable.setTable(CatalogSupplier.TABLE_STORE);
 
-            TableQuery salesFactTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTable = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
             // Create level
-            Level storeSqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
             storeSqftLevel.setName("Store Sqft");
             storeSqftLevel.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             storeSqftLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             storeSqftLevel.setUniqueMembers(true);
 
             // Create hierarchy
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             hierarchy.setQuery(storeTable);
             hierarchy.getLevels().add(storeSqftLevel);
 
             // Create dimension
-            StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Store Size in SQFT");
             dimension.getHierarchies().add(hierarchy);
 
             // Create dimension connectors
-            DimensionConnector connector1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector connector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             connector1.setOverrideDimensionName("Store Size in SQFT");
             connector1.setDimension(dimension);
             connector1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
-            DimensionConnector connector2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector connector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             connector2.setOverrideDimensionName("SQFT 2");
             connector2.setDimension(dimension);
             connector2.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
             // Create measure
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
 
             // Create cube
-            PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales");
             cube.setDefaultMeasure(unitSalesMeasure);
             cube.setQuery(salesFactTable);
@@ -7495,11 +7354,11 @@ public class SchemaModifiersEmf {
             cube.getMeasureGroups().add(measureGroup);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
             catalog.getCubes().add(cube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
 
         }
@@ -7530,13 +7389,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMember calculatedMember1 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember1 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember1.setName("~Missing");
                 calculatedMember1.setFormula("100");
                 calculatedMember1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                 cube.getCalculatedMembers().add(calculatedMember1);
 
-                CalculatedMember calculatedMember2 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember2 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember2.setName("~Missing");
                 calculatedMember2.setFormula("100");
                 calculatedMember2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_PRODUCT));
@@ -7580,27 +7439,27 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
                 promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
 
                 // Create SQL expression for key
-                SQLExpressionColumn keyExpressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn keyExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 keyExpressionColumn.setName("promotion_name_key");
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql("RTRIM(" + colName + ")");
 
                 keyExpressionColumn.getSqls().add(sqlStatement);
 
                 // Create level
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(keyExpressionColumn);
                 promotionNameLevel.setUniqueMembers(true);
 
                 // Create hierarchy
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -7609,12 +7468,12 @@ public class SchemaModifiersEmf {
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -7661,34 +7520,34 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
                 promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
 
-                PhysicalColumn promotionIdInSalesFact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column promotionIdInSalesFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 promotionIdInSalesFact.setName("promotion_id");
 
                 // Create SQL expression for ordinal
-                SQLExpressionColumn ordinalExpressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn ordinalExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 ordinalExpressionColumn.setName("promotion_name_ordinal");
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql("RTRIM(" + colName + ")");
 
                 ordinalExpressionColumn.getSqls().add(sqlStatement);
 
-                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(ordinalExpressionColumn);
 
                 // Create level
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
                 promotionNameLevel.getOrdinalColumns().addAll(List.of(oc1));
                 promotionNameLevel.setUniqueMembers(true);
 
                 // Create hierarchy
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -7697,12 +7556,12 @@ public class SchemaModifiersEmf {
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -7749,17 +7608,17 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
                 promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
 
                 // Create level
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
                 promotionNameLevel.setUniqueMembers(true);
 
                 // Create hierarchy
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -7768,12 +7627,12 @@ public class SchemaModifiersEmf {
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -7820,28 +7679,28 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
                 promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
 
                 // Create SQL expression for caption
-                SQLExpressionColumn captionExpressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn captionExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 captionExpressionColumn.setName("promotion_name_caption");
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql("RTRIM(" + colName + ")");
 
                 captionExpressionColumn.getSqls().add(sqlStatement);
 
                 // Create level
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
                 promotionNameLevel.setCaptionColumn(captionExpressionColumn);
                 promotionNameLevel.setUniqueMembers(true);
 
                 // Create hierarchy
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -7850,12 +7709,12 @@ public class SchemaModifiersEmf {
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -7902,28 +7761,28 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
                 promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
 
                 // Create SQL expression for name
-                SQLExpressionColumn nameExpressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn nameExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 nameExpressionColumn.setName("promotion_name_expression");
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql("RTRIM(" + colName + ")");
 
                 nameExpressionColumn.getSqls().add(sqlStatement);
 
                 // Create level
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
                 promotionNameLevel.setNameColumn(nameExpressionColumn);
                 promotionNameLevel.setUniqueMembers(true);
 
                 // Create hierarchy
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -7932,12 +7791,12 @@ public class SchemaModifiersEmf {
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -7993,49 +7852,49 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery employeeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource employeeTable = SourceFactory.eINSTANCE.createTableSource();
                 employeeTable.setTable(CatalogSupplier.TABLE_EMPLOYEE);
 
-                TableQuery employeeClosureTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource employeeClosureTable = SourceFactory.eINSTANCE.createTableSource();
                 employeeClosureTable.setTable(CatalogSupplier.TABLE_EMPLOYEE_CLOSURE);
 
                 // Create SQL expression for parent
-                SQLExpressionColumn parentExpressionColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+                ExpressionColumn parentExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 parentExpressionColumn.setName("supervisor_expression");
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql("RTRIM(" + colName + ")");
 
                 parentExpressionColumn.getSqls().add(sqlStatement);
 
                 // Create member properties
-                MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 maritalStatusProperty.setName("Marital Status");
                 maritalStatusProperty.setColumn(CatalogSupplier.COLUMN_MARITAL_STATUS_EMPLOYEE);
 
-                MemberProperty positionTitleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty positionTitleProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 positionTitleProperty.setName("Position Title");
                 positionTitleProperty.setColumn(CatalogSupplier.COLUMN_POSITION_TITLE_EMPLOYEE);
 
-                MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 genderProperty.setName("Gender");
                 genderProperty.setColumn(CatalogSupplier.COLUMN_GENDER_EMPLOYEE);
 
-                MemberProperty salaryProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty salaryProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 salaryProperty.setName("Salary");
                 salaryProperty.setColumn(CatalogSupplier.COLUMN_SALARY_EMPLOYEE);
 
-                MemberProperty educationLevelProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty educationLevelProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 educationLevelProperty.setName("Education Level");
                 educationLevelProperty.setColumn(CatalogSupplier.COLUMN_EDUCATION_LEVEL_EMPLOYEE);
 
-                MemberProperty managementRoleProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty managementRoleProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 managementRoleProperty.setName("Management Role");
                 managementRoleProperty.setColumn(CatalogSupplier.COLUMN_MANAGEMENT_ROLE_EMPLOYEE);
 
                 // Create level
-                Level employeeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level employeeIdLevel = LevelFactory.eINSTANCE.createLevel();
                 employeeIdLevel.setName("Employee Id");
                 employeeIdLevel.setColumnType(ColumnInternalDataType.NUMERIC);
                 employeeIdLevel.setUniqueMembers(true);
@@ -8045,15 +7904,13 @@ public class SchemaModifiersEmf {
                         genderProperty, salaryProperty, educationLevelProperty, managementRoleProperty));
 
                 // Create parent child link (closure)
-                ParentChildLink parentChildLink = RolapMappingFactory.eINSTANCE
-                        .createParentChildLink();
+                ParentChildLink parentChildLink = HierarchyFactory.eINSTANCE.createParentChildLink();
                 parentChildLink.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE);
                 parentChildLink.setChildColumn(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE);
                 parentChildLink.setTable(employeeClosureTable);
 
                 // Create parent-child hierarchy
-                ParentChildHierarchy hierarchy = RolapMappingFactory.eINSTANCE
-                        .createParentChildHierarchy();
+                ParentChildHierarchy hierarchy = HierarchyFactory.eINSTANCE.createParentChildHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Employees");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
@@ -8064,12 +7921,12 @@ public class SchemaModifiersEmf {
                 hierarchy.setLevel(employeeIdLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Employees");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Employees");
                 connector.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
                 connector.setDimension(dimension);
@@ -8118,34 +7975,33 @@ public class SchemaModifiersEmf {
                 }
 
                 // Create table
-                TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
                 promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
 
                 // Create SQL expression for property
-                SQLExpressionColumn propertyExpressionColumn = RolapMappingFactory.eINSTANCE
-                        .createSQLExpressionColumn();
+                ExpressionColumn propertyExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 propertyExpressionColumn.setName("rtrim_name");
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql("RTRIM(" + colName + ")");
 
                 propertyExpressionColumn.getSqls().add(sqlStatement);
 
                 // Create member property
-                MemberProperty rtrimNameProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+                MemberProperty rtrimNameProperty = LevelFactory.eINSTANCE.createMemberProperty();
                 rtrimNameProperty.setName("Rtrim Name");
                 rtrimNameProperty.setColumn(propertyExpressionColumn);
 
                 // Create level
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
                 promotionNameLevel.setName("Promotion Name");
                 promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
                 promotionNameLevel.setUniqueMembers(true);
                 promotionNameLevel.getMemberProperties().add(rtrimNameProperty);
 
                 // Create hierarchy
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -8154,12 +8010,12 @@ public class SchemaModifiersEmf {
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
                 dimension.getHierarchies().add(hierarchy);
 
                 // Create dimension connector
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -8222,98 +8078,98 @@ public class SchemaModifiersEmf {
 
         public OrderByAliasTestModifier4(Catalog catalog2) {
             // Create Time dimension
-            TableQuery timeByDayTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeByDayTable = SourceFactory.eINSTANCE.createTableSource();
             timeByDayTable.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
 
             // Create SQL expression for Quarter key
-            SQLExpressionColumn quarterKeyExpression = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn quarterKeyExpression = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
             quarterKeyExpression.setName("quarter_key");
-            SqlStatement quarterSql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement quarterSql = SourceFactory.eINSTANCE.createSqlStatement();
             quarterSql.getDialects().add("generic");
             quarterSql.setSql("RTRIM(quarter)");
             quarterKeyExpression.getSqls().add(quarterSql);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(quarterKeyExpression);
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
             timeHierarchy.setQuery(timeByDayTable);
             timeHierarchy.getLevels().add(yearLevel);
             timeHierarchy.getLevels().add(quarterLevel);
 
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create Product dimension
-            TableQuery productTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
 
-            TableQuery productClassTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTable = SourceFactory.eINSTANCE.createTableSource();
             productClassTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
-            JoinedQueryElement leftProduct = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement leftProduct = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftProduct.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             leftProduct.setQuery(productTable);
 
-            JoinedQueryElement rightProductClass = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightProductClass = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightProductClass.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             rightProductClass.setQuery(productClassTable);
 
-            JoinQuery productJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
             productJoin.setLeft(leftProduct);
             productJoin.setRight(rightProductClass);
 
-            Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevel.setName("Product Family");
             productFamilyLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
             productFamilyLevel.setUniqueMembers(true);
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             productHierarchy.setQuery(productJoin);
             productHierarchy.getLevels().add(productFamilyLevel);
 
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Sales cube
-            TableQuery salesFactTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTable = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            DimensionConnector salesTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector salesTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             salesTimeConnector.setOverrideDimensionName("Time");
             salesTimeConnector.setDimension(timeDimension);
             salesTimeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            DimensionConnector salesProductConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector salesProductConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             salesProductConnector.setOverrideDimensionName("Product");
             salesProductConnector.setDimension(productDimension);
             salesProductConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
-            MeasureGroup salesMeasureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup salesMeasureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             salesMeasureGroup.getMeasures().add(unitSalesMeasure);
 
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setQuery(salesFactTable);
             salesCube.getDimensionConnectors().add(salesTimeConnector);
@@ -8321,28 +8177,28 @@ public class SchemaModifiersEmf {
             salesCube.getMeasureGroups().add(salesMeasureGroup);
 
             // Create Warehouse cube
-            TableQuery inventoryFactTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource inventoryFactTable = SourceFactory.eINSTANCE.createTableSource();
             inventoryFactTable.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
 
-            DimensionConnector warehouseTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector warehouseTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             warehouseTimeConnector.setOverrideDimensionName("Time");
             warehouseTimeConnector.setDimension(timeDimension);
             warehouseTimeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
-            DimensionConnector warehouseProductConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector warehouseProductConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             warehouseProductConnector.setOverrideDimensionName("Product");
             warehouseProductConnector.setDimension(productDimension);
             warehouseProductConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
 
-            SumMeasure warehouseSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure warehouseSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             warehouseSalesMeasure.setName("Warehouse Sales");
             warehouseSalesMeasure.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
             warehouseSalesMeasure.setFormatString("Standard");
 
-            MeasureGroup warehouseMeasureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup warehouseMeasureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             warehouseMeasureGroup.getMeasures().add(warehouseSalesMeasure);
 
-            PhysicalCube warehouseCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube warehouseCube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouseCube.setName("Warehouse");
             warehouseCube.setQuery(inventoryFactTable);
             warehouseCube.getDimensionConnectors().add(warehouseTimeConnector);
@@ -8350,15 +8206,15 @@ public class SchemaModifiersEmf {
             warehouseCube.getMeasureGroups().add(warehouseMeasureGroup);
 
             // Create Virtual Cube
-            DimensionConnector virtualTimeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector virtualTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             virtualTimeConnector.setOverrideDimensionName("Time");
             virtualTimeConnector.setDimension(timeDimension);
 
-            DimensionConnector virtualProductConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector virtualProductConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             virtualProductConnector.setOverrideDimensionName("Product");
             virtualProductConnector.setDimension(productDimension);
 
-            VirtualCube virtualCube = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube virtualCube = CubeFactory.eINSTANCE.createVirtualCube();
             virtualCube.setName("Warehouse and Sales");
             virtualCube.getDimensionConnectors().add(virtualTimeConnector);
             virtualCube.getDimensionConnectors().add(virtualProductConnector);
@@ -8366,13 +8222,13 @@ public class SchemaModifiersEmf {
             virtualCube.getReferencedMeasures().add(warehouseSalesMeasure);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
             catalog.getCubes().add(salesCube);
             catalog.getCubes().add(warehouseCube);
             catalog.getCubes().add(virtualCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             }
 
         }
@@ -8399,7 +8255,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 VirtualCubeImpl cube = (VirtualCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Profit With Spaces");
                 calculatedMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
                 cube.getCalculatedMembers().add(calculatedMember);
@@ -8433,17 +8289,17 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Profit Formatted");
                 calculatedMember.setVisible(false);
                 calculatedMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
 
-                CalculatedMemberProperty prop1 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                CalculatedMemberProperty prop1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop1.setName("FORMAT_STRING");
                 prop1.setValue("$#,##0.00");
                 calculatedMember.getCalculatedMemberProperties().add(prop1);
 
-                CalculatedMemberProperty prop2 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                CalculatedMemberProperty prop2 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop2.setName("CELL_FORMATTER");
                 prop2.setValue(FormatterUtil.FooBarCellFormatter.class.getName());
                 calculatedMember.getCalculatedMemberProperties().add(prop2);
@@ -8475,7 +8331,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("My Tuple");
                 calculatedMember.setVisible(false);
                 calculatedMember
@@ -8513,17 +8369,17 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Profit Formatted");
                 calculatedMember.setVisible(false);
                 calculatedMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
 
-                CalculatedMemberProperty prop1 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                CalculatedMemberProperty prop1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop1.setName("FORMAT_STRING");
                 prop1.setValue("$#,##0.00");
                 calculatedMember.getCalculatedMemberProperties().add(prop1);
 
-                CalculatedMemberProperty prop2 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                CalculatedMemberProperty prop2 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop2.setName("CELL_FORMATTER");
                 prop2.setValue("mondrian.test.NonExistentCellFormatter");
                 calculatedMember.getCalculatedMemberProperties().add(prop2);
@@ -8567,43 +8423,43 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Store2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
                 hierarchy.setAllMemberName("All Stores");
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy.setQuery(table);
 
-                Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1 = LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Store Country");
                 level1.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 level1.setUniqueMembers(true);
                 hierarchy.getLevels().add(level1);
 
-                Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2 = LevelFactory.eINSTANCE.createLevel();
                 level2.setName("Store State");
                 level2.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
                 level2.setUniqueMembers(true);
                 hierarchy.getLevels().add(level2);
 
-                Level level3 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level3 = LevelFactory.eINSTANCE.createLevel();
                 level3.setName("Store City");
                 level3.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
                 level3.setUniqueMembers(false);
                 hierarchy.getLevels().add(level3);
 
-                Level level4 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level4 = LevelFactory.eINSTANCE.createLevel();
                 level4.setName("Store Type");
                 level4.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
                 level4.setUniqueMembers(false);
                 hierarchy.getLevels().add(level4);
 
-                Level level5 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level5 = LevelFactory.eINSTANCE.createLevel();
                 level5.setName("Store Name");
                 level5.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
                 level5.setUniqueMembers(true);
@@ -8611,7 +8467,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Store2");
                 connector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -8649,28 +8505,28 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION));
                 hierarchy.setDefaultMember("[All Promotions]");
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable((Table) copier.get(CatalogSupplier.TABLE_PROMOTION));
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Promotion Name");
                 level.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION));
                 level.setUniqueMembers(true);
 
-                SQLExpressionColumn sqlColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-                sqlColumn.setType(ColumnType.VARCHAR);
+                ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+                sqlColumn.setType(SqlSimpleTypes.varcharType(255));
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("ERROR_TEST_FUNCTION_NAME(" + colName + ")");
                 sqlStatement.getDialects().add("generic");
                 sqlColumn.getSqls().add(sqlStatement);
@@ -8680,7 +8536,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
                 connector.setDimension(dimension);
@@ -8719,28 +8575,28 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_PROMOTION);
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Promotion Name");
                 level.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
                 level.setUniqueMembers(true);
 
-                SQLExpressionColumn sqlColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-                sqlColumn.setType(ColumnType.VARCHAR);
+                ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+                sqlColumn.setType(SqlSimpleTypes.varcharType(255));
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("RTRIM(" + colName + ")");
                 sqlStatement.getDialects().add("generic");
                 sqlColumn.getSqls().add(sqlStatement);
@@ -8750,7 +8606,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions");
                 connector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -8796,24 +8652,24 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 // Store2 dimension
-                StandardDimension dimension2 = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension2 = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension2.setName("Store2");
 
-                ExplicitHierarchy hierarchy2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy2.setHasAll(true);
                 hierarchy2.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
 
-                TableQuery table2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table2 = SourceFactory.eINSTANCE.createTableSource();
                 table2.setTable(CatalogSupplier.TABLE_STORE_RAGGED);
                 hierarchy2.setQuery(table2);
 
-                Level level2_1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2_1 = LevelFactory.eINSTANCE.createLevel();
                 level2_1.setName("Store Country");
                 level2_1.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE_RAGGED);
                 level2_1.setUniqueMembers(true);
                 hierarchy2.getLevels().add(level2_1);
 
-                Level level2_2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2_2 = LevelFactory.eINSTANCE.createLevel();
                 level2_2.setName("Store Id");
                 level2_2.setColumn(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
                 level2_2.setCaptionColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE_RAGGED);
@@ -8823,7 +8679,7 @@ public class SchemaModifiersEmf {
 
                 dimension2.getHierarchies().add(hierarchy2);
 
-                DimensionConnector connector2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector2.setOverrideDimensionName("Store2");
                 connector2.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector2.setDimension(dimension2);
@@ -8832,24 +8688,24 @@ public class SchemaModifiersEmf {
                 connectors.add(connector2);
 
                 // Store3 dimension
-                StandardDimension dimension3 = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension3 = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension3.setName("Store3");
 
-                ExplicitHierarchy hierarchy3 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy3 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy3.setHasAll(true);
                 hierarchy3.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                TableQuery table3 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table3 = SourceFactory.eINSTANCE.createTableSource();
                 table3.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy3.setQuery(table3);
 
-                Level level3_1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level3_1 = LevelFactory.eINSTANCE.createLevel();
                 level3_1.setName("Store Country");
                 level3_1.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 level3_1.setUniqueMembers(true);
                 hierarchy3.getLevels().add(level3_1);
 
-                Level level3_2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level3_2 = LevelFactory.eINSTANCE.createLevel();
                 level3_2.setName("Store Id");
                 level3_2.setColumn(CatalogSupplier.COLUMN_STORE_ID_STORE);
                 level3_2.setCaptionColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
@@ -8859,7 +8715,7 @@ public class SchemaModifiersEmf {
 
                 dimension3.getHierarchies().add(hierarchy3);
 
-                DimensionConnector connector3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector3.setOverrideDimensionName("Store3");
                 connector3.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector3.setDimension(dimension3);
@@ -8902,21 +8758,21 @@ public class SchemaModifiersEmf {
                     i = cube.getDimensionConnectors().indexOf(o.get());
                 }
 
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Store2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Stores");
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_STORE_RAGGED);
                 hierarchy.setQuery(table);
 
-                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(CatalogSupplier.COLUMN_REGION_ID_STORE_RAGGED);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Store Id");
                 level.setColumn(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
                 level.setNameColumn(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
@@ -8926,7 +8782,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Store2");
                 connector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -8962,18 +8818,18 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Education Level2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_CUSTOMER);
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName(
                         "Education Level but with a very long name that will be too long if converted directly into a column");
                 level.setColumn(CatalogSupplier.COLUMN_EDUCATION_CUSTOMER);
@@ -8982,7 +8838,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Education Level2");
                 connector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -9022,28 +8878,28 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Gender4");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Gender");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_CUSTOMER);
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Gender");
                 level.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                 level.setUniqueMembers(true);
                 level.setHideMemberIf(HideMemberIf.IF_BLANK_NAME);
 
-                SQLExpressionColumn nameColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-                nameColumn.setType(ColumnType.VARCHAR);
+                ExpressionColumn nameColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+                nameColumn.setType(SqlSimpleTypes.varcharType(255));
 
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("case \"gender\" when 'F' then ' ' when 'M' then 'M' ");
                 sqlStatement.getDialects().add("generic");
                 nameColumn.getSqls().add(sqlStatement);
@@ -9053,7 +8909,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Gender4");
                 connector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -9094,32 +8950,32 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales Ragged".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Store");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED));
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE_RAGGED));
                 hierarchy.setQuery(table);
 
-                Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1 = LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Store Country");
                 level1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE_RAGGED));
                 level1.setUniqueMembers(true);
                 level1.setHideMemberIf(HideMemberIf.NEVER);
                 hierarchy.getLevels().add(level1);
 
-                Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2 = LevelFactory.eINSTANCE.createLevel();
                 level2.setName("Store State");
                 level2.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STATE_STORE_RAGGED));
                 level2.setUniqueMembers(true);
                 level2.setHideMemberIf(HideMemberIf.IF_PARENTS_NAME);
                 hierarchy.getLevels().add(level2);
 
-                Level level3 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level3 = LevelFactory.eINSTANCE.createLevel();
                 level3.setName("Store City");
                 level3.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE_RAGGED));
                 level3.setUniqueMembers(false);
@@ -9128,7 +8984,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Store");
                 connector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
                 connector.setDimension(dimension);
@@ -9165,18 +9021,18 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Promotions2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION));
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable((Table) copier.get(CatalogSupplier.TABLE_PROMOTION));
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Promotion2 Name");
                 level.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION));
                 level.setUniqueMembers(true);
@@ -9184,7 +9040,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Promotions2");
                 connector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
                 connector.setDimension(dimension);
@@ -9219,11 +9075,11 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 VirtualCubeImpl cube = (VirtualCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Shipped per Ordered");
                 calculatedMember.setFormula("[Measures].[Units Shipped] / [Measures].[Unit Sales]");
 
-                CalculatedMemberProperty prop = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                CalculatedMemberProperty prop = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop.setName("FORMAT_STRING");
                 prop.setValue("#.0%");
                 calculatedMember.getCalculatedMemberProperties().add(prop);
@@ -9305,23 +9161,23 @@ public class SchemaModifiersEmf {
         private static TimeDimension dTime;
 
         public VirtualCubeTestModifier3(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
 
             // Create Time dimension
-            dTime = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            dTime = DimensionFactory.eINSTANCE.createTimeDimension();
             dTime.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setVisible(true);
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTable = SourceFactory.eINSTANCE.createTableSource();
             timeTable.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy.setQuery(timeTable);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -9329,7 +9185,7 @@ public class SchemaModifiersEmf {
             yearLevel.setType(LevelDefinition.TIME_YEARS);
             timeHierarchy.getLevels().add(yearLevel);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -9340,25 +9196,25 @@ public class SchemaModifiersEmf {
             dTime.getHierarchies().add(timeHierarchy);
 
             // Create Sales cube
-            PhysicalCube cubeSales = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeSales = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeSales.setName("Sales");
 
-            TableQuery salesTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTable = SourceFactory.eINSTANCE.createTableSource();
             salesTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
 
-            AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             aggFactCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.setAggregationFactCount(aggFactCount);
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SUM_AGG_C_SPECIAL_SALES_FACT_1997);
             aggMeasure.setName("[Measures].[Unit Sales]");
             aggName.getAggregationMeasures().add(aggMeasure);
 
-            AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggLevel.setColumn(CatalogSupplier.COLUMN_TIME_YEAR_AGG_C_SPECIAL_SALES_FACT_1997);
             aggLevel.setName("[Time].[Year]");
             aggName.getAggregationLevels().add(aggLevel);
@@ -9366,20 +9222,20 @@ public class SchemaModifiersEmf {
             salesTable.getAggregationTables().add(aggName);
             cubeSales.setQuery(salesTable);
 
-            DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDimConnector.setOverrideDimensionName("Time");
             timeDimConnector.setDimension(dTime);
             timeDimConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             cubeSales.getDimensionConnectors().add(timeDimConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measureGroup.getMeasures().add(unitSalesMeasure);
             cubeSales.getMeasureGroups().add(measureGroup);
 
-            CalculatedMember cmRecurse = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            CalculatedMember cmRecurse = LevelFactory.eINSTANCE.createCalculatedMember();
             cmRecurse.setName("recurse");
             cmRecurse.setVisible(true);
             cmRecurse.setFormula(
@@ -9389,7 +9245,7 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(cubeSales);
 
             // Create Virtual Cube
-            VirtualCube virtualCube = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube virtualCube = CubeFactory.eINSTANCE.createVirtualCube();
             virtualCube.setEnabled(true);
             virtualCube.setName("Warehouse and Sales");
             virtualCube.setVisible(true);
@@ -9401,8 +9257,8 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(virtualCube);
 
             // Add database schemas
-            for (DatabaseSchema dbSchema : catalog2.getDbschemas()) {
-                catalog.getDbschemas().add((DatabaseSchema) dbSchema);
+            for (Schema dbSchema : catalog2.getDbschemas()) {
+                catalog.getDbschemas().add((Schema) dbSchema);
             }
 
         }
@@ -9430,10 +9286,10 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                AvgMeasure avgMeasure = RolapMappingFactory.eINSTANCE.createAvgMeasure();
+                AvgMeasure avgMeasure = MeasureFactory.eINSTANCE.createAvgMeasure();
                 avgMeasure.setName("Avg Sales");
                 avgMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 avgMeasure.setFormatString("#.###");
@@ -9469,10 +9325,10 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                SumMeasure sumMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure sumMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
                 sumMeasure.setName("Unit Sales Foo Bar");
                 sumMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 sumMeasure.setFormatter(FormatterUtil.FooBarCellFormatter.class.getName());
@@ -9507,22 +9363,22 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                AvgMeasure avgMeasure = RolapMappingFactory.eINSTANCE.createAvgMeasure();
+                AvgMeasure avgMeasure = MeasureFactory.eINSTANCE.createAvgMeasure();
                 avgMeasure.setName("Avg Unit Sales");
                 avgMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 avgMeasure.setMeasureGroup(mg);
                 mg.getMeasures().add(avgMeasure);
 
-                CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+                CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
                 countMeasure.setName("Count Unit Sales");
                 countMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 countMeasure.setMeasureGroup(mg);
                 mg.getMeasures().add(countMeasure);
 
-                SumMeasure sumMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure sumMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
                 sumMeasure.setName("Sum Unit Sales");
                 sumMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 sumMeasure.setMeasureGroup(mg);
@@ -9563,7 +9419,7 @@ public class SchemaModifiersEmf {
                 cube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_CUSTOMER_COUNT));
                 cube.setDefaultMeasure((Member) copier
                         .get(CatalogSupplier.MEASURE_WAREHOUSE_SALES));
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Unit Sales by Customer");
                 calculatedMember.setFormula("Measures.[Unit Sales]/Measures.[Customer Count]");
                 cube.getCalculatedMembers().add(calculatedMember);
@@ -9595,25 +9451,24 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                SQLExpressionColumn sqlColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-                SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+                ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+                SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
                 sqlStatement.setSql(expression);
                 sqlColumn.getSqls().add(sqlStatement);
 
                 if ((type != null) && type.equals("String")) {
-                    MaxMeasure measure = RolapMappingFactory.eINSTANCE
-                            .createMaxMeasure();
+                    MaxMeasure measure = MeasureFactory.eINSTANCE.createMaxMeasure();
                     measure.setName("typeMeasure");
                     measure.setDataType(type != null ? ColumnInternalDataType.get(type.toUpperCase()) : null);
                     measure.setColumn(sqlColumn);
                     measure.setMeasureGroup(mg);
                     mg.getMeasures().add(measure);
                 } else {
-                    SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
                     measure.setName("typeMeasure");
                     measure.setDataType(type != null ? ColumnInternalDataType.get(type.toUpperCase()) : null);
                     measure.setColumn(sqlColumn);
@@ -9690,42 +9545,42 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                PhysicalColumn nuStoreId = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column nuStoreId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nuStoreId.setName("NuStore_id");
-                nuStoreId.setType(ColumnType.INTEGER);
-                nuStoreId.setTable(CatalogSupplier.TABLE_STORE);
+                nuStoreId.setType(SqlSimpleTypes.Sql99.integerType());
+                CatalogSupplier.TABLE_STORE.getFeature().add(nuStoreId);
 
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("NuStore");
 
                 // First hierarchy
-                ExplicitHierarchy hierarchy1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy1.setHasAll(true);
                 hierarchy1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                TableQuery table1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table1 = SourceFactory.eINSTANCE.createTableSource();
                 table1.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy1.setQuery(table1);
 
-                Level level1_1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_1 = LevelFactory.eINSTANCE.createLevel();
                 level1_1.setName("NuStore Country");
                 level1_1.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 level1_1.setUniqueMembers(true);
                 hierarchy1.getLevels().add(level1_1);
 
-                Level level1_2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_2 = LevelFactory.eINSTANCE.createLevel();
                 level1_2.setName("NuStore State");
                 level1_2.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
                 level1_2.setUniqueMembers(true);
                 hierarchy1.getLevels().add(level1_2);
 
-                Level level1_3 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_3 = LevelFactory.eINSTANCE.createLevel();
                 level1_3.setName("NuStore City");
                 level1_3.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
                 level1_3.setUniqueMembers(false);
                 hierarchy1.getLevels().add(level1_3);
 
-                Level level1_4 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_4 = LevelFactory.eINSTANCE.createLevel();
                 level1_4.setName("NuStore Name");
                 level1_4.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
                 level1_4.setUniqueMembers(true);
@@ -9750,23 +9605,23 @@ public class SchemaModifiersEmf {
                 dimension.getHierarchies().add(hierarchy1);
 
                 // Second hierarchy
-                ExplicitHierarchy hierarchy2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy2.setName("NuStore2");
                 hierarchy2.setAllMemberName("All NuStore2s");
                 hierarchy2.setHasAll(true);
                 hierarchy2.setPrimaryKey(nuStoreId);
 
-                TableQuery table2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table2 = SourceFactory.eINSTANCE.createTableSource();
                 table2.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy2.setQuery(table2);
 
-                Level level2_1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2_1 = LevelFactory.eINSTANCE.createLevel();
                 level2_1.setName("NuStore City");
                 level2_1.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
                 level2_1.setUniqueMembers(false);
                 hierarchy2.getLevels().add(level2_1);
 
-                Level level2_2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2_2 = LevelFactory.eINSTANCE.createLevel();
                 level2_2.setName("NuStore Name");
                 level2_2.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
                 level2_2.setUniqueMembers(true);
@@ -9790,7 +9645,7 @@ public class SchemaModifiersEmf {
                 hierarchy2.getLevels().add(level2_2);
                 dimension.getHierarchies().add(hierarchy2);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("NuStore");
                 connector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -9803,7 +9658,7 @@ public class SchemaModifiersEmf {
         }
 
         private void addMemberProperty(Level level, String name, Column column, ColumnInternalDataType dataType) {
-            MemberProperty prop = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty prop = LevelFactory.eINSTANCE.createMemberProperty();
             prop.setName(name);
             prop.setColumn(column);
             if (dataType != null) {
@@ -9850,42 +9705,42 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                PhysicalColumn nuStoreId = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column nuStoreId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nuStoreId.setName("NuStore_id");
-                nuStoreId.setType(ColumnType.INTEGER);
-                nuStoreId.setTable(CatalogSupplier.TABLE_STORE);
+                nuStoreId.setType(SqlSimpleTypes.Sql99.integerType());
+                CatalogSupplier.TABLE_STORE.getFeature().add(nuStoreId);
 
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("NuStore");
 
                 // First hierarchy
-                ExplicitHierarchy hierarchy1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy1.setHasAll(true);
                 hierarchy1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                TableQuery table1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table1 = SourceFactory.eINSTANCE.createTableSource();
                 table1.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy1.setQuery(table1);
 
-                Level level1_1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_1 = LevelFactory.eINSTANCE.createLevel();
                 level1_1.setName("NuStore Country");
                 level1_1.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
                 level1_1.setUniqueMembers(true);
                 hierarchy1.getLevels().add(level1_1);
 
-                Level level1_2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_2 = LevelFactory.eINSTANCE.createLevel();
                 level1_2.setName("NuStore State");
                 level1_2.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
                 level1_2.setUniqueMembers(true);
                 hierarchy1.getLevels().add(level1_2);
 
-                Level level1_3 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_3 = LevelFactory.eINSTANCE.createLevel();
                 level1_3.setName("NuStore City");
                 level1_3.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
                 level1_3.setUniqueMembers(false);
                 hierarchy1.getLevels().add(level1_3);
 
-                Level level1_4 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level1_4 = LevelFactory.eINSTANCE.createLevel();
                 level1_4.setName("NuStore Name");
                 level1_4.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
                 level1_4.setUniqueMembers(true);
@@ -9894,23 +9749,23 @@ public class SchemaModifiersEmf {
                 dimension.getHierarchies().add(hierarchy1);
 
                 // Second hierarchy
-                ExplicitHierarchy hierarchy2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy2.setName("NuStore2");
                 hierarchy2.setAllMemberName("All NuStore2s");
                 hierarchy2.setHasAll(true);
                 hierarchy2.setPrimaryKey(nuStoreId);
 
-                TableQuery table2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table2 = SourceFactory.eINSTANCE.createTableSource();
                 table2.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy2.setQuery(table2);
 
-                Level level2_1 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2_1 = LevelFactory.eINSTANCE.createLevel();
                 level2_1.setName("NuStore City");
                 level2_1.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
                 level2_1.setUniqueMembers(false);
                 hierarchy2.getLevels().add(level2_1);
 
-                Level level2_2 = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level2_2 = LevelFactory.eINSTANCE.createLevel();
                 level2_2.setName("NuStore Name");
                 level2_2.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
                 level2_2.setUniqueMembers(true);
@@ -9918,7 +9773,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy2);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("NuStore");
                 connector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -9971,19 +9826,19 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 // ACC dimension
-                StandardDimension accDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension accDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 accDimension.setName("ACC");
 
-                ExplicitHierarchy accHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy accHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 accHierarchy.setHasAll(true);
                 accHierarchy.setAllMemberName("All");
                 accHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                TableQuery accTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource accTable = SourceFactory.eINSTANCE.createTableSource();
                 accTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
                 accHierarchy.setQuery(accTable);
 
-                Level accLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level accLevel = LevelFactory.eINSTANCE.createLevel();
                 accLevel.setName("CODE");
                 accLevel.setColumn(CatalogSupplier.COLUMN_ACCOUNT_NUM_CUSTOMER);
                 accLevel.setUniqueMembers(true);
@@ -9992,7 +9847,7 @@ public class SchemaModifiersEmf {
 
                 accDimension.getHierarchies().add(accHierarchy);
 
-                DimensionConnector accConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector accConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 accConnector.setOverrideDimensionName("ACC");
                 accConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 accConnector.setDimension(accDimension);
@@ -10001,21 +9856,21 @@ public class SchemaModifiersEmf {
                 connectors.add(accConnector);
 
                 // Store Name sans All dimension
-                StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store Name sans All");
 
-                ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 storeHierarchy.setHasAll(false);
                 storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                TableQuery storeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource storeTable = SourceFactory.eINSTANCE.createTableSource();
                 storeTable.setTable(CatalogSupplier.TABLE_STORE);
                 storeHierarchy.setQuery(storeTable);
 
-                OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+                OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
 
-                Level storeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+                Level storeLevel = LevelFactory.eINSTANCE.createLevel();
                 storeLevel.setName("Store Name");
                 storeLevel.setColumn(CatalogSupplier.COLUMN_STORE_NUMBER_STORE);
                 storeLevel.setUniqueMembers(true);
@@ -10025,20 +9880,20 @@ public class SchemaModifiersEmf {
 
                 storeDimension.getHierarchies().add(storeHierarchy);
 
-                DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 storeConnector.setOverrideDimensionName("Store Name sans All");
                 storeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 storeConnector.setDimension(storeDimension);
 
                 connectors.add(storeConnector);
 
-                CalculatedMember cm1 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember cm1 = LevelFactory.eINSTANCE.createCalculatedMember();
                 cm1.setName("EXP2_4");
                 cm1.setFormula(
                         "IIf([ACC].CurrentMember.Level.Ordinal = [ACC].[All].Ordinal, Sum([ACC].[All].Children, [Measures].[Unit Sales]), [Measures].[Unit Sales])");
                 cube.getCalculatedMembers().add(cm1);
 
-                CalculatedMember cm2 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember cm2 = LevelFactory.eINSTANCE.createCalculatedMember();
                 cm2.setName("EXP2");
                 cm2.setFormula("IIf(0 < [Measures].[EXP2_4], [Measures].[EXP2_4], NULL)");
                 cube.getCalculatedMembers().add(cm2);
@@ -10074,19 +9929,19 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 List connectors = cube.getDimensionConnectors();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Store Type 2");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setName("Store Type 2");
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_STORE);
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Store Type");
                 level.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
                 level.setUniqueMembers(true);
@@ -10094,7 +9949,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Store Type 2");
                 connector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -10126,42 +9981,42 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        PhysicalColumn id;
-        PhysicalColumn desc;
+        Column id;
+        Column desc;
         InlineTable itt;
-        InlineTableQuery i;
+        InlineTableSource i;
 
         public Ssas2005CompatibilityTestModifier2(Catalog catalogMapping) {
 
-            id = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             id.setName("id");
-            id.setType(ColumnType.DOUBLE);
+            id.setType(SqlSimpleTypes.Sql99.doublePrecisionType());
 
-            desc = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            desc = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             desc.setName("desc");
-            desc.setType(ColumnType.VARCHAR);
+            desc.setType(SqlSimpleTypes.varcharType(255));
 
-            itt = RolapMappingFactory.eINSTANCE.createInlineTable();
-            itt.getColumns().add(id);
-            itt.getColumns().add(desc);
+            itt = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
 
-            Row row = RolapMappingFactory.eINSTANCE.createRow();
+            itt.setExtent(RelationalFactory.eINSTANCE.createRowSet());
+            itt.getFeature().add(id);
+            itt.getFeature().add(desc);
 
-            RowValue rv1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv1.setColumn(id);
-            rv1.setValue("1");
-            row.getRowValues().add(rv1);
+            Row row = RelationalFactory.eINSTANCE.createRow();
 
-            RowValue rv2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv2.setColumn(desc);
-            rv2.setValue("SameName");
-            row.getRowValues().add(rv2);
+            DataSlot rv1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv1.setFeature(id);
+            rv1.setDataValue("1");
+            row.getSlot().add(rv1);
 
-            itt.getRows().add(row);
+            DataSlot rv2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv2.setFeature(desc);
+            rv2.setDataValue("SameName");
+            row.getSlot().add(rv2);
 
-            i = RolapMappingFactory.eINSTANCE.createInlineTableQuery();
+            itt.getExtent().getOwnedElement().add(row);
+
+            i = SourceFactory.eINSTANCE.createInlineTableSource();
             i.setAlias("sn");
             i.setTable(itt);
 
@@ -10171,15 +10026,15 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("SameName");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(id);
                 hierarchy.setQuery(i);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("SameName");
                 level.setColumn(desc);
                 level.setUniqueMembers(true);
@@ -10187,7 +10042,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("SameName");
                 connector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -10223,19 +10078,19 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Customer Last Name");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Customers");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_CUSTOMER);
                 hierarchy.setQuery(table);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Last Name");
                 level.setColumn(CatalogSupplier.COLUMN_LNAME_CUSTOMER);
                 level.setUniqueMembers(true);
@@ -10243,7 +10098,7 @@ public class SchemaModifiersEmf {
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Customer Last Name");
                 connector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -10293,55 +10148,52 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
 
-            PhysicalColumn promoId = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column promoId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             promoId.setName("promo_id");
-            promoId.setType(ColumnType.NUMERIC);
+            promoId.setType(SqlSimpleTypes.numericType(18, 4));
 
-            PhysicalColumn promoName = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column promoName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             promoName.setName("promo_name");
-            promoName.setType(ColumnType.VARCHAR);
+            promoName.setType(SqlSimpleTypes.varcharType(255));
 
-            InlineTable itt = RolapMappingFactory.eINSTANCE
-                    .createInlineTable();
+            InlineTable itt = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+
+            itt.setExtent(RelationalFactory.eINSTANCE.createRowSet());
             itt.setName("alt_promotion");
-            itt.getColumns().add(promoId);
-            itt.getColumns().add(promoName);
+            itt.getFeature().add(promoId);
+            itt.getFeature().add(promoName);
 
-            Row row1 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv1_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv1_1.setColumn(promoId);
-            rv1_1.setValue("0");
-            row1.getRowValues().add(rv1_1);
-            RowValue rv1_2 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv1_2.setColumn(promoName);
-            rv1_2.setValue("Promo0");
-            row1.getRowValues().add(rv1_2);
-            itt.getRows().add(row1);
+            Row row1 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv1_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv1_1.setFeature(promoId);
+            rv1_1.setDataValue("0");
+            row1.getSlot().add(rv1_1);
+            DataSlot rv1_2 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv1_2.setFeature(promoName);
+            rv1_2.setDataValue("Promo0");
+            row1.getSlot().add(rv1_2);
+            itt.getExtent().getOwnedElement().add(row1);
 
-            Row row2 = RolapMappingFactory.eINSTANCE.createRow();
-            RowValue rv2_1 = RolapMappingFactory.eINSTANCE
-                    .createRowValue();
-            rv2_1.setColumn(promoId);
-            rv2_1.setValue("1");
-            row2.getRowValues().add(rv2_1);
-            itt.getRows().add(row2);
+            Row row2 = RelationalFactory.eINSTANCE.createRow();
+            DataSlot rv2_1 = InstanceFactory.eINSTANCE.createDataSlot();
+            rv2_1.setFeature(promoId);
+            rv2_1.setDataValue("1");
+            row2.getSlot().add(rv2_1);
+            itt.getExtent().getOwnedElement().add(row2);
 
-            InlineTableQuery itq = RolapMappingFactory.eINSTANCE
-                    .createInlineTableQuery();
+            InlineTableSource itq = SourceFactory.eINSTANCE.createInlineTableSource();
             itq.setAlias("alt_promotion");
             itq.setTable(itt);
 
-            PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales_inline");
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             cube.setQuery(tableQuery);
 
             // Time dimension connector
-            DimensionConnector timeDimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDimConnector.setOverrideDimensionName("Time");
             timeDimConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeDimConnector.setDimension((Dimension) copier
@@ -10349,15 +10201,15 @@ public class SchemaModifiersEmf {
             cube.getDimensionConnectors().add(timeDimConnector);
 
             // Alternative Promotion dimension
-            StandardDimension altPromoDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension altPromoDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             altPromoDimension.setName("Alternative Promotion");
 
-            ExplicitHierarchy altPromoHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy altPromoHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             altPromoHierarchy.setHasAll(true);
             altPromoHierarchy.setPrimaryKey(promoId);
             altPromoHierarchy.setQuery(itq);
 
-            Level altPromoLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level altPromoLevel = LevelFactory.eINSTANCE.createLevel();
             altPromoLevel.setName("Alternative Promotion");
             altPromoLevel.setColumn(promoName);
             altPromoLevel.setUniqueMembers(true);
@@ -10365,17 +10217,17 @@ public class SchemaModifiersEmf {
 
             altPromoDimension.getHierarchies().add(altPromoHierarchy);
 
-            DimensionConnector altPromoConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector altPromoConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             altPromoConnector.setOverrideDimensionName("Alternative Promotion");
             altPromoConnector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
             altPromoConnector.setDimension(altPromoDimension);
             cube.getDimensionConnectors().add(altPromoConnector);
 
             // Measure group
-            MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
             mg.setPhysicalCube(cube);
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
@@ -10383,7 +10235,7 @@ public class SchemaModifiersEmf {
             unitSalesMeasure.setMeasureGroup(mg);
             mg.getMeasures().add(unitSalesMeasure);
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("#,###.00");
@@ -10423,19 +10275,19 @@ public class SchemaModifiersEmf {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
                 for (int i = 0; i < 1000; i++) {
-                    StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                     dimension.setName(new StringBuilder("Gender").append(i).toString());
 
-                    ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setAllMemberName("All Gender");
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-                    TableQuery table = RolapMappingFactory.eINSTANCE.createTableQuery();
+                    TableSource table = SourceFactory.eINSTANCE.createTableSource();
                     table.setTable(CatalogSupplier.TABLE_CUSTOMER);
                     hierarchy.setQuery(table);
 
-                    Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                    Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Gender");
                     level.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                     level.setUniqueMembers(true);
@@ -10443,7 +10295,7 @@ public class SchemaModifiersEmf {
 
                     dimension.getHierarchies().add(hierarchy);
 
-                    DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     connector.setOverrideDimensionName(new StringBuilder("Gender").append(i).toString());
                     connector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                     connector.setDimension(dimension);
@@ -10468,30 +10320,30 @@ public class SchemaModifiersEmf {
         public PerformanceTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube(
                     (Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
             // Store Type hierarchy grant
-            AccessHierarchyGrant storeTypeGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant storeTypeGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             storeTypeGrant.setHierarchy((Hierarchy) copier
                     .get(CatalogSupplier.HIERARCHY_STORE_TYPE));
             storeTypeGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             storeTypeGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant storeTypeMember1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant storeTypeMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             storeTypeMember1.setMember("[Store Type].[All Store Types]");
             storeTypeMember1.setMemberAccess(MemberAccess.ALL);
             storeTypeGrant.getMemberGrants().add(storeTypeMember1);
 
-            AccessMemberGrant storeTypeMember2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant storeTypeMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             storeTypeMember2.setMember("[Store Type].[Supermarket]");
             storeTypeMember2.setMemberAccess(MemberAccess.NONE);
             storeTypeGrant.getMemberGrants().add(storeTypeMember2);
@@ -10499,18 +10351,18 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(storeTypeGrant);
 
             // Customers hierarchy grant
-            AccessHierarchyGrant customersGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant customersGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             customersGrant.setHierarchy((Hierarchy) copier
                     .get(CatalogSupplier.HIERARCHY_CUSTOMER));
             customersGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             customersGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant customersMember1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant customersMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             customersMember1.setMember("[Customers].[All Customers]");
             customersMember1.setMemberAccess(MemberAccess.ALL);
             customersGrant.getMemberGrants().add(customersMember1);
 
-            AccessMemberGrant customersMember2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant customersMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             customersMember2.setMember("[Customers].[USA].[CA].[Los Angeles]");
             customersMember2.setMemberAccess(MemberAccess.NONE);
             customersGrant.getMemberGrants().add(customersMember2);
@@ -10518,18 +10370,18 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(customersGrant);
 
             // Product hierarchy grant
-            AccessHierarchyGrant productGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant productGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             productGrant.setHierarchy((Hierarchy) copier
                     .get(CatalogSupplier.HIERARCHY_PRODUCT));
             productGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             productGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant productMember1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant productMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             productMember1.setMember("[Product].[All Products]");
             productMember1.setMemberAccess(MemberAccess.ALL);
             productGrant.getMemberGrants().add(productMember1);
 
-            AccessMemberGrant productMember2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant productMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             productMember2.setMember("[Product].[Drink]");
             productMember2.setMemberAccess(MemberAccess.NONE);
             productGrant.getMemberGrants().add(productMember2);
@@ -10537,18 +10389,18 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(productGrant);
 
             // Promotion Media hierarchy grant
-            AccessHierarchyGrant promoMediaGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant promoMediaGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             promoMediaGrant.setHierarchy((Hierarchy) copier
                     .get(CatalogSupplier.HIERARCHY_PROMOTION_MEDIA));
             promoMediaGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             promoMediaGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant promoMediaMember1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant promoMediaMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             promoMediaMember1.setMember("[Promotion Media].[All Media]");
             promoMediaMember1.setMemberAccess(MemberAccess.ALL);
             promoMediaGrant.getMemberGrants().add(promoMediaMember1);
 
-            AccessMemberGrant promoMediaMember2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant promoMediaMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             promoMediaMember2.setMember("[Promotion Media].[TV]");
             promoMediaMember2.setMemberAccess(MemberAccess.NONE);
             promoMediaGrant.getMemberGrants().add(promoMediaMember2);
@@ -10556,18 +10408,18 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(promoMediaGrant);
 
             // Education Level hierarchy grant
-            AccessHierarchyGrant educationGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant educationGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             educationGrant.setHierarchy((Hierarchy) copier
                     .get(CatalogSupplier.HIERARCHY_EDUCATION_LEVEL));
             educationGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             educationGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant educationMember1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant educationMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             educationMember1.setMember("[Education Level].[All Education Levels]");
             educationMember1.setMemberAccess(MemberAccess.ALL);
             educationGrant.getMemberGrants().add(educationMember1);
 
-            AccessMemberGrant educationMember2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant educationMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             educationMember2.setMember("[Education Level].[Graduate Degree]");
             educationMember2.setMemberAccess(MemberAccess.NONE);
             educationGrant.getMemberGrants().add(educationMember2);
@@ -10668,7 +10520,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("PurchaseDate");
                 connector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 connector.setDimension((Dimension) copier
@@ -10703,7 +10555,7 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("H1 1997");
                 calculatedMember.setFormula("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])");
                 calculatedMember.setHierarchy((Hierarchy) copier
@@ -10743,35 +10595,35 @@ public class SchemaModifiersEmf {
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
 
-                PhysicalColumn foo = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+                Column foo = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 foo.setName("foo");
-                foo.setType(ColumnType.NUMERIC);
+                foo.setType(SqlSimpleTypes.numericType(18, 4));
 
-                InlineTable itt = RolapMappingFactory.eINSTANCE
-                        .createInlineTable();
+                InlineTable itt = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+
+                itt.setExtent(RelationalFactory.eINSTANCE.createRowSet());
                 itt.setName("foo");
-                itt.getColumns().add(foo);
-                StandardDimension dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+                itt.getFeature().add(foo);
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Scenario");
 
-                ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setPrimaryKey(foo);
                 hierarchy.setHasAll(true);
 
-                InlineTableQuery itq = RolapMappingFactory.eINSTANCE
-                        .createInlineTableQuery();
+                InlineTableSource itq = SourceFactory.eINSTANCE.createInlineTableSource();
                 itq.setAlias("foo");
                 itq.setTable(itt);
                 hierarchy.setQuery(itq);
 
-                Level level = RolapMappingFactory.eINSTANCE.createLevel();
+                Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Scenario");
                 level.setColumn(foo);
                 hierarchy.getLevels().add(level);
 
                 dimension.getHierarchies().add(hierarchy);
 
-                DimensionConnector connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                DimensionConnector connector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 connector.setOverrideDimensionName("Scenario");
                 connector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 connector.setDimension(dimension);
@@ -10779,10 +10631,10 @@ public class SchemaModifiersEmf {
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
                 connectors.add(connector);
 
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
 
-                CountMeasure countMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+                CountMeasure countMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
                 countMeasure.setName("Atomic Cell Count");
                 countMeasure.setMeasureGroup(mg);
                 mg.getMeasures().add(countMeasure);
@@ -10832,60 +10684,52 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMemberProperty calculatedMemberProperty1 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty1.setName("SOLVE_ORDER");
                 calculatedMemberProperty1.setValue("3000");
 
-                CalculatedMember maleMinusFemaleCalculatedMember = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMember();
+                CalculatedMember maleMinusFemaleCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 maleMinusFemaleCalculatedMember.setName("maleMinusFemale");
                 maleMinusFemaleCalculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                 maleMinusFemaleCalculatedMember.setVisible(false);
                 maleMinusFemaleCalculatedMember.setFormula("gender.m - gender.f");
                 maleMinusFemaleCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty1);
 
-                CalculatedMemberProperty calculatedMemberProperty2 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty2 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty2.setName("SOLVE_ORDER");
                 calculatedMemberProperty2.setValue("3000");
 
-                CalculatedMemberProperty calculatedMemberProperty3 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty3 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty3.setName("FORMAT_STRING");
                 calculatedMemberProperty3.setValue("$#,##0.000000");
 
-                CalculatedMember profitSolveOrder3000CalculatedMember = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMember();
+                CalculatedMember profitSolveOrder3000CalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 profitSolveOrder3000CalculatedMember.setName("ProfitSolveOrder3000");
                 // .dimension("Measures")
                 profitSolveOrder3000CalculatedMember.setFormula("[Measures].[Store Sales] - [Measures].[Store Cost]");
                 profitSolveOrder3000CalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty2);
                 profitSolveOrder3000CalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty3);
 
-                CalculatedMemberProperty calculatedMemberProperty4 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty4 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty4.setName("FORMAT_STRING");
                 calculatedMemberProperty4.setValue("0.0#");
 
-                CalculatedMemberProperty calculatedMemberProperty5 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty5 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty5.setName("SOLVE_ORDER");
                 calculatedMemberProperty5.setValue("10");
 
-                CalculatedMember ratioCalculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember ratioCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 ratioCalculatedMember.setName("ratio");
                 // .dimension("Measures")
                 ratioCalculatedMember.setFormula("measures.[unit sales] / measures.[sales count]");
                 ratioCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty4);
                 ratioCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty5);
 
-                CalculatedMemberProperty calculatedMemberProperty6 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty6 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty6.setName("SOLVE_ORDER");
                 calculatedMemberProperty6.setValue("20");
 
-                CalculatedMember totalCalculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                CalculatedMember totalCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 totalCalculatedMember.setName("Total");
                 totalCalculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
                 totalCalculatedMember.setFormula("AGGREGATE({[Time].[1997].[Q1],[Time].[1997].[Q2]})");
@@ -10922,13 +10766,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                SumMeasure m = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure m = MeasureFactory.eINSTANCE.createSumMeasure();
                 m.setName("Unit Sales Foo Bar");
                 m.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 m.setFormatString("Standard");
                 m.setFormatter(FormatterUtil.FooBarCellFormatter.class.getName());
 
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
                 mg.getMeasures().add(m);
                 cube.getMeasureGroups().add(mg);
@@ -10960,13 +10804,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                SumMeasure m = RolapMappingFactory.eINSTANCE.createSumMeasure();
+                SumMeasure m = MeasureFactory.eINSTANCE.createSumMeasure();
                 m.setName("Unit Sales Foo Bar");
                 m.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 m.setFormatString("Standard");
                 m.setFormatter(FormatterUtil.FooBarCellFormatter.class.getName());
 
-                MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
                 mg.setPhysicalCube((PhysicalCube) cube);
                 mg.getMeasures().add(m);
                 cube.getMeasureGroups().add(mg);
@@ -11000,13 +10844,11 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CalculatedMemberProperty calculatedMemberProperty1 = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMemberProperty();
+                CalculatedMemberProperty calculatedMemberProperty1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 calculatedMemberProperty1.setName("CELL_FORMATTER");
                 calculatedMemberProperty1.setValue(FormatterUtil.FooBarCellFormatter.class.getName());
 
-                CalculatedMember unitSalesFooBarCalculatedMember = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMember();
+                CalculatedMember unitSalesFooBarCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 unitSalesFooBarCalculatedMember.setName("Unit Sales Foo Bar");
                 // .dimension("Measures")
                 unitSalesFooBarCalculatedMember.setFormula("[Measures].[Unit Sales]");
@@ -11043,11 +10885,10 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CellFormatter cellFormatter = RolapMappingFactory.eINSTANCE.createCellFormatter();
+                CellFormatter cellFormatter = FormatFactory.eINSTANCE.createCellFormatter();
                 cellFormatter.setRef(FormatterUtil.FooBarCellFormatter.class.getName());
 
-                CalculatedMember unitSalesFooBarCalculatedMember = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMember();
+                CalculatedMember unitSalesFooBarCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 unitSalesFooBarCalculatedMember.setName("Unit Sales Foo Bar");
                 // .dimension("Measures")
                 unitSalesFooBarCalculatedMember.setFormula("[Measures].[Unit Sales]");
@@ -11084,11 +10925,10 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                CellFormatter cellFormatter = RolapMappingFactory.eINSTANCE.createCellFormatter();
+                CellFormatter cellFormatter = FormatFactory.eINSTANCE.createCellFormatter();
                 cellFormatter.setRef("return \"foo\" + value + \"bar\";\n");
 
-                CalculatedMember unitSalesFooBarCalculatedMember = RolapMappingFactory.eINSTANCE
-                        .createCalculatedMember();
+                CalculatedMember unitSalesFooBarCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 unitSalesFooBarCalculatedMember.setName("Unit Sales Foo Bar");
                 // .dimension("Measures")
                 unitSalesFooBarCalculatedMember.setFormula("[Measures].[Unit Sales]");
@@ -11355,12 +11195,12 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                Level mediaTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
-                ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-                StandardDimension promotionMedia2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector promotionMedia2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
-                TableQuery promotionQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                MemberFormatter memberFormatter = RolapMappingFactory.eINSTANCE.createMemberFormatter();
+                Level mediaTypeLevel = LevelFactory.eINSTANCE.createLevel();
+                ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                StandardDimension promotionMedia2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector promotionMedia2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                TableSource promotionQuery = SourceFactory.eINSTANCE.createTableSource();
+                MemberFormatter memberFormatter = FormatFactory.eINSTANCE.createMemberFormatter();
 
                 // Member Formatter
                 memberFormatter.setRef(FormatterUtil.FooBarMemberFormatter.class.getName());
@@ -11426,12 +11266,12 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                Level mediaTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
-                ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-                StandardDimension promotionMedia2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector promotionMedia2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
-                TableQuery promotionQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-                MemberFormatter memberFormatter = RolapMappingFactory.eINSTANCE.createMemberFormatter();
+                Level mediaTypeLevel = LevelFactory.eINSTANCE.createLevel();
+                ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                StandardDimension promotionMedia2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector promotionMedia2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                TableSource promotionQuery = SourceFactory.eINSTANCE.createTableSource();
+                MemberFormatter memberFormatter = FormatFactory.eINSTANCE.createMemberFormatter();
 
                 // Member Formatter
                 memberFormatter.setRef("return \"foo\" + member.getName() + \"bar\"\n");
@@ -11495,14 +11335,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MemberProperty mediumProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberPropertyFormatter propertyFormatter = RolapMappingFactory.eINSTANCE
-                        .createMemberPropertyFormatter();
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-                ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-                StandardDimension promotions2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector promotions2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
-                TableQuery promotionQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                MemberProperty mediumProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberPropertyFormatter propertyFormatter = FormatFactory.eINSTANCE.createMemberPropertyFormatter();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
+                ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                StandardDimension promotions2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector promotions2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                TableSource promotionQuery = SourceFactory.eINSTANCE.createTableSource();
 
                 // Property Formatter
                 propertyFormatter.setRef(FormatterUtil.FooBarPropertyFormatter.class.getName());
@@ -11574,14 +11413,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MemberProperty mediumProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberPropertyFormatter propertyFormatter = RolapMappingFactory.eINSTANCE
-                        .createMemberPropertyFormatter();
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-                ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-                StandardDimension promotions2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector promotions2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
-                TableQuery promotionQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                MemberProperty mediumProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberPropertyFormatter propertyFormatter = FormatFactory.eINSTANCE.createMemberPropertyFormatter();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
+                ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                StandardDimension promotions2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector promotions2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                TableSource promotionQuery = SourceFactory.eINSTANCE.createTableSource();
 
                 // Property Formatter
                 propertyFormatter.setRef(FormatterUtil.FooBarPropertyFormatter.class.getName());
@@ -11657,14 +11495,13 @@ public class SchemaModifiersEmf {
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
-                MemberProperty mediumProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
-                MemberPropertyFormatter propertyFormatter = RolapMappingFactory.eINSTANCE
-                        .createMemberPropertyFormatter();
-                Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-                ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-                StandardDimension promotions2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-                DimensionConnector promotions2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
-                TableQuery promotionQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                MemberProperty mediumProperty = LevelFactory.eINSTANCE.createMemberProperty();
+                MemberPropertyFormatter propertyFormatter = FormatFactory.eINSTANCE.createMemberPropertyFormatter();
+                Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
+                ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                StandardDimension promotions2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                DimensionConnector promotions2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                TableSource promotionQuery = SourceFactory.eINSTANCE.createTableSource();
 
                 // Property Formatter
                 propertyFormatter.setRef(
@@ -11991,57 +11828,46 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
-        private static final AggregationColumnName factCount = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreCustomer = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreStore = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignorePromotion = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationForeignKey aggForeignKey = RolapMappingFactory.eINSTANCE
-                .createAggregationForeignKey();
-        private static final AggregationMeasure aggMeasureStoreCost = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationMeasure aggMeasureStoreSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationMeasure aggMeasureUnitSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
+        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreCustomer = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreStore = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignorePromotion = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationForeignKey aggForeignKey = AggregationFactory.eINSTANCE.createAggregationForeignKey();
+        private static final AggregationMeasure aggMeasureStoreCost = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationMeasure aggMeasureStoreSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationMeasure aggMeasureUnitSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery productTable = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery productClassTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource productClassTable = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final JoinedQueryElement leftJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-        private static final JoinedQueryElement rightJoin = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
-        private static final JoinQuery joinQuery = RolapMappingFactory.eINSTANCE.createJoinQuery();
+        private static final JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
+        private static final JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
 
-        private static final Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final StandardDimension productDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final DimensionConnector productConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final Catalog amcCatalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        private static final PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final Catalog amcCatalog = CatalogFactory.eINSTANCE.createCatalog();
 
         static {
             // Aggregation Excludes
@@ -12174,22 +12000,19 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery customerQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource customerQuery = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final StandardDimension genderDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final DimensionConnector genderConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level genderLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final DimensionConnector genderConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final Catalog foodMartCatalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        private static final PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final Catalog foodMartCatalog = CatalogFactory.eINSTANCE.createCatalog();
 
         static {
             // Unit Sales Measure
@@ -12281,38 +12104,33 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final CountMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final CountMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
-        private static final AggregationColumnName factCount = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreQuarter = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreMonthOfYear = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationMeasure aggMeasureCustomerCount = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationLevel aggLevelYear = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreQuarter = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreMonthOfYear = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationMeasure aggMeasureCustomerCount = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationLevel aggLevelYear = AggregationFactory.eINSTANCE.createAggregationLevel();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery timeByDayTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource timeByDayTable = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
-        private static final DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level yearLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
+        private static final DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final Catalog foodMartCatalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        private static final PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final Catalog foodMartCatalog = CatalogFactory.eINSTANCE.createCatalog();
 
         static {
             // Aggregation Excludes
@@ -12563,50 +12381,50 @@ public class SchemaModifiersEmf {
 
 
             // Create aggregation excludes
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_special_sales_fact_1997");
 
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_lc_100_sales_fact_1997");
 
-            AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude3.setName("agg_lc_10_sales_fact_1997");
 
-            AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude4.setName("agg_pc_10_sales_fact_1997");
 
             // Create aggregation fact count
-            AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             aggFactCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_PL_01_SALES_FACT_1997);
 
             // Create aggregation foreign keys
-            AggregationForeignKey aggFk1 = RolapMappingFactory.eINSTANCE.createAggregationForeignKey();
+            AggregationForeignKey aggFk1 = AggregationFactory.eINSTANCE.createAggregationForeignKey();
             aggFk1.setFactColumn(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             aggFk1.setAggregationColumn(CatalogSupplier.COLUMN_PRODUCT_ID_AGG_PL_01_SALES_FACT_1997);
 
-            AggregationForeignKey aggFk2 = RolapMappingFactory.eINSTANCE.createAggregationForeignKey();
+            AggregationForeignKey aggFk2 = AggregationFactory.eINSTANCE.createAggregationForeignKey();
             aggFk2.setFactColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             aggFk2.setAggregationColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_AGG_PL_01_SALES_FACT_1997);
 
-            AggregationForeignKey aggFk3 = RolapMappingFactory.eINSTANCE.createAggregationForeignKey();
+            AggregationForeignKey aggFk3 = AggregationFactory.eINSTANCE.createAggregationForeignKey();
             aggFk3.setFactColumn(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             aggFk3.setAggregationColumn(CatalogSupplier.COLUMN_TIME_ID_AGG_PL_01_SALES_FACT_1997);
 
             // Create aggregation measures
-            AggregationMeasure aggMeasure1 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure1 = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure1.setName("[Measures].[Unit Sales]");
             aggMeasure1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SUM_AGG_PL_01_SALES_FACT_1997);
 
-            AggregationMeasure aggMeasure2 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure2 = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure2.setName("[Measures].[Store Cost]");
             aggMeasure2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SUM_AGG_PL_01_SALES_FACT_1997);
 
-            AggregationMeasure aggMeasure3 = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure3 = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure3.setName("[Measures].[Store Sales]");
             aggMeasure3.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SUM_AGG_PL_01_SALES_FACT_1997);
 
             // Create aggregation name
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_PL_01_SALES_FACT);
             aggName.setApproxRowCount("86000");
             aggName.setAggregationFactCount(aggFactCount);
@@ -12618,7 +12436,7 @@ public class SchemaModifiersEmf {
             aggName.getAggregationMeasures().add(aggMeasure3);
 
             // Create table query with aggregations
-            TableQuery salesFactTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTable = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesFactTable.getAggregationExcludes().add(aggExclude1);
             salesFactTable.getAggregationExcludes().add(aggExclude2);
@@ -12627,34 +12445,34 @@ public class SchemaModifiersEmf {
             salesFactTable.getAggregationTables().add(aggName);
 
             // Create Time dimension with Weekly hierarchy
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            Level weekLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level weekLevel = LevelFactory.eINSTANCE.createLevel();
             weekLevel.setName("Week");
             weekLevel.setColumn(CatalogSupplier.COLUMN_WEEK_OF_YEAR_TIME_BY_DAY);
             weekLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             weekLevel.setUniqueMembers(false);
             weekLevel.setType(LevelDefinition.TIME_WEEKS);
 
-            Level dayLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level dayLevel = LevelFactory.eINSTANCE.createLevel();
             dayLevel.setName("Day");
             dayLevel.setColumn(CatalogSupplier.COLUMN_DAY_OF_MONTH_TIME_BY_DAY);
             dayLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             dayLevel.setUniqueMembers(false);
             dayLevel.setType(LevelDefinition.TIME_DAYS);
 
-            TableQuery timeByDayTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeByDayTable = SourceFactory.eINSTANCE.createTableSource();
             timeByDayTable.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
 
-            ExplicitHierarchy weeklyHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy weeklyHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             weeklyHierarchy.setName("Weekly");
             weeklyHierarchy.setHasAll(true);
             weeklyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
@@ -12666,58 +12484,58 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(weeklyHierarchy);
 
             // Create Product dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
 
-            Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevel.setName("Product Family");
             productFamilyLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
             productFamilyLevel.setUniqueMembers(true);
 
-            Level productDepartmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productDepartmentLevel = LevelFactory.eINSTANCE.createLevel();
             productDepartmentLevel.setName("Product Department");
             productDepartmentLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
             productDepartmentLevel.setUniqueMembers(false);
 
-            Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productCategoryLevel.setName("Product Category");
             productCategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
             productCategoryLevel.setUniqueMembers(false);
 
-            Level productSubcategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productSubcategoryLevel.setName("Product Subcategory");
             productSubcategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
             productSubcategoryLevel.setUniqueMembers(false);
 
-            Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
             brandNameLevel.setName("Brand Name");
             brandNameLevel.setColumn(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
             brandNameLevel.setUniqueMembers(false);
 
-            Level productNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
             productNameLevel.setName("Product Name");
             productNameLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
             productNameLevel.setUniqueMembers(true);
 
-            TableQuery productTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
 
-            TableQuery productClassTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTable = SourceFactory.eINSTANCE.createTableSource();
             productClassTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
-            JoinedQueryElement productLeft = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement productLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             productLeft.setQuery(productTable);
 
-            JoinedQueryElement productRight = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement productRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             productRight.setQuery(productClassTable);
 
-            JoinQuery productJoin = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
             productJoin.setLeft(productLeft);
             productJoin.setRight(productRight);
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             productHierarchy.setQuery(productJoin);
@@ -12731,81 +12549,81 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Customers dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             countryLevel.setUniqueMembers(true);
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
             stateProvinceLevel.setUniqueMembers(true);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
             cityLevel.setUniqueMembers(false);
 
-            Level nameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level nameLevel = LevelFactory.eINSTANCE.createLevel();
             nameLevel.setName("Name");
             nameLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             nameLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             nameLevel.setUniqueMembers(true);
 
-            SQLExpressionColumn nameExpression = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn nameExpression = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
 
-            SqlStatement sqlOracle = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlOracle = SourceFactory.eINSTANCE.createSqlStatement();
             sqlOracle.getDialects().add("oracle");
             sqlOracle.setSql("\"fname\" || ' ' || \"lname\"\n");
 
-            SqlStatement sqlHive = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlHive = SourceFactory.eINSTANCE.createSqlStatement();
             sqlHive.getDialects().add("hive");
             sqlHive.setSql("`customer`.`fullname`\n");
 
-            SqlStatement sqlHsqldb = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlHsqldb = SourceFactory.eINSTANCE.createSqlStatement();
             sqlHsqldb.getDialects().add("hsqldb");
             sqlHsqldb.setSql("\"fname\" || ' ' || \"lname\"\n");
 
-            SqlStatement sqlAccess = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlAccess = SourceFactory.eINSTANCE.createSqlStatement();
             sqlAccess.getDialects().add("access");
             sqlAccess.setSql("fname + ' ' + lname\n");
 
-            SqlStatement sqlPostgres = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlPostgres = SourceFactory.eINSTANCE.createSqlStatement();
             sqlPostgres.getDialects().add("postgres");
             sqlPostgres.setSql("\"fname\" || ' ' || \"lname\"\n");
 
-            SqlStatement sqlMysql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlMysql = SourceFactory.eINSTANCE.createSqlStatement();
             sqlMysql.getDialects().add("mysql");
             sqlMysql.setSql("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n");
 
-            SqlStatement sqlMssql = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlMssql = SourceFactory.eINSTANCE.createSqlStatement();
             sqlMssql.getDialects().add("mssql");
             sqlMssql.setSql("fname + ' ' + lname\n");
 
-            SqlStatement sqlDerby = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlDerby = SourceFactory.eINSTANCE.createSqlStatement();
             sqlDerby.getDialects().add("derby");
             sqlDerby.setSql("\"customer\".\"fullname\"\n");
 
-            SqlStatement sqlDb2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlDb2 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlDb2.getDialects().add("db2");
             sqlDb2.setSql("CONCAT(CONCAT(\"customer\".\"fname\", ' '), \"customer\".\"lname\")\n");
 
-            SqlStatement sqlLuciddb = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlLuciddb = SourceFactory.eINSTANCE.createSqlStatement();
             sqlLuciddb.getDialects().add("luciddb");
             sqlLuciddb.setSql("\"fname\" || ' ' || \"lname\"\n");
 
-            SqlStatement sqlNeoview = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlNeoview = SourceFactory.eINSTANCE.createSqlStatement();
             sqlNeoview.getDialects().add("neoview");
             sqlNeoview.setSql("\"customer\".\"fullname\"\n");
 
-            SqlStatement sqlTeradata = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlTeradata = SourceFactory.eINSTANCE.createSqlStatement();
             sqlTeradata.getDialects().add("teradata");
             sqlTeradata.setSql("\"fname\" || ' ' || \"lname\"\n");
 
-            SqlStatement sqlGeneric = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlGeneric = SourceFactory.eINSTANCE.createSqlStatement();
             sqlGeneric.getDialects().add("generic");
             sqlGeneric.setSql("fullname");
 
@@ -12822,23 +12640,23 @@ public class SchemaModifiersEmf {
             nameExpression.getSqls().add(sqlNeoview);
             nameExpression.getSqls().add(sqlTeradata);
             nameExpression.getSqls().add(sqlGeneric);
-            nameExpression.setType(ColumnType.VARCHAR);
+            nameExpression.setType(SqlSimpleTypes.varcharType(255));
 
             nameLevel.setNameColumn(nameExpression);
 
-            MemberProperty genderProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty genderProperty = LevelFactory.eINSTANCE.createMemberProperty();
             genderProperty.setName("Gender");
             genderProperty.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
 
-            MemberProperty maritalStatusProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty maritalStatusProperty = LevelFactory.eINSTANCE.createMemberProperty();
             maritalStatusProperty.setName("Marital Status");
             maritalStatusProperty.setColumn(CatalogSupplier.COLUMN_MARITAL_STATUS_CUSTOMER);
 
-            MemberProperty educationProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty educationProperty = LevelFactory.eINSTANCE.createMemberProperty();
             educationProperty.setName("Education");
             educationProperty.setColumn(CatalogSupplier.COLUMN_EDUCATION_CUSTOMER);
 
-            MemberProperty yearlyIncomeProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty yearlyIncomeProperty = LevelFactory.eINSTANCE.createMemberProperty();
             yearlyIncomeProperty.setName("Yearly Income");
             yearlyIncomeProperty.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
 
@@ -12847,10 +12665,10 @@ public class SchemaModifiersEmf {
             nameLevel.getMemberProperties().add(educationProperty);
             nameLevel.getMemberProperties().add(yearlyIncomeProperty);
 
-            TableQuery customerTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customerTable = SourceFactory.eINSTANCE.createTableSource();
             customerTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -12863,34 +12681,34 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Create measures
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
-            SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("#,###.00");
 
-            CountMeasure salesCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            CountMeasure salesCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
             salesCountMeasure.setName("Sales Count");
             salesCountMeasure.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             salesCountMeasure.setFormatString("#,###");
 
-            CountMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            CountMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
             customerCountMeasure.setName("Customer Count");
             customerCountMeasure.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             customerCountMeasure.setDistinct(true);
             customerCountMeasure.setFormatString("#,###");
 
             // Create measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             measureGroup.getMeasures().add(storeCostMeasure);
             measureGroup.getMeasures().add(storeSalesMeasure);
@@ -12898,23 +12716,23 @@ public class SchemaModifiersEmf {
             measureGroup.getMeasures().add(customerCountMeasure);
 
             // Create dimension connectors
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product");
             productConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             productConnector.setDimension(productDimension);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers");
             customersConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             customersConnector.setDimension(customersDimension);
 
             // Create cube
-            PhysicalCube salesFooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesFooCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesFooCube.setName("Sales_Foo");
             salesFooCube.setDefaultMeasure(unitSalesMeasure);
             salesFooCube.setQuery(salesFactTable);
@@ -12924,9 +12742,9 @@ public class SchemaModifiersEmf {
             salesFooCube.getMeasureGroups().add(measureGroup);
 
             // Create catalog
-            this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             this.catalog.setName("FooSchema");
-            this.catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) ((CatalogImpl) catalogMapping).getDbschemas());
+            this.catalog.getDbschemas().addAll((Collection<? extends Schema>) ((CatalogImpl) catalogMapping).getDbschemas());
             this.catalog.getCubes().add(salesFooCube);
         }
 
@@ -13004,69 +12822,57 @@ public class SchemaModifiersEmf {
          * "    <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
          * + "      formatString=\"#,###.00\"/>\n" + "  </Cube>\n" + "</Schema>\n";
          */
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude9 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude10 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude10 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
-        private static final AggregationColumnName factCount = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreProductId = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreCustomerId = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignorePromotionId = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreTheYear = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreQuarter = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationForeignKey aggForeignKey = RolapMappingFactory.eINSTANCE
-                .createAggregationForeignKey();
-        private static final AggregationMeasure aggMeasureUnitSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationMeasure aggMeasureStoreCost = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationMeasure aggMeasureStoreSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationLevel aggLevelMonth = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreProductId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreCustomerId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignorePromotionId = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreTheYear = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreQuarter = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationForeignKey aggForeignKey = AggregationFactory.eINSTANCE.createAggregationForeignKey();
+        private static final AggregationMeasure aggMeasureUnitSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationMeasure aggMeasureStoreCost = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationMeasure aggMeasureStoreSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationLevel aggLevelMonth = AggregationFactory.eINSTANCE.createAggregationLevel();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery storeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery timeByDayTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource storeTable = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource timeByDayTable = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level dayLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
-        private static final DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level yearLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level monthLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level dayLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
+        private static final DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube sales1Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final Catalog customCatalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        private static final PhysicalCube sales1Cube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final Catalog customCatalog = CatalogFactory.eINSTANCE.createCatalog();
 
         static {
             // Aggregation Excludes
@@ -13259,37 +13065,32 @@ public class SchemaModifiersEmf {
          *
          */
 
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
-        private static final AggregationColumnName factCount = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreQuarter = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreMonthOfYear = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationMeasure aggMeasureUnitSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationLevel aggLevelYear = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreQuarter = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreMonthOfYear = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationMeasure aggMeasureUnitSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationLevel aggLevelYear = AggregationFactory.eINSTANCE.createAggregationLevel();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery timeByDayTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource timeByDayTable = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
-        private static final DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level yearLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
+        private static final DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final Catalog foodMartCatalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        private static final PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final Catalog foodMartCatalog = CatalogFactory.eINSTANCE.createCatalog();
 
         static {
             // Aggregation Excludes
@@ -13417,52 +13218,41 @@ public class SchemaModifiersEmf {
          * "      formatString=\"Standard\"/>\n" + "</Cube></Schema>\n";
          */
 
-        private static final SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude3 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude4 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude5 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude6 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude7 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
-        private static final AggregationExclude aggExclude8 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude5 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude6 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
+        private static final AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
-        private static final AggregationColumnName factCount = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreCustomer = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignoreStore = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationColumnName ignorePromotion = RolapMappingFactory.eINSTANCE
-                .createAggregationColumnName();
-        private static final AggregationForeignKey aggForeignKey = RolapMappingFactory.eINSTANCE
-                .createAggregationForeignKey();
-        private static final AggregationMeasure aggMeasureStoreCost = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationMeasure aggMeasureStoreSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
-        private static final AggregationMeasure aggMeasureUnitSales = RolapMappingFactory.eINSTANCE
-                .createAggregationMeasure();
+        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreCustomer = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignoreStore = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationColumnName ignorePromotion = AggregationFactory.eINSTANCE.createAggregationColumnName();
+        private static final AggregationForeignKey aggForeignKey = AggregationFactory.eINSTANCE.createAggregationForeignKey();
+        private static final AggregationMeasure aggMeasureStoreCost = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationMeasure aggMeasureStoreSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
+        private static final AggregationMeasure aggMeasureUnitSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
 
-        private static final TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery promotionTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final Level mediaTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final StandardDimension promotionDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final DimensionConnector promotionConnector = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
+        private static final Level mediaTypeLevel = LevelFactory.eINSTANCE.createLevel();
+        private static final ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final StandardDimension promotionDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final DimensionConnector promotionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
-        private static final PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final Catalog amcCatalog = RolapMappingFactory.eINSTANCE.createCatalog();
+        private static final PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final Catalog amcCatalog = CatalogFactory.eINSTANCE.createCatalog();
 
         static {
             // Aggregation Excludes
@@ -13679,84 +13469,84 @@ public class SchemaModifiersEmf {
 
         public TestAggregationManagerModifier9(Catalog catalog2) {
 
-            PhysicalColumn foo = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-            PhysicalColumn bar = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column foo = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+            Column bar = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
 
-            TableQuery t;
+            TableSource t;
             StandardDimension storeDimension;
             TimeDimension timeDimension;
 
             foo.setName("foo");
-            foo.setType(ColumnType.INTEGER);
+            foo.setType(SqlSimpleTypes.Sql99.integerType());
             bar.setName("bar");
-            bar.setType(ColumnType.INTEGER);
+            bar.setType(SqlSimpleTypes.Sql99.integerType());
 
             // Initialize table with aggregations
-            t = RolapMappingFactory.eINSTANCE.createTableQuery();
+            t = SourceFactory.eINSTANCE.createTableSource();
             t.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
 
-            AggregationColumnName factCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.setAggregationFactCount(factCount);
 
             // Ignore columns
-            AggregationColumnName ignoreColFoo = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName ignoreColFoo = AggregationFactory.eINSTANCE.createAggregationColumnName();
             ignoreColFoo.setColumn(foo);
             aggName.getAggregationIgnoreColumns().add(ignoreColFoo);
 
-            AggregationColumnName ignoreColBar = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName ignoreColBar = AggregationFactory.eINSTANCE.createAggregationColumnName();
             ignoreColBar.setColumn(bar);
             aggName.getAggregationIgnoreColumns().add(ignoreColBar);
 
-            AggregationColumnName ignoreColProduct = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName ignoreColProduct = AggregationFactory.eINSTANCE.createAggregationColumnName();
             ignoreColProduct.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationIgnoreColumns().add(ignoreColProduct);
 
-            AggregationColumnName ignoreColCustomer = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName ignoreColCustomer = AggregationFactory.eINSTANCE.createAggregationColumnName();
             ignoreColCustomer.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationIgnoreColumns().add(ignoreColCustomer);
 
-            AggregationColumnName ignoreColPromotion = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName ignoreColPromotion = AggregationFactory.eINSTANCE.createAggregationColumnName();
             ignoreColPromotion.setColumn(CatalogSupplier.COLUMN_PROMOTION_ID_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationIgnoreColumns().add(ignoreColPromotion);
 
             // Foreign key
-            AggregationForeignKey aggFk = RolapMappingFactory.eINSTANCE.createAggregationForeignKey();
+            AggregationForeignKey aggFk = AggregationFactory.eINSTANCE.createAggregationForeignKey();
             aggFk.setFactColumn(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             aggFk.setAggregationColumn(CatalogSupplier.COLUMN_STORE_ID_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationForeignKeys().add(aggFk);
 
             // Measures
-            AggregationMeasure aggMeasureUnitSales = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasureUnitSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasureUnitSales.setName("[Measures].[Unit Sales]");
             aggMeasureUnitSales.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SUM_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationMeasures().add(aggMeasureUnitSales);
 
-            AggregationMeasure aggMeasureStoreCost = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasureStoreCost = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasureStoreCost.setName("[Measures].[Store Cost]");
             aggMeasureStoreCost.setColumn(CatalogSupplier.COLUMN_STORE_COST_SUM_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationMeasures().add(aggMeasureStoreCost);
 
-            AggregationMeasure aggMeasureStoreSales = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasureStoreSales = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasureStoreSales.setName("[Measures].[Store Sales]");
             aggMeasureStoreSales.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SUM_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationMeasures().add(aggMeasureStoreSales);
 
             // Levels
-            AggregationLevel aggLevelYear = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggLevelYear = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggLevelYear.setName("[Time].[Time].[Year]");
             aggLevelYear.setColumn(CatalogSupplier.COLUMN_TIME_YEAR_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggLevelYear);
 
-            AggregationLevel aggLevelQuarter = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggLevelQuarter = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggLevelQuarter.setName("[Time].[Time].[Quarter]");
             aggLevelQuarter.setColumn(CatalogSupplier.COLUMN_TIME_QUARTER_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggLevelQuarter);
 
-            AggregationLevel aggLevelMonth = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggLevelMonth = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggLevelMonth.setName("[Time].[Time].[Month]");
             aggLevelMonth.setColumn(CatalogSupplier.COLUMN_TIME_MONTH_AGG_C_SPECIAL_SALES_FACT_1997);
             aggName.getAggregationLevels().add(aggLevelMonth);
@@ -13764,36 +13554,36 @@ public class SchemaModifiersEmf {
             t.getAggregationTables().add(aggName);
 
             // Store dimension
-            storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeDimension.setName("Store");
 
-            ExplicitHierarchy storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-            TableQuery storeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTable = SourceFactory.eINSTANCE.createTableSource();
             storeTable.setTable(CatalogSupplier.TABLE_STORE);
             storeHierarchy.setQuery(storeTable);
 
-            Level levelStoreCountry = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStoreCountry = LevelFactory.eINSTANCE.createLevel();
             levelStoreCountry.setName("Store Country");
             levelStoreCountry.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             levelStoreCountry.setUniqueMembers(true);
             storeHierarchy.getLevels().add(levelStoreCountry);
 
-            Level levelStoreState = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStoreState = LevelFactory.eINSTANCE.createLevel();
             levelStoreState.setName("Store State");
             levelStoreState.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
             levelStoreState.setUniqueMembers(true);
             storeHierarchy.getLevels().add(levelStoreState);
 
-            Level levelStoreCity = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStoreCity = LevelFactory.eINSTANCE.createLevel();
             levelStoreCity.setName("Store City");
             levelStoreCity.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
             levelStoreCity.setUniqueMembers(false);
             storeHierarchy.getLevels().add(levelStoreCity);
 
-            Level levelStoreName = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStoreName = LevelFactory.eINSTANCE.createLevel();
             levelStoreName.setName("Store Name");
             levelStoreName.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
             levelStoreName.setUniqueMembers(true);
@@ -13802,19 +13592,19 @@ public class SchemaModifiersEmf {
             storeDimension.getHierarchies().add(storeHierarchy);
 
             // Time dimension
-            timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
             // First hierarchy (default)
-            ExplicitHierarchy timeHierarchy1 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy1.setHasAll(false);
             timeHierarchy1.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTable1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTable1 = SourceFactory.eINSTANCE.createTableSource();
             timeTable1.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy1.setQuery(timeTable1);
 
-            Level levelYear1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelYear1 = LevelFactory.eINSTANCE.createLevel();
             levelYear1.setName("Year");
             levelYear1.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             levelYear1.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -13822,14 +13612,14 @@ public class SchemaModifiersEmf {
             levelYear1.setType(LevelDefinition.TIME_YEARS);
             timeHierarchy1.getLevels().add(levelYear1);
 
-            Level levelQuarter1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelQuarter1 = LevelFactory.eINSTANCE.createLevel();
             levelQuarter1.setName("Quarter");
             levelQuarter1.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             levelQuarter1.setUniqueMembers(false);
             levelQuarter1.setType(LevelDefinition.TIME_QUARTERS);
             timeHierarchy1.getLevels().add(levelQuarter1);
 
-            Level levelMonth1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelMonth1 = LevelFactory.eINSTANCE.createLevel();
             levelMonth1.setName("Month");
             levelMonth1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             levelMonth1.setUniqueMembers(false);
@@ -13840,16 +13630,16 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy1);
 
             // Second hierarchy (Weekly)
-            ExplicitHierarchy timeHierarchy2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy2.setHasAll(true);
             timeHierarchy2.setName("Weekly");
             timeHierarchy2.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTable2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTable2 = SourceFactory.eINSTANCE.createTableSource();
             timeTable2.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             timeHierarchy2.setQuery(timeTable2);
 
-            Level levelYear2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelYear2 = LevelFactory.eINSTANCE.createLevel();
             levelYear2.setName("Year");
             levelYear2.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             levelYear2.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -13857,7 +13647,7 @@ public class SchemaModifiersEmf {
             levelYear2.setType(LevelDefinition.TIME_YEARS);
             timeHierarchy2.getLevels().add(levelYear2);
 
-            Level levelWeek = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelWeek = LevelFactory.eINSTANCE.createLevel();
             levelWeek.setName("Week");
             levelWeek.setColumn(CatalogSupplier.COLUMN_WEEK_OF_YEAR_TIME_BY_DAY);
             levelWeek.setUniqueMembers(false);
@@ -13865,7 +13655,7 @@ public class SchemaModifiersEmf {
             levelWeek.setType(LevelDefinition.TIME_WEEKS);
             timeHierarchy2.getLevels().add(levelWeek);
 
-            Level levelDay = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelDay = LevelFactory.eINSTANCE.createLevel();
             levelDay.setName("Day");
             levelDay.setColumn(CatalogSupplier.COLUMN_DAY_OF_MONTH_TIME_BY_DAY);
             levelDay.setUniqueMembers(false);
@@ -13875,21 +13665,21 @@ public class SchemaModifiersEmf {
 
             timeDimension.getHierarchies().add(timeHierarchy2);
 
-            MeasureGroup mgSales1 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mgSales1 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure mUnitSalesSales1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mUnitSalesSales1 = MeasureFactory.eINSTANCE.createSumMeasure();
             mUnitSalesSales1.setName("Unit Sales");
             mUnitSalesSales1.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             mUnitSalesSales1.setFormatString("Standard");
             mUnitSalesSales1.setMeasureGroup(mgSales1);
 
-            SumMeasure mStoreCostSales1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mStoreCostSales1 = MeasureFactory.eINSTANCE.createSumMeasure();
             mStoreCostSales1.setName("Store Cost");
             mStoreCostSales1.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             mStoreCostSales1.setFormatString("#,###.00");
             mStoreCostSales1.setMeasureGroup(mgSales1);
 
-            SumMeasure mStoreSalesSales1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mStoreSalesSales1 = MeasureFactory.eINSTANCE.createSumMeasure();
             mStoreSalesSales1.setName("Store Sales");
             mStoreSalesSales1.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             mStoreSalesSales1.setFormatString("#,###.00");
@@ -13899,21 +13689,21 @@ public class SchemaModifiersEmf {
             mgSales1.getMeasures().add(mStoreCostSales1);
             mgSales1.getMeasures().add(mStoreSalesSales1);
 
-            MeasureGroup mgSales2 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mgSales2 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure mUnitSalesSales2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mUnitSalesSales2 = MeasureFactory.eINSTANCE.createSumMeasure();
             mUnitSalesSales2.setName("Unit Sales");
             mUnitSalesSales2.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             mUnitSalesSales2.setFormatString("Standard");
             mUnitSalesSales2.setMeasureGroup(mgSales2);
 
-            SumMeasure mStoreCostSales2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mStoreCostSales2 = MeasureFactory.eINSTANCE.createSumMeasure();
             mStoreCostSales2.setName("Store Cost");
             mStoreCostSales2.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             mStoreCostSales2.setFormatString("#,###.00");
             mStoreCostSales2.setMeasureGroup(mgSales2);
 
-            SumMeasure mStoreSalesSales2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mStoreSalesSales2 = MeasureFactory.eINSTANCE.createSumMeasure();
             mStoreSalesSales2.setName("Store Sales");
             mStoreSalesSales2.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             mStoreSalesSales2.setFormatString("#,###.00");
@@ -13923,18 +13713,18 @@ public class SchemaModifiersEmf {
             mgSales2.getMeasures().add(mStoreCostSales2);
             mgSales2.getMeasures().add(mStoreSalesSales2);
 
-            PhysicalCube cubeSales1 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeSales1 = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeSales1.setName("Sales1");
             cubeSales1.setDefaultMeasure(mUnitSalesSales1);
             cubeSales1.setQuery(t);
 
-            DimensionConnector dcStore1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcStore1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStore1.setOverrideDimensionName("Store");
             dcStore1.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             dcStore1.setDimension(storeDimension);
             cubeSales1.getDimensionConnectors().add(dcStore1);
 
-            DimensionConnector dcTime1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcTime1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTime1.setOverrideDimensionName("Time");
             dcTime1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             dcTime1.setDimension(timeDimension);
@@ -13943,18 +13733,18 @@ public class SchemaModifiersEmf {
             cubeSales1.getMeasureGroups().add(mgSales1);
             mgSales1.setPhysicalCube(cubeSales1);
 
-            PhysicalCube cubeSales2 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeSales2 = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeSales2.setName("Sales2");
             cubeSales2.setDefaultMeasure(mUnitSalesSales2);
             cubeSales2.setQuery(t);
 
-            DimensionConnector dcStore2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcStore2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStore2.setOverrideDimensionName("Store");
             dcStore2.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             dcStore2.setDimension(storeDimension);
             cubeSales2.getDimensionConnectors().add(dcStore2);
 
-            DimensionConnector dcTime2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcTime2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTime2.setOverrideDimensionName("Time");
             dcTime2.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             dcTime2.setDimension(timeDimension);
@@ -13963,17 +13753,17 @@ public class SchemaModifiersEmf {
             cubeSales2.getMeasureGroups().add(mgSales2);
             mgSales2.setPhysicalCube(cubeSales2);
 
-            VirtualCube vcSuperSales = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube vcSuperSales = CubeFactory.eINSTANCE.createVirtualCube();
             vcSuperSales.setName("SuperSales");
             vcSuperSales.setDefaultMeasure(mUnitSalesSales2);
 
-            //DimensionConnector ccStore = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector ccStore = DimensionFactory.eINSTANCE.createDimensionConnector();
             //ccStore.setPhysicalCube(cubeSales1);
             //ccStore.setOverrideDimensionName("Store");
             //ccStore.setDimension(storeDimension);
             vcSuperSales.getDimensionConnectors().add(dcStore1);
 
-            //DimensionConnector ccTime = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector ccTime = DimensionFactory.eINSTANCE.createDimensionConnector();
             //ccTime.setPhysicalCube(cubeSales1);
             //ccTime.setOverrideDimensionName("Time");
             //ccTime.setDimension(timeDimension);
@@ -13983,9 +13773,9 @@ public class SchemaModifiersEmf {
             vcSuperSales.getReferencedMeasures().add(mStoreCostSales2);
             vcSuperSales.getReferencedMeasures().add(mStoreSalesSales2);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(cubeSales1);
             catalog.getCubes().add(cubeSales2);
             catalog.getCubes().add(vcSuperSales);
@@ -14033,33 +13823,25 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final StandardDimension genderDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelGender = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelGender = LevelFactory.eINSTANCE.createLevel();
 
-        private static final SumMeasure measureStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreCost = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreCost = MeasureFactory.eINSTANCE.createSumMeasure();
 
-        private static final TableQuery querySalesCube = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery queryCustomer = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final PhysicalCube salesBugCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorGender = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final TableSource querySalesCube = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource queryCustomer = SourceFactory.eINSTANCE.createTableSource();
+        private static final PhysicalCube salesBugCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorGender = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-        private static final CalculatedMember calcMemberAposInDq = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
-        private static final CalculatedMember calcMemberDqInDq = RolapMappingFactory.eINSTANCE.createCalculatedMember();
-        private static final CalculatedMember calcMemberAposInApos = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
-        private static final CalculatedMember calcMemberDqInApos = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
-        private static final CalculatedMember calcMemberColoredProfit = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
-        private static final CalculatedMemberProperty propFormatString = RolapMappingFactory.eINSTANCE
-                .createCalculatedMemberProperty();
+        private static final CalculatedMember calcMemberAposInDq = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMember calcMemberDqInDq = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMember calcMemberAposInApos = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMember calcMemberDqInApos = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMember calcMemberColoredProfit = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMemberProperty propFormatString = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
 
         static {
             levelGender.setName("Gender");
@@ -14132,9 +13914,9 @@ public class SchemaModifiersEmf {
         }
 
         public TestCalculatedMembers1(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesBugCube);
 
         }
@@ -14179,33 +13961,26 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final StandardDimension storeTypeDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy storeTypeHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelStoreType = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension storeTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy storeTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreType = LevelFactory.eINSTANCE.createLevel();
 
-        private static final StandardDimension countryDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy countryHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelCountry = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension countryDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy countryHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelCountry = LevelFactory.eINSTANCE.createLevel();
 
-        private static final SumMeasure measureStoreSqft = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureGrocerySqft = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreSqft = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureGrocerySqft = MeasureFactory.eINSTANCE.createSumMeasure();
         private static final Annotation annotationGrocery = RolapMappingFactory.eINSTANCE.createAnnotation();
 
-        private static final CalculatedMember calcMemberConstant1 = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
+        private static final CalculatedMember calcMemberConstant1 = LevelFactory.eINSTANCE.createCalculatedMember();
         private static final Annotation annotationCalcMember = RolapMappingFactory.eINSTANCE.createAnnotation();
 
-        private static final TableQuery queryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final PhysicalCube store5Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorStoreType = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final DimensionConnector dimensionConnectorCountry = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
+        private static final PhysicalCube store5Cube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorStoreType = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final DimensionConnector dimensionConnectorCountry = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             levelStoreType.setName("Store Type");
@@ -14272,9 +14047,9 @@ public class SchemaModifiersEmf {
         }
 
         public TestCalculatedMembers2(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(store5Cube);
         }
 
@@ -14307,25 +14082,20 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final StandardDimension genderDimension = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelGender = RolapMappingFactory.eINSTANCE.createLevel();
+        private static final StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelGender = LevelFactory.eINSTANCE.createLevel();
 
-        private static final SumMeasure measureUnitSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureUnitSales = MeasureFactory.eINSTANCE.createSumMeasure();
 
-        private static final CalculatedMember calcMemberBracket = RolapMappingFactory.eINSTANCE
-                .createCalculatedMember();
-        private static final CalculatedMemberProperty propFormatString = RolapMappingFactory.eINSTANCE
-                .createCalculatedMemberProperty();
+        private static final CalculatedMember calcMemberBracket = LevelFactory.eINSTANCE.createCalculatedMember();
+        private static final CalculatedMemberProperty propFormatString = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
 
-        private static final TableQuery querySalesCube = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final TableQuery queryCustomer = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final PhysicalCube salesBracketCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorGender = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final TableSource querySalesCube = SourceFactory.eINSTANCE.createTableSource();
+        private static final TableSource queryCustomer = SourceFactory.eINSTANCE.createTableSource();
+        private static final PhysicalCube salesBracketCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorGender = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             levelGender.setName("Gender");
@@ -14371,9 +14141,9 @@ public class SchemaModifiersEmf {
         }
 
         public TestCalculatedMembers3(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesBracketCube);
         }
 
@@ -14448,39 +14218,35 @@ public class SchemaModifiersEmf {
          *
          */
 
-        private static final Column storeIdX = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        private static final Column valueX = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        private static final PhysicalTable storeX = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        private static final Column storeIdX = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+        private static final Column valueX = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+        private static final Table storeX = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
-        private static final Column storeIdY = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        private static final Column valueY = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        private static final PhysicalTable storeY = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        private static final Column storeIdY = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+        private static final Column valueY = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+        private static final Table storeY = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
-        private static final StandardDimension dimensionStoreX = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy hierarchyStoreX = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelStoreX = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery queryStoreX = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension dimensionStoreX = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hierarchyStoreX = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreX = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource queryStoreX = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final StandardDimension dimensionStoreY = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy hierarchyStoreY = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelStoreY = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery queryStoreY = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension dimensionStoreY = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hierarchyStoreY = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreY = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource queryStoreY = SourceFactory.eINSTANCE.createTableSource();
 
         static {
             storeIdX.setName("store_id");
-            storeIdX.setType(ColumnType.INTEGER);
+            storeIdX.setType(SqlSimpleTypes.Sql99.integerType());
 
             valueX.setName("value");
-            valueX.setType(ColumnType.VARCHAR);
-            valueX.setCharOctetLength(30);
+            valueX.setType(SqlSimpleTypes.varcharType(255));
+            // valueX.setCharOctetLength(30);
 
             storeX.setName("store_x");
-            storeX.getColumns().add(storeIdX);
-            storeX.getColumns().add(valueX);
+            storeX.getFeature().add(storeIdX);
+            storeX.getFeature().add(valueX);
 
             queryStoreX.setTable(storeX);
 
@@ -14497,15 +14263,15 @@ public class SchemaModifiersEmf {
             dimensionStoreX.getHierarchies().add(hierarchyStoreX);
 
             storeIdY.setName("store_id");
-            storeIdY.setType(ColumnType.INTEGER);
+            storeIdY.setType(SqlSimpleTypes.Sql99.integerType());
 
             valueY.setName("value");
-            valueY.setType(ColumnType.VARCHAR);
-            valueY.setCharOctetLength(30);
+            valueY.setType(SqlSimpleTypes.varcharType(255));
+            // valueY.setCharOctetLength(30);
 
             storeY.setName("store_y");
-            storeY.getColumns().add(storeIdY);
-            storeY.getColumns().add(valueY);
+            storeY.getFeature().add(storeIdY);
+            storeY.getFeature().add(valueY);
 
             queryStoreY.setTable(storeY);
 
@@ -14524,104 +14290,104 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public UsagePrefixTestModifier1(Catalog catalog2) {
-            Column storeIdCheques = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column storeIdCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeIdCheques.setName("store_id");
-            storeIdCheques.setType(ColumnType.INTEGER);
+            storeIdCheques.setType(SqlSimpleTypes.Sql99.integerType());
 
-            Column prodIdCheques = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column prodIdCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             prodIdCheques.setName("prod_id");
-            prodIdCheques.setType(ColumnType.INTEGER);
+            prodIdCheques.setType(SqlSimpleTypes.Sql99.integerType());
 
-            Column amountCheques = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column amountCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             amountCheques.setName("amount");
-            amountCheques.setType(ColumnType.DECIMAL);
-            amountCheques.setColumnSize(10);
-            amountCheques.setDecimalDigits(2);
+            amountCheques.setType(SqlSimpleTypes.decimalType(18, 4));
+            // amountCheques.setColumnSize(10);
+            // amountCheques.setDecimalDigits(2);
 
-            PhysicalTable cheques = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Table cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             cheques.setName("cheques");
-            cheques.getColumns().add(storeIdCheques);
-            cheques.getColumns().add(prodIdCheques);
-            cheques.getColumns().add(amountCheques);
+            cheques.getFeature().add(storeIdCheques);
+            cheques.getFeature().add(prodIdCheques);
+            cheques.getFeature().add(amountCheques);
 
-            Column firstprefixValueAgg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column firstprefixValueAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             firstprefixValueAgg.setName("firstprefix_value");
-            firstprefixValueAgg.setType(ColumnType.VARCHAR);
-            firstprefixValueAgg.setColumnSize(30);
+            firstprefixValueAgg.setType(SqlSimpleTypes.varcharType(255));
+            // firstprefixValueAgg.setColumnSize(30);
 
-            Column secondprefixValueAgg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column secondprefixValueAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             secondprefixValueAgg.setName("secondprefix_value");
-            secondprefixValueAgg.setType(ColumnType.VARCHAR);
-            secondprefixValueAgg.setColumnSize(30);
+            secondprefixValueAgg.setType(SqlSimpleTypes.varcharType(255));
+            // secondprefixValueAgg.setColumnSize(30);
 
-            Column amountAgg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column amountAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             amountAgg.setName("amount");
-            amountAgg.setType(ColumnType.DECIMAL);
-            amountAgg.setColumnSize(10);
-            amountAgg.setDecimalDigits(2);
+            amountAgg.setType(SqlSimpleTypes.decimalType(18, 4));
+            // amountAgg.setColumnSize(10);
+            // amountAgg.setDecimalDigits(2);
 
-            Column factCountAgg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column factCountAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             factCountAgg.setName("FACT_COUNT");
-            factCountAgg.setType(ColumnType.INTEGER);
+            factCountAgg.setType(SqlSimpleTypes.Sql99.integerType());
 
-            PhysicalTable aggLp595Cheques = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Table aggLp595Cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             aggLp595Cheques.setName("agg_lp_595_cheques");
-            aggLp595Cheques.getColumns().add(firstprefixValueAgg);
-            aggLp595Cheques.getColumns().add(secondprefixValueAgg);
-            aggLp595Cheques.getColumns().add(amountAgg);
-            aggLp595Cheques.getColumns().add(factCountAgg);
+            aggLp595Cheques.getFeature().add(firstprefixValueAgg);
+            aggLp595Cheques.getFeature().add(secondprefixValueAgg);
+            aggLp595Cheques.getFeature().add(amountAgg);
+            aggLp595Cheques.getFeature().add(factCountAgg);
 
-            AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+            AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             aggFactCount.setColumn(factCountAgg);
 
-            AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+            AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             aggMeasure.setName("[Measures].[Amount]");
             aggMeasure.setColumn(amountAgg);
 
-            AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+            AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
             aggLevel.setName("[StoreX].[Store Value]");
             aggLevel.setColumn(firstprefixValueAgg);
 
-            AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
             aggName.setName(aggLp595Cheques);
             aggName.setAggregationFactCount(aggFactCount);
             aggName.getAggregationMeasures().add(aggMeasure);
             aggName.getAggregationLevels().add(aggLevel);
 
-            TableQuery queryCheques = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource queryCheques = SourceFactory.eINSTANCE.createTableSource();
             queryCheques.setTable(cheques);
             queryCheques.getAggregationTables().add(aggName);
 
-            SumMeasure measureAmount = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measureAmount = MeasureFactory.eINSTANCE.createSumMeasure();
             measureAmount.setName("Amount");
             measureAmount.setColumn(amountCheques);
             measureAmount.setFormatString("00.0");
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measureAmount);
 
-            DimensionConnector dcStoreX = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcStoreX = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStoreX.setOverrideDimensionName("StoreX");
             dcStoreX.setDimension(dimensionStoreX);
             dcStoreX.setForeignKey(storeIdCheques);
             dcStoreX.setUsagePrefix("firstprefix_");
 
-            DimensionConnector dcStoreY = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcStoreY = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStoreY.setOverrideDimensionName("StoreY");
             dcStoreY.setDimension(dimensionStoreY);
             dcStoreY.setForeignKey(storeIdCheques);
             dcStoreY.setUsagePrefix("secondprefix_");
 
-            PhysicalCube chequesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube chequesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             chequesCube.setName("Cheques");
             chequesCube.setQuery(queryCheques);
             chequesCube.getDimensionConnectors().add(dcStoreX);
             chequesCube.getDimensionConnectors().add(dcStoreY);
             chequesCube.getMeasureGroups().add(measureGroup);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("usagePrefixTest");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(chequesCube);
 
         }
@@ -14688,24 +14454,22 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final StandardDimension dimensionStore = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final ExplicitHierarchy hierarchyStore = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final Level levelStoreId = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery queryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension dimensionStore = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hierarchyStore = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreId = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final TimeDimension dimensionTime = RolapMappingFactory.eINSTANCE.createTimeDimension();
-        private static final ExplicitHierarchy hierarchyTime = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final Level levelYear = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level levelQuarter = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final Level levelMonth = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery queryTimeByDay = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final TimeDimension dimensionTime = DimensionFactory.eINSTANCE.createTimeDimension();
+        private static final ExplicitHierarchy hierarchyTime = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelYear = LevelFactory.eINSTANCE.createLevel();
+        private static final Level levelQuarter = LevelFactory.eINSTANCE.createLevel();
+        private static final Level levelMonth = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource queryTimeByDay = SourceFactory.eINSTANCE.createTableSource();
 
-        private static final StandardDimension dimensionWarehouse = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy hierarchyWarehouse = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelWarehouseName = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final TableQuery queryWarehouse = RolapMappingFactory.eINSTANCE.createTableQuery();
+        private static final StandardDimension dimensionWarehouse = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hierarchyWarehouse = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelWarehouseName = LevelFactory.eINSTANCE.createLevel();
+        private static final TableSource queryWarehouse = SourceFactory.eINSTANCE.createTableSource();
 
         static {
             queryStore.setTable(CatalogSupplier.TABLE_STORE);
@@ -14786,37 +14550,37 @@ public class SchemaModifiersEmf {
         }
 
         public DrillThroughExcludeFilterTestModifier(Catalog catalog2) {
-            MeasureGroup mgSales = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            MeasureGroup mgWarehouse = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mgSales = CubeFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mgWarehouse = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure mStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
             mStoreSales.setName("Store Sales");
             mStoreSales.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             mStoreSales.setFormatString("#,###.00");
 
-            SumMeasure mWarehouseSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure mWarehouseSales = MeasureFactory.eINSTANCE.createSumMeasure();
             mWarehouseSales.setName("Warehouse Sales");
             mWarehouseSales.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
 
             mgSales.getMeasures().add(mStoreSales);
             mgWarehouse.getMeasures().add(mWarehouseSales);
 
-            TableQuery querySalesFact = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource querySalesFact = SourceFactory.eINSTANCE.createTableSource();
             querySalesFact.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            DimensionConnector dcStoreInSales = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcStoreInSales = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStoreInSales.setOverrideDimensionName("Store");
             dcStoreInSales.setDimension(dimensionStore);
             dcStoreInSales.setVisible(true);
             dcStoreInSales.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
-            DimensionConnector dcTimeInSales = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcTimeInSales = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTimeInSales.setOverrideDimensionName("Time");
             dcTimeInSales.setDimension(dimensionTime);
             dcTimeInSales.setVisible(true);
             dcTimeInSales.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            PhysicalCube cubeSales = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeSales = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeSales.setName("Sales");
             cubeSales.setVisible(true);
             cubeSales.setCache(true);
@@ -14826,28 +14590,28 @@ public class SchemaModifiersEmf {
             cubeSales.getDimensionConnectors().add(dcTimeInSales);
             cubeSales.getMeasureGroups().add(mgSales);
 
-            TableQuery queryInventoryFact = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource queryInventoryFact = SourceFactory.eINSTANCE.createTableSource();
             queryInventoryFact.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
 
-            DimensionConnector dcStoreInWarehouse = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcStoreInWarehouse = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStoreInWarehouse.setOverrideDimensionName("Store");
             dcStoreInWarehouse.setDimension(dimensionStore);
             dcStoreInWarehouse.setVisible(true);
             dcStoreInWarehouse.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
 
-            DimensionConnector dcTimeInWarehouse = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcTimeInWarehouse = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTimeInWarehouse.setOverrideDimensionName("Time");
             dcTimeInWarehouse.setDimension(dimensionTime);
             dcTimeInWarehouse.setVisible(true);
             dcTimeInWarehouse.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
-            DimensionConnector dcWarehouseInWarehouse = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcWarehouseInWarehouse = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcWarehouseInWarehouse.setOverrideDimensionName("Warehouse");
             dcWarehouseInWarehouse.setDimension(dimensionWarehouse);
             dcWarehouseInWarehouse.setVisible(true);
             dcWarehouseInWarehouse.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
 
-            PhysicalCube cubeWarehouse = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cubeWarehouse = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeWarehouse.setName("Warehouse");
             cubeWarehouse.setVisible(true);
             cubeWarehouse.setCache(true);
@@ -14858,12 +14622,12 @@ public class SchemaModifiersEmf {
             cubeWarehouse.getDimensionConnectors().add(dcWarehouseInWarehouse);
             cubeWarehouse.getMeasureGroups().add(mgWarehouse);
 
-            DimensionConnector dcTimeInVirtualCube = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcTimeInVirtualCube = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTimeInVirtualCube.setOverrideDimensionName("Time");
             dcTimeInVirtualCube.setDimension(dimensionTime);
             dcTimeInVirtualCube.setVisible(true);
 
-            VirtualCube vcWarehouseAndSales = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube vcWarehouseAndSales = CubeFactory.eINSTANCE.createVirtualCube();
             vcWarehouseAndSales.setEnabled(true);
             vcWarehouseAndSales.setName("Warehouse and Sales");
             vcWarehouseAndSales.setVisible(true);
@@ -14871,9 +14635,9 @@ public class SchemaModifiersEmf {
             vcWarehouseAndSales.getReferencedMeasures().add(mStoreSales);
             vcWarehouseAndSales.getReferencedMeasures().add(mWarehouseSales);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("MYFoodmart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(cubeSales);
             catalog.getCubes().add(cubeWarehouse);
             catalog.getCubes().add(vcWarehouseAndSales);
@@ -14913,60 +14677,56 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final Column promoId = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        private static final Column promoName = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
-        private static final InlineTable inlineTablePromotion = RolapMappingFactory.eINSTANCE.createInlineTable();
-        private static final Row row1 = RolapMappingFactory.eINSTANCE.createRow();
-        private static final Row row2 = RolapMappingFactory.eINSTANCE.createRow();
-        private static final RowValue rowValue1 = RolapMappingFactory.eINSTANCE.createRowValue();
-        private static final RowValue rowValue2PromoId = RolapMappingFactory.eINSTANCE.createRowValue();
-        private static final RowValue rowValue2PromoName = RolapMappingFactory.eINSTANCE.createRowValue();
+        private static final Column promoId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+        private static final Column promoName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+        private static final InlineTable inlineTablePromotion = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
+        static { inlineTablePromotion.setExtent(RelationalFactory.eINSTANCE.createRowSet()); }
+        private static final Row row1 = RelationalFactory.eINSTANCE.createRow();
+        private static final Row row2 = RelationalFactory.eINSTANCE.createRow();
+        private static final DataSlot rowValue1 = InstanceFactory.eINSTANCE.createDataSlot();
+        private static final DataSlot rowValue2PromoId = InstanceFactory.eINSTANCE.createDataSlot();
+        private static final DataSlot rowValue2PromoName = InstanceFactory.eINSTANCE.createDataSlot();
 
-        private static final StandardDimension dimensionAlternativePromotion = RolapMappingFactory.eINSTANCE
-                .createStandardDimension();
-        private static final ExplicitHierarchy hierarchyPromotion = RolapMappingFactory.eINSTANCE
-                .createExplicitHierarchy();
-        private static final Level levelPromotion = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final InlineTableQuery queryInlinePromotion = RolapMappingFactory.eINSTANCE
-                .createInlineTableQuery();
+        private static final StandardDimension dimensionAlternativePromotion = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hierarchyPromotion = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelPromotion = LevelFactory.eINSTANCE.createLevel();
+        private static final InlineTableSource queryInlinePromotion = SourceFactory.eINSTANCE.createInlineTableSource();
 
-        private static final SumMeasure measureUnitSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
-        private static final SumMeasure measureStoreSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureUnitSales = MeasureFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreSales = MeasureFactory.eINSTANCE.createSumMeasure();
 
-        private static final TableQuery querySalesFact = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final PhysicalCube salesInlineCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorTime = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final DimensionConnector dimensionConnectorPromotion = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final TableSource querySalesFact = SourceFactory.eINSTANCE.createTableSource();
+        private static final PhysicalCube salesInlineCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorTime = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final DimensionConnector dimensionConnectorPromotion = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             promoId.setName("promo_id");
-            promoId.setType(ColumnType.NUMERIC);
+            promoId.setType(SqlSimpleTypes.numericType(18, 4));
 
             promoName.setName("promo_name");
-            promoName.setType(ColumnType.VARCHAR);
+            promoName.setType(SqlSimpleTypes.varcharType(255));
 
-            rowValue1.setColumn(promoId);
-            rowValue1.setValue("0");
+            rowValue1.setFeature(promoId);
+            rowValue1.setDataValue("0");
 
-            row1.getRowValues().add(rowValue1);
+            row1.getSlot().add(rowValue1);
 
-            rowValue2PromoId.setColumn(promoId);
-            rowValue2PromoId.setValue("1");
+            rowValue2PromoId.setFeature(promoId);
+            rowValue2PromoId.setDataValue("1");
 
-            rowValue2PromoName.setColumn(promoName);
-            rowValue2PromoName.setValue("Promo1");
+            rowValue2PromoName.setFeature(promoName);
+            rowValue2PromoName.setDataValue("Promo1");
 
-            row2.getRowValues().add(rowValue2PromoId);
-            row2.getRowValues().add(rowValue2PromoName);
+            row2.getSlot().add(rowValue2PromoId);
+            row2.getSlot().add(rowValue2PromoName);
 
             inlineTablePromotion.setName("alt_promotion");
-            inlineTablePromotion.getColumns().add(promoId);
-            inlineTablePromotion.getColumns().add(promoName);
-            inlineTablePromotion.getRows().add(row1);
-            inlineTablePromotion.getRows().add(row2);
+            inlineTablePromotion.getFeature().add(promoId);
+            inlineTablePromotion.getFeature().add(promoName);
+            inlineTablePromotion.getExtent().getOwnedElement().add(row1);
+            inlineTablePromotion.getExtent().getOwnedElement().add(row2);
 
             queryInlinePromotion.setAlias("alt_promotion");
             queryInlinePromotion.setTable(inlineTablePromotion);
@@ -15015,9 +14775,9 @@ public class SchemaModifiersEmf {
         public CompatibilityTestModifier(Catalog catalog2) {
             dimensionConnectorTime.setDimension(CatalogSupplier.DIMENSION_TIME);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(salesInlineCube);
         }
@@ -15059,28 +14819,26 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final StandardDimension dimensionStore = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final ExplicitHierarchy hierarchyStore = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final Level levelStoreName = RolapMappingFactory.eINSTANCE.createLevel();
-        private static final MemberProperty propertyStoreSqft = RolapMappingFactory.eINSTANCE.createMemberProperty();
+        private static final StandardDimension dimensionStore = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hierarchyStore = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final Level levelStoreName = LevelFactory.eINSTANCE.createLevel();
+        private static final MemberProperty propertyStoreSqft = LevelFactory.eINSTANCE.createMemberProperty();
 
-        private static final SQLExpressionColumn ordinalExpression = RolapMappingFactory.eINSTANCE
-                .createSQLExpressionColumn();
-        private static final SqlStatement sqlAccess = RolapMappingFactory.eINSTANCE.createSqlStatement();
-        private static final SqlStatement sqlOracle = RolapMappingFactory.eINSTANCE.createSqlStatement();
-        private static final SqlStatement sqlHsqldb = RolapMappingFactory.eINSTANCE.createSqlStatement();
-        private static final SqlStatement sqlDb2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
-        private static final SqlStatement sqlLuciddb = RolapMappingFactory.eINSTANCE.createSqlStatement();
-        private static final SqlStatement sqlNetezza = RolapMappingFactory.eINSTANCE.createSqlStatement();
-        private static final SqlStatement sqlGeneric = RolapMappingFactory.eINSTANCE.createSqlStatement();
+        private static final ExpressionColumn ordinalExpression = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+        private static final SqlStatement sqlAccess = SourceFactory.eINSTANCE.createSqlStatement();
+        private static final SqlStatement sqlOracle = SourceFactory.eINSTANCE.createSqlStatement();
+        private static final SqlStatement sqlHsqldb = SourceFactory.eINSTANCE.createSqlStatement();
+        private static final SqlStatement sqlDb2 = SourceFactory.eINSTANCE.createSqlStatement();
+        private static final SqlStatement sqlLuciddb = SourceFactory.eINSTANCE.createSqlStatement();
+        private static final SqlStatement sqlNetezza = SourceFactory.eINSTANCE.createSqlStatement();
+        private static final SqlStatement sqlGeneric = SourceFactory.eINSTANCE.createSqlStatement();
 
-        private static final SumMeasure measureStoreSqft = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        private static final SumMeasure measureStoreSqft = MeasureFactory.eINSTANCE.createSumMeasure();
 
-        private static final TableQuery queryStore = RolapMappingFactory.eINSTANCE.createTableQuery();
-        private static final PhysicalCube storeNullsCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
-        private static final DimensionConnector dimensionConnectorStore = RolapMappingFactory.eINSTANCE
-                .createDimensionConnector();
-        private static final MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
+        private static final PhysicalCube storeNullsCube = CubeFactory.eINSTANCE.createPhysicalCube();
+        private static final DimensionConnector dimensionConnectorStore = DimensionFactory.eINSTANCE.createDimensionConnector();
+        private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
             sqlAccess.setSql("Iif(store_name = 'HQ', null, store_name)");
@@ -15116,7 +14874,7 @@ public class SchemaModifiersEmf {
             propertyStoreSqft.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             propertyStoreSqft.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(ordinalExpression);
 
             levelStoreName.setName("Store Name");
@@ -15151,9 +14909,9 @@ public class SchemaModifiersEmf {
         }
 
         public CompatibilityTestModifier2(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getCubes().add(storeNullsCube);
 
@@ -15179,13 +14937,12 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantLA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomers = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-        private static final AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantLA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomers = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             memberGrantUSA.setMember("[Customers].[USA]");
@@ -15217,9 +14974,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSales.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(role1);
 
@@ -15266,42 +15023,28 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         // Role1 objects
-        private static final AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantGladys = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomersRole1 = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessHierarchyGrant hierarchyGrantPromotionMedia = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessHierarchyGrant hierarchyGrantMaritalStatus = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessHierarchyGrant hierarchyGrantGender = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessHierarchyGrant hierarchyGrantStoreRole1 = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSalesRole1 = RolapMappingFactory.eINSTANCE
-                .createAccessCubeGrant();
-        private static final AccessCubeGrant cubeGrantWarehouse = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrantRole1 = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantGladys = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomersRole1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessHierarchyGrant hierarchyGrantPromotionMedia = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessHierarchyGrant hierarchyGrantMaritalStatus = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessHierarchyGrant hierarchyGrantGender = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessHierarchyGrant hierarchyGrantStoreRole1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSalesRole1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCubeGrant cubeGrantWarehouse = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrantRole1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
         // Role2 objects
-        private static final AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantCARole2 = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantOR = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantPortland = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomersRole2 = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessHierarchyGrant hierarchyGrantStoreRole2 = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSalesRole2 = RolapMappingFactory.eINSTANCE
-                .createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrantRole2 = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantCARole2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantOR = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantPortland = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomersRole2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessHierarchyGrant hierarchyGrantStoreRole2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSalesRole2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrantRole2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             // Role1 configuration
@@ -15400,9 +15143,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSalesRole2.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(role1);
             catalog.getAccessRoles().add(role2);
@@ -15433,16 +15176,14 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomers = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessDimensionGrant dimensionGrantStore = RolapMappingFactory.eINSTANCE
-                .createAccessDimensionGrant();
-        private static final AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-        private static final AccessRole roleUSAmanager = RolapMappingFactory.eINSTANCE.createAccessRole();
-        private static final AccessRole roleParentUSAmanager = RolapMappingFactory.eINSTANCE.createAccessRole();
-        private static final AccessRole roleGrandparentUSAmanager = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomers = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessDimensionGrant dimensionGrantStore = OlapFactory.eINSTANCE.createAccessDimensionGrant();
+        private static final AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole roleUSAmanager = CommonFactory.eINSTANCE.createAccessRole();
+        private static final AccessRole roleParentUSAmanager = CommonFactory.eINSTANCE.createAccessRole();
+        private static final AccessRole roleGrandparentUSAmanager = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             memberGrantUSA.setMember("[Customers].[USA]");
@@ -15478,9 +15219,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSales.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(roleUSAmanager);
             catalog.getAccessRoles().add(roleParentUSAmanager);
@@ -15509,17 +15250,14 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessCatalogGrant catalogGrantRole1 = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessCatalogGrant catalogGrantRole1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
-        private static final AccessMemberGrant memberGrantOR = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomers = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrantRole2 = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantOR = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomers = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrantRole2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             catalogGrantRole1.setCatalogAccess(CatalogAccess.NONE);
@@ -15550,9 +15288,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSales.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(role1);
             catalog.getAccessRoles().add(role2);
@@ -15579,17 +15317,14 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomers = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrantRole1 = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomers = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrantRole1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
-        private static final AccessCatalogGrant catalogGrantRole2 = RolapMappingFactory.eINSTANCE
-                .createAccessCatalogGrant();
-        private static final AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessCatalogGrant catalogGrantRole2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             memberGrantCA.setMember("[Customers].[USA].[CA]");
@@ -15624,9 +15359,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSales.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(role1);
             catalog.getAccessRoles().add(role2);
@@ -15651,13 +15386,11 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessMemberGrant memberGrantDrink = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantProduct = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-        private static final AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantDrink = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantProduct = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             memberGrantDrink.setMember("[Product].[Drink]");
@@ -15682,9 +15415,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSales.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(role1);
         }
@@ -15713,17 +15446,14 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier7(Catalog catalog2) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
             this.catalog = (CatalogImpl) copier.get(catalog2);
-            AccessHierarchyGrant hierarchyGrantStoreInSales = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
-            AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessHierarchyGrant hierarchyGrantStoreInSales = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
 
-            AccessHierarchyGrant hierarchyGrantStoreInRagged = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
-            AccessCubeGrant cubeGrantSalesRagged = RolapMappingFactory.eINSTANCE
-                    .createAccessCubeGrant();
+            AccessHierarchyGrant hierarchyGrantStoreInRagged = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessCubeGrant cubeGrantSalesRagged = OlapFactory.eINSTANCE.createAccessCubeGrant();
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-            AccessRole roleCaliforniaManager = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessRole roleCaliforniaManager = CommonFactory.eINSTANCE.createAccessRole();
 
             hierarchyGrantStoreInSales.setHierarchyAccess(HierarchyAccess.NONE);
 
@@ -15793,19 +15523,15 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
             this.catalog = (CatalogImpl) copier.get(catalog2);
 
-            AccessMemberGrant memberGrantEmployee = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessHierarchyGrant hierarchyGrantEmployees = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
+            AccessMemberGrant memberGrantEmployee = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessHierarchyGrant hierarchyGrantEmployees = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-            AccessMemberGrant memberGrantStore = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessHierarchyGrant hierarchyGrantStore = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
+            AccessMemberGrant memberGrantStore = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessHierarchyGrant hierarchyGrantStore = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-            AccessCubeGrant cubeGrantHR = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-            AccessRole roleBuggy = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessCubeGrant cubeGrantHR = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessRole roleBuggy = CommonFactory.eINSTANCE.createAccessRole();
 
             memberGrantEmployee.setMember("[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz]");
             memberGrantEmployee.setMemberAccess(MemberAccess.ALL);
@@ -15870,21 +15596,16 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
             this.catalog = (CatalogImpl) copier.get(catalog2);
 
-            AccessMemberGrant memberGrant20319 = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessMemberGrant memberGrant21215 = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessHierarchyGrant hierarchyGrantStoreSize = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
+            AccessMemberGrant memberGrant20319 = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant21215 = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessHierarchyGrant hierarchyGrantStoreSize = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-            AccessMemberGrant memberGrantSupermarket = RolapMappingFactory.eINSTANCE
-                    .createAccessMemberGrant();
-            AccessHierarchyGrant hierarchyGrantStoreType = RolapMappingFactory.eINSTANCE
-                    .createAccessHierarchyGrant();
+            AccessMemberGrant memberGrantSupermarket = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            AccessHierarchyGrant hierarchyGrantStoreType = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-            AccessCubeGrant cubeGrantWarehouse = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessCubeGrant cubeGrantWarehouse = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
             memberGrant20319.setMember("[Store Size in SQFT].[20319]");
             memberGrant20319.setMemberAccess(MemberAccess.ALL);
@@ -15951,27 +15672,19 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessMemberGrant memberGrantStoreCA = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantStoreLA = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantStore = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
+        private static final AccessMemberGrant memberGrantStoreCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantStoreLA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantStore = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-        private static final AccessMemberGrant memberGrantCustomersCA = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantCustomersLA = RolapMappingFactory.eINSTANCE
-                .createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantCustomers = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
+        private static final AccessMemberGrant memberGrantCustomersCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantCustomersLA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantCustomers = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-        private static final AccessHierarchyGrant hierarchyGrantGender = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
+        private static final AccessHierarchyGrant hierarchyGrantGender = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
 
-        private static final AccessCubeGrant cubeGrantWarehouseAndSales = RolapMappingFactory.eINSTANCE
-                .createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-        private static final AccessRole vcRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessCubeGrant cubeGrantWarehouseAndSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole vcRole = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             memberGrantStoreCA.setMember("[Store].[USA].[CA]");
@@ -16023,9 +15736,9 @@ public class SchemaModifiersEmf {
             cubeGrantWarehouseAndSales.setCube((Cube) catalog2.getCubes().stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findFirst().orElse(null));
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(vcRole);
 
@@ -16050,13 +15763,12 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        private static final AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessMemberGrant memberGrantLA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
-        private static final AccessHierarchyGrant hierarchyGrantStore = RolapMappingFactory.eINSTANCE
-                .createAccessHierarchyGrant();
-        private static final AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
-        private static final AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
-        private static final AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+        private static final AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessMemberGrant memberGrantLA = OlapFactory.eINSTANCE.createAccessMemberGrant();
+        private static final AccessHierarchyGrant hierarchyGrantStore = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+        private static final AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
+        private static final AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+        private static final AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
             memberGrantCA.setMember("[Store].[USA].[CA]");
@@ -16086,9 +15798,9 @@ public class SchemaModifiersEmf {
 
             cubeGrantSales.setCube(CatalogSupplier.CUBE_SALES);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
             catalog.getAccessRoles().add(role2);
         }
@@ -16106,37 +15818,37 @@ public class SchemaModifiersEmf {
         private PhysicalCube cube;
         private Catalog catalog;
 
-        private static final ExplicitHierarchy hCustomers = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final ExplicitHierarchy hCustomers2 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final ExplicitHierarchy hCustomers3 = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
-        private static final StandardDimension dCustomers = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final StandardDimension dCustomers2 = RolapMappingFactory.eINSTANCE.createStandardDimension();
-        private static final StandardDimension dCustomers3 = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        private static final ExplicitHierarchy hCustomers = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final ExplicitHierarchy hCustomers2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final ExplicitHierarchy hCustomers3 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+        private static final StandardDimension dCustomers = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final StandardDimension dCustomers2 = DimensionFactory.eINSTANCE.createStandardDimension();
+        private static final StandardDimension dCustomers3 = DimensionFactory.eINSTANCE.createStandardDimension();
 
         static {
             // Initialize hCustomers
             hCustomers.setHasAll(true);
             hCustomers.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            TableQuery tq1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tq1 = SourceFactory.eINSTANCE.createTableSource();
             tq1.setTable(CatalogSupplier.TABLE_CUSTOMER);
             hCustomers.setQuery(tq1);
 
-            Level levelCountry1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelCountry1 = LevelFactory.eINSTANCE.createLevel();
             levelCountry1.setName("Country");
             levelCountry1.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             levelCountry1.setUniqueMembers(true);
 
-            Level levelStateProvince1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStateProvince1 = LevelFactory.eINSTANCE.createLevel();
             levelStateProvince1.setName("State Province");
             levelStateProvince1.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
             levelStateProvince1.setUniqueMembers(true);
 
-            Level levelCity1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelCity1 = LevelFactory.eINSTANCE.createLevel();
             levelCity1.setName("City");
             levelCity1.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
             levelCity1.setUniqueMembers(false);
 
-            Level levelName1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelName1 = LevelFactory.eINSTANCE.createLevel();
             levelName1.setName("Name");
             levelName1.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             levelName1.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -16150,26 +15862,26 @@ public class SchemaModifiersEmf {
             // Initialize hCustomers2
             hCustomers2.setHasAll(true);
             hCustomers2.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            TableQuery tq2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tq2 = SourceFactory.eINSTANCE.createTableSource();
             tq2.setTable(CatalogSupplier.TABLE_CUSTOMER);
             hCustomers2.setQuery(tq2);
 
-            Level levelCountry2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelCountry2 = LevelFactory.eINSTANCE.createLevel();
             levelCountry2.setName("Country");
             levelCountry2.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             levelCountry2.setUniqueMembers(true);
 
-            Level levelStateProvince2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStateProvince2 = LevelFactory.eINSTANCE.createLevel();
             levelStateProvince2.setName("State Province");
             levelStateProvince2.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
             levelStateProvince2.setUniqueMembers(true);
 
-            Level levelCity2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelCity2 = LevelFactory.eINSTANCE.createLevel();
             levelCity2.setName("City");
             levelCity2.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
             levelCity2.setUniqueMembers(false);
 
-            Level levelName2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelName2 = LevelFactory.eINSTANCE.createLevel();
             levelName2.setName("Name");
             levelName2.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             levelName2.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -16183,26 +15895,26 @@ public class SchemaModifiersEmf {
             // Initialize hCustomers3
             hCustomers3.setHasAll(true);
             hCustomers3.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            TableQuery tq3 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tq3 = SourceFactory.eINSTANCE.createTableSource();
             tq3.setTable(CatalogSupplier.TABLE_CUSTOMER);
             hCustomers3.setQuery(tq3);
 
-            Level levelCountry3 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelCountry3 = LevelFactory.eINSTANCE.createLevel();
             levelCountry3.setName("Country");
             levelCountry3.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             levelCountry3.setUniqueMembers(true);
 
-            Level levelStateProvince3 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelStateProvince3 = LevelFactory.eINSTANCE.createLevel();
             levelStateProvince3.setName("State Province");
             levelStateProvince3.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
             levelStateProvince3.setUniqueMembers(true);
 
-            Level levelCity3 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelCity3 = LevelFactory.eINSTANCE.createLevel();
             levelCity3.setName("City");
             levelCity3.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
             levelCity3.setUniqueMembers(false);
 
-            Level levelName3 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level levelName3 = LevelFactory.eINSTANCE.createLevel();
             levelName3.setName("Name");
             levelName3.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             levelName3.setColumnType(ColumnInternalDataType.NUMERIC);
@@ -16230,34 +15942,34 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             this.result = result;
-            cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales with multiple customers");
 
-            TableQuery factTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource factTable = SourceFactory.eINSTANCE.createTableSource();
             factTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
             cube.setQuery(factTable);
 
-            DimensionConnector dcTime = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcTime = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTime.setOverrideDimensionName("Time");
             dcTime.setDimension(CatalogSupplier.DIMENSION_TIME);
             dcTime.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
-            DimensionConnector dcProduct = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcProduct = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcProduct.setOverrideDimensionName("Product");
             dcProduct.setDimension(CatalogSupplier.DIMENSION_PRODUCT);
             dcProduct.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
-            DimensionConnector dcCustomers = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcCustomers = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcCustomers.setOverrideDimensionName("Customers");
             dcCustomers.setDimension(dCustomers);
             dcCustomers.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
 
-            DimensionConnector dcCustomers2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcCustomers2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcCustomers2.setOverrideDimensionName("Customers2");
             dcCustomers2.setDimension(dCustomers2);
             dcCustomers2.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
 
-            DimensionConnector dcCustomers3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dcCustomers3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcCustomers3.setOverrideDimensionName("Customers3");
             dcCustomers3.setDimension(dCustomers3);
             dcCustomers3.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
@@ -16268,8 +15980,8 @@ public class SchemaModifiersEmf {
             cube.getDimensionConnectors().add(dcCustomers2);
             cube.getDimensionConnectors().add(dcCustomers3);
 
-            MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
-            SumMeasure measure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
+            SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
             measure.setName("Unit Sales");
             measure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             measure.setFormatString("Standard");
@@ -16289,42 +16001,42 @@ public class SchemaModifiersEmf {
                 // e.g. "[Customers3].[State Province].[BC].[Burnaby]"
                 String uniqueName3 = uniqueName.replace("Customers", "Customers3");
 
-                AccessRole r = RolapMappingFactory.eINSTANCE.createAccessRole();
+                AccessRole r = CommonFactory.eINSTANCE.createAccessRole();
                 r.setName(name);
 
-                AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
                 catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-                AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+                AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
                 cubeGrant.setCubeAccess(CubeAccess.ALL);
                 cubeGrant.setCube(cube);
 
-                AccessHierarchyGrant hg1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                AccessHierarchyGrant hg1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
                 hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
                 hg1.setHierarchy(hCustomers);
                 hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
-                AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
                 mg1.setMemberAccess(MemberAccess.ALL);
                 mg1.setMember(uniqueName);
                 hg1.getMemberGrants().add(mg1);
 
-                AccessHierarchyGrant hg2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
                 hg2.setHierarchyAccess(HierarchyAccess.CUSTOM);
                 hg2.setHierarchy(hCustomers2);
                 hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
-                AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
                 mg2.setMemberAccess(MemberAccess.ALL);
                 mg2.setMember(uniqueName2);
                 hg2.getMemberGrants().add(mg2);
 
-                AccessHierarchyGrant hg3 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                AccessHierarchyGrant hg3 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
                 hg3.setHierarchyAccess(HierarchyAccess.CUSTOM);
                 hg3.setHierarchy(hCustomers3);
                 hg3.setRollupPolicy(RollupPolicy.PARTIAL);
 
-                AccessMemberGrant mg3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
                 mg3.setMemberAccess(MemberAccess.ALL);
                 mg3.setMember(uniqueName3);
                 hg3.getMemberGrants().add(mg3);
@@ -16340,7 +16052,7 @@ public class SchemaModifiersEmf {
                 roleUsages.add(r);
             }
 
-            AccessRole testRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole testRole = CommonFactory.eINSTANCE.createAccessRole();
             testRole.setName("Test");
             testRole.getReferencedAccessRoles().addAll(roleUsages);
             res.add(testRole);
@@ -16407,36 +16119,36 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier14(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("REG1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_HR));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_EMPLOYEE));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Employees].[All Employees]");
             mg1.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember(
                     "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Steven Betsekas]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg3.setMember(
                     "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Arvid Ziegler]");
             mg3.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg4 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg4.setMember(
                     "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Ann Weyerhaeuser]");
             mg4.setMemberAccess(MemberAccess.ALL);
@@ -16489,45 +16201,45 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier15(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("CTO");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hg1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Customers].[USA].[XX]");
             mg1.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember("[Customers].[USA].[XX].[Yyy Yyyyyyy]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg3.setMember("[Customers].[USA]");
             mg3.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg4 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg4.setMember("[Customers].[USA].[CA]");
             mg4.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg5 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg5 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg5.setMember("[Customers].[USA].[CA].[Los Angeles]");
             mg5.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg6 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg6 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg6.setMember("[Customers].[USA].[CA].[Zzz Zzzz]");
             mg6.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg7 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg7 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg7.setMember("[Customers].[USA].[CA].[San Francisco]");
             mg7.setMemberAccess(MemberAccess.ALL);
 
@@ -16539,7 +16251,7 @@ public class SchemaModifiersEmf {
             hg1.getMemberGrants().add(mg6);
             hg1.getMemberGrants().add(mg7);
 
-            AccessHierarchyGrant hg2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
             hg2.setHierarchyAccess(HierarchyAccess.NONE);
 
@@ -16575,17 +16287,17 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier16(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -16623,21 +16335,21 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Role1
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.NONE);
 
-            AccessHierarchyGrant hierarchyGrant1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             // .withHierarchy([Measures])
             hierarchyGrant1.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Measures].[Unit Sales]");
             mg1.setMemberAccess(MemberAccess.ALL);
 
@@ -16647,13 +16359,13 @@ public class SchemaModifiersEmf {
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Role2
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES_RAGGED));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
 
@@ -16697,27 +16409,27 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier18(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
             // Store Type hierarchy grant
-            AccessHierarchyGrant hg1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE_TYPE));
             hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Store Type].[All Store Types]");
             mg1.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember("[Store Type].[Supermarket]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
@@ -16725,24 +16437,24 @@ public class SchemaModifiersEmf {
             hg1.getMemberGrants().add(mg2);
 
             // Customers hierarchy grant
-            AccessHierarchyGrant hg2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hg2.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg3.setMember("[Customers].[All Customers]");
             mg3.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg4 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg4.setMember("[Customers].[USA].[WA]");
             mg4.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg5 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg5 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg5.setMember("[Customers].[USA].[CA]");
             mg5.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg6 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg6 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg6.setMember("[Customers].[USA].[CA].[Los Angeles]");
             mg6.setMemberAccess(MemberAccess.ALL);
 
@@ -16794,25 +16506,25 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Role1
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.CUSTOM);
 
-            AccessDimensionGrant dg1 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg1 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             // .withDimension([Measures])
             dg1.setDimensionAccess(DimensionAccess.ALL);
 
-            AccessDimensionGrant dg2 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg2 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dg2.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_EDUCATION_LEVEL));
             dg2.setDimensionAccess(DimensionAccess.ALL);
 
-            AccessDimensionGrant dg3 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg3 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dg3.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_GENDER));
             dg3.setDimensionAccess(DimensionAccess.ALL);
 
@@ -16824,25 +16536,25 @@ public class SchemaModifiersEmf {
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Role2
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant2.setCubeAccess(CubeAccess.CUSTOM);
 
-            AccessDimensionGrant dg4 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg4 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             // .withDimension([Measures])
             dg4.setDimensionAccess(DimensionAccess.ALL);
 
-            AccessDimensionGrant dg5 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg5 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dg5.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_EDUCATION_LEVEL));
             dg5.setDimensionAccess(DimensionAccess.ALL);
 
-            AccessDimensionGrant dg6 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg6 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dg6.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_GENDER));
             dg6.setDimensionAccess(DimensionAccess.NONE);
 
@@ -16854,21 +16566,21 @@ public class SchemaModifiersEmf {
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
             // Role3
-            AccessRole role3 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role3 = CommonFactory.eINSTANCE.createAccessRole();
             role3.setName("Role3");
 
-            AccessCatalogGrant catalogGrant3 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant3 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant3.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant3 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant3 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant3.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant3.setCubeAccess(CubeAccess.CUSTOM);
 
-            AccessDimensionGrant dg7 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg7 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dg7.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_EDUCATION_LEVEL));
             dg7.setDimensionAccess(DimensionAccess.ALL);
 
-            AccessDimensionGrant dg8 = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dg8 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             // .withDimension("[Measures]")
             dg8.setDimensionAccess(DimensionAccess.CUSTOM);
 
@@ -16914,24 +16626,24 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Role1
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hg1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg1.setTopLevel((Level) copier.get(CatalogSupplier.LEVEL_CITY_TABLE_COLUMN_CITY));
             hg1.setBottomLevel((Level) copier.get(CatalogSupplier.LEVEL_CITY_TABLE_COLUMN_CITY));
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[City].[Coronado]");
             mg1.setMemberAccess(MemberAccess.ALL);
 
@@ -16941,24 +16653,24 @@ public class SchemaModifiersEmf {
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Role2
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hg2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hg2.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg2.setTopLevel((Level) copier.get(CatalogSupplier.LEVEL_CITY_TABLE_COLUMN_CITY));
             hg2.setBottomLevel((Level) copier.get(CatalogSupplier.LEVEL_CITY_TABLE_COLUMN_CITY));
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember("[City].[Burbank]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
@@ -16996,22 +16708,22 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier21(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Bacon");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Customers].[USA].[CA].[Los Angeles]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -17044,22 +16756,22 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier22(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Store].[USA].[CA]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -17099,22 +16811,22 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             // Role1
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hg1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Store].[USA].[CA]");
             mg1.setMemberAccess(MemberAccess.ALL);
 
@@ -17124,22 +16836,22 @@ public class SchemaModifiersEmf {
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Role2
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hg2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hg2.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember("[Store].[USA].[OR]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
@@ -17177,35 +16889,35 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier24(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Admin");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
             // Store hierarchy grant
-            AccessHierarchyGrant hg1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Store].[Store].[USA].[CA]");
             mg1.setMemberAccess(MemberAccess.ALL);
 
             hg1.getMemberGrants().add(mg1);
 
             // Customers hierarchy grant
-            AccessHierarchyGrant hg2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hg2.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember("[Customers].[Customers].[USA].[CA]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
@@ -17254,51 +16966,51 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier25(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("test");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setTopLevel((Level) copier.get(CatalogSupplier.LEVEL_STORE_COUNTRY));
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
-            AccessMemberGrant mg1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg1.setMember("[Store].[All Stores]");
             mg1.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant mg2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg2.setMember("[Store].[USA].[CA].[Los Angeles]");
             mg2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg3.setMember("[Store].[USA].[CA].[Alameda]");
             mg3.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg4 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg4.setMember("[Store].[USA].[CA].[Beverly Hills]");
             mg4.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg5 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg5 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg5.setMember("[Store].[USA].[CA].[San Francisco]");
             mg5.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg6 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg6 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg6.setMember("[Store].[USA].[CA].[San Diego]");
             mg6.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg7 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg7 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg7.setMember("[Store].[USA].[OR].[Portland]");
             mg7.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant mg8 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant mg8 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             mg8.setMember("[Store].[USA].[OR].[Salem]");
             mg8.setMemberAccess(MemberAccess.ALL);
 
@@ -17340,32 +17052,32 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier26(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("dev");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.ALL);
 
             // Sales cube grant
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
 
             // HR cube grant
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_HR));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
 
             // Warehouse and Sales cube grant with hierarchy grant
-            AccessCubeGrant cubeGrant3 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant3 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant3.setCube((Cube) copier.get(CatalogSupplier.CUBE_VIRTIAL_WAREHOUSE_AND_SALES));
             cubeGrant3.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             // .withHierarchy("Measures")
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Measures].[Warehouse Sales]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -17406,22 +17118,22 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier27(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("dev");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.ALL);
 
             // Sales cube grant with hierarchy grant
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             // .withHierarchy("Measures")
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Measures].[Unit Sales]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -17429,12 +17141,12 @@ public class SchemaModifiersEmf {
             cubeGrant1.getHierarchyGrants().add(hierarchyGrant);
 
             // HR cube grant
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_HR));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
 
             // Warehouse and Sales cube grant
-            AccessCubeGrant cubeGrant3 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant3 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant3.setCube((Cube) copier.get(CatalogSupplier.CUBE_VIRTIAL_WAREHOUSE_AND_SALES));
             cubeGrant3.setCubeAccess(CubeAccess.ALL);
 
@@ -17470,22 +17182,22 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier28(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Admin");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Gender].[Gender].[F]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -17523,31 +17235,31 @@ public class SchemaModifiersEmf {
             this.policy = policy;
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hierarchyGrant.setRollupPolicy(policy);
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setBottomLevel(CatalogSupplier.LEVEL_CUSTOMER_CITY);
 
-            AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantUSA.setMember("[Customers].[USA]");
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCA.setMember("[Customers].[USA].[CA]");
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantLA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantLA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantLA.setMember("[Customers].[USA].[CA].[Los Angeles]");
             memberGrantLA.setMemberAccess(MemberAccess.NONE);
 
@@ -17587,26 +17299,26 @@ public class SchemaModifiersEmf {
             this.policy = policy;
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hierarchyGrant.setRollupPolicy(policy);
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantUSA.setMember("[Customers].[USA]");
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantGladys = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantGladys = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantGladys.setMember("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]");
             memberGrantGladys.setMemberAccess(MemberAccess.NONE);
 
@@ -17651,27 +17363,27 @@ public class SchemaModifiersEmf {
             this.policy = policy;
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("Role1");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
             // Customers hierarchy grant
-            AccessHierarchyGrant hierarchyGrantCustomers = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrantCustomers = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrantCustomers.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
             hierarchyGrantCustomers.setRollupPolicy(policy);
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantUSA.setMember("[Customers].[USA]");
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantGladys = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantGladys = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantGladys.setMember("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]");
             memberGrantGladys.setMemberAccess(MemberAccess.NONE);
 
@@ -17679,16 +17391,16 @@ public class SchemaModifiersEmf {
             hierarchyGrantCustomers.getMemberGrants().add(memberGrantGladys);
 
             // Store hierarchy grant
-            AccessHierarchyGrant hierarchyGrantStore = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrantStore = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrantStore.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrantStore.setRollupPolicy(policy);
             hierarchyGrantStore.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrantStoreCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantStoreCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantStoreCA.setMember("[Store].[USA].[CA]");
             memberGrantStoreCA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantStore14 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantStore14 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantStore14.setMember("[Store].[USA].[CA].[San Francisco].[Store 14]");
             memberGrantStore14.setMemberAccess(MemberAccess.NONE);
 
@@ -17728,26 +17440,26 @@ public class SchemaModifiersEmf {
             this.policy = policy;
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("California manager");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant.setRollupPolicy(policy);
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCA.setMember("[Store].[USA].[CA]");
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantPortland = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantPortland = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantPortland.setMember("[Store].[USA].[OR].[Portland]");
             memberGrantPortland.setMemberAccess(MemberAccess.ALL);
 
@@ -17829,26 +17541,26 @@ public class SchemaModifiersEmf {
             this.defaultMem = defaultMem;
             this.policy = policy;
             // Create Store2 dimension
-            StandardDimension store2Dimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension store2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             store2Dimension.setName("Store2");
 
-            store2Hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            store2Hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             store2Hierarchy.setHasAll(hasAll);
             if (defaultMem != null) {
                 store2Hierarchy.setDefaultMember(defaultMem);
             }
             store2Hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-            TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_STORE);
             store2Hierarchy.setQuery(tableQuery);
 
-            Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
             storeCountryLevel.setName("Store Country");
             storeCountryLevel.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             storeCountryLevel.setUniqueMembers(true);
 
-            Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
             storeStateLevel.setName("Store State");
             storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
             storeStateLevel.setUniqueMembers(true);
@@ -17859,22 +17571,22 @@ public class SchemaModifiersEmf {
             store2Dimension.getHierarchies().add(store2Hierarchy);
 
             // Create TinySales cube
-            tinySalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            tinySalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             tinySalesCube.setName("TinySales");
 
-            TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
             salesFactQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             tinySalesCube.setQuery(salesFactQuery);
 
             // Product dimension connector
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product");
             productConnector.setDimension((Dimension) copier.get(
                     CatalogSupplier.DIMENSION_PRODUCT));
             productConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
             // Store2 dimension connector
-            DimensionConnector store2Connector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector store2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
             store2Connector.setOverrideDimensionName("Store2");
             store2Connector.setDimension(store2Dimension);
             store2Connector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
@@ -17883,9 +17595,9 @@ public class SchemaModifiersEmf {
             tinySalesCube.getDimensionConnectors().add(store2Connector);
 
             // Measure group
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
 
@@ -17894,30 +17606,30 @@ public class SchemaModifiersEmf {
 
             this.catalog.getCubes().add(tinySalesCube);
 
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("test");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube(tinySalesCube);
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy(store2Hierarchy);
             hierarchyGrant.setRollupPolicy(policy);
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCA.setMember("[Store2].[USA].[CA]");
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantOR = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantOR.setMember("[Store2].[USA].[OR]");
             memberGrantOR.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantCanada = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCanada.setMember("[Store2].[Canada]");
             memberGrantCanada.setMemberAccess(MemberAccess.ALL);
 
@@ -17953,25 +17665,25 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier30(Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
-            AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("noBaseCubes");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant cubeGrantSales = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrantSales = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrantSales.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrantSales.setCubeAccess(CubeAccess.NONE);
 
-            AccessCubeGrant cubeGrantSalesRagged = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrantSalesRagged = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrantSalesRagged.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES_RAGGED));
             cubeGrantSalesRagged.setCubeAccess(CubeAccess.NONE);
 
-            AccessCubeGrant cubeGrantSales2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrantSales2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrantSales2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES_2));
             cubeGrantSales2.setCubeAccess(CubeAccess.NONE);
 
-            AccessCubeGrant cubeGrantWarehouse = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrantWarehouse = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrantWarehouse.setCube((Cube) copier.get(CatalogSupplier.CUBE_WAREHOUSE));
             cubeGrantWarehouse.setCubeAccess(CubeAccess.NONE);
 
@@ -18012,17 +17724,17 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Role1
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             // Note: [Measures] hierarchy is not set explicitly (TODO in original code)
             hierarchyGrant1.setHierarchyAccess(HierarchyAccess.ALL);
 
@@ -18031,21 +17743,21 @@ public class SchemaModifiersEmf {
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             // Role2
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierarchyGrant2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             // Note: [Measures] hierarchy is not set explicitly (TODO in original code)
             hierarchyGrant2.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Measures].[Unit Sales]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -18077,17 +17789,17 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create the Sales1 cube
-            sales1Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            sales1Cube = CubeFactory.eINSTANCE.createPhysicalCube();
             sales1Cube.setName("Sales1");
 
             sales1Cube.setQuery(CatalogSupplier.QUERY_SALES_FACT);
 
             // Create Customers dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
             // Create Customers hierarchy
-            customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setVisible(true);
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
@@ -18097,7 +17809,7 @@ public class SchemaModifiersEmf {
             ;
 
             // Country level
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setVisible(true);
             countryLevel.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
@@ -18107,7 +17819,7 @@ public class SchemaModifiersEmf {
             countryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // State Province level
-            stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setVisible(true);
             stateProvinceLevel.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
@@ -18117,7 +17829,7 @@ public class SchemaModifiersEmf {
             stateProvinceLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // City level
-            cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setVisible(true);
             cityLevel.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
@@ -18127,7 +17839,7 @@ public class SchemaModifiersEmf {
             cityLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Name1 level
-            Level name1Level = RolapMappingFactory.eINSTANCE.createLevel();
+            Level name1Level = LevelFactory.eINSTANCE.createLevel();
             name1Level.setName("Name1");
             name1Level.setVisible(true);
             name1Level.setColumn(CatalogSupplier.COLUMN_FNAME_CUSTOMER);
@@ -18137,32 +17849,32 @@ public class SchemaModifiersEmf {
             name1Level.setHideMemberIf(HideMemberIf.NEVER);
 
             // Add properties to Name1 level
-            MemberProperty genderProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty genderProp = LevelFactory.eINSTANCE.createMemberProperty();
             genderProp.setName("Gender");
             genderProp.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
             genderProp.setPropertyType(ColumnInternalDataType.STRING);
             name1Level.getMemberProperties().add(genderProp);
 
-            MemberProperty maritalStatusProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty maritalStatusProp = LevelFactory.eINSTANCE.createMemberProperty();
             maritalStatusProp.setName("Marital Status");
             maritalStatusProp.setColumn(CatalogSupplier.COLUMN_MARITAL_STATUS_CUSTOMER);
             maritalStatusProp.setPropertyType(ColumnInternalDataType.STRING);
             name1Level.getMemberProperties().add(maritalStatusProp);
 
-            MemberProperty educationProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty educationProp = LevelFactory.eINSTANCE.createMemberProperty();
             educationProp.setName("Education");
             educationProp.setColumn(CatalogSupplier.COLUMN_EDUCATION_CUSTOMER);
             educationProp.setPropertyType(ColumnInternalDataType.STRING);
             name1Level.getMemberProperties().add(educationProp);
 
-            MemberProperty yearlyIncomeProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty yearlyIncomeProp = LevelFactory.eINSTANCE.createMemberProperty();
             yearlyIncomeProp.setName("Yearly Income");
             yearlyIncomeProp.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
             yearlyIncomeProp.setPropertyType(ColumnInternalDataType.STRING);
             name1Level.getMemberProperties().add(yearlyIncomeProp);
 
             // First Name level
-            Level firstNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level firstNameLevel = LevelFactory.eINSTANCE.createLevel();
             firstNameLevel.setName("First Name");
             firstNameLevel.setVisible(true);
             firstNameLevel.setColumn(CatalogSupplier.COLUMN_FNAME_CUSTOMER);
@@ -18179,7 +17891,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.getLevels().add(firstNameLevel);
 
             // Gender hierarchy
-            ExplicitHierarchy genderHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             genderHierarchy.setName("Gender");
             genderHierarchy.setVisible(true);
             genderHierarchy.setHasAll(true);
@@ -18187,7 +17899,7 @@ public class SchemaModifiersEmf {
 
             genderHierarchy.setQuery(CatalogSupplier.QUERY_CUSTOMER);
 
-            Level genderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
             genderLevel.setVisible(true);
             genderLevel.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
@@ -18204,14 +17916,14 @@ public class SchemaModifiersEmf {
             genderHierarchy.getLevels().add(genderLevel);
 
             // Marital Status hierarchy
-            ExplicitHierarchy maritalStatusHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy maritalStatusHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             maritalStatusHierarchy.setName("Marital Status");
             maritalStatusHierarchy.setVisible(true);
             maritalStatusHierarchy.setHasAll(true);
             maritalStatusHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             maritalStatusHierarchy.setQuery(CatalogSupplier.QUERY_CUSTOMER);
 
-            Level maritalStatusLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level maritalStatusLevel = LevelFactory.eINSTANCE.createLevel();
             maritalStatusLevel.setName("Marital Status");
             maritalStatusLevel.setVisible(true);
             maritalStatusLevel.setColumn(CatalogSupplier.COLUMN_MARITAL_STATUS_CUSTOMER);
@@ -18233,25 +17945,25 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(maritalStatusHierarchy);
 
             // Create DimensionConnector for Customers
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setVisible(true);
             customersConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             customersConnector.setOverrideDimensionName("Customers");
             customersConnector.setDimension(customersDimension);
 
             // Create Store dimension
-            StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeDimension.setName("Store");
 
             // Create Store hierarchy
-            storeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeHierarchy.setVisible(true);
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             storeHierarchy.setQuery(CatalogSupplier.QUERY_STORE);
 
             // Store ID level
-            Level storeIdLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeIdLevel = LevelFactory.eINSTANCE.createLevel();
             storeIdLevel.setName("Store ID");
             storeIdLevel.setVisible(true);
             storeIdLevel.setColumn(CatalogSupplier.COLUMN_STORE_ID_STORE);
@@ -18261,7 +17973,7 @@ public class SchemaModifiersEmf {
             storeIdLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Store Country level
-            Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
             storeCountryLevel.setName("Store Country");
             storeCountryLevel.setVisible(true);
             storeCountryLevel.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
@@ -18271,7 +17983,7 @@ public class SchemaModifiersEmf {
             storeCountryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Store State level
-            Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
             storeStateLevel.setName("Store State");
             storeStateLevel.setVisible(true);
             storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
@@ -18281,7 +17993,7 @@ public class SchemaModifiersEmf {
             storeStateLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Store City level
-            Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
             storeCityLevel.setName("Store City");
             storeCityLevel.setVisible(true);
             storeCityLevel.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
@@ -18291,7 +18003,7 @@ public class SchemaModifiersEmf {
             storeCityLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Store Name level
-            Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
             storeNameLevel.setName("Store Name");
             storeNameLevel.setVisible(true);
             storeNameLevel.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
@@ -18301,49 +18013,49 @@ public class SchemaModifiersEmf {
             storeNameLevel.setHideMemberIf(HideMemberIf.NEVER);
 
             // Add properties to Store Name level
-            MemberProperty storeTypeProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeTypeProp = LevelFactory.eINSTANCE.createMemberProperty();
             storeTypeProp.setName("Store Type");
             storeTypeProp.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
             storeTypeProp.setPropertyType(ColumnInternalDataType.STRING);
             storeNameLevel.getMemberProperties().add(storeTypeProp);
 
-            MemberProperty storeManagerProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeManagerProp = LevelFactory.eINSTANCE.createMemberProperty();
             storeManagerProp.setName("Store Manager");
             storeManagerProp.setColumn(CatalogSupplier.COLUMN_STORE_MANAGER_STORE);
             storeManagerProp.setPropertyType(ColumnInternalDataType.STRING);
             storeNameLevel.getMemberProperties().add(storeManagerProp);
 
-            MemberProperty storeSqftProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeSqftProp = LevelFactory.eINSTANCE.createMemberProperty();
             storeSqftProp.setName("Store Sqft");
             storeSqftProp.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             storeSqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
             storeNameLevel.getMemberProperties().add(storeSqftProp);
 
-            MemberProperty grocerySqftProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty grocerySqftProp = LevelFactory.eINSTANCE.createMemberProperty();
             grocerySqftProp.setName("Grocery Sqft");
             grocerySqftProp.setColumn(CatalogSupplier.COLUMN_GROCERY_SQFT_STORE);
             grocerySqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
             storeNameLevel.getMemberProperties().add(grocerySqftProp);
 
-            MemberProperty frozenSqftProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty frozenSqftProp = LevelFactory.eINSTANCE.createMemberProperty();
             frozenSqftProp.setName("Frozen Sqft");
             frozenSqftProp.setColumn(CatalogSupplier.COLUMN_FROZEN_SQFT_STORE);
             frozenSqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
             storeNameLevel.getMemberProperties().add(frozenSqftProp);
 
-            MemberProperty meatSqftProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty meatSqftProp = LevelFactory.eINSTANCE.createMemberProperty();
             meatSqftProp.setName("Meat Sqft");
             meatSqftProp.setColumn(CatalogSupplier.COLUMN_MEAT_SQFT_STORE);
             meatSqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
             storeNameLevel.getMemberProperties().add(meatSqftProp);
 
-            MemberProperty coffeeBarProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty coffeeBarProp = LevelFactory.eINSTANCE.createMemberProperty();
             coffeeBarProp.setName("Has coffee bar");
             coffeeBarProp.setColumn(CatalogSupplier.COLUMN_COFFEE_BAR_STORE);
             coffeeBarProp.setPropertyType(ColumnInternalDataType.BOOLEAN);
             storeNameLevel.getMemberProperties().add(coffeeBarProp);
 
-            MemberProperty streetAddressProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty streetAddressProp = LevelFactory.eINSTANCE.createMemberProperty();
             streetAddressProp.setName("Street address");
             streetAddressProp.setColumn(CatalogSupplier.COLUMN_STORE_STREET_ADDRESS_STORE);
             streetAddressProp.setPropertyType(ColumnInternalDataType.STRING);
@@ -18360,7 +18072,7 @@ public class SchemaModifiersEmf {
             storeDimension.getHierarchies().add(storeHierarchy);
 
             // Create DimensionConnector for Store
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setVisible(true);
             storeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             storeConnector.setOverrideDimensionName("Store");
@@ -18375,37 +18087,37 @@ public class SchemaModifiersEmf {
 
 
             // Create MR role
-            AccessHierarchyGrant storeHierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant storeHierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             storeHierarchyGrant.setHierarchy(storeHierarchy);
             storeHierarchyGrant.setHierarchyAccess(HierarchyAccess.ALL);
 
-            AccessHierarchyGrant customersHierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant customersHierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             customersHierarchyGrant.setHierarchy(customersHierarchy);
             customersHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             customersHierarchyGrant.setTopLevel(stateProvinceLevel);
             customersHierarchyGrant.setBottomLevel(cityLevel);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube(sales1Cube);
             cubeGrant.setCubeAccess(CubeAccess.ALL);
             cubeGrant.getHierarchyGrants().add(storeHierarchyGrant);
             cubeGrant.getHierarchyGrants().add(customersHierarchyGrant);
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant.getCubeGrants().add(cubeGrant);
 
-            AccessRole mrRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole mrRole = CommonFactory.eINSTANCE.createAccessRole();
             mrRole.setName("MR");
             mrRole.getAccessCatalogGrants().add(catalogGrant);
 
             this.catalog.getAccessRoles().add(mrRole);
 
             // Create DBPentUsers role
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessRole dbPentUsersRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole dbPentUsersRole = CommonFactory.eINSTANCE.createAccessRole();
             dbPentUsersRole.setName("DBPentUsers");
             dbPentUsersRole.getAccessCatalogGrants().add(catalogGrant2);
 
@@ -18527,30 +18239,30 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create member grant
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Store].[Store].[USA].[Non Existent]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             // Create hierarchy grant
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
             hierarchyGrant.getMemberGrants().add(memberGrant);
 
             // Create cube grant
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
 
             // Create catalog grant
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant.getCubeGrants().add(cubeGrant);
 
             // Create role
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant);
 
@@ -18600,35 +18312,35 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Role1 - with PARTIAL rollup policy
-            AccessMemberGrant memberGrantWA1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantWA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantWA1.setMember("[Store].[USA].[WA]");
             memberGrantWA1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantOR1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantOR1.setMember("[Store].[USA].[OR]");
             memberGrantOR1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantSF1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantSF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantSF1.setMember("[Store].[USA].[CA].[San Francisco]");
             memberGrantSF1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantLA1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantLA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantLA1.setMember("[Store].[USA].[CA].[Los Angeles]");
             memberGrantLA1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantMexico1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantMexico1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantMexico1.setMember("[Store].[Mexico]");
             memberGrantMexico1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantDF1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantDF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantDF1.setMember("[Store].[Mexico].[DF]");
             memberGrantDF1.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant memberGrantCanada1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCanada1.setMember("[Store].[Canada]");
             memberGrantCanada1.setMemberAccess(MemberAccess.NONE);
 
-            AccessHierarchyGrant hierarchyGrant1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant1.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant1.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -18640,51 +18352,51 @@ public class SchemaModifiersEmf {
             hierarchyGrant1.getMemberGrants().add(memberGrantDF1);
             hierarchyGrant1.getMemberGrants().add(memberGrantCanada1);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
             cubeGrant1.getHierarchyGrants().add(hierarchyGrant1);
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant1.getCubeGrants().add(cubeGrant1);
 
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             this.catalog.getAccessRoles().add(role1);
 
             // Role2 - with FULL rollup policy
-            AccessMemberGrant memberGrantWA2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantWA2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantWA2.setMember("[Store].[USA].[WA]");
             memberGrantWA2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantOR2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantOR2.setMember("[Store].[USA].[OR]");
             memberGrantOR2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantSF2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantSF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantSF2.setMember("[Store].[USA].[CA].[San Francisco]");
             memberGrantSF2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantLA2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantLA2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantLA2.setMember("[Store].[USA].[CA].[Los Angeles]");
             memberGrantLA2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantMexico2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantMexico2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantMexico2.setMember("[Store].[Mexico]");
             memberGrantMexico2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantDF2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantDF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantDF2.setMember("[Store].[Mexico].[DF]");
             memberGrantDF2.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant memberGrantCanada2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCanada2.setMember("[Store].[Canada]");
             memberGrantCanada2.setMemberAccess(MemberAccess.NONE);
 
-            AccessHierarchyGrant hierarchyGrant2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant2.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant2.setRollupPolicy(RollupPolicy.FULL);
@@ -18696,16 +18408,16 @@ public class SchemaModifiersEmf {
             hierarchyGrant2.getMemberGrants().add(memberGrantDF2);
             hierarchyGrant2.getMemberGrants().add(memberGrantCanada2);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
             cubeGrant2.getHierarchyGrants().add(hierarchyGrant2);
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant2.getCubeGrants().add(cubeGrant2);
 
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
@@ -18754,35 +18466,35 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Role1 - with 7 member grants
-            AccessMemberGrant memberGrantWA1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantWA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantWA1.setMember("[Store].[USA].[WA]");
             memberGrantWA1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantOR1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantOR1.setMember("[Store].[USA].[OR]");
             memberGrantOR1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantSF1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantSF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantSF1.setMember("[Store].[USA].[CA].[San Francisco]");
             memberGrantSF1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantLA1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantLA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantLA1.setMember("[Store].[USA].[CA].[Los Angeles]");
             memberGrantLA1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantMexico1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantMexico1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantMexico1.setMember("[Store].[Mexico]");
             memberGrantMexico1.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantDF1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantDF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantDF1.setMember("[Store].[Mexico].[DF]");
             memberGrantDF1.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant memberGrantCanada1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCanada1.setMember("[Store].[Canada]");
             memberGrantCanada1.setMemberAccess(MemberAccess.NONE);
 
-            AccessHierarchyGrant hierarchyGrant1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant1.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant1.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -18794,47 +18506,47 @@ public class SchemaModifiersEmf {
             hierarchyGrant1.getMemberGrants().add(memberGrantDF1);
             hierarchyGrant1.getMemberGrants().add(memberGrantCanada1);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant1.setCubeAccess(CubeAccess.ALL);
             cubeGrant1.getHierarchyGrants().add(hierarchyGrant1);
 
-            AccessCatalogGrant catalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant1.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant1.getCubeGrants().add(cubeGrant1);
 
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
             this.catalog.getAccessRoles().add(role1);
 
             // Role2 - with 6 member grants (no Los Angeles)
-            AccessMemberGrant memberGrantWA2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantWA2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantWA2.setMember("[Store].[USA].[WA]");
             memberGrantWA2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantOR2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantOR2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantOR2.setMember("[Store].[USA].[OR]");
             memberGrantOR2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantSF2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantSF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantSF2.setMember("[Store].[USA].[CA].[San Francisco]");
             memberGrantSF2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantMexico2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantMexico2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantMexico2.setMember("[Store].[Mexico]");
             memberGrantMexico2.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantDF2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantDF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantDF2.setMember("[Store].[Mexico].[DF]");
             memberGrantDF2.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant memberGrantCanada2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCanada2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCanada2.setMember("[Store].[Canada]");
             memberGrantCanada2.setMemberAccess(MemberAccess.NONE);
 
-            AccessHierarchyGrant hierarchyGrant2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant2.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant2.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -18845,16 +18557,16 @@ public class SchemaModifiersEmf {
             hierarchyGrant2.getMemberGrants().add(memberGrantDF2);
             hierarchyGrant2.getMemberGrants().add(memberGrantCanada2);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
             cubeGrant2.getHierarchyGrants().add(hierarchyGrant2);
 
-            AccessCatalogGrant catalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant2.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant2.getCubeGrants().add(cubeGrant2);
 
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("Role2");
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
@@ -18887,26 +18599,26 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create dimension grants
-            AccessDimensionGrant measuresGrant = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant measuresGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             // Note: Measures dimension grant doesn't need setDimension call (commented in
             // original)
             measuresGrant.setDimensionAccess(DimensionAccess.ALL);
 
-            AccessDimensionGrant genderGrant = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant genderGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             genderGrant.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_GENDER));
             genderGrant.setDimensionAccess(DimensionAccess.ALL);
 
             // Create member grants
-            AccessMemberGrant memberGrantUSA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantUSA.setMember("[Store].[USA]");
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant memberGrantCA = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrantCA.setMember("[Store].[USA].[CA]");
             memberGrantCA.setMemberAccess(MemberAccess.NONE);
 
             // Create hierarchy grant
-            AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -18914,7 +18626,7 @@ public class SchemaModifiersEmf {
             hierarchyGrant.getMemberGrants().add(memberGrantCA);
 
             // Create cube grant
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
             cubeGrant.setCubeAccess(CubeAccess.CUSTOM);
             cubeGrant.getDimensionGrants().add(measuresGrant);
@@ -18922,12 +18634,12 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
 
             // Create catalog grant
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
             catalogGrant.getCubeGrants().add(cubeGrant);
 
             // Create role
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant);
 
@@ -18999,26 +18711,26 @@ public class SchemaModifiersEmf {
 
         public AccessControlTestModifier32(Catalog catalog2) {
             ExplicitHierarchy warehouseSharedHierarchy;
-            StandardDimension d = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension d = DimensionFactory.eINSTANCE.createStandardDimension();
             d.setName("WarehouseShared");
-            warehouseSharedHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            warehouseSharedHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             warehouseSharedHierarchy.setHasAll(true);
             warehouseSharedHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
-            TableQuery warehouseTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseTableQuery.setTable(CatalogSupplier.TABLE_WAREHOUSE);
             warehouseSharedHierarchy.setQuery(warehouseTableQuery);
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_STATE_PROVINCE_WAREHOUSE);
             stateProvinceLevel.setUniqueMembers(true);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_CITY_WAREHOUSE);
             cityLevel.setUniqueMembers(false);
 
-            Level warehouseNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level warehouseNameLevel = LevelFactory.eINSTANCE.createLevel();
             warehouseNameLevel.setName("Warehouse Name");
             warehouseNameLevel.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_NAME_WAREHOUSE);
             warehouseNameLevel.setUniqueMembers(true);
@@ -19029,25 +18741,25 @@ public class SchemaModifiersEmf {
 
             d.getHierarchies().add(warehouseSharedHierarchy);
 
-            PhysicalCube warehouse1Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube warehouse1Cube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouse1Cube.setName("Warehouse1");
-            TableQuery warehouse1TableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouse1TableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouse1TableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
             warehouse1Cube.setQuery(warehouse1TableQuery);
 
-            DimensionConnector dc1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dc1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dc1.setOverrideDimensionName("WarehouseShared");
             dc1.setDimension(d);
             dc1.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
             warehouse1Cube.getDimensionConnectors().add(dc1);
 
-            MeasureGroup mg1 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg1 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure measure1_0 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure1_0 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1_0.setName("Measure1_0");
             measure1_0.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
 
-            SumMeasure measure1_1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure1_1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1_1.setName("Measure1_1");
             measure1_1.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
 
@@ -19055,36 +18767,36 @@ public class SchemaModifiersEmf {
             mg1.getMeasures().add(measure1_1);
             warehouse1Cube.getMeasureGroups().add(mg1);
 
-            CalculatedMember cm1 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            CalculatedMember cm1 = LevelFactory.eINSTANCE.createCalculatedMember();
             cm1.setName("Calculated Measure1");
             cm1.setFormula("[Measures].[Measure1_1] / [Measures].[Measure1_0]");
 
-            CalculatedMemberProperty cmp1 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+            CalculatedMemberProperty cmp1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
             cmp1.setName("FORMAT_STRING");
             cmp1.setValue("$#,##0.00");
             cm1.getCalculatedMemberProperties().add(cmp1);
 
             warehouse1Cube.getCalculatedMembers().add(cm1);
 
-            PhysicalCube warehouse2Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube warehouse2Cube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouse2Cube.setName("Warehouse2");
-            TableQuery warehouse2TableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource warehouse2TableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouse2TableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
             warehouse2Cube.setQuery(warehouse2TableQuery);
 
-            DimensionConnector dc2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dc2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dc2.setOverrideDimensionName("WarehouseShared");
             dc2.setDimension(d);
             dc2.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
             warehouse2Cube.getDimensionConnectors().add(dc2);
 
-            MeasureGroup mg2 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg2 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure measure2_0 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure2_0 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2_0.setName("Measure2_0");
             measure2_0.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
 
-            SumMeasure measure2_1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure2_1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2_1.setName("Measure2_1");
             measure2_1.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
 
@@ -19092,52 +18804,52 @@ public class SchemaModifiersEmf {
             mg2.getMeasures().add(measure2_1);
             warehouse2Cube.getMeasureGroups().add(mg2);
 
-            CalculatedMember cm2 = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            CalculatedMember cm2 = LevelFactory.eINSTANCE.createCalculatedMember();
             cm2.setName("Calculated Measure2");
             cm2.setFormula("[Measures].[Measure2_1] / [Measures].[Measure2_0]");
 
-            CalculatedMemberProperty cmp2 = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+            CalculatedMemberProperty cmp2 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
             cmp2.setName("FORMAT_STRING");
             cmp2.setValue("$#,##0.00");
             cm2.getCalculatedMemberProperties().add(cmp2);
 
             warehouse2Cube.getCalculatedMembers().add(cm2);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart.DimAndMeasure.Role");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(warehouse1Cube);
             catalog.getCubes().add(warehouse2Cube);
 
-            AccessRole adminRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
             adminRole.setName("Administrator");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant1.setCube(warehouse1Cube);
             cubeGrant1.setCubeAccess(CubeAccess.CUSTOM);
 
-            AccessHierarchyGrant hg1_1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1_1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1_1.setHierarchy(warehouseSharedHierarchy);
             hg1_1.setHierarchyAccess(HierarchyAccess.ALL);
 
-            AccessHierarchyGrant hg1_2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg1_2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg1_2.setHierarchyAccess(HierarchyAccess.ALL);
 
             cubeGrant1.getHierarchyGrants().add(hg1_1);
             cubeGrant1.getHierarchyGrants().add(hg1_2);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCube(warehouse2Cube);
             cubeGrant2.setCubeAccess(CubeAccess.CUSTOM);
 
-            AccessHierarchyGrant hg2_1 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2_1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2_1.setHierarchy(warehouseSharedHierarchy);
             hg2_1.setHierarchyAccess(HierarchyAccess.ALL);
 
-            AccessHierarchyGrant hg2_2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hg2_2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hg2_2.setHierarchyAccess(HierarchyAccess.ALL);
 
             cubeGrant2.getHierarchyGrants().add(hg2_1);
@@ -19171,13 +18883,13 @@ public class SchemaModifiersEmf {
         public AccessControlTestModifier38(Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
-            AccessRole salesRaggedRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole salesRaggedRole = CommonFactory.eINSTANCE.createAccessRole();
             salesRaggedRole.setName("Sales Ragged");
 
-            AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             catalogGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube((PhysicalCube) copier.get(CatalogSupplier.CUBE_SALES_RAGGED));
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
@@ -19216,35 +18928,35 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public OrderKeyOneToOneCheckTestModifier(Catalog catalog2) {
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             hierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.getOrdinalColumns().addAll(List.of(oc1));
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-            Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthLevel = LevelFactory.eINSTANCE.createLevel();
             monthLevel.setName("Month");
             monthLevel.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthLevel.setUniqueMembers(false);
@@ -19257,22 +18969,22 @@ public class SchemaModifiersEmf {
 
             timeDimension.getHierarchies().add(hierarchy);
 
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesCube.setQuery(salesTableQuery);
 
-            DimensionConnector timeDc = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDc.setOverrideDimensionName("Time");
             timeDc.setDimension(timeDimension);
             timeDc.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             salesCube.getDimensionConnectors().add(timeDc);
 
-            MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
@@ -19280,9 +18992,9 @@ public class SchemaModifiersEmf {
             mg.getMeasures().add(unitSalesMeasure);
             salesCube.getMeasureGroups().add(mg);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2358");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesCube);
         }
 
@@ -19326,35 +19038,35 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public DefaultRecognizerTestModifier(Catalog catalog2) {
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             hierarchy.setQuery(timeTableQuery);
 
-            Level yearLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
             yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             yearLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             yearLevel.setUniqueMembers(true);
             yearLevel.setType(LevelDefinition.TIME_YEARS);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.getOrdinalColumns().addAll(List.of(oc1));
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-            Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthLevel = LevelFactory.eINSTANCE.createLevel();
             monthLevel.setName("Month");
             monthLevel.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthLevel.setUniqueMembers(false);
@@ -19367,22 +19079,22 @@ public class SchemaModifiersEmf {
 
             timeDimension.getHierarchies().add(hierarchy);
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            AggregationExclude aggExclude1 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude1.setName("agg_c_special_sales_fact_1997");
 
-            AggregationExclude aggExclude2 = RolapMappingFactory.eINSTANCE.createAggregationExclude();
+            AggregationExclude aggExclude2 = AggregationFactory.eINSTANCE.createAggregationExclude();
             aggExclude2.setName("agg_c_14_sales_fact_1997");
 
             salesTableQuery.getAggregationExcludes().add(aggExclude1);
@@ -19390,25 +19102,25 @@ public class SchemaModifiersEmf {
 
             salesCube.setQuery(salesTableQuery);
 
-            DimensionConnector timeDc = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDc.setOverrideDimensionName("Time");
             timeDc.setDimension(timeDimension);
             timeDc.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             salesCube.getDimensionConnectors().add(timeDc);
 
-            MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure storeCostMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeCostMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeCostMeasure.setName("Store Cost");
             storeCostMeasure.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
             storeCostMeasure.setFormatString("#,###.00");
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("#,###.00");
 
-            CountMeasure customerCountMeasure = RolapMappingFactory.eINSTANCE.createCountMeasure();
+            CountMeasure customerCountMeasure = MeasureFactory.eINSTANCE.createCountMeasure();
             customerCountMeasure.setName("Customer Count");
             customerCountMeasure.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             customerCountMeasure.setDistinct(true);
@@ -19421,9 +19133,9 @@ public class SchemaModifiersEmf {
 
             salesCube.getMeasureGroups().add(mg);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesCube);
 
         }
@@ -19457,60 +19169,60 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public DialectTestModifier1(Catalog catalog2) {
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
             hierarchy.setQuery(timeTableQuery);
 
-            Level dayLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level dayLevel = LevelFactory.eINSTANCE.createLevel();
             dayLevel.setName("Day");
             dayLevel.setColumnType(ColumnInternalDataType.DATE);
             dayLevel.setUniqueMembers(true);
             dayLevel.setType(LevelDefinition.TIME_YEARS);
 
-            SQLExpressionColumn sqlColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-            SqlStatement sqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+            SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement.setSql("cast(\"the_date\" as DATE)\n");
             sqlColumn.getSqls().add(sqlStatement);
-            sqlColumn.setType(ColumnType.VARCHAR);
+            sqlColumn.setType(SqlSimpleTypes.varcharType(255));
 
             dayLevel.setColumn(sqlColumn);
 
             hierarchy.getLevels().add(dayLevel);
             timeDimension.getHierarchies().add(hierarchy);
 
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
-            PhysicalCube dateLiteralTestCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube dateLiteralTestCube = CubeFactory.eINSTANCE.createPhysicalCube();
             dateLiteralTestCube.setName("DateLiteralTest");
             dateLiteralTestCube.setDefaultMeasure(unitSalesMeasure);
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             dateLiteralTestCube.setQuery(salesTableQuery);
 
-            DimensionConnector timeDc = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDc.setOverrideDimensionName("Time");
             timeDc.setDimension(timeDimension);
             timeDc.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             dateLiteralTestCube.getDimensionConnectors().add(timeDc);
 
-            MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
             mg.getMeasures().add(unitSalesMeasure);
             dateLiteralTestCube.getMeasureGroups().add(mg);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(dateLiteralTestCube);
 
         }
@@ -19552,74 +19264,74 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public DialectTestModifier2(Catalog catalog2) {
-            TimeDimension storeSqftDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension storeSqftDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             storeSqftDimension.setName("StoreSqft");
 
-            ExplicitHierarchy hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
 
-            TableQuery storeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
             hierarchy.setQuery(storeTableQuery);
 
-            Level storeSqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
             storeSqftLevel.setName("StoreSqft");
             storeSqftLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             storeSqftLevel.setUniqueMembers(true);
 
-            SQLExpressionColumn sqlColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
+            ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
 
-            SqlStatement sqlStatement1 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlStatement1 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement1.getDialects().add("mysql");
             sqlStatement1.setSql("cast(`store_sqft` as UNSIGNED INTEGER) + " + Integer.MAX_VALUE);
 
-            SqlStatement sqlStatement2 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlStatement2 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement2.getDialects().add("vertica");
             sqlStatement2.setSql("cast(\"store_sqft\" as BIGINT) + " + Integer.MAX_VALUE);
 
-            SqlStatement sqlStatement3 = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            SqlStatement sqlStatement3 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement3.getDialects().add("oracle");
             sqlStatement3.setSql("CAST(\"store_sqft\" + 2147483647 AS NUMBER(22))");
 
             sqlColumn.getSqls().add(sqlStatement1);
             sqlColumn.getSqls().add(sqlStatement2);
             sqlColumn.getSqls().add(sqlStatement3);
-            sqlColumn.setType(ColumnType.VARCHAR);
+            sqlColumn.setType(SqlSimpleTypes.varcharType(255));
 
             storeSqftLevel.setColumn(sqlColumn);
 
             hierarchy.getLevels().add(storeSqftLevel);
             storeSqftDimension.getHierarchies().add(hierarchy);
 
-            PhysicalCube bigIntTestCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube bigIntTestCube = CubeFactory.eINSTANCE.createPhysicalCube();
             bigIntTestCube.setName("BigIntTest");
 
-            TableQuery salesTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
             bigIntTestCube.setQuery(salesTableQuery);
 
-            DimensionConnector storeSqftDc = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeSqftDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeSqftDc.setOverrideDimensionName("StoreSqft");
             storeSqftDc.setDimension(storeSqftDimension);
             storeSqftDc.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             bigIntTestCube.getDimensionConnectors().add(storeSqftDc);
 
-            MeasureGroup mg = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup mg = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure bigUnitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure bigUnitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             bigUnitSalesMeasure.setName("Big Unit Sales");
             bigUnitSalesMeasure.setFormatString("Standard");
 
-            SQLExpressionColumn measureSqlColumn = RolapMappingFactory.eINSTANCE.createSQLExpressionColumn();
-            SqlStatement measureSqlStatement = RolapMappingFactory.eINSTANCE.createSqlStatement();
+            ExpressionColumn measureSqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
+            SqlStatement measureSqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
             measureSqlStatement.getDialects().add("vertica");
             measureSqlStatement.setSql("CAST(\"unit_sales\" + 2147483647 AS NUMBER(22))");
             measureSqlColumn.getSqls().add(measureSqlStatement);
 
             bigUnitSalesMeasure.setColumn(measureSqlColumn);
 
-            SumMeasure passAggMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure passAggMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             passAggMeasure.setName("Pass Agg enabled");
             passAggMeasure.setColumn(CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
 
@@ -19628,9 +19340,9 @@ public class SchemaModifiersEmf {
 
             bigIntTestCube.getMeasureGroups().add(mg);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(bigIntTestCube);
 
         }
@@ -19678,17 +19390,17 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public DrillThroughTestModifier4(Catalog catalog2) {
-            StandardDimension frozenSqftDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension frozenSqftDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             frozenSqftDimension.setName("Frozen sqft");
 
-            ExplicitHierarchy frozenSqftHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy frozenSqftHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             frozenSqftHierarchy.setHasAll(true);
 
-            TableQuery frozenSqftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource frozenSqftTable = SourceFactory.eINSTANCE.createTableSource();
             frozenSqftTable.setTable(CatalogSupplier.TABLE_STORE);
             frozenSqftHierarchy.setQuery(frozenSqftTable);
 
-            Level frozenSqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level frozenSqftLevel = LevelFactory.eINSTANCE.createLevel();
             frozenSqftLevel.setName("Frozen sqft");
             frozenSqftLevel.setUniqueMembers(false);
             frozenSqftLevel.setColumn(CatalogSupplier.COLUMN_FROZEN_SQFT_STORE);
@@ -19697,17 +19409,17 @@ public class SchemaModifiersEmf {
 
             frozenSqftDimension.getHierarchies().add(frozenSqftHierarchy);
 
-            StandardDimension grocerySqftDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension grocerySqftDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             grocerySqftDimension.setName("Grocery sqft");
 
-            ExplicitHierarchy grocerySqftHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy grocerySqftHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             grocerySqftHierarchy.setHasAll(true);
 
-            TableQuery grocerySqftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource grocerySqftTable = SourceFactory.eINSTANCE.createTableSource();
             grocerySqftTable.setTable(CatalogSupplier.TABLE_STORE);
             grocerySqftHierarchy.setQuery(grocerySqftTable);
 
-            Level grocerySqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level grocerySqftLevel = LevelFactory.eINSTANCE.createLevel();
             grocerySqftLevel.setName("Grocery sqft");
             grocerySqftLevel.setUniqueMembers(false);
             grocerySqftLevel.setColumn(CatalogSupplier.COLUMN_GROCERY_SQFT_STORE);
@@ -19716,17 +19428,17 @@ public class SchemaModifiersEmf {
 
             grocerySqftDimension.getHierarchies().add(grocerySqftHierarchy);
 
-            StandardDimension meatSqftDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension meatSqftDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             meatSqftDimension.setName("Meat sqft");
 
-            ExplicitHierarchy meatSqftHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy meatSqftHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             meatSqftHierarchy.setHasAll(true);
 
-            TableQuery meatSqftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource meatSqftTable = SourceFactory.eINSTANCE.createTableSource();
             meatSqftTable.setTable(CatalogSupplier.TABLE_STORE);
             meatSqftHierarchy.setQuery(meatSqftTable);
 
-            Level meatSqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level meatSqftLevel = LevelFactory.eINSTANCE.createLevel();
             meatSqftLevel.setName("Meat sqft");
             meatSqftLevel.setUniqueMembers(false);
             meatSqftLevel.setColumn(CatalogSupplier.COLUMN_MEAT_SQFT_STORE);
@@ -19735,17 +19447,17 @@ public class SchemaModifiersEmf {
 
             meatSqftDimension.getHierarchies().add(meatSqftHierarchy);
 
-            StandardDimension storeSqftDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeSqftDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeSqftDimension.setName("Store sqft");
 
-            ExplicitHierarchy storeSqftHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storeSqftHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeSqftHierarchy.setHasAll(true);
 
-            TableQuery storeSqftTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeSqftTable = SourceFactory.eINSTANCE.createTableSource();
             storeSqftTable.setTable(CatalogSupplier.TABLE_STORE);
             storeSqftHierarchy.setQuery(storeSqftTable);
 
-            Level storeSqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
             storeSqftLevel.setName("Store sqft");
             storeSqftLevel.setUniqueMembers(false);
             storeSqftLevel.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
@@ -19754,60 +19466,60 @@ public class SchemaModifiersEmf {
 
             storeSqftDimension.getHierarchies().add(storeSqftHierarchy);
 
-            PhysicalCube dsadCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube dsadCube = CubeFactory.eINSTANCE.createPhysicalCube();
             dsadCube.setName("dsad");
 
-            TableQuery dsadCubeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource dsadCubeTable = SourceFactory.eINSTANCE.createTableSource();
             dsadCubeTable.setTable(CatalogSupplier.TABLE_STORE);
             dsadCube.setQuery(dsadCubeTable);
 
-            DimensionConnector frozenSqftConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector frozenSqftConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             frozenSqftConnector.setOverrideDimensionName("Frozen sqft");
             frozenSqftConnector.setDimension(frozenSqftDimension);
             dsadCube.getDimensionConnectors().add(frozenSqftConnector);
 
-            DimensionConnector grocerySqftConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector grocerySqftConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             grocerySqftConnector.setOverrideDimensionName("Grocery sqft");
             grocerySqftConnector.setDimension(grocerySqftDimension);
             dsadCube.getDimensionConnectors().add(grocerySqftConnector);
 
-            DimensionConnector meatSqftConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector meatSqftConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             meatSqftConnector.setOverrideDimensionName("Meat sqft");
             meatSqftConnector.setDimension(meatSqftDimension);
             dsadCube.getDimensionConnectors().add(meatSqftConnector);
 
-            DimensionConnector storeSqftConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeSqftConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeSqftConnector.setOverrideDimensionName("Store sqft");
             storeSqftConnector.setDimension(storeSqftDimension);
             dsadCube.getDimensionConnectors().add(storeSqftConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure frozenSqftMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure frozenSqftMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             frozenSqftMeasure.setName("Frozen sqft");
             frozenSqftMeasure.setColumn(CatalogSupplier.COLUMN_FROZEN_SQFT_STORE);
             measureGroup.getMeasures().add(frozenSqftMeasure);
 
-            SumMeasure grocerySqftMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure grocerySqftMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             grocerySqftMeasure.setName("Grocery sqft");
             grocerySqftMeasure.setColumn(CatalogSupplier.COLUMN_GROCERY_SQFT_STORE);
             measureGroup.getMeasures().add(grocerySqftMeasure);
 
-            SumMeasure meatSqftMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure meatSqftMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             meatSqftMeasure.setName("Meat sqft");
             meatSqftMeasure.setColumn(CatalogSupplier.COLUMN_MEAT_SQFT_STORE);
             measureGroup.getMeasures().add(meatSqftMeasure);
 
-            SumMeasure storeSqftMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSqftMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSqftMeasure.setName("Store sqft");
             storeSqftMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             measureGroup.getMeasures().add(storeSqftMeasure);
 
             dsadCube.getMeasureGroups().add(measureGroup);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(dsadCube);
 
         }
@@ -19841,19 +19553,19 @@ public class SchemaModifiersEmf {
 
         public DrillThroughTestModifier5(Catalog catalog2) {
             // Customers Dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers Dimension");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers hierarchy name");
             customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-            TableQuery customersTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersTable = SourceFactory.eINSTANCE.createTableSource();
             customersTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(customersTable);
 
-            Level customerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer Level Name");
             customerLevel.setDescription("Customer Level Description");
             customerLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -19865,19 +19577,19 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Product Dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product Dimension");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setAllMemberName("All products hierarchy name");
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-            TableQuery productTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
             productHierarchy.setQuery(productTable);
 
-            Level productLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product Level Name");
             productLevel.setDescription("Product Level Description");
             productLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
@@ -19889,28 +19601,28 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // SalesShort Cube
-            PhysicalCube salesShortCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesShortCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesShortCube.setName("SalesShort");
 
-            TableQuery salesTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTable = SourceFactory.eINSTANCE.createTableSource();
             salesTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesShortCube.setQuery(salesTable);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers Dimension");
             customersConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             customersConnector.setDimension(customersDimension);
             salesShortCube.getDimensionConnectors().add(customersConnector);
 
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product Dimension");
             productConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             productConnector.setDimension(productDimension);
             salesShortCube.getDimensionConnectors().add(productConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("#,###.00");
@@ -19918,9 +19630,9 @@ public class SchemaModifiersEmf {
 
             salesShortCube.getMeasureGroups().add(measureGroup);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMartSalesOnly");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesShortCube);
         }
 
@@ -19953,19 +19665,19 @@ public class SchemaModifiersEmf {
 
         public DrillThroughTestModifier6(Catalog catalog2) {
             // Customers Dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers Dimension");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers hierarchy name");
             customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-            TableQuery customersTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersTable = SourceFactory.eINSTANCE.createTableSource();
             customersTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(customersTable);
 
-            Level customerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer Level Name");
             customerLevel.setDescription("Customer Level Description");
             customerLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -19976,19 +19688,19 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Product Dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product Dimension");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setAllMemberName("All products hierarchy name");
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
 
-            TableQuery productTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
             productHierarchy.setQuery(productTable);
 
-            Level productLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product Level Name");
             productLevel.setDescription("Product Level Description");
             productLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
@@ -19999,28 +19711,28 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // SalesShort Cube
-            PhysicalCube salesShortCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesShortCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesShortCube.setName("SalesShort");
 
-            TableQuery salesTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesTable = SourceFactory.eINSTANCE.createTableSource();
             salesTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
             salesShortCube.setQuery(salesTable);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers Dimension");
             customersConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             customersConnector.setDimension(customersDimension);
             salesShortCube.getDimensionConnectors().add(customersConnector);
 
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product Dimension");
             productConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             productConnector.setDimension(productDimension);
             salesShortCube.getDimensionConnectors().add(productConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure storeSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure storeSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             storeSalesMeasure.setName("Store Sales");
             storeSalesMeasure.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
             storeSalesMeasure.setFormatString("#,###.00");
@@ -20028,9 +19740,9 @@ public class SchemaModifiersEmf {
 
             salesShortCube.getMeasureGroups().add(measureGroup);
 
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMartSalesOnly");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(salesShortCube);
         }
 
@@ -20061,31 +19773,31 @@ public class SchemaModifiersEmf {
         public PropertiesTestModifier(Catalog catalog2) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
             this.catalog = (CatalogImpl) copier.get(catalog2);
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
             unitSalesMeasure.setFormatString("Standard");
 
             // Promotions Dimension
-            StandardDimension promotionsDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension promotionsDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             promotionsDimension.setName("Promotions");
 
-            ExplicitHierarchy promotionsHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy promotionsHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             promotionsHierarchy.setHasAll(true);
             promotionsHierarchy.setAllMemberName("All Promotions");
             promotionsHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION));
             promotionsHierarchy.setDefaultMember("[All Promotions]");
 
-            TableQuery promotionsTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource promotionsTable = SourceFactory.eINSTANCE.createTableSource();
             promotionsTable.setTable((Table) copier.get(CatalogSupplier.TABLE_PROMOTION));
             promotionsHierarchy.setQuery(promotionsTable);
 
-            Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
             promotionNameLevel.setName("Promotion Name");
             promotionNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION));
             promotionNameLevel.setUniqueMembers(true);
 
-            MemberProperty barProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty barProp = LevelFactory.eINSTANCE.createMemberProperty();
             barProp.setName("BarProp");
             barProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION));
             barProp.setDescription("BaconDesc");
@@ -20095,21 +19807,21 @@ public class SchemaModifiersEmf {
             promotionsDimension.getHierarchies().add(promotionsHierarchy);
 
             // Foo Cube
-            PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
             fooCube.setName("Foo");
             fooCube.setDefaultMeasure(unitSalesMeasure);
 
-            TableQuery fooTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource fooTable = SourceFactory.eINSTANCE.createTableSource();
             fooTable.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             fooCube.setQuery(fooTable);
 
-            DimensionConnector promotionsConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector promotionsConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             promotionsConnector.setOverrideDimensionName("Promotions");
             promotionsConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
             promotionsConnector.setDimension(promotionsDimension);
             fooCube.getDimensionConnectors().add(promotionsConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
             fooCube.getMeasureGroups().add(measureGroup);
 
@@ -20129,47 +19841,47 @@ public class SchemaModifiersEmf {
 
         public Ssas2005CompatibilityTestModifier5(Catalog catalog2) {
             // Create the measure
-            SumMeasure unitSalesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSalesMeasure.setName("Unit Sales");
             unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
             unitSalesMeasure.setFormatString("Standard");
 
             // Store Dimension - Stores Hierarchy
-            Level storeCountryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
             storeCountryLevel.setName("Store Country");
             storeCountryLevel.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
             storeCountryLevel.setUniqueMembers(true);
 
-            Level storeStateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
             storeStateLevel.setName("Store State");
             storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
             storeStateLevel.setUniqueMembers(true);
 
-            Level storeCityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
             storeCityLevel.setName("Store City");
             storeCityLevel.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
             storeCityLevel.setUniqueMembers(false);
 
-            MemberProperty storeTypeProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeTypeProperty = LevelFactory.eINSTANCE.createMemberProperty();
             storeTypeProperty.setName("Store Type");
             storeTypeProperty.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
 
-            MemberProperty storeSqftProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty storeSqftProperty = LevelFactory.eINSTANCE.createMemberProperty();
             storeSqftProperty.setName("Store Sqft");
             storeSqftProperty.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             storeSqftProperty.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            Level storeNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
             storeNameLevel.setName("Store Name");
             storeNameLevel.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
             storeNameLevel.setUniqueMembers(true);
             storeNameLevel.getMemberProperties().add(storeTypeProperty);
             storeNameLevel.getMemberProperties().add(storeSqftProperty);
 
-            TableQuery storeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
             storeQuery.setTable(CatalogSupplier.TABLE_STORE);
 
-            ExplicitHierarchy storesHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storesHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storesHierarchy.setName("Stores");
             storesHierarchy.setHasAll(true);
             storesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
@@ -20179,41 +19891,41 @@ public class SchemaModifiersEmf {
             storesHierarchy.getLevels().add(storeCityLevel);
             storesHierarchy.getLevels().add(storeNameLevel);
 
-            StandardDimension storeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeDimension.setName("Store");
             storeDimension.getHierarchies().add(storesHierarchy);
 
-            DimensionConnector storeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setOverrideDimensionName("Store");
             storeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             storeConnector.setDimension(storeDimension);
 
             // Time Dimension - Time By Week Hierarchy
-            Level year2Level1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level year2Level1 = LevelFactory.eINSTANCE.createLevel();
             year2Level1.setName("Year2");
             year2Level1.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             year2Level1.setColumnType(ColumnInternalDataType.NUMERIC);
             year2Level1.setUniqueMembers(true);
             year2Level1.setType(LevelDefinition.TIME_YEARS);
 
-            Level weekLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level weekLevel = LevelFactory.eINSTANCE.createLevel();
             weekLevel.setName("Week");
             weekLevel.setColumn(CatalogSupplier.COLUMN_WEEK_OF_YEAR_TIME_BY_DAY);
             weekLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             weekLevel.setUniqueMembers(false);
             weekLevel.setType(LevelDefinition.TIME_WEEKS);
 
-            Level date2Level = RolapMappingFactory.eINSTANCE.createLevel();
+            Level date2Level = LevelFactory.eINSTANCE.createLevel();
             date2Level.setName("Date2");
             date2Level.setColumn(CatalogSupplier.COLUMN_DAY_OF_MONTH_TIME_BY_DAY);
             date2Level.setColumnType(ColumnInternalDataType.NUMERIC);
             date2Level.setUniqueMembers(false);
             date2Level.setType(LevelDefinition.TIME_DAYS);
 
-            TableQuery timeByDayQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeByDayQuery1 = SourceFactory.eINSTANCE.createTableSource();
             timeByDayQuery1.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
 
-            ExplicitHierarchy timeByWeekHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeByWeekHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeByWeekHierarchy.setHasAll(true);
             timeByWeekHierarchy.setName("Time By Week");
             timeByWeekHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
@@ -20223,20 +19935,20 @@ public class SchemaModifiersEmf {
             timeByWeekHierarchy.getLevels().add(date2Level);
 
             // Time Dimension - Time2 Hierarchy
-            Level year2Level2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level year2Level2 = LevelFactory.eINSTANCE.createLevel();
             year2Level2.setName("Year2");
             year2Level2.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
             year2Level2.setColumnType(ColumnInternalDataType.NUMERIC);
             year2Level2.setUniqueMembers(true);
             year2Level2.setType(LevelDefinition.TIME_YEARS);
 
-            Level quarterLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quarterLevel = LevelFactory.eINSTANCE.createLevel();
             quarterLevel.setName("Quarter");
             quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
             quarterLevel.setUniqueMembers(false);
             quarterLevel.setType(LevelDefinition.TIME_QUARTERS);
 
-            Level monthLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthLevel = LevelFactory.eINSTANCE.createLevel();
             monthLevel.setName("Month");
             monthLevel.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
             monthLevel.setNameColumn(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY);
@@ -20244,10 +19956,10 @@ public class SchemaModifiersEmf {
             monthLevel.setUniqueMembers(false);
             monthLevel.setType(LevelDefinition.TIME_MONTHS);
 
-            TableQuery timeByDayQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeByDayQuery2 = SourceFactory.eINSTANCE.createTableSource();
             timeByDayQuery2.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
 
-            ExplicitHierarchy time2Hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy time2Hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             time2Hierarchy.setHasAll(false);
             time2Hierarchy.setName("Time2");
             time2Hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
@@ -20256,67 +19968,67 @@ public class SchemaModifiersEmf {
             time2Hierarchy.getLevels().add(quarterLevel);
             time2Hierarchy.getLevels().add(monthLevel);
 
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
             timeDimension.getHierarchies().add(timeByWeekHierarchy);
             timeDimension.getHierarchies().add(time2Hierarchy);
 
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
             timeConnector.setDimension(timeDimension);
 
             // Product Dimension - Products Hierarchy
-            Level productFamilyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevel.setName("Product Family");
             productFamilyLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
             productFamilyLevel.setUniqueMembers(true);
 
-            Level productDepartmentLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productDepartmentLevel = LevelFactory.eINSTANCE.createLevel();
             productDepartmentLevel.setName("Product Department");
             productDepartmentLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
             productDepartmentLevel.setUniqueMembers(false);
 
-            Level productCategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productCategoryLevel.setName("Product Category");
             productCategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
             productCategoryLevel.setUniqueMembers(false);
 
-            Level productSubcategoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productSubcategoryLevel.setName("Product Subcategory");
             productSubcategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
             productSubcategoryLevel.setUniqueMembers(false);
 
-            Level brandNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
             brandNameLevel.setName("Brand Name");
             brandNameLevel.setColumn(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
             brandNameLevel.setUniqueMembers(false);
 
-            Level productNameLevel1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productNameLevel1 = LevelFactory.eINSTANCE.createLevel();
             productNameLevel1.setName("Product Name");
             productNameLevel1.setNameColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
             productNameLevel1.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             productNameLevel1.setUniqueMembers(true);
 
-            TableQuery productTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
             productTableQuery1.setTable(CatalogSupplier.TABLE_PRODUCT);
 
-            TableQuery productClassTableQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
             productClassTableQuery1.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
-            JoinedQueryElement leftJoin1 = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement leftJoin1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin1.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             leftJoin1.setQuery(productTableQuery1);
 
-            JoinedQueryElement rightJoin1 = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightJoin1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin1.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             rightJoin1.setQuery(productClassTableQuery1);
 
-            JoinQuery joinQuery1 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource joinQuery1 = SourceFactory.eINSTANCE.createJoinSource();
             joinQuery1.setLeft(leftJoin1);
             joinQuery1.setRight(rightJoin1);
 
-            ExplicitHierarchy productsHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productsHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productsHierarchy.setHasAll(true);
             productsHierarchy.setName("Products");
             productsHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
@@ -20329,56 +20041,56 @@ public class SchemaModifiersEmf {
             productsHierarchy.getLevels().add(productNameLevel1);
 
             // Product Dimension - Product Name Hierarchy
-            Level productNameLevel2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productNameLevel2 = LevelFactory.eINSTANCE.createLevel();
             productNameLevel2.setName("Product Name");
             productNameLevel2.setColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
             productNameLevel2.setUniqueMembers(true);
 
-            TableQuery productTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             productTableQuery2.setTable(CatalogSupplier.TABLE_PRODUCT);
 
-            TableQuery productClassTableQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productClassTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             productClassTableQuery2.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
-            JoinedQueryElement leftJoin2 = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement leftJoin2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin2.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             leftJoin2.setQuery(productTableQuery2);
 
-            JoinedQueryElement rightJoin2 = RolapMappingFactory.eINSTANCE.createJoinedQueryElement();
+            JoinedQueryElement rightJoin2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin2.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             rightJoin2.setQuery(productClassTableQuery2);
 
-            JoinQuery joinQuery2 = RolapMappingFactory.eINSTANCE.createJoinQuery();
+            JoinSource joinQuery2 = SourceFactory.eINSTANCE.createJoinSource();
             joinQuery2.setLeft(leftJoin2);
             joinQuery2.setRight(rightJoin2);
 
-            ExplicitHierarchy productNameHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productNameHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productNameHierarchy.setName("Product Name");
             productNameHierarchy.setHasAll(true);
             productNameHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             productNameHierarchy.setQuery(joinQuery2);
             productNameHierarchy.getLevels().add(productNameLevel2);
 
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
             productDimension.getHierarchies().add(productsHierarchy);
             productDimension.getHierarchies().add(productNameHierarchy);
 
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("Product");
             productConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
             productConnector.setDimension(productDimension);
 
             // Promotion Dimension
-            Level promotionNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
             promotionNameLevel.setName("Promotion Name");
             promotionNameLevel.setColumn(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION);
             promotionNameLevel.setUniqueMembers(true);
 
-            TableQuery promotionQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource promotionQuery = SourceFactory.eINSTANCE.createTableSource();
             promotionQuery.setTable(CatalogSupplier.TABLE_PROMOTION);
 
-            ExplicitHierarchy promotionHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy promotionHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             promotionHierarchy.setHasAll(true);
             promotionHierarchy.setAllMemberName("All Promotions");
             promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
@@ -20386,65 +20098,65 @@ public class SchemaModifiersEmf {
             promotionHierarchy.setQuery(promotionQuery);
             promotionHierarchy.getLevels().add(promotionNameLevel);
 
-            StandardDimension promotionDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension promotionDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             promotionDimension.setName("Promotion");
             promotionDimension.getHierarchies().add(promotionHierarchy);
 
-            DimensionConnector promotionConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector promotionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             promotionConnector.setOverrideDimensionName("Promotion");
             promotionConnector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
             promotionConnector.setDimension(promotionDimension);
 
             // Currency Dimension
-            Level currencyLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level currencyLevel = LevelFactory.eINSTANCE.createLevel();
             currencyLevel.setName("Currency");
             currencyLevel.setColumn(CatalogSupplier.COLUMN_MEDIA_TYPE_PROMOTION);
             currencyLevel.setUniqueMembers(true);
 
-            TableQuery promotionQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource promotionQuery2 = SourceFactory.eINSTANCE.createTableSource();
             promotionQuery2.setTable(CatalogSupplier.TABLE_PROMOTION);
 
-            ExplicitHierarchy currencyHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy currencyHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             currencyHierarchy.setHasAll(true);
             currencyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
             currencyHierarchy.setQuery(promotionQuery2);
             currencyHierarchy.getLevels().add(currencyLevel);
 
-            StandardDimension currencyDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension currencyDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             currencyDimension.setName("Currency");
             currencyDimension.getHierarchies().add(currencyHierarchy);
 
-            DimensionConnector currencyConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector currencyConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             currencyConnector.setOverrideDimensionName("Currency");
             currencyConnector.setForeignKey(CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
             currencyConnector.setDimension(currencyDimension);
 
             // Customer Dimension
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             countryLevel.setUniqueMembers(true);
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn(CatalogSupplier.COLUMN_STATE_PROVINCE_CUSTOMER);
             stateProvinceLevel.setUniqueMembers(true);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
             cityLevel.setUniqueMembers(false);
 
-            Level nameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level nameLevel = LevelFactory.eINSTANCE.createLevel();
             nameLevel.setName("Name");
             nameLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             nameLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             nameLevel.setUniqueMembers(true);
 
-            TableQuery customerQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customerQuery = SourceFactory.eINSTANCE.createTableSource();
             customerQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
 
-            ExplicitHierarchy customerHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customerHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customerHierarchy.setHasAll(true);
             customerHierarchy.setAllMemberName("All Customers");
             customerHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
@@ -20454,48 +20166,48 @@ public class SchemaModifiersEmf {
             customerHierarchy.getLevels().add(cityLevel);
             customerHierarchy.getLevels().add(nameLevel);
 
-            StandardDimension customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customerDimension.setName("Customer");
             customerDimension.getHierarchies().add(customerHierarchy);
 
-            DimensionConnector customerConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customerConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customerConnector.setOverrideDimensionName("Customer");
             customerConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
             customerConnector.setDimension(customerDimension);
 
             // Store Size in SQFT Dimension
-            Level storeSqftLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
             storeSqftLevel.setName("Store Sqft");
             storeSqftLevel.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             storeSqftLevel.setColumnType(ColumnInternalDataType.NUMERIC);
             storeSqftLevel.setUniqueMembers(true);
 
-            TableQuery storeQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource storeQuery2 = SourceFactory.eINSTANCE.createTableSource();
             storeQuery2.setTable(CatalogSupplier.TABLE_STORE);
 
-            ExplicitHierarchy storeSizeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy storeSizeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeSizeHierarchy.setHasAll(true);
             storeSizeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             storeSizeHierarchy.setQuery(storeQuery2);
             storeSizeHierarchy.getLevels().add(storeSqftLevel);
 
-            StandardDimension storeSizeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension storeSizeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             storeSizeDimension.setName("Store Size in SQFT");
             storeSizeDimension.getHierarchies().add(storeSizeHierarchy);
 
-            DimensionConnector storeSizeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector storeSizeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeSizeConnector.setOverrideDimensionName("Store Size in SQFT");
             storeSizeConnector.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
             storeSizeConnector.setDimension(storeSizeDimension);
 
             // Create the cube
-            TableQuery salesFactQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
             salesFactQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(unitSalesMeasure);
 
-            PhysicalCube warehouseAndSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube warehouseAndSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouseAndSalesCube.setName("Warehouse and Sales");
             warehouseAndSalesCube.setDefaultMeasure(unitSalesMeasure);
             warehouseAndSalesCube.setQuery(salesFactQuery);
@@ -20509,9 +20221,9 @@ public class SchemaModifiersEmf {
             warehouseAndSalesCube.getMeasureGroups().add(measureGroup);
 
             // Create the catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(warehouseAndSalesCube);
         }
 
@@ -20618,25 +20330,25 @@ public class SchemaModifiersEmf {
         private Level countryLevel;
 
         public SteelWheelsSchemaTestModifier1(Catalog catalogMapping) {
-            this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
 
             catalog.getDbschemas().addAll(((Catalog) catalogMapping).getDbschemas());
 
             // Create Markets dimension
-            StandardDimension marketsDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension marketsDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             marketsDimension.setName("Markets");
 
-            marketsHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            marketsHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             marketsHierarchy.setHasAll(true);
             marketsHierarchy.setAllMemberName("All Markets");
             marketsHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery marketsQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource marketsQuery = SourceFactory.eINSTANCE.createTableSource();
             marketsQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             marketsHierarchy.setQuery(marketsQuery);
 
-            territoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            territoryLevel = LevelFactory.eINSTANCE.createLevel();
             territoryLevel.setName("Territory");
             territoryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TERRITORY_CUSTOMER);
             territoryLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20644,7 +20356,7 @@ public class SchemaModifiersEmf {
             territoryLevel.setType(LevelDefinition.REGULAR);
             territoryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             countryLevel.setType(LevelDefinition.REGULAR);
@@ -20660,7 +20372,7 @@ public class SchemaModifiersEmf {
 
             countryLevel.getAnnotations().addAll(List.of(countryDataRoleAnnotation, countryGeoRoleAnnotation));
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATE_CUSTOMER);
             stateProvinceLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20681,7 +20393,7 @@ public class SchemaModifiersEmf {
 
             stateProvinceLevel.getAnnotations().addAll(List.of(stateDataRoleAnnotation, stateGeoRoleAnnotation, stateGeoCountryAnnotation));
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CITY_CUSTOMER);
             cityLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20706,19 +20418,19 @@ public class SchemaModifiersEmf {
             marketsDimension.getHierarchies().add(marketsHierarchy);
 
             // Create Customers dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery customersQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersQuery = SourceFactory.eINSTANCE.createTableSource();
             customersQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(customersQuery);
 
-            Level customerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer");
             customerLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNAME_CUSTOMER);
             customerLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20726,32 +20438,32 @@ public class SchemaModifiersEmf {
             customerLevel.setType(LevelDefinition.REGULAR);
             customerLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            MemberProperty customerNumberProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty customerNumberProp = LevelFactory.eINSTANCE.createMemberProperty();
             customerNumberProp.setName("Customer Number");
             customerNumberProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
             customerNumberProp.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            MemberProperty contactFirstNameProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty contactFirstNameProp = LevelFactory.eINSTANCE.createMemberProperty();
             contactFirstNameProp.setName("Contact First Name");
             contactFirstNameProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CONTACTFIRSTNAME_CUSTOMER);
             contactFirstNameProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty contactLastNameProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty contactLastNameProp = LevelFactory.eINSTANCE.createMemberProperty();
             contactLastNameProp.setName("Contact Last Name");
             contactLastNameProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CONTACTLASTNAME_CUSTOMER);
             contactLastNameProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty phoneProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty phoneProp = LevelFactory.eINSTANCE.createMemberProperty();
             phoneProp.setName("Phone");
             phoneProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PHONE_CUSTOMER);
             phoneProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty addressProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty addressProp = LevelFactory.eINSTANCE.createMemberProperty();
             addressProp.setName("Address");
             addressProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_ADDRESSLINE1_CUSTOMER);
             addressProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty creditLimitProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty creditLimitProp = LevelFactory.eINSTANCE.createMemberProperty();
             creditLimitProp.setName("Credit Limit");
             creditLimitProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CREDITLIMIT_CUSTOMER);
             creditLimitProp.setPropertyType(ColumnInternalDataType.NUMERIC);
@@ -20763,20 +20475,20 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Create Product dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setName("");
             productHierarchy.setHasAll(true);
             productHierarchy.setAllMemberName("All Products");
             productHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
 
-            TableQuery productQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
             productQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
             productHierarchy.setQuery(productQuery);
 
-            Level lineLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level lineLevel = LevelFactory.eINSTANCE.createLevel();
             lineLevel.setName("Line");
             lineLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
             lineLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20784,7 +20496,7 @@ public class SchemaModifiersEmf {
             lineLevel.setType(LevelDefinition.REGULAR);
             lineLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level vendorLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level vendorLevel = LevelFactory.eINSTANCE.createLevel();
             vendorLevel.setName("Vendor");
             vendorLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTVENDOR_PRODUCTS);
             vendorLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20792,7 +20504,7 @@ public class SchemaModifiersEmf {
             vendorLevel.setType(LevelDefinition.REGULAR);
             vendorLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level productLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product");
             productLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTNAME_PRODUCTS);
             productLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20800,17 +20512,17 @@ public class SchemaModifiersEmf {
             productLevel.setType(LevelDefinition.REGULAR);
             productLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            MemberProperty codeProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty codeProp = LevelFactory.eINSTANCE.createMemberProperty();
             codeProp.setName("Code");
             codeProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
             codeProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty vendorProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty vendorProp = LevelFactory.eINSTANCE.createMemberProperty();
             vendorProp.setName("Vendor");
             vendorProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTVENDOR_PRODUCTS);
             vendorProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty descriptionProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty descriptionProp = LevelFactory.eINSTANCE.createMemberProperty();
             descriptionProp.setName("Description");
             descriptionProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTDESCRIPTION_PRODUCTS);
             descriptionProp.setPropertyType(ColumnInternalDataType.STRING);
@@ -20821,19 +20533,19 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(true);
             timeHierarchy.setAllMemberName("All Years");
             timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TIME_ID_TIME);
 
-            TableQuery timeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeQuery = SourceFactory.eINSTANCE.createTableSource();
             timeQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_TIME);
             timeHierarchy.setQuery(timeQuery);
 
-            Level yearsLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearsLevel = LevelFactory.eINSTANCE.createLevel();
             yearsLevel.setName("Years");
             yearsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_YEAR_ID_TIME);
             yearsLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20846,10 +20558,10 @@ public class SchemaModifiersEmf {
             yearsAnnotation.setValue("[yyyy]");
             yearsLevel.getAnnotations().add(yearsAnnotation);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
 
-            Level quartersLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quartersLevel = LevelFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_NAME_TIME);
             quartersLevel.getOrdinalColumns().addAll(List.of(oc1));
@@ -20863,10 +20575,10 @@ public class SchemaModifiersEmf {
             quartersAnnotation.setValue("[yyyy].['QTR'q]");
             quartersLevel.getAnnotations().add(quartersAnnotation);
 
-            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
 
-            Level monthsLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthsLevel = LevelFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_NAME_TIME);
             monthsLevel.getOrdinalColumns().addAll(List.of(oc2));
@@ -20884,15 +20596,15 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create Order Status dimension
-            StandardDimension orderStatusDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension orderStatusDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             orderStatusDimension.setName("Order Status");
 
-            ExplicitHierarchy orderStatusHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy orderStatusHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             orderStatusHierarchy.setHasAll(true);
             orderStatusHierarchy.setAllMemberName("All Status Types");
             orderStatusHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
 
-            Level typeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level typeLevel = LevelFactory.eINSTANCE.createLevel();
             typeLevel.setName("Type");
             typeLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
             typeLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -20904,36 +20616,36 @@ public class SchemaModifiersEmf {
             orderStatusDimension.getHierarchies().add(orderStatusHierarchy);
 
             // Create SteelWheelsSales cube
-            steelWheelsSalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            steelWheelsSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             steelWheelsSalesCube.setName("SteelWheelsSales");
             steelWheelsSalesCube.setCache(true);
             steelWheelsSalesCube.setEnabled(true);
 
-            TableQuery cubeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             steelWheelsSalesCube.setQuery(cubeQuery);
 
-            DimensionConnector marketsConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector marketsConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector.setDimension(marketsDimension);
             marketsConnector.setOverrideDimensionName("Markets");
             marketsConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setDimension(customersDimension);
             customersConnector.setOverrideDimensionName("Customers");
             customersConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setDimension(productDimension);
             productConnector.setOverrideDimensionName("Customers");
             productConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_ORDERFACT);
 
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setDimension(timeDimension);
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TIME_ID_ORDERFACT);
 
-            DimensionConnector orderStatusConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector orderStatusConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             orderStatusConnector.setDimension(orderStatusDimension);
             orderStatusConnector.setOverrideDimensionName("Order Status");
             orderStatusConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
@@ -20941,9 +20653,9 @@ public class SchemaModifiersEmf {
             steelWheelsSalesCube.getDimensionConnectors().addAll(List.of(marketsConnector, customersConnector,
                 productConnector, timeConnector, orderStatusConnector));
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure quantityMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure quantityMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             quantityMeasure.setName("Quantity");
             quantityMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QUANTITYORDERED_ORDERFACT);
             quantityMeasure.setFormatString("#,###");
@@ -20953,7 +20665,7 @@ public class SchemaModifiersEmf {
             quantityAnnotation.setValue("Measures");
             quantityMeasure.getAnnotations().add(quantityAnnotation);
 
-            SumMeasure salesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure salesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             salesMeasure.setName("Sales");
             salesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
             salesMeasure.setFormatString("#,###");
@@ -20970,29 +20682,29 @@ public class SchemaModifiersEmf {
 
             // Create Roles
             // dev role
-            AccessRole devRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole devRole = CommonFactory.eINSTANCE.createAccessRole();
             devRole.setName("dev");
 
             // First catalog grant for dev role
-            AccessCatalogGrant devCatalogGrant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant devCatalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             devCatalogGrant1.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant devCubeGrant1 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant devCubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             devCubeGrant1.setCube(steelWheelsSalesCube);
             devCubeGrant1.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant devMarketsHierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant devMarketsHierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             devMarketsHierarchyGrant.setHierarchy(marketsHierarchy);
             devMarketsHierarchyGrant.setTopLevel(territoryLevel);
             devMarketsHierarchyGrant.setBottomLevel(countryLevel);
             devMarketsHierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
             devMarketsHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant devApacMemberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant devApacMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             devApacMemberGrant.setMember("[Markets].[APAC]");
             devApacMemberGrant.setMemberAccess(MemberAccess.ALL);
 
-            AccessMemberGrant devAustraliaMemberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant devAustraliaMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             devAustraliaMemberGrant.setMember("[Markets].[APAC].[Australia]");
             devAustraliaMemberGrant.setMemberAccess(MemberAccess.NONE);
 
@@ -21001,21 +20713,21 @@ public class SchemaModifiersEmf {
             devCatalogGrant1.getCubeGrants().add(devCubeGrant1);
 
             // Second catalog grant for dev role
-            AccessCatalogGrant devCatalogGrant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant devCatalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             devCatalogGrant2.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant devCubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant devCubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             devCubeGrant2.setCube(steelWheelsSalesCube);
             devCubeGrant2.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant devMeasuresHierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant devMeasuresHierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             devMeasuresHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant devQuantityMemberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant devQuantityMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             devQuantityMemberGrant.setMember("[Measures].[Quantity]");
             devQuantityMemberGrant.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant devSalesMemberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant devSalesMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             devSalesMemberGrant.setMember("[Measures].[Sales]");
             devSalesMemberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -21026,24 +20738,24 @@ public class SchemaModifiersEmf {
             devRole.getAccessCatalogGrants().addAll(List.of(devCatalogGrant1, devCatalogGrant2));
 
             // cto role
-            AccessRole ctoRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole ctoRole = CommonFactory.eINSTANCE.createAccessRole();
             ctoRole.setName("cto");
 
-            AccessCatalogGrant ctoCatalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant ctoCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             ctoCatalogGrant.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant ctoCubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant ctoCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             ctoCubeGrant.setCube(steelWheelsSalesCube);
             ctoCubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant ctoMeasuresHierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant ctoMeasuresHierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             ctoMeasuresHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant ctoQuantityMemberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant ctoQuantityMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             ctoQuantityMemberGrant.setMember("[Measures].[Quantity]");
             ctoQuantityMemberGrant.setMemberAccess(MemberAccess.NONE);
 
-            AccessMemberGrant ctoSalesMemberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant ctoSalesMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             ctoSalesMemberGrant.setMember("[Measures].[Sales]");
             ctoSalesMemberGrant.setMemberAccess(MemberAccess.ALL);
 
@@ -21054,13 +20766,13 @@ public class SchemaModifiersEmf {
             ctoRole.getAccessCatalogGrants().add(ctoCatalogGrant);
 
             // Admin role
-            AccessRole adminRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
             adminRole.setName("Admin");
 
-            AccessCatalogGrant adminCatalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant adminCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             adminCatalogGrant.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant adminCubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant adminCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             adminCubeGrant.setCube(steelWheelsSalesCube);
             adminCubeGrant.setCubeAccess(CubeAccess.ALL);
 
@@ -21117,7 +20829,7 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public SteelWheelsSchemaTestModifier4(Catalog catalogMapping) {
-            this.catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("test_namecolumn");
 
 
@@ -21125,19 +20837,19 @@ public class SchemaModifiersEmf {
 
 
             // Create Markets dimension
-            StandardDimension marketsDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension marketsDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             marketsDimension.setName("Markets");
 
-            ExplicitHierarchy marketsHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy marketsHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             marketsHierarchy.setHasAll(true);
             marketsHierarchy.setAllMemberName("All Markets");
             marketsHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery marketsQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource marketsQuery = SourceFactory.eINSTANCE.createTableSource();
             marketsQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             marketsHierarchy.setQuery(marketsQuery);
 
-            Level territoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level territoryLevel = LevelFactory.eINSTANCE.createLevel();
             territoryLevel.setName("Territory");
             territoryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TERRITORY_CUSTOMER);
             territoryLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21145,7 +20857,7 @@ public class SchemaModifiersEmf {
             territoryLevel.setType(LevelDefinition.REGULAR);
             territoryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             countryLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21153,7 +20865,7 @@ public class SchemaModifiersEmf {
             countryLevel.setType(LevelDefinition.REGULAR);
             countryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level stateProvinceLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
             stateProvinceLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATE_CUSTOMER);
             stateProvinceLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21161,7 +20873,7 @@ public class SchemaModifiersEmf {
             stateProvinceLevel.setType(LevelDefinition.REGULAR);
             stateProvinceLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CITY_CUSTOMER);
             cityLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21173,19 +20885,19 @@ public class SchemaModifiersEmf {
             marketsDimension.getHierarchies().add(marketsHierarchy);
 
             // Create Customers dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery customersQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersQuery = SourceFactory.eINSTANCE.createTableSource();
             customersQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(customersQuery);
 
-            Level customerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer");
             customerLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNAME_CUSTOMER);
             customerLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21193,32 +20905,32 @@ public class SchemaModifiersEmf {
             customerLevel.setType(LevelDefinition.REGULAR);
             customerLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            MemberProperty customerNumberProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty customerNumberProp = LevelFactory.eINSTANCE.createMemberProperty();
             customerNumberProp.setName("Customer Number");
             customerNumberProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
             customerNumberProp.setPropertyType(ColumnInternalDataType.NUMERIC);
 
-            MemberProperty contactFirstNameProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty contactFirstNameProp = LevelFactory.eINSTANCE.createMemberProperty();
             contactFirstNameProp.setName("Contact First Name");
             contactFirstNameProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CONTACTFIRSTNAME_CUSTOMER);
             contactFirstNameProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty contactLastNameProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty contactLastNameProp = LevelFactory.eINSTANCE.createMemberProperty();
             contactLastNameProp.setName("Contact Last Name");
             contactLastNameProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CONTACTLASTNAME_CUSTOMER);
             contactLastNameProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty phoneProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty phoneProp = LevelFactory.eINSTANCE.createMemberProperty();
             phoneProp.setName("Phone");
             phoneProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PHONE_CUSTOMER);
             phoneProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty addressProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty addressProp = LevelFactory.eINSTANCE.createMemberProperty();
             addressProp.setName("Address");
             addressProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_ADDRESSLINE1_CUSTOMER);
             addressProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty creditLimitProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty creditLimitProp = LevelFactory.eINSTANCE.createMemberProperty();
             creditLimitProp.setName("Credit Limit");
             creditLimitProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CREDITLIMIT_CUSTOMER);
             creditLimitProp.setPropertyType(ColumnInternalDataType.NUMERIC);
@@ -21230,19 +20942,19 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Create Product dimension
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setAllMemberName("All Products");
             productHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
 
-            TableQuery productQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
             productQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
             productHierarchy.setQuery(productQuery);
 
-            Level lineLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level lineLevel = LevelFactory.eINSTANCE.createLevel();
             lineLevel.setName("Line");
             lineLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTLINE_PRODUCTS);
             lineLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21250,7 +20962,7 @@ public class SchemaModifiersEmf {
             lineLevel.setType(LevelDefinition.REGULAR);
             lineLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level vendorLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level vendorLevel = LevelFactory.eINSTANCE.createLevel();
             vendorLevel.setName("Vendor");
             vendorLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTVENDOR_PRODUCTS);
             vendorLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21258,7 +20970,7 @@ public class SchemaModifiersEmf {
             vendorLevel.setType(LevelDefinition.REGULAR);
             vendorLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level productLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product");
             productLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTNAME_PRODUCTS);
             productLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21266,17 +20978,17 @@ public class SchemaModifiersEmf {
             productLevel.setType(LevelDefinition.REGULAR);
             productLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            MemberProperty codeProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty codeProp = LevelFactory.eINSTANCE.createMemberProperty();
             codeProp.setName("Code");
             codeProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
             codeProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty vendorProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty vendorProp = LevelFactory.eINSTANCE.createMemberProperty();
             vendorProp.setName("Vendor");
             vendorProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTVENDOR_PRODUCTS);
             vendorProp.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty descriptionProp = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty descriptionProp = LevelFactory.eINSTANCE.createMemberProperty();
             descriptionProp.setName("Description");
             descriptionProp.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTDESCRIPTION_PRODUCTS);
             descriptionProp.setPropertyType(ColumnInternalDataType.STRING);
@@ -21287,19 +20999,19 @@ public class SchemaModifiersEmf {
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Time dimension
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(true);
             timeHierarchy.setAllMemberName("All Years");
             timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TIME_ID_TIME);
 
-            TableQuery timeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeQuery = SourceFactory.eINSTANCE.createTableSource();
             timeQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_TIME);
             timeHierarchy.setQuery(timeQuery);
 
-            Level yearsLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearsLevel = LevelFactory.eINSTANCE.createLevel();
             yearsLevel.setName("Years");
             yearsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_YEAR_ID_TIME);
             yearsLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21307,10 +21019,10 @@ public class SchemaModifiersEmf {
             yearsLevel.setType(LevelDefinition.TIME_YEARS);
             yearsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
 
-            Level quartersLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quartersLevel = LevelFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
             quartersLevel.setNameColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_NAME_TIME);
@@ -21320,10 +21032,10 @@ public class SchemaModifiersEmf {
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
             quartersLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
 
-            Level monthsLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthsLevel = LevelFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
             monthsLevel.setNameColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_NAME_TIME);
@@ -21337,15 +21049,15 @@ public class SchemaModifiersEmf {
             timeDimension.getHierarchies().add(timeHierarchy);
 
             // Create Order Status dimension
-            StandardDimension orderStatusDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension orderStatusDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             orderStatusDimension.setName("Order Status");
 
-            ExplicitHierarchy orderStatusHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy orderStatusHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             orderStatusHierarchy.setHasAll(true);
             orderStatusHierarchy.setAllMemberName("All Status Types");
             orderStatusHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
 
-            Level typeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level typeLevel = LevelFactory.eINSTANCE.createLevel();
             typeLevel.setName("Type");
             typeLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
             typeLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -21357,31 +21069,31 @@ public class SchemaModifiersEmf {
             orderStatusDimension.getHierarchies().add(orderStatusHierarchy);
 
             // Create SteelWheelsSales1 cube
-            PhysicalCube cube1 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube1 = CubeFactory.eINSTANCE.createPhysicalCube();
             cube1.setName("SteelWheelsSales1");
             cube1.setCache(true);
             cube1.setEnabled(true);
 
-            TableQuery cube1Query = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cube1Query = SourceFactory.eINSTANCE.createTableSource();
             cube1Query.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             cube1.setQuery(cube1Query);
 
-            DimensionConnector marketsConnector1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector marketsConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector1.setDimension(marketsDimension);
             marketsConnector1.setOverrideDimensionName("Markets");
             marketsConnector1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector customersConnector1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector1.setDimension(customersDimension);
             customersConnector1.setOverrideDimensionName("Customers");
             customersConnector1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector productConnector1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector1.setDimension(productDimension);
             productConnector1.setOverrideDimensionName("Product");
             productConnector1.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_ORDERFACT);
 
-            DimensionConnector timeConnector1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector1.setDimension(timeDimension);
             timeConnector1.setUsagePrefix("TR_");
             timeConnector1.setOverrideDimensionName("Time");
@@ -21390,14 +21102,14 @@ public class SchemaModifiersEmf {
             cube1.getDimensionConnectors().addAll(List.of(marketsConnector1, customersConnector1,
                 productConnector1, timeConnector1));
 
-            MeasureGroup measureGroup1 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup1 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure priceEach1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure priceEach1 = MeasureFactory.eINSTANCE.createSumMeasure();
             priceEach1.setName("Price Each");
             priceEach1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRICEEACH_ORDERFACT);
             priceEach1.setFormatString("#,###.0");
 
-            SumMeasure totalPrice1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure totalPrice1 = MeasureFactory.eINSTANCE.createSumMeasure();
             totalPrice1.setName("Total Price");
             totalPrice1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
             totalPrice1.setFormatString("#,###.00");
@@ -21406,31 +21118,31 @@ public class SchemaModifiersEmf {
             cube1.getMeasureGroups().add(measureGroup1);
 
             // Create SteelWheelsSales2 cube
-            PhysicalCube cube2 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube2 = CubeFactory.eINSTANCE.createPhysicalCube();
             cube2.setName("SteelWheelsSales2");
             cube2.setCache(true);
             cube2.setEnabled(true);
 
-            TableQuery cube2Query = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cube2Query = SourceFactory.eINSTANCE.createTableSource();
             cube2Query.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             cube2.setQuery(cube2Query);
 
-            DimensionConnector marketsConnector2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector marketsConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector2.setDimension(marketsDimension);
             marketsConnector2.setOverrideDimensionName("Markets");
             marketsConnector2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector customersConnector2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector2.setDimension(customersDimension);
             customersConnector2.setOverrideDimensionName("Customers");
             customersConnector2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector productConnector2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector2.setDimension(productDimension);
             productConnector2.setOverrideDimensionName("Product");
             productConnector2.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_ORDERFACT);
 
-            DimensionConnector timeConnector2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector2.setDimension(timeDimension);
             timeConnector2.setUsagePrefix("TC_");
             timeConnector2.setOverrideDimensionName("Time");
@@ -21439,14 +21151,14 @@ public class SchemaModifiersEmf {
             cube2.getDimensionConnectors().addAll(List.of(marketsConnector2, customersConnector2,
                 productConnector2, timeConnector2));
 
-            MeasureGroup measureGroup2 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup2 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure priceEach2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure priceEach2 = MeasureFactory.eINSTANCE.createSumMeasure();
             priceEach2.setName("Price Each");
             priceEach2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRICEEACH_ORDERFACT);
             priceEach2.setFormatString("#,###.0");
 
-            SumMeasure totalPrice2 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure totalPrice2 = MeasureFactory.eINSTANCE.createSumMeasure();
             totalPrice2.setName("Total Price");
             totalPrice2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
             totalPrice2.setFormatString("#,###.00");
@@ -21455,31 +21167,31 @@ public class SchemaModifiersEmf {
             cube2.getMeasureGroups().add(measureGroup2);
 
             // Create SteelWheelsSales3 cube
-            PhysicalCube cube3 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube3 = CubeFactory.eINSTANCE.createPhysicalCube();
             cube3.setName("SteelWheelsSales3");
             cube3.setCache(true);
             cube3.setEnabled(true);
 
-            TableQuery cube3Query = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cube3Query = SourceFactory.eINSTANCE.createTableSource();
             cube3Query.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             cube3.setQuery(cube3Query);
 
-            DimensionConnector marketsConnector3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector marketsConnector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector3.setDimension(marketsDimension);
             marketsConnector3.setOverrideDimensionName("Markets");
             marketsConnector3.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector customersConnector3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector3.setDimension(customersDimension);
             customersConnector3.setOverrideDimensionName("Customers");
             customersConnector3.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
-            DimensionConnector productConnector3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector3.setDimension(productDimension);
             productConnector3.setOverrideDimensionName("Product");
             productConnector3.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_ORDERFACT);
 
-            DimensionConnector timeConnector3 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector3.setDimension(timeDimension);
             timeConnector3.setUsagePrefix("TW_");
             timeConnector3.setOverrideDimensionName("Time");
@@ -21488,14 +21200,14 @@ public class SchemaModifiersEmf {
             cube3.getDimensionConnectors().addAll(List.of(marketsConnector3, customersConnector3,
                 productConnector3, timeConnector3));
 
-            MeasureGroup measureGroup3 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup3 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure priceEach3 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure priceEach3 = MeasureFactory.eINSTANCE.createSumMeasure();
             priceEach3.setName("Price Each");
             priceEach3.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRICEEACH_ORDERFACT);
             priceEach3.setFormatString("#,###.0");
 
-            SumMeasure totalPrice3 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure totalPrice3 = MeasureFactory.eINSTANCE.createSumMeasure();
             totalPrice3.setName("Total Price");
             totalPrice3.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
             totalPrice3.setFormatString("#,###.00");
@@ -21627,57 +21339,57 @@ public class SchemaModifiersEmf {
 
         public SteelWheelsSchemaTestModifier5(Catalog catalog2) {
             // Create physical columns for orders table
-            PhysicalColumn ordernumber = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column ordernumber = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             ordernumber.setName("ORDERNUMBER");
-            ordernumber.setType(ColumnType.INTEGER);
+            ordernumber.setType(SqlSimpleTypes.Sql99.integerType());
 
-            PhysicalColumn orderdate = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+            Column orderdate = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             orderdate.setName("ORDERDATE");
-            orderdate.setType(ColumnType.TIMESTAMP);
+            orderdate.setType(SqlSimpleTypes.Sql99.timestampType());
 
-            PhysicalTable orders = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+            Table orders = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             orders.setName("orders");
-            orders.getColumns().add(ordernumber);
-            orders.getColumns().add(orderdate);
+            orders.getFeature().add(ordernumber);
+            orders.getFeature().add(orderdate);
 
             // Create Orders dimension
-            MemberProperty orderDateProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty orderDateProperty = LevelFactory.eINSTANCE.createMemberProperty();
             orderDateProperty.setName("OrderDate");
             orderDateProperty.setColumn(orderdate);
             orderDateProperty.setPropertyType(ColumnInternalDataType.TIMESTAMP);
 
-            Level orderLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level orderLevel = LevelFactory.eINSTANCE.createLevel();
             orderLevel.setName("Order");
             orderLevel.setColumn(ordernumber);
             orderLevel.setColumnType(ColumnInternalDataType.INTEGER);
             orderLevel.setUniqueMembers(true);
             orderLevel.getMemberProperties().add(orderDateProperty);
 
-            TableQuery ordersTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource ordersTableQuery = SourceFactory.eINSTANCE.createTableSource();
             ordersTableQuery.setTable(orders);
 
-            ExplicitHierarchy ordersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy ordersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             ordersHierarchy.setHasAll(true);
             ordersHierarchy.setAllMemberName("All Orders");
             ordersHierarchy.setPrimaryKey(ordernumber);
             ordersHierarchy.setQuery(ordersTableQuery);
             ordersHierarchy.getLevels().add(orderLevel);
 
-            StandardDimension ordersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension ordersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             ordersDimension.setName("Orders");
             ordersDimension.getHierarchies().add(ordersHierarchy);
 
-            DimensionConnector ordersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector ordersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             ordersConnector.setOverrideDimensionName("Orders");
             ordersConnector.setDimension(ordersDimension);
             ordersConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
             // Create Customers dimension (simplified version)
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setQuery(
@@ -21685,7 +21397,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            Level customerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer");
             customerLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNAME_CUSTOMER);
@@ -21695,35 +21407,35 @@ public class SchemaModifiersEmf {
             customersHierarchy.getLevels().add(customerLevel);
             customersDimension.getHierarchies().add(customersHierarchy);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers");
             customersConnector.setDimension(customersDimension);
             customersConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
             // Create measures
-            SumMeasure quantityMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure quantityMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             quantityMeasure.setName("Quantity");
             quantityMeasure.setFormatString("#,###");
             quantityMeasure.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QUANTITYORDERED_ORDERFACT);
 
-            SumMeasure salesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure salesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             salesMeasure.setName("Sales");
             salesMeasure.setFormatString("#,###");
             salesMeasure.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(quantityMeasure);
             measureGroup.getMeasures().add(salesMeasure);
 
             // Create cube
-            TableQuery cubeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
 
-            PhysicalCube fooCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
             fooCube.setName("Foo");
             fooCube.setQuery(cubeQuery);
             fooCube.getDimensionConnectors().add(ordersConnector);
@@ -21731,9 +21443,9 @@ public class SchemaModifiersEmf {
             fooCube.getMeasureGroups().add(measureGroup);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FooBar");
-            catalog.getDbschemas().addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(fooCube);
 
         }
@@ -21776,25 +21488,25 @@ public class SchemaModifiersEmf {
 
         public SteelWheelsSchemaTestModifier6(Catalog catalog2) {
             // Create Product dimension
-            MemberProperty codeProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty codeProperty = LevelFactory.eINSTANCE.createMemberProperty();
             codeProperty.setName("Code");
             codeProperty.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
             codeProperty.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty vendorProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty vendorProperty = LevelFactory.eINSTANCE.createMemberProperty();
             vendorProperty.setName("Vendor");
             vendorProperty.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTVENDOR_PRODUCTS);
             vendorProperty.setPropertyType(ColumnInternalDataType.STRING);
 
-            MemberProperty descriptionProperty = RolapMappingFactory.eINSTANCE.createMemberProperty();
+            MemberProperty descriptionProperty = LevelFactory.eINSTANCE.createMemberProperty();
             descriptionProperty.setName("Description");
             descriptionProperty.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTDESCRIPTION_PRODUCTS);
             descriptionProperty.setPropertyType(ColumnInternalDataType.STRING);
 
-            Level productLineLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productLineLevel = LevelFactory.eINSTANCE.createLevel();
             productLineLevel.setName("Line");
             productLineLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTLINE_PRODUCTS);
@@ -21803,7 +21515,7 @@ public class SchemaModifiersEmf {
             productLineLevel.setType(LevelDefinition.REGULAR);
             productLineLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level vendorLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level vendorLevel = LevelFactory.eINSTANCE.createLevel();
             vendorLevel.setName("Vendor");
             vendorLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTVENDOR_PRODUCTS);
@@ -21812,7 +21524,7 @@ public class SchemaModifiersEmf {
             vendorLevel.setType(LevelDefinition.REGULAR);
             vendorLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level productLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product");
             productLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTNAME_PRODUCTS);
@@ -21824,11 +21536,11 @@ public class SchemaModifiersEmf {
             productLevel.getMemberProperties().add(vendorProperty);
             productLevel.getMemberProperties().add(descriptionProperty);
 
-            TableQuery productTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource productTableQuery = SourceFactory.eINSTANCE.createTableSource();
             productTableQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
 
-            ExplicitHierarchy productHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setAllMemberName("All Products");
             productHierarchy.setPrimaryKey(
@@ -21838,12 +21550,12 @@ public class SchemaModifiersEmf {
             productHierarchy.getLevels().add(vendorLevel);
             productHierarchy.getLevels().add(productLevel);
 
-            StandardDimension productDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             productDimension.setName("Product");
             productDimension.getHierarchies().add(productHierarchy);
 
             // Create Markets dimension
-            Level territoryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level territoryLevel = LevelFactory.eINSTANCE.createLevel();
             territoryLevel.setName("Territory");
             territoryLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TERRITORY_CUSTOMER);
@@ -21852,7 +21564,7 @@ public class SchemaModifiersEmf {
             territoryLevel.setType(LevelDefinition.REGULAR);
             territoryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
@@ -21861,7 +21573,7 @@ public class SchemaModifiersEmf {
             countryLevel.setType(LevelDefinition.REGULAR);
             countryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level stateLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level stateLevel = LevelFactory.eINSTANCE.createLevel();
             stateLevel.setName("State Province");
             stateLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATE_CUSTOMER);
@@ -21870,7 +21582,7 @@ public class SchemaModifiersEmf {
             stateLevel.setType(LevelDefinition.REGULAR);
             stateLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Level cityLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
             cityLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CITY_CUSTOMER);
@@ -21879,11 +21591,11 @@ public class SchemaModifiersEmf {
             cityLevel.setType(LevelDefinition.REGULAR);
             cityLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            TableQuery marketsTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource marketsTableQuery = SourceFactory.eINSTANCE.createTableSource();
             marketsTableQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
 
-            ExplicitHierarchy marketsHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy marketsHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             marketsHierarchy.setHasAll(true);
             marketsHierarchy.setAllMemberName("All Markets");
             marketsHierarchy.setPrimaryKey(
@@ -21894,18 +21606,18 @@ public class SchemaModifiersEmf {
             marketsHierarchy.getLevels().add(stateLevel);
             marketsHierarchy.getLevels().add(cityLevel);
 
-            StandardDimension marketsDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension marketsDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             marketsDimension.setName("Markets");
             marketsDimension.getHierarchies().add(marketsHierarchy);
 
-            DimensionConnector marketsConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector marketsConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector.setOverrideDimensionName("Markets");
             marketsConnector.setDimension(marketsDimension);
             marketsConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
             // Create Customers dimension
-            Level customerLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer");
             customerLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNAME_CUSTOMER);
@@ -21914,11 +21626,11 @@ public class SchemaModifiersEmf {
             customerLevel.setType(LevelDefinition.REGULAR);
             customerLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            TableQuery customersTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customersTableQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(
@@ -21926,25 +21638,25 @@ public class SchemaModifiersEmf {
             customersHierarchy.setQuery(customersTableQuery);
             customersHierarchy.getLevels().add(customerLevel);
 
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
             customersDimension.getHierarchies().add(customersHierarchy);
 
-            DimensionConnector customersConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers");
             customersConnector.setDimension(customersDimension);
             customersConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
             // Create Product connector
-            DimensionConnector productConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             productConnector.setOverrideDimensionName("MyProduct");
             productConnector.setDimension(productDimension);
             productConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_ORDERFACT);
 
             // Create Time dimension
-            Level yearsLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level yearsLevel = LevelFactory.eINSTANCE.createLevel();
             yearsLevel.setName("Years");
             yearsLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_YEAR_ID_TIME);
@@ -21953,10 +21665,10 @@ public class SchemaModifiersEmf {
             yearsLevel.setType(LevelDefinition.TIME_YEARS);
             yearsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            OrderedColumn oc1 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
 
-            Level quartersLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level quartersLevel = LevelFactory.eINSTANCE.createLevel();
             quartersLevel.setName("Quarters");
             quartersLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_NAME_TIME);
@@ -21966,10 +21678,10 @@ public class SchemaModifiersEmf {
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
             quartersLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            OrderedColumn oc2 = RolapMappingFactory.eINSTANCE.createOrderedColumn();
+            OrderedColumn oc2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
 
-            Level monthsLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level monthsLevel = LevelFactory.eINSTANCE.createLevel();
             monthsLevel.setName("Months");
             monthsLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_NAME_TIME);
@@ -21979,11 +21691,11 @@ public class SchemaModifiersEmf {
             monthsLevel.setType(LevelDefinition.TIME_MONTHS);
             monthsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            TableQuery timeTableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_TIME);
 
-            ExplicitHierarchy timeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(true);
             timeHierarchy.setAllMemberName("All Years");
             timeHierarchy.setPrimaryKey(
@@ -21993,18 +21705,18 @@ public class SchemaModifiersEmf {
             timeHierarchy.getLevels().add(quartersLevel);
             timeHierarchy.getLevels().add(monthsLevel);
 
-            TimeDimension timeDimension = RolapMappingFactory.eINSTANCE.createTimeDimension();
+            TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
             timeDimension.getHierarchies().add(timeHierarchy);
 
-            DimensionConnector timeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector timeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeConnector.setOverrideDimensionName("Time");
             timeConnector.setDimension(timeDimension);
             timeConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TIME_ID_ORDERFACT);
 
             // Create Order Status dimension
-            Level statusTypeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level statusTypeLevel = LevelFactory.eINSTANCE.createLevel();
             statusTypeLevel.setName("Type");
             statusTypeLevel.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
@@ -22013,46 +21725,46 @@ public class SchemaModifiersEmf {
             statusTypeLevel.setType(LevelDefinition.REGULAR);
             statusTypeLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            ExplicitHierarchy statusHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy statusHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             statusHierarchy.setHasAll(true);
             statusHierarchy.setAllMemberName("All Status Types");
             statusHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
             statusHierarchy.getLevels().add(statusTypeLevel);
 
-            StandardDimension statusDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension statusDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             statusDimension.setName("Order Status");
             statusDimension.getHierarchies().add(statusHierarchy);
 
-            DimensionConnector statusConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector statusConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             statusConnector.setOverrideDimensionName("Order Status");
             statusConnector.setDimension(statusDimension);
             statusConnector.setForeignKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_STATUS_ORDERFACT);
 
             // Create measures
-            SumMeasure quantityMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure quantityMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             quantityMeasure.setName("Quantity");
             quantityMeasure.setFormatString("#,###");
             quantityMeasure.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QUANTITYORDERED_ORDERFACT);
 
-            SumMeasure salesMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure salesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             salesMeasure.setName("Sales");
             salesMeasure.setFormatString("#,###");
             salesMeasure.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(quantityMeasure);
             measureGroup.getMeasures().add(salesMeasure);
 
             // Create cube
-            TableQuery cubeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
 
-            PhysicalCube cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("SteelWheelsSales");
             cube.setEnabled(true);
             cube.setQuery(cubeQuery);
@@ -22064,9 +21776,9 @@ public class SchemaModifiersEmf {
             cube.getMeasureGroups().add(measureGroup);
 
             // Create catalog
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
-            catalog.getDbschemas().addAll( (Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+            catalog.getDbschemas().addAll( (Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.getCubes().add(cube);
 
         }
@@ -22146,25 +21858,25 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
             // CUBE_SCHEMA_ALL role
-            AccessRole role1 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
             role1.setName("CUBE_SCHEMA_ALL");
-            AccessCatalogGrant grant1 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant grant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             grant1.setCatalogAccess(CatalogAccess.ALL);
             role1.getAccessCatalogGrants().add(grant1);
             this.catalog.getAccessRoles().add(role1);
 
             // CUBE_SALES_MINIMAL role
-            AccessRole role2 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
             role2.setName("CUBE_SALES_MINIMAL");
-            AccessCatalogGrant grant2 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant grant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             grant2.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant2 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant2 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant2.setCubeAccess(CubeAccess.ALL);
             cubeGrant2.setCube((Cube) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.CUBE_STEELWHEELSSALES));
 
-            AccessHierarchyGrant hierGrant2 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierGrant2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierGrant2.setHierarchyAccess(HierarchyAccess.NONE);
             hierGrant2.setHierarchy((Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.HIERARCHY_MARKETS));
@@ -22175,23 +21887,23 @@ public class SchemaModifiersEmf {
             this.catalog.getAccessRoles().add(role2);
 
             // DIM_MARKETAREA_MARKET_800 role
-            AccessRole role3 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role3 = CommonFactory.eINSTANCE.createAccessRole();
             role3.setName("DIM_MARKETAREA_MARKET_800");
-            AccessCatalogGrant grant3 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant grant3 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             grant3.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant3 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant3 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant3.setCubeAccess(CubeAccess.NONE);
             cubeGrant3.setCube((Cube) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.CUBE_STEELWHEELSSALES));
 
-            AccessHierarchyGrant hierGrant3 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierGrant3 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierGrant3.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierGrant3.setRollupPolicy(RollupPolicy.PARTIAL);
             hierGrant3.setHierarchy((Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.HIERARCHY_MARKETS));
 
-            AccessMemberGrant memberGrant3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant3.setMember("[Markets].[Territory].[APAC]");
             memberGrant3.setMemberAccess(MemberAccess.ALL);
 
@@ -22202,17 +21914,17 @@ public class SchemaModifiersEmf {
             this.catalog.getAccessRoles().add(role3);
 
             // DIM_MARKETAREA_MARKET_850 role
-            AccessRole role4 = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole role4 = CommonFactory.eINSTANCE.createAccessRole();
             role4.setName("DIM_MARKETAREA_MARKET_850");
-            AccessCatalogGrant grant4 = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant grant4 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             grant4.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant cubeGrant4 = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant4 = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant4.setCubeAccess(CubeAccess.NONE);
             cubeGrant4.setCube((Cube) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.CUBE_STEELWHEELSSALES));
 
-            AccessHierarchyGrant hierGrant4 = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierGrant4 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierGrant4.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierGrant4.setRollupPolicy(RollupPolicy.PARTIAL);
             hierGrant4.setHierarchy((Hierarchy) copier.get(
@@ -22220,7 +21932,7 @@ public class SchemaModifiersEmf {
             hierGrant4.setTopLevel((Level) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.LEVEL_MARKETS_TERRITORY));
 
-            AccessMemberGrant memberGrant4 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant4.setMember("[Markets].[Territory].[EMEA]");
             memberGrant4.setMemberAccess(MemberAccess.ALL);
 
@@ -22272,30 +21984,30 @@ public class SchemaModifiersEmf {
 
         public SteelWheelsSchemaTestModifier8(Catalog catalog2) {
             // Create Customers Dimension
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
             catalog.getDbschemas()
-                    .addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                    .addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.setDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers Dimension");
             customersDimension.setVisible(true);
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setName("Customers Hierarchy");
             customersHierarchy.setVisible(true);
             customersHierarchy.setHasAll(true);
             customersHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery hierarchyQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource hierarchyQuery = SourceFactory.eINSTANCE.createTableSource();
             hierarchyQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(hierarchyQuery);
 
             // Address Level
-            Level addressLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level addressLevel = LevelFactory.eINSTANCE.createLevel();
             addressLevel.setName("Address");
             addressLevel.setVisible(true);
             addressLevel.setColumn(
@@ -22307,7 +22019,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.getLevels().add(addressLevel);
 
             // Name Level
-            Level nameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level nameLevel = LevelFactory.eINSTANCE.createLevel();
             nameLevel.setName("Name");
             nameLevel.setVisible(true);
             nameLevel.setColumn(
@@ -22321,19 +22033,19 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Create Customers Cube
-            PhysicalCube customersCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube customersCube = CubeFactory.eINSTANCE.createPhysicalCube();
             customersCube.setName("Customers Cube");
             customersCube.setVisible(true);
             customersCube.setCache(true);
             customersCube.setEnabled(true);
 
-            TableQuery cubeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             customersCube.setQuery(cubeQuery);
 
             // Dimension Usage
-            DimensionConnector dimUsage = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimUsage = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage.setOverrideDimensionName("Customer_DimUsage");
             dimUsage.setVisible(true);
             dimUsage.setDimension(customersDimension);
@@ -22342,17 +22054,17 @@ public class SchemaModifiersEmf {
 
             customersCube.getDimensionConnectors().add(dimUsage);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
             // Measures
-            SumMeasure priceEach = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure priceEach = MeasureFactory.eINSTANCE.createSumMeasure();
             priceEach.setName("Price Each");
             priceEach.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRICEEACH_ORDERFACT);
             priceEach.setVisible(true);
             measureGroup.getMeasures().add(priceEach);
 
-            SumMeasure totalPrice = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure totalPrice = MeasureFactory.eINSTANCE.createSumMeasure();
             totalPrice.setName("Total Price");
             totalPrice.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
@@ -22363,13 +22075,13 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(customersCube);
 
             // Administrator Role
-            AccessRole adminRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
             adminRole.setName("Administrator");
 
-            AccessCatalogGrant adminGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant adminGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             adminGrant.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant adminCubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant adminCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             adminCubeGrant.setCube(customersCube);
             adminCubeGrant.setCubeAccess(CubeAccess.ALL);
             adminGrant.getCubeGrants().add(adminCubeGrant);
@@ -22378,27 +22090,27 @@ public class SchemaModifiersEmf {
             catalog.getAccessRoles().add(adminRole);
 
             // Power User Role
-            AccessRole powerUserRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
             powerUserRole.setName("Power User");
 
-            AccessCatalogGrant powerUserGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant powerUserGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             powerUserGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant powerUserCubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant powerUserCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             powerUserCubeGrant.setCube(customersCube);
             powerUserCubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessDimensionGrant dimGrant = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dimGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dimGrant.setDimensionAccess(DimensionAccess.ALL);
             powerUserCubeGrant.getDimensionGrants().add(dimGrant);
 
-            AccessHierarchyGrant hierGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierGrant.setHierarchy(customersHierarchy);
             hierGrant.setTopLevel(nameLevel);
             hierGrant.setRollupPolicy(RollupPolicy.PARTIAL);
             hierGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant);
@@ -22455,31 +22167,31 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public SteelWheelsSchemaTestModifier9(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
             catalog.getDbschemas()
-                    .addAll((Collection<? extends DatabaseSchema>) catalog2.getDbschemas());
+                    .addAll((Collection<? extends Schema>) catalog2.getDbschemas());
             catalog.setDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             // Create Customers Dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers Dimension");
             customersDimension.setVisible(true);
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setName("Customers Hierarchy");
             customersHierarchy.setVisible(true);
             customersHierarchy.setHasAll(true);
             customersHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery hierarchyQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource hierarchyQuery = SourceFactory.eINSTANCE.createTableSource();
             hierarchyQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(hierarchyQuery);
 
             // Address Level
-            Level addressLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level addressLevel = LevelFactory.eINSTANCE.createLevel();
             addressLevel.setName("Address");
             addressLevel.setVisible(true);
             addressLevel.setColumn(
@@ -22491,7 +22203,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.getLevels().add(addressLevel);
 
             // Name Level
-            Level nameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level nameLevel = LevelFactory.eINSTANCE.createLevel();
             nameLevel.setName("Name");
             nameLevel.setVisible(true);
             nameLevel.setColumn(
@@ -22504,7 +22216,7 @@ public class SchemaModifiersEmf {
 
             customersDimension.getHierarchies().add(customersHierarchy);
 
-            DimensionConnector dimConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimConnector.setOverrideDimensionName("Customer_DimUsage");
             dimConnector.setVisible(true);
             dimConnector.setDimension(customersDimension);
@@ -22512,29 +22224,29 @@ public class SchemaModifiersEmf {
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
 
             // Create Customers Cube
-            PhysicalCube customersCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube customersCube = CubeFactory.eINSTANCE.createPhysicalCube();
             customersCube.setName("Customers Cube");
             customersCube.setVisible(true);
             customersCube.setCache(true);
             customersCube.setEnabled(true);
 
-            TableQuery cubeTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource cubeTable = SourceFactory.eINSTANCE.createTableSource();
             cubeTable.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             customersCube.setQuery(cubeTable);
 
             customersCube.getDimensionConnectors().add(dimConnector);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             // Measures
-            SumMeasure priceEach = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure priceEach = MeasureFactory.eINSTANCE.createSumMeasure();
             priceEach.setName("Price Each");
             priceEach.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRICEEACH_ORDERFACT);
             priceEach.setVisible(true);
             measureGroup.getMeasures().add(priceEach);
 
-            SumMeasure totalPrice = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure totalPrice = MeasureFactory.eINSTANCE.createSumMeasure();
             totalPrice.setName("Total Price");
             totalPrice.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
@@ -22546,13 +22258,13 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(customersCube);
 
             // Administrator Role
-            AccessRole adminRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
             adminRole.setName("Administrator");
 
-            AccessCatalogGrant adminGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant adminGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             adminGrant.setCatalogAccess(CatalogAccess.ALL);
 
-            AccessCubeGrant adminCubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant adminCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             adminCubeGrant.setCube(customersCube);
             adminCubeGrant.setCubeAccess(CubeAccess.ALL);
             adminGrant.getCubeGrants().add(adminCubeGrant);
@@ -22561,37 +22273,37 @@ public class SchemaModifiersEmf {
             catalog.getAccessRoles().add(adminRole);
 
             // Foo Role
-            AccessRole fooRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole fooRole = CommonFactory.eINSTANCE.createAccessRole();
             fooRole.setName("Foo");
 
-            AccessCatalogGrant fooGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant fooGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             fooGrant.setCatalogAccess(CatalogAccess.NONE);
 
             fooRole.getAccessCatalogGrants().add(fooGrant);
             catalog.getAccessRoles().add(fooRole);
 
             // Power User Role
-            AccessRole powerUserRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
             powerUserRole.setName("Power User");
 
-            AccessCatalogGrant powerUserGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant powerUserGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             powerUserGrant.setCatalogAccess(CatalogAccess.NONE);
 
-            AccessCubeGrant powerUserCubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant powerUserCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             powerUserCubeGrant.setCube(customersCube);
             powerUserCubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessDimensionGrant dimGrant = RolapMappingFactory.eINSTANCE.createAccessDimensionGrant();
+            AccessDimensionGrant dimGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
             dimGrant.setDimensionAccess(DimensionAccess.ALL);
             powerUserCubeGrant.getDimensionGrants().add(dimGrant);
 
-            AccessHierarchyGrant hierGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierGrant.setHierarchy(customersHierarchy);
             hierGrant.setTopLevel(nameLevel);
             hierGrant.setRollupPolicy(RollupPolicy.PARTIAL);
             hierGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant.setMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
             memberGrant.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant);
@@ -22602,14 +22314,14 @@ public class SchemaModifiersEmf {
             catalog.getAccessRoles().add(powerUserRole);
 
             // Administrator Union Role
-            AccessRole adminUnionRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole adminUnionRole = CommonFactory.eINSTANCE.createAccessRole();
             adminUnionRole.setName("Administrator Union");
             adminUnionRole.getReferencedAccessRoles().add(adminRole);
             adminUnionRole.getReferencedAccessRoles().add(fooRole);
             catalog.getAccessRoles().add(adminUnionRole);
 
             // Power User Union Role
-            AccessRole powerUserUnionRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole powerUserUnionRole = CommonFactory.eINSTANCE.createAccessRole();
             powerUserUnionRole.setName("Power User Union");
             powerUserUnionRole.getReferencedAccessRoles().add(powerUserRole);
             powerUserUnionRole.getReferencedAccessRoles().add(fooRole);
@@ -22671,16 +22383,16 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public SteelWheelsSchemaTestModifier10(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
             // Set catalog name
             catalog.setName("rolesTest");
 
             // Create Dimension1
-            StandardDimension dimension1 = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimension1 = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension1.setName("Dimension1");
             dimension1.setVisible(true);
 
-            ExplicitHierarchy dimension1Hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy dimension1Hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             dimension1Hierarchy.setName("Customers Hierarchy");
             dimension1Hierarchy.setVisible(true);
             dimension1Hierarchy.setHasAll(true);
@@ -22688,12 +22400,12 @@ public class SchemaModifiersEmf {
             dimension1Hierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
 
-            TableQuery dimension1Query = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource dimension1Query = SourceFactory.eINSTANCE.createTableSource();
             dimension1Query.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
             dimension1Hierarchy.setQuery(dimension1Query);
 
-            Level level1 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level level1 = LevelFactory.eINSTANCE.createLevel();
             level1.setName("Level1");
             level1.setVisible(true);
             level1.setColumn(
@@ -22707,23 +22419,23 @@ public class SchemaModifiersEmf {
             dimension1.getHierarchies().add(dimension1Hierarchy);
 
             // Create Dimension2
-            StandardDimension dimension2 = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension dimension2 = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension2.setName("Dimension2");
             dimension2.setVisible(true);
 
-            ExplicitHierarchy dimension2Hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy dimension2Hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             dimension2Hierarchy.setVisible(true);
             dimension2Hierarchy.setHasAll(true);
             dimension2Hierarchy.setAllMemberName("All Customers");
             dimension2Hierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
-            TableQuery dimension2Query = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource dimension2Query = SourceFactory.eINSTANCE.createTableSource();
             dimension2Query.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
             dimension2Hierarchy.setQuery(dimension2Query);
 
-            Level level2 = RolapMappingFactory.eINSTANCE.createLevel();
+            Level level2 = LevelFactory.eINSTANCE.createLevel();
             level2.setName("Level2");
             level2.setVisible(true);
             level2.setColumn(
@@ -22737,19 +22449,19 @@ public class SchemaModifiersEmf {
             dimension2.getHierarchies().add(dimension2Hierarchy);
 
             // Create rolesTest1 Cube
-            PhysicalCube rolesTest1 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube rolesTest1 = CubeFactory.eINSTANCE.createPhysicalCube();
             rolesTest1.setName("rolesTest1");
             rolesTest1.setVisible(true);
             rolesTest1.setCache(true);
             rolesTest1.setEnabled(true);
 
-            TableQuery rolesTest1Table = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource rolesTest1Table = SourceFactory.eINSTANCE.createTableSource();
             rolesTest1Table.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             rolesTest1Table.setAlias("rolesTest1");
             rolesTest1.setQuery(rolesTest1Table);
 
-            DimensionConnector dimUsage1_1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimUsage1_1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage1_1.setOverrideDimensionName("Dimension1");
             dimUsage1_1.setDimension(dimension1);
             dimUsage1_1.setVisible(true);
@@ -22757,7 +22469,7 @@ public class SchemaModifiersEmf {
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_ORDERFACT);
             rolesTest1.getDimensionConnectors().add(dimUsage1_1);
 
-            DimensionConnector dimUsage1_2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimUsage1_2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage1_2.setOverrideDimensionName("Dimension2");
             dimUsage1_2.setDimension(dimension2);
             dimUsage1_2.setVisible(true);
@@ -22765,9 +22477,9 @@ public class SchemaModifiersEmf {
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
             rolesTest1.getDimensionConnectors().add(dimUsage1_2);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure measure1 = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Measure1");
             measure1.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QUANTITYORDERED_ORDERFACT);
@@ -22777,19 +22489,19 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(rolesTest1);
 
             // Create rolesTest2 Cube
-            PhysicalCube rolesTest2 = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube rolesTest2 = CubeFactory.eINSTANCE.createPhysicalCube();
             rolesTest2.setName("rolesTest2");
             rolesTest2.setVisible(true);
             rolesTest2.setCache(true);
             rolesTest2.setEnabled(true);
 
-            TableQuery rolesTest2Table = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource rolesTest2Table = SourceFactory.eINSTANCE.createTableSource();
             rolesTest2Table.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             rolesTest2Table.setAlias("rolesTest2");
             rolesTest2.setQuery(rolesTest2Table);
 
-            DimensionConnector dimUsage2_1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimUsage2_1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage2_1.setOverrideDimensionName("Dimension2");
             dimUsage2_1.setDimension(dimension2);
             dimUsage2_1.setVisible(true);
@@ -22797,9 +22509,9 @@ public class SchemaModifiersEmf {
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_ORDERFACT);
             rolesTest2.getDimensionConnectors().add(dimUsage2_1);
 
-            MeasureGroup measureGroup1 = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup1 = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure measure2Internal = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure measure2Internal = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2Internal.setName("Measure2:Internal");
             measure2Internal.setColumn(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
@@ -22810,18 +22522,18 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(rolesTest2);
 
             // Create VirtualCube rolesTest
-            VirtualCube rolesTest = RolapMappingFactory.eINSTANCE.createVirtualCube();
+            VirtualCube rolesTest = CubeFactory.eINSTANCE.createVirtualCube();
             rolesTest.setEnabled(true);
             rolesTest.setName("rolesTest");
             rolesTest.setVisible(true);
 
-            //DimensionConnector vcd1 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector vcd1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             //vcd1.setOverrideDimensionName("Dimension1");
             //vcd1.setVisible(true);
             //vcd1.setPhysicalCube(rolesTest1);
             rolesTest.getDimensionConnectors().add(dimUsage1_1);
 
-            //DimensionConnector vcd2 = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //DimensionConnector vcd2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             //vcd2.setOverrideDimensionName("Dimension2");
             //vcd2.setVisible(true);
             //vcd2.setPhysicalCube(rolesTest1);
@@ -22830,7 +22542,7 @@ public class SchemaModifiersEmf {
             rolesTest.getReferencedMeasures().add(measure1);
             rolesTest.getReferencedMeasures().add(measure2Internal);
 
-            CalculatedMember calcMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+            CalculatedMember calcMember = LevelFactory.eINSTANCE.createCalculatedMember();
             calcMember.setName("Measure2");
             calcMember.setFormula("ValidMeasure([Measures].[Measure2:Internal])");
             // calcMember.setDimension("Measures");
@@ -22839,47 +22551,47 @@ public class SchemaModifiersEmf {
             catalog.getCubes().add(rolesTest);
 
             // Administrator Role
-            AccessRole adminRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
             adminRole.setName("Administrator");
 
-            AccessCatalogGrant adminGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant adminGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             adminGrant.setCatalogAccess(CatalogAccess.ALL);
 
             adminRole.getAccessCatalogGrants().add(adminGrant);
             catalog.getAccessRoles().add(adminRole);
 
             // Report Author Role
-            AccessRole reportAuthorRole = RolapMappingFactory.eINSTANCE.createAccessRole();
+            AccessRole reportAuthorRole = CommonFactory.eINSTANCE.createAccessRole();
             reportAuthorRole.setName("Report Author");
 
-            AccessCatalogGrant reportAuthorGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+            AccessCatalogGrant reportAuthorGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             reportAuthorGrant.setCatalogAccess(CatalogAccess.CUSTOM);
 
-            AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+            AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             cubeGrant.setCube(rolesTest);
             cubeGrant.setCubeAccess(CubeAccess.ALL);
 
-            AccessHierarchyGrant hierGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+            AccessHierarchyGrant hierGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
             hierGrant.setHierarchy(dimension2Hierarchy);
             hierGrant.setTopLevel(level2);
             hierGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
-            AccessMemberGrant memberGrant1 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant1.setMember("[Dimension2].[BG&E Collectables]");
             memberGrant1.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant1);
 
-            AccessMemberGrant memberGrant2 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant2.setMember("[Dimension2].[Baane Mini Imports]");
             memberGrant2.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant2);
 
-            AccessMemberGrant memberGrant3 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant3.setMember("[Dimension2].[Blauer See Auto, Co.]");
             memberGrant3.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant3);
 
-            AccessMemberGrant memberGrant4 = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+            AccessMemberGrant memberGrant4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
             memberGrant4.setMember("[Dimension2].[Boards & Toys Co.]");
             memberGrant4.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant4);
@@ -22966,25 +22678,25 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public XmlaBasicTestModifier(Catalog catalog2) {
-            catalog = RolapMappingFactory.eINSTANCE.createCatalog();
+            catalog = CatalogFactory.eINSTANCE.createCatalog();
 
             // Set catalog name
             catalog.setName("foodmart-xmla-alias-bug");
 
             // Create Customers Dimension
-            StandardDimension customersDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+            StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers");
 
-            ExplicitHierarchy customersHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+            ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-            TableQuery customersTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource customersTable = SourceFactory.eINSTANCE.createTableSource();
             customersTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
             customersHierarchy.setQuery(customersTable);
 
-            Level countryLevel = RolapMappingFactory.eINSTANCE.createLevel();
+            Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
             countryLevel.setColumn(CatalogSupplier.COLUMN_COUNTRY_CUSTOMER);
             countryLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -22996,16 +22708,16 @@ public class SchemaModifiersEmf {
             customersDimension.getHierarchies().add(customersHierarchy);
 
             // Create Sales Cube
-            PhysicalCube salesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+            PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setCache(true);
             salesCube.setEnabled(true);
 
-            TableQuery salesFactTable = RolapMappingFactory.eINSTANCE.createTableQuery();
+            TableSource salesFactTable = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable.setTable(CatalogSupplier.TABLE_SALES_FACT1998);
             salesCube.setQuery(salesFactTable);
 
-            DimensionConnector dimUsage = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            DimensionConnector dimUsage = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage.setOverrideDimensionName("Customers-Alias");
             dimUsage.setDimension(customersDimension);
             dimUsage.setVisible(true);
@@ -23014,9 +22726,9 @@ public class SchemaModifiersEmf {
             dimUsage.setDimension(customersDimension);
             salesCube.getDimensionConnectors().add(dimUsage);
 
-            MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+            MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
-            SumMeasure unitSales = RolapMappingFactory.eINSTANCE.createSumMeasure();
+            SumMeasure unitSales = MeasureFactory.eINSTANCE.createSumMeasure();
             unitSales.setName("Unit Sales");
             unitSales.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT1998);
             unitSales.setFormatString("Standard");

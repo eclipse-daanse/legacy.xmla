@@ -16,19 +16,23 @@ package mondrian.test;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /**
  * EMF version of TestMultipleAllWithInExprModifier from NativeSetEvaluationTest.
  * Creates a cube "3StoreHCube" with AltStore dimension having three hierarchies.
@@ -78,9 +82,9 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
     private static final Level LEVEL_STORE_NAME_3;
 
     // Static table queries
-    private static final TableQuery TABLE_QUERY_STORE_1;
-    private static final TableQuery TABLE_QUERY_STORE_2;
-    private static final TableQuery TABLE_QUERY_STORE_3;
+    private static final TableSource TABLE_QUERY_STORE_1;
+    private static final TableSource TABLE_QUERY_STORE_2;
+    private static final TableSource TABLE_QUERY_STORE_3;
 
     // Static hierarchies
     private static final ExplicitHierarchy HIERARCHY_DEFAULT;
@@ -96,7 +100,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
     private static final DimensionConnector CONNECTOR_PRODUCT;
 
     // Static fact table query
-    private static final TableQuery TABLE_QUERY_SALES_FACT;
+    private static final TableSource TABLE_QUERY_SALES_FACT;
 
     // Static measure
     private static final SumMeasure MEASURE_STORE_SALES;
@@ -109,21 +113,21 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
 
     static {
         // Create default hierarchy levels
-        LEVEL_STORE_NAME_1 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_NAME_1 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_NAME_1.setName("Store Name");
         LEVEL_STORE_NAME_1.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
         LEVEL_STORE_NAME_1.setUniqueMembers(false);
 
-        LEVEL_STORE_CITY_1 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_CITY_1 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_CITY_1.setName("Store City");
         LEVEL_STORE_CITY_1.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
         LEVEL_STORE_CITY_1.setUniqueMembers(false);
 
-        TABLE_QUERY_STORE_1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_STORE_1 = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_STORE_1.setTable(CatalogSupplier.TABLE_STORE);
 
         // Create default hierarchy
-        HIERARCHY_DEFAULT = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_DEFAULT = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_DEFAULT.setHasAll(true);
         HIERARCHY_DEFAULT.setAllMemberName("All");
         HIERARCHY_DEFAULT.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
@@ -134,21 +138,21 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         ));
 
         // Create City hierarchy levels
-        LEVEL_STORE_CITY_2 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_CITY_2 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_CITY_2.setName("Store City");
         LEVEL_STORE_CITY_2.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
         LEVEL_STORE_CITY_2.setUniqueMembers(false);
 
-        LEVEL_STORE_NAME_2 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_NAME_2 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_NAME_2.setName("Store Name");
         LEVEL_STORE_NAME_2.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
         LEVEL_STORE_NAME_2.setUniqueMembers(false);
 
-        TABLE_QUERY_STORE_2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_STORE_2 = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_STORE_2.setTable(CatalogSupplier.TABLE_STORE);
 
         // Create City hierarchy
-        HIERARCHY_CITY = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_CITY = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_CITY.setName("City");
         HIERARCHY_CITY.setHasAll(true);
         HIERARCHY_CITY.setAllMemberName("All");
@@ -160,26 +164,26 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         ));
 
         // Create State hierarchy levels
-        LEVEL_STORE_STATE = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_STATE = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_STATE.setName("Store State");
         LEVEL_STORE_STATE.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
         LEVEL_STORE_STATE.setUniqueMembers(false);
 
-        LEVEL_STORE_CITY_3 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_CITY_3 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_CITY_3.setName("Store City");
         LEVEL_STORE_CITY_3.setColumn(CatalogSupplier.COLUMN_STORE_CITY_STORE);
         LEVEL_STORE_CITY_3.setUniqueMembers(false);
 
-        LEVEL_STORE_NAME_3 = RolapMappingFactory.eINSTANCE.createLevel();
+        LEVEL_STORE_NAME_3 = LevelFactory.eINSTANCE.createLevel();
         LEVEL_STORE_NAME_3.setName("Store Name");
         LEVEL_STORE_NAME_3.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
         LEVEL_STORE_NAME_3.setUniqueMembers(false);
 
-        TABLE_QUERY_STORE_3 = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_STORE_3 = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_STORE_3.setTable(CatalogSupplier.TABLE_STORE);
 
         // Create State hierarchy
-        HIERARCHY_STATE = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        HIERARCHY_STATE = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_STATE.setName("State");
         HIERARCHY_STATE.setHasAll(true);
         HIERARCHY_STATE.setAllMemberName("All");
@@ -192,7 +196,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         ));
 
         // Create AltStore dimension with three hierarchies
-        DIMENSION_ALT_STORE = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        DIMENSION_ALT_STORE = DimensionFactory.eINSTANCE.createStandardDimension();
         DIMENSION_ALT_STORE.setName("AltStore");
         DIMENSION_ALT_STORE.getHierarchies().addAll(List.of(
             HIERARCHY_DEFAULT,
@@ -201,39 +205,39 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         ));
 
         // Create dimension connector for AltStore
-        CONNECTOR_ALT_STORE = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_ALT_STORE = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_ALT_STORE.setOverrideDimensionName("AltStore");
         CONNECTOR_ALT_STORE.setDimension(DIMENSION_ALT_STORE);
         CONNECTOR_ALT_STORE.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
 
         // Create dimension connector for Time
-        CONNECTOR_TIME = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_TIME = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_TIME.setOverrideDimensionName("Time");
         CONNECTOR_TIME.setDimension(CatalogSupplier.DIMENSION_TIME);
         CONNECTOR_TIME.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
         // Create dimension connector for Product
-        CONNECTOR_PRODUCT = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        CONNECTOR_PRODUCT = DimensionFactory.eINSTANCE.createDimensionConnector();
         CONNECTOR_PRODUCT.setOverrideDimensionName("Product");
         CONNECTOR_PRODUCT.setDimension(CatalogSupplier.DIMENSION_PRODUCT);
         CONNECTOR_PRODUCT.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
 
         // Create fact table query
-        TABLE_QUERY_SALES_FACT = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TABLE_QUERY_SALES_FACT = SourceFactory.eINSTANCE.createTableSource();
         TABLE_QUERY_SALES_FACT.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
         // Create measure
-        MEASURE_STORE_SALES = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        MEASURE_STORE_SALES = MeasureFactory.eINSTANCE.createSumMeasure();
         MEASURE_STORE_SALES.setName("Store Sales");
         MEASURE_STORE_SALES.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
         MEASURE_STORE_SALES.setFormatString("#,###.00");
 
         // Create measure group
-        MEASURE_GROUP = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MEASURE_GROUP = CubeFactory.eINSTANCE.createMeasureGroup();
         MEASURE_GROUP.getMeasures().add(MEASURE_STORE_SALES);
 
         // Create cube
-        CUBE_3STORE_H_CUBE = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        CUBE_3STORE_H_CUBE = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_3STORE_H_CUBE.setName("3StoreHCube");
         CUBE_3STORE_H_CUBE.setQuery(TABLE_QUERY_SALES_FACT);
         CUBE_3STORE_H_CUBE.getDimensionConnectors().addAll(List.of(

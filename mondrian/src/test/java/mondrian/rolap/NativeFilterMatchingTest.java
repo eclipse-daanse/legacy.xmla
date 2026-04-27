@@ -16,37 +16,44 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.util.List;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.Column;
-import org.eclipse.daanse.rolap.mapping.model.Cube;
-import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.Dimension;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.RollupPolicy;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Table;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.RollupPolicy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -63,7 +70,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
-
 /**
  * Test case for pushing MDX filter conditions down to SQL.
  */
@@ -444,24 +450,24 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
                 // Create levels for hierarchy using RolapMappingFactory
                 Level storeCountryLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 storeCountryLevel.setName("Store Country");
                 storeCountryLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE));
                 storeCountryLevel.setUniqueMembers(true);
 
                 Level storeStateLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 storeStateLevel.setName("Store State");
                 storeStateLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_STATE_STORE));
                 storeStateLevel.setUniqueMembers(true);
 
                 // Create hierarchy using RolapMappingFactory
-                hierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE));
 
-                TableQuery storeTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource storeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
                 hierarchy.setQuery(storeTableQuery);
                 hierarchy.getLevels().add(storeCountryLevel);
@@ -469,7 +475,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
                 // Create Store2 dimension using RolapMappingFactory
                 StandardDimension store2Dimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 store2Dimension.setName("Store2");
                 store2Dimension.getHierarchies().add(hierarchy);
 
@@ -489,24 +495,24 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 }
 
                 // Create TinySales cube using RolapMappingFactory
-                tinySalesCube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                tinySalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
                 tinySalesCube.setName("TinySales");
 
-                TableQuery salesTableQuery =
-                    RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource salesTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
                 salesTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT));
                 tinySalesCube.setQuery(salesTableQuery);
 
                 // Create dimension connector for Product
                 DimensionConnector productDimConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 productDimConnector.setOverrideDimensionName("Product");
                 productDimConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
                 productDimConnector.setDimension(productDimension);
 
                 // Create dimension connector for Store2
                 DimensionConnector store2DimConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 store2DimConnector.setOverrideDimensionName("Store2");
                 store2DimConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
                 store2DimConnector.setDimension(store2Dimension);
@@ -516,13 +522,13 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
                 // Create measure using RolapMappingFactory
                 SumMeasure unitSalesMeasure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
                 unitSalesMeasure.setFormatString("Standard");
 
                 MeasureGroup measureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(unitSalesMeasure);
                 tinySalesCube.getMeasureGroups().add(measureGroup);
 
@@ -531,22 +537,22 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
                 // Create access role "test" using RolapMappingFactory
                 AccessMemberGrant memberGrant1 =
-                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                    OlapFactory.eINSTANCE.createAccessMemberGrant();
                 memberGrant1.setMember("[Store2].[USA].[CA]");
                 memberGrant1.setMemberAccess(MemberAccess.ALL);
 
                 AccessMemberGrant memberGrant2 =
-                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                    OlapFactory.eINSTANCE.createAccessMemberGrant();
                 memberGrant2.setMember("[Store2].[USA].[OR]");
                 memberGrant2.setMemberAccess(MemberAccess.ALL);
 
                 AccessMemberGrant memberGrant3 =
-                    RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+                    OlapFactory.eINSTANCE.createAccessMemberGrant();
                 memberGrant3.setMember("[Store2].[Canada]");
                 memberGrant3.setMemberAccess(MemberAccess.ALL);
 
                 AccessHierarchyGrant hierarchyGrant =
-                    RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+                    OlapFactory.eINSTANCE.createAccessHierarchyGrant();
                 hierarchyGrant.setHierarchy(hierarchy);
                 hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
                 hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
@@ -555,18 +561,18 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 hierarchyGrant.getMemberGrants().add(memberGrant3);
 
                 AccessCubeGrant cubeGrant =
-                    RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+                    OlapFactory.eINSTANCE.createAccessCubeGrant();
                 cubeGrant.setCube(tinySalesCube);
                 cubeGrant.setCubeAccess(CubeAccess.ALL);
                 cubeGrant.getHierarchyGrants().add(hierarchyGrant);
 
                 AccessCatalogGrant catalogGrant =
-                    RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+                    CommonFactory.eINSTANCE.createAccessCatalogGrant();
                 catalogGrant.setCatalogAccess(CatalogAccess.NONE);
                 catalogGrant.getCubeGrants().add(cubeGrant);
 
                 AccessRole role =
-                    RolapMappingFactory.eINSTANCE.createAccessRole();
+                    CommonFactory.eINSTANCE.createAccessRole();
                 role.setName("test");
                 role.getAccessCatalogGrants().add(catalogGrant);
 

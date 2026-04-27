@@ -14,14 +14,13 @@
 
 package mondrian.test.clearview;
 
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 /*
 <CalculatedMember
   name='Sales as % of Cost'
@@ -88,12 +87,12 @@ public class MiscTestModifier implements CatalogMappingSupplier {
 
                 if ("Sales".equals(cube.getName())) {
                     // Create calculated member property using RolapMappingFactory
-                    CalculatedMemberProperty formatStringProperty = RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    CalculatedMemberProperty formatStringProperty = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                     formatStringProperty.setName("FORMAT_STRING");
                     formatStringProperty.setValue("####0.0%");
 
                     // Create calculated member using RolapMappingFactory
-                    CalculatedMember calculatedMember = RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                     calculatedMember.setName("Sales as % of Cost");
                     calculatedMember.setFormula("([Measures].[Store Sales] - [Measures].[Store Cost])/[Measures].[Store Cost]");
                     calculatedMember.getCalculatedMemberProperties().add(formatStringProperty);

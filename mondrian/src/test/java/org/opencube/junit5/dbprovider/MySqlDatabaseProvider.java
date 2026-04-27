@@ -32,7 +32,6 @@ import org.eclipse.daanse.jdbc.db.dialect.db.mysql.MySqlDialect;
 
 import com.github.dockerjava.api.model.PortBinding;
 import com.mysql.cj.jdbc.MysqlDataSource;
-import com.mysql.jdbc.Driver;
 
 import aQute.bnd.annotation.spi.ServiceProvider;
 

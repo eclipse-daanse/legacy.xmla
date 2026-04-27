@@ -40,15 +40,14 @@ import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapVirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * Unit test for {@link RolapCube}.
  *
@@ -69,7 +68,7 @@ class RolapCubeTest {
             (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
         cube.processFormatStringAttribute(
-                RolapMappingFactory.eINSTANCE.createCalculatedMember(), builder);
+                LevelFactory.eINSTANCE.createCalculatedMember(), builder);
         assertEquals(0, builder.length());
     }
 
@@ -80,7 +79,7 @@ class RolapCubeTest {
             (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
         CalculatedMember xmlCalcMember =
-                RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                LevelFactory.eINSTANCE.createCalculatedMember();
         String format = "FORMAT";
         xmlCalcMember.setFormatString(format);
         cube.processFormatStringAttribute(xmlCalcMember, builder);

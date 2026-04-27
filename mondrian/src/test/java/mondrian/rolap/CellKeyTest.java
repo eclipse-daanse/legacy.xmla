@@ -12,7 +12,6 @@
 package mondrian.rolap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
@@ -20,28 +19,31 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.key.CellKey;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * Test that the implementations of the CellKey interface are correct.
  *
@@ -129,24 +131,24 @@ class CellKeyTest  {
 
                 // Create measure "Unit Sales" using RolapMappingFactory
                 SumMeasure measure =
-                    RolapMappingFactory.eINSTANCE.createSumMeasure();
+                    MeasureFactory.eINSTANCE.createSumMeasure();
                 measure.setName("Unit Sales");
                 measure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 measure.setFormatString("Standard");
 
                 // Create level "city" for City dimension
                 Level cityLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 cityLevel.setName("city");
                 cityLevel.setColumn(CatalogSupplier.COLUMN_CITY_CUSTOMER);
                 cityLevel.setUniqueMembers(true);
 
-                TableQuery customerQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource customerQuery = SourceFactory.eINSTANCE.createTableSource();
                 customerQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
 
                 // Create hierarchy for City dimension
                 ExplicitHierarchy cityHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 cityHierarchy.setHasAll(true);
                 cityHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 cityHierarchy.setQuery(customerQuery);
@@ -154,30 +156,30 @@ class CellKeyTest  {
 
                 // Create City dimension
                 StandardDimension cityDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 cityDimension.setName("City");
                 cityDimension.getHierarchies().add(cityHierarchy);
 
                 // Create dimension connector for City
                 DimensionConnector cityConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 cityConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 cityConnector.setOverrideDimensionName("City");
                 cityConnector.setDimension(cityDimension);
 
                 // Create level "gender" for Gender dimension
                 Level genderLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("gender");
                 genderLevel.setColumn(CatalogSupplier.COLUMN_GENDER_CUSTOMER);
                 genderLevel.setUniqueMembers(true);
 
-                TableQuery customerQuery1 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource customerQuery1 = SourceFactory.eINSTANCE.createTableSource();
                 customerQuery1.setTable(CatalogSupplier.TABLE_CUSTOMER);
 
                 // Create hierarchy for Gender dimension
                 ExplicitHierarchy genderHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 genderHierarchy.setHasAll(true);
                 genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 genderHierarchy.setQuery(customerQuery1);
@@ -185,30 +187,30 @@ class CellKeyTest  {
 
                 // Create Gender dimension
                 StandardDimension genderDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 genderDimension.setName("Gender");
                 genderDimension.getHierarchies().add(genderHierarchy);
 
                 // Create dimension connector for Gender
                 DimensionConnector genderConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 genderConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 genderConnector.setOverrideDimensionName("Gender");
                 genderConnector.setDimension(genderDimension);
 
                 // Create level "addr" for Address2 dimension
                 Level addrLevel =
-                    RolapMappingFactory.eINSTANCE.createLevel();
+                    LevelFactory.eINSTANCE.createLevel();
                 addrLevel.setName("addr");
                 addrLevel.setColumn(CatalogSupplier.COLUMN_ADDRESS2_CUSTOMER);
                 addrLevel.setUniqueMembers(true);
 
-                TableQuery customerQuery2 = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource customerQuery2 = SourceFactory.eINSTANCE.createTableSource();
                 customerQuery2.setTable(CatalogSupplier.TABLE_CUSTOMER);
 
                 // Create hierarchy for Address2 dimension
                 ExplicitHierarchy addrHierarchy =
-                    RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 addrHierarchy.setHasAll(true);
                 addrHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                 addrHierarchy.setQuery(customerQuery2);
@@ -216,28 +218,28 @@ class CellKeyTest  {
 
                 // Create Address2 dimension
                 StandardDimension addrDimension =
-                    RolapMappingFactory.eINSTANCE.createStandardDimension();
+                    DimensionFactory.eINSTANCE.createStandardDimension();
                 addrDimension.setName("Address2");
                 addrDimension.getHierarchies().add(addrHierarchy);
 
                 // Create dimension connector for Address2
                 DimensionConnector addrConnector =
-                    RolapMappingFactory.eINSTANCE.createDimensionConnector();
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
                 addrConnector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 addrConnector.setOverrideDimensionName("Address2");
                 addrConnector.setDimension(addrDimension);
 
                 // Create measure group
                 MeasureGroup measureGroup =
-                    RolapMappingFactory.eINSTANCE.createMeasureGroup();
+                    CubeFactory.eINSTANCE.createMeasureGroup();
                 measureGroup.getMeasures().add(measure);
 
-                TableQuery cubeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+                TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
                 // Create SalesTest cube
                 PhysicalCube salesTestCube =
-                    RolapMappingFactory.eINSTANCE.createPhysicalCube();
+                    CubeFactory.eINSTANCE.createPhysicalCube();
                 salesTestCube.setName("SalesTest");
                 salesTestCube.setDefaultMeasure(measure);
                 salesTestCube.setQuery(cubeQuery);

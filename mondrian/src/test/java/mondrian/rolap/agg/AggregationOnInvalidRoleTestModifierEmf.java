@@ -13,64 +13,71 @@
  */
 package mondrian.rolap.agg;
 
-import org.eclipse.daanse.rolap.mapping.model.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessMemberGrant;
-import org.eclipse.daanse.rolap.mapping.model.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.AggregationLevel;
-import org.eclipse.daanse.rolap.mapping.model.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.AggregationName;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.ColumnType;
-import org.eclipse.daanse.rolap.mapping.model.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.HideMemberIf;
-import org.eclipse.daanse.rolap.mapping.model.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.Level;
-import org.eclipse.daanse.rolap.mapping.model.LevelDefinition;
-import org.eclipse.daanse.rolap.mapping.model.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.MemberAccess;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalColumn;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.PhysicalTable;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.TableQuery;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessMemberGrant;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.MemberAccess;
+import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
+import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
+import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.HideMemberIf;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-
 public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSupplier {
 
     protected final Catalog catalog;
 
     // mondrian2225_customer table columns
-    protected PhysicalColumn customerIdMondrian2225Customer;
-    protected PhysicalColumn customerNameMondrian2225Customer;
-    protected PhysicalTable mondrian2225Customer;
+    protected Column customerIdMondrian2225Customer;
+    protected Column customerNameMondrian2225Customer;
+    protected Table mondrian2225Customer;
 
     // mondrian2225_fact table columns
-    protected PhysicalColumn productIdMondrian2225Fact;
-    protected PhysicalColumn customerIdMondrian2225Fact;
-    protected PhysicalColumn factMondrian2225Fact;
-    protected PhysicalTable mondrian2225Fact;
+    protected Column productIdMondrian2225Fact;
+    protected Column customerIdMondrian2225Fact;
+    protected Column factMondrian2225Fact;
+    protected Table mondrian2225Fact;
 
     // mondrian2225_dim table columns
-    protected PhysicalColumn productIdMondrian2225Dim;
-    protected PhysicalColumn productCodeMondrian2225Dim;
-    protected PhysicalTable mondrian2225Dim;
+    protected Column productIdMondrian2225Dim;
+    protected Column productCodeMondrian2225Dim;
+    protected Table mondrian2225Dim;
 
     // mondrian2225_agg table columns
-    protected PhysicalColumn dimCodeMondrian2225Agg;
-    protected PhysicalColumn factMeasureMondrian2225Agg;
-    protected PhysicalColumn factCountMondrian2225Agg;
-    protected PhysicalTable mondrian2225Agg;
+    protected Column dimCodeMondrian2225Agg;
+    protected Column factMeasureMondrian2225Agg;
+    protected Column factCountMondrian2225Agg;
+    protected Table mondrian2225Agg;
 
     // Dimensions
     protected StandardDimension customerDimension;
@@ -122,97 +129,97 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
 
     protected void createTables() {
         // Create mondrian2225_customer table columns
-        customerIdMondrian2225Customer = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        customerIdMondrian2225Customer = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerIdMondrian2225Customer.setName("customer_id");
-        customerIdMondrian2225Customer.setType(ColumnType.INTEGER);
+        customerIdMondrian2225Customer.setType(SqlSimpleTypes.Sql99.integerType());
 
-        customerNameMondrian2225Customer = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        customerNameMondrian2225Customer = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerNameMondrian2225Customer.setName("customer_name");
-        customerNameMondrian2225Customer.setType(ColumnType.VARCHAR);
-        customerNameMondrian2225Customer.setCharOctetLength(45);
+        customerNameMondrian2225Customer.setType(SqlSimpleTypes.varcharType(255));
+        // customerNameMondrian2225Customer.setCharOctetLength(45);
 
-        mondrian2225Customer = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        mondrian2225Customer = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         mondrian2225Customer.setName("mondrian2225_customer");
-        mondrian2225Customer.getColumns().add(customerIdMondrian2225Customer);
-        mondrian2225Customer.getColumns().add(customerNameMondrian2225Customer);
+        mondrian2225Customer.getFeature().add(customerIdMondrian2225Customer);
+        mondrian2225Customer.getFeature().add(customerNameMondrian2225Customer);
 
         // Create mondrian2225_fact table columns
-        productIdMondrian2225Fact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        productIdMondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productIdMondrian2225Fact.setName("product_ID");
-        productIdMondrian2225Fact.setType(ColumnType.INTEGER);
+        productIdMondrian2225Fact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        customerIdMondrian2225Fact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        customerIdMondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerIdMondrian2225Fact.setName("customer_id");
-        customerIdMondrian2225Fact.setType(ColumnType.INTEGER);
+        customerIdMondrian2225Fact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        factMondrian2225Fact = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        factMondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factMondrian2225Fact.setName("fact");
-        factMondrian2225Fact.setType(ColumnType.INTEGER);
+        factMondrian2225Fact.setType(SqlSimpleTypes.Sql99.integerType());
 
-        mondrian2225Fact = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        mondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         mondrian2225Fact.setName("mondrian2225_fact");
-        mondrian2225Fact.getColumns().add(productIdMondrian2225Fact);
-        mondrian2225Fact.getColumns().add(customerIdMondrian2225Fact);
-        mondrian2225Fact.getColumns().add(factMondrian2225Fact);
+        mondrian2225Fact.getFeature().add(productIdMondrian2225Fact);
+        mondrian2225Fact.getFeature().add(customerIdMondrian2225Fact);
+        mondrian2225Fact.getFeature().add(factMondrian2225Fact);
 
         // Create mondrian2225_dim table columns
-        productIdMondrian2225Dim = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        productIdMondrian2225Dim = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productIdMondrian2225Dim.setName("product_id");
-        productIdMondrian2225Dim.setType(ColumnType.INTEGER);
+        productIdMondrian2225Dim.setType(SqlSimpleTypes.Sql99.integerType());
 
-        productCodeMondrian2225Dim = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        productCodeMondrian2225Dim = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productCodeMondrian2225Dim.setName("product_code");
-        productCodeMondrian2225Dim.setType(ColumnType.VARCHAR);
-        productCodeMondrian2225Dim.setCharOctetLength(45);
+        productCodeMondrian2225Dim.setType(SqlSimpleTypes.varcharType(255));
+        // productCodeMondrian2225Dim.setCharOctetLength(45);
 
-        mondrian2225Dim = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        mondrian2225Dim = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         mondrian2225Dim.setName("mondrian2225_dim");
-        mondrian2225Dim.getColumns().add(productIdMondrian2225Dim);
-        mondrian2225Dim.getColumns().add(productCodeMondrian2225Dim);
+        mondrian2225Dim.getFeature().add(productIdMondrian2225Dim);
+        mondrian2225Dim.getFeature().add(productCodeMondrian2225Dim);
 
         // Create mondrian2225_agg table columns
-        dimCodeMondrian2225Agg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        dimCodeMondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         dimCodeMondrian2225Agg.setName("dim_code");
-        dimCodeMondrian2225Agg.setType(ColumnType.VARCHAR);
-        dimCodeMondrian2225Agg.setCharOctetLength(45);
-        dimCodeMondrian2225Agg.setNullable(true);
+        dimCodeMondrian2225Agg.setType(SqlSimpleTypes.varcharType(255));
+        // dimCodeMondrian2225Agg.setCharOctetLength(45);
+        // setNullable removed (CWM Column has isNullable enum): dimCodeMondrian2225Agg true
 
-        factMeasureMondrian2225Agg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        factMeasureMondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factMeasureMondrian2225Agg.setName("fact_measure");
-        factMeasureMondrian2225Agg.setType(ColumnType.DECIMAL);
-        factMeasureMondrian2225Agg.setColumnSize(10);
-        factMeasureMondrian2225Agg.setDecimalDigits(2);
+        factMeasureMondrian2225Agg.setType(SqlSimpleTypes.decimalType(18, 4));
+        // factMeasureMondrian2225Agg.setColumnSize(10);
+        // factMeasureMondrian2225Agg.setDecimalDigits(2);
 
-        factCountMondrian2225Agg = RolapMappingFactory.eINSTANCE.createPhysicalColumn();
+        factCountMondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountMondrian2225Agg.setName("fact_count");
-        factCountMondrian2225Agg.setType(ColumnType.INTEGER);
+        factCountMondrian2225Agg.setType(SqlSimpleTypes.Sql99.integerType());
 
-        mondrian2225Agg = RolapMappingFactory.eINSTANCE.createPhysicalTable();
+        mondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         mondrian2225Agg.setName("mondrian2225_agg");
-        mondrian2225Agg.getColumns().add(dimCodeMondrian2225Agg);
-        mondrian2225Agg.getColumns().add(factMeasureMondrian2225Agg);
-        mondrian2225Agg.getColumns().add(factCountMondrian2225Agg);
+        mondrian2225Agg.getFeature().add(dimCodeMondrian2225Agg);
+        mondrian2225Agg.getFeature().add(factMeasureMondrian2225Agg);
+        mondrian2225Agg.getFeature().add(factCountMondrian2225Agg);
 
         // Add tables to database schema
         if (catalog.getDbschemas().size() > 0) {
-            DatabaseSchema dbSchema = catalog.getDbschemas().get(0);
-            dbSchema.getTables().add(mondrian2225Customer);
-            dbSchema.getTables().add(mondrian2225Fact);
-            dbSchema.getTables().add(mondrian2225Dim);
-            dbSchema.getTables().add(mondrian2225Agg);
+            Schema dbSchema = catalog.getDbschemas().get(0);
+            dbSchema.getOwnedElement().add(mondrian2225Customer);
+            dbSchema.getOwnedElement().add(mondrian2225Fact);
+            dbSchema.getOwnedElement().add(mondrian2225Dim);
+            dbSchema.getOwnedElement().add(mondrian2225Agg);
         }
     }
 
     protected void createDimensions() {
         // Create Customer dimension
-        customerDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        customerDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         customerDimension.setName("Customer");
 
         // Create Customer hierarchy
-        TableQuery customerQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource customerQuery = SourceFactory.eINSTANCE.createTableSource();
         customerQuery.setTable(mondrian2225Customer);
 
-        firstNameLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        firstNameLevel = LevelFactory.eINSTANCE.createLevel();
         firstNameLevel.setName("First Name");
         firstNameLevel.setVisible(true);
         firstNameLevel.setColumn(customerNameMondrian2225Customer);
@@ -221,7 +228,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         firstNameLevel.setType(LevelDefinition.REGULAR);
         firstNameLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-        customerHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        customerHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         customerHierarchy.setName("Customer");
         customerHierarchy.setVisible(true);
         customerHierarchy.setHasAll(true);
@@ -232,14 +239,14 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         customerDimension.getHierarchies().add(customerHierarchy);
 
         // Create Product Code dimension
-        productCodeDimension = RolapMappingFactory.eINSTANCE.createStandardDimension();
+        productCodeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         productCodeDimension.setName("Product Code");
 
         // Create Product Code hierarchy
-        TableQuery productCodeQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource productCodeQuery = SourceFactory.eINSTANCE.createTableSource();
         productCodeQuery.setTable(mondrian2225Dim);
 
-        Level codeLevel = RolapMappingFactory.eINSTANCE.createLevel();
+        Level codeLevel = LevelFactory.eINSTANCE.createLevel();
         codeLevel.setName("Code");
         codeLevel.setVisible(true);
         codeLevel.setColumn(productCodeMondrian2225Dim);
@@ -248,7 +255,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         codeLevel.setType(LevelDefinition.REGULAR);
         codeLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-        ExplicitHierarchy productCodeHierarchy = RolapMappingFactory.eINSTANCE.createExplicitHierarchy();
+        ExplicitHierarchy productCodeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productCodeHierarchy.setName("Product Code");
         productCodeHierarchy.setVisible(true);
         productCodeHierarchy.setHasAll(true);
@@ -260,7 +267,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
     }
 
     protected void createMeasures() {
-        measureMeasure = RolapMappingFactory.eINSTANCE.createSumMeasure();
+        measureMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
         measureMeasure.setName("Measure");
         measureMeasure.setColumn(factMondrian2225Fact);
         measureMeasure.setVisible(true);
@@ -268,27 +275,27 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
 
     protected void createCube() {
         // Create table query with aggregation
-        TableQuery tableQuery = RolapMappingFactory.eINSTANCE.createTableQuery();
+        TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
         tableQuery.setTable(mondrian2225Fact);
 
         // Create aggregation
-        AggregationName aggName = RolapMappingFactory.eINSTANCE.createAggregationName();
+        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
         aggName.setName(mondrian2225Agg);
         aggName.setIgnorecase(true);
 
         // Aggregation fact count
-        AggregationColumnName aggFactCount = RolapMappingFactory.eINSTANCE.createAggregationColumnName();
+        AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         aggFactCount.setColumn(factCountMondrian2225Agg);
         aggName.setAggregationFactCount(aggFactCount);
 
         // Aggregation measure
-        AggregationMeasure aggMeasure = RolapMappingFactory.eINSTANCE.createAggregationMeasure();
+        AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggMeasure.setColumn(factMeasureMondrian2225Agg);
         aggMeasure.setName("[Measures].[Measure]");
         aggName.getAggregationMeasures().add(aggMeasure);
 
         // Aggregation level
-        AggregationLevel aggLevel = RolapMappingFactory.eINSTANCE.createAggregationLevel();
+        AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
         aggLevel.setColumn(dimCodeMondrian2225Agg);
         aggLevel.setName("[Product Code].[Product Code].[Code]");
         aggLevel.setCollapsed(true);
@@ -297,24 +304,24 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         tableQuery.getAggregationTables().add(aggName);
 
         // Create dimension connectors
-        DimensionConnector customerConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector customerConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         customerConnector.setDimension(customerDimension);
         customerConnector.setOverrideDimensionName("Customer");
         customerConnector.setVisible(true);
         customerConnector.setForeignKey(customerIdMondrian2225Fact);
 
-        DimensionConnector productCodeConnector = RolapMappingFactory.eINSTANCE.createDimensionConnector();
+        DimensionConnector productCodeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
         productCodeConnector.setDimension(productCodeDimension);
         productCodeConnector.setOverrideDimensionName("Product Code");
         productCodeConnector.setVisible(true);
         productCodeConnector.setForeignKey(productIdMondrian2225Fact);
 
         // Create measure group
-        MeasureGroup measureGroup = RolapMappingFactory.eINSTANCE.createMeasureGroup();
+        MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
         measureGroup.getMeasures().add(measureMeasure);
 
         // Create cube
-        mondrian2225Cube = RolapMappingFactory.eINSTANCE.createPhysicalCube();
+        mondrian2225Cube = CubeFactory.eINSTANCE.createPhysicalCube();
         mondrian2225Cube.setName("mondrian2225");
         mondrian2225Cube.setVisible(true);
         mondrian2225Cube.setCache(true);
@@ -343,30 +350,30 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
 
     protected void createAccessRoles() {
         // Create member grant
-        AccessMemberGrant memberGrant = RolapMappingFactory.eINSTANCE.createAccessMemberGrant();
+        AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
         memberGrant.setMember("[Customer].[Customer].[NonExistingName]");
         memberGrant.setMemberAccess(MemberAccess.ALL);
 
         // Create hierarchy grant
-        AccessHierarchyGrant hierarchyGrant = RolapMappingFactory.eINSTANCE.createAccessHierarchyGrant();
+        AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
         hierarchyGrant.setHierarchy(customerHierarchy);
         hierarchyGrant.setTopLevel(firstNameLevel);
         hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
         hierarchyGrant.getMemberGrants().add(memberGrant);
 
         // Create cube grant
-        AccessCubeGrant cubeGrant = RolapMappingFactory.eINSTANCE.createAccessCubeGrant();
+        AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
         cubeGrant.setCube(mondrian2225Cube);
         cubeGrant.setCubeAccess(CubeAccess.ALL);
         cubeGrant.getHierarchyGrants().add(hierarchyGrant);
 
         // Create catalog grant
-        AccessCatalogGrant catalogGrant = RolapMappingFactory.eINSTANCE.createAccessCatalogGrant();
+        AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
         catalogGrant.setCatalogAccess(CatalogAccess.NONE);
         catalogGrant.getCubeGrants().add(cubeGrant);
 
         // Create role
-        AccessRole role = RolapMappingFactory.eINSTANCE.createAccessRole();
+        AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
         role.setName("Test");
         role.getAccessCatalogGrants().add(catalogGrant);
 

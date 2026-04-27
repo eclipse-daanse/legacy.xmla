@@ -26,13 +26,14 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMember;
-import org.eclipse.daanse.rolap.mapping.model.CalculatedMemberProperty;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.Cube;
-import org.eclipse.daanse.rolap.mapping.model.NamedSet;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.NamedSet;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -40,7 +41,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
 /**
  * Unit-test for named sets, in all their various forms: <code>WITH SET</code>,
  * sets defined against cubes, virtual cubes, and at the schema level.
@@ -871,7 +871,7 @@ class NamedSetTest {
 
                 // Create named set "Bad" with invalid formula using RolapMappingFactory
                 NamedSet namedSet =
-                    RolapMappingFactory.eINSTANCE.createNamedSet();
+                    DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Bad");
                 namedSet.setFormula("{[Store].[USA].[WA].Children}}");
 
@@ -1353,13 +1353,13 @@ class NamedSetTest {
 
             // Create named set "CA Cities" using RolapMappingFactory
             NamedSet namedSet1 =
-                RolapMappingFactory.eINSTANCE.createNamedSet();
+                DimensionFactory.eINSTANCE.createNamedSet();
             namedSet1.setName("CA Cities");
             namedSet1.setFormula("{[Store].[USA].[CA].Children}");
 
             // Create named set "Top CA Cities" using RolapMappingFactory
             NamedSet namedSet2 =
-                RolapMappingFactory.eINSTANCE.createNamedSet();
+                DimensionFactory.eINSTANCE.createNamedSet();
             namedSet2.setName("Top CA Cities");
             namedSet2.setFormula("TopCount([CA Cities], 2, [Measures].[Unit Sales])");
 
@@ -1414,19 +1414,19 @@ class NamedSetTest {
 
             // Create named set "CA Cities" using RolapMappingFactory
             NamedSet namedSet1 =
-                RolapMappingFactory.eINSTANCE.createNamedSet();
+                DimensionFactory.eINSTANCE.createNamedSet();
             namedSet1.setName("CA Cities");
             namedSet1.setFormula("{[Store].[USA].[CA].Children}");
 
             // Create named set "Top CA Cities" using RolapMappingFactory
             NamedSet namedSet2 =
-                RolapMappingFactory.eINSTANCE.createNamedSet();
+                DimensionFactory.eINSTANCE.createNamedSet();
             namedSet2.setName("Top CA Cities");
             namedSet2.setFormula("TopCount([CA Cities], 2, [Measures].[Unit Sales])");
 
             // Create named set "Top USA Stores" using RolapMappingFactory
             NamedSet namedSet3 =
-                RolapMappingFactory.eINSTANCE.createNamedSet();
+                DimensionFactory.eINSTANCE.createNamedSet();
             namedSet3.setName("Top USA Stores");
             namedSet3.setFormula("TopCount(Descendants([Store].[USA]), 7)");
 
@@ -1498,13 +1498,13 @@ class NamedSetTest {
             if (salesCube != null) {
                 // Create named set "Top Products In CA" using RolapMappingFactory
                 NamedSet namedSet1 =
-                    RolapMappingFactory.eINSTANCE.createNamedSet();
+                    DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet1.setName("Top Products In CA");
                 namedSet1.setFormula("TopCount([Product].[Product Department].MEMBERS, 3, ([Time].[1997].[Q3], [Measures].[CA City Sales]))");
 
                 // Create named set "CA Cities" using RolapMappingFactory
                 NamedSet namedSet2 =
-                    RolapMappingFactory.eINSTANCE.createNamedSet();
+                    DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet2.setName("CA Cities");
                 namedSet2.setFormula("{[Store].[USA].[CA].Children}");
 
@@ -1514,14 +1514,14 @@ class NamedSetTest {
 
                 // Create calculated member "CA City Sales" using RolapMappingFactory
                 CalculatedMember calcMember =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMember();
+                    LevelFactory.eINSTANCE.createCalculatedMember();
                 calcMember.setName("CA City Sales");
                 calcMember.setVisible(false);
                 calcMember.setFormula("Aggregate([CA Cities], [Measures].[Unit Sales])");
 
                 // Create calculated member property for FORMAT_STRING
                 CalculatedMemberProperty property =
-                    RolapMappingFactory.eINSTANCE.createCalculatedMemberProperty();
+                    LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 property.setName("FORMAT_STRING");
                 property.setValue("$#,##0.0");
 

@@ -13,10 +13,13 @@
  */
 package org.eclipse.daanse.olap.function.def.parallelperiod;
 
-import static mondrian.olap.fun.FunctionTest.*;
-import static org.opencube.junit5.TestUtil.*;
+import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
+import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;

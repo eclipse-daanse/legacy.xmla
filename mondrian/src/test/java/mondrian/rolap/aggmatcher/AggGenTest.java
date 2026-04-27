@@ -36,14 +36,14 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggGen;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -98,8 +98,8 @@ class AggGenTest {
             sqlConnection = dataSource.getConnection();
             DatabaseMetaData dbmeta = sqlConnection.getMetaData();
             Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-            List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
-            DatabaseSchema databaseSchema = schemas.getFirst();
+            List<? extends Schema> schemas = catalogMapping.getDbschemas();
+            Schema databaseSchema = schemas.getFirst();
 
 
             String log = writer.toString();

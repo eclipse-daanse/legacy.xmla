@@ -23,22 +23,20 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.mapping.model.BaseMeasure;
-import org.eclipse.daanse.rolap.mapping.model.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
-import org.eclipse.daanse.rolap.mapping.model.VirtualCube;
-import org.eclipse.daanse.rolap.mapping.model.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.BaseMeasure;
+import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
+import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-
 class OrderFunDefTest {
 
     @AfterEach
@@ -1072,18 +1070,18 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
             // Create virtual cube
             VirtualCube virtualCube =
-                RolapMappingFactory.eINSTANCE.createVirtualCube();
+                CubeFactory.eINSTANCE.createVirtualCube();
             virtualCube.setName("Sales vs HR");
 
             // Create dimension connector for Customers from Sales cube
             //org.eclipse.daanse.rolap.mapping.emf.rolapmapping.DimensionConnector customersDimConnector =
-            //    org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //    org.eclipse.daanse.rolap.mapping.emf.rolapmapping.DimensionFactory.eINSTANCE.createDimensionConnector();
             //customersDimConnector.setOverrideDimensionName("Customers");
             //customersDimConnector.setPhysicalCube(CatalogSupplier.CUBE_SALES);
 
             // Create dimension connector for Position from HR cube
             //org.eclipse.daanse.rolap.mapping.emf.rolapmapping.DimensionConnector positionDimConnector =
-            //    org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory.eINSTANCE.createDimensionConnector();
+            //    org.eclipse.daanse.rolap.mapping.emf.rolapmapping.DimensionFactory.eINSTANCE.createDimensionConnector();
             //positionDimConnector.setOverrideDimensionName("Position");
             //positionDimConnector.setPhysicalCube(CatalogSupplier.CUBE_HR);
 
