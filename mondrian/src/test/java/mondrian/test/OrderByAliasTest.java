@@ -60,13 +60,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInKeyExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -108,13 +108,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInNameExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -158,13 +158,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInCaptionExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -208,13 +208,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInOrdinalExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -258,13 +258,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInParentExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("supervisor_id");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -332,13 +332,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInPropertyExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -380,14 +380,14 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInMeasureExpression(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
     flushSchemaCache(context.getConnectionWithDefaultRole());
-    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
+    final String colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -430,7 +430,7 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyCrossJoin(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
@@ -514,7 +514,7 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testVirtualCube(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {

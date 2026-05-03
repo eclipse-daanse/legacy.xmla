@@ -114,7 +114,7 @@ class CaptionTest{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testLevelCaptionExpression(Context<?> context) {
 
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
             case ACCESS:
             case ORACLE:
             case MARIADB:

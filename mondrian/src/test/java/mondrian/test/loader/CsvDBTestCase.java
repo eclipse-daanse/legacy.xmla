@@ -74,8 +74,8 @@ public abstract class CsvDBTestCase extends BatchTestCase {
 
     protected final boolean isApplicable(Connection connection) {
         final Dialect dialect = getDialect(connection);
-        return dialect.allowsDdl()
-                && getDatabaseProduct(dialect.getDialectName())
+        return dialect.supportsDdl()
+                && getDatabaseProduct(dialect.name())
                 != DatabaseProduct.INFOBRIGHT;
     }
 

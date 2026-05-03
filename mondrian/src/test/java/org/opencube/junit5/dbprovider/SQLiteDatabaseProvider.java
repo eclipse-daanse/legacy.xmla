@@ -64,7 +64,7 @@ public class SQLiteDatabaseProvider implements DatabaseProvider {
 		dataSource.setUrl(JDBC_SQLITE_MEMORY);
 		try {
 			Connection connection = dataSource.getConnection();
-			Dialect dialect = new MySqlDialect(connection);
+			Dialect dialect = new MySqlDialect(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.fromConnection(connection));
 			connection.close();
 			return new SimpleEntry<>(dataSource, dialect);
 		} catch (SQLException e) {

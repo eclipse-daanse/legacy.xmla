@@ -300,7 +300,7 @@ public class BatchTestCase{
         final String cubeName = requests[0].getMeasure().getCubeName();
         final RolapCube cube = lookupCube(connection, cubeName);
         final Dialect sqlDialect = star.getSqlQueryDialect();
-        DatabaseProduct d = getDatabaseProduct(sqlDialect.getDialectName());
+        DatabaseProduct d = getDatabaseProduct(sqlDialect.name());
         SqlPattern sqlPattern = SqlPattern.getPattern(d, patterns);
         if (d == DatabaseProduct.UNKNOWN) {
             // If the dialect is not one in the pattern set, do not run the
@@ -489,7 +489,7 @@ public class BatchTestCase{
         // (We could optimize and run it once, collecting multiple queries, and
         // comparing all queries at the end.)
         Dialect dialect = getDialect(connection);
-        DatabaseProduct d = getDatabaseProduct(dialect.getDialectName());
+        DatabaseProduct d = getDatabaseProduct(dialect.name());
         boolean patternFound = false;
         for (SqlPattern sqlPattern : patterns) {
             if (!sqlPattern.hasDatabaseProduct(d)) {
@@ -1141,26 +1141,20 @@ public class BatchTestCase{
         private boolean foundMatch = false;
 
         public TriggerHook(String trigger) {
-            this.trigger =
-                trigger
-                    .replaceAll("\r\n", "")
-                    .replaceAll("\r", "")
-                    .replaceAll("\n", "");
+            // Normalise whitespace once; matchTrigger normalises the captured SQL
+            // the same way so a multi-line indented expectation matches a
+            // single-line captured query.
+            this.trigger = trigger.replaceAll("\\s+", " ").trim();
         }
 
         private boolean matchTrigger(String sql) {
             if (trigger == null) {
                 return true;
             }
-            // Cleanup the endlines.
-            sql =
-                sql
-                    .replaceAll("\r\n", "")
-                    .replaceAll("\r", "")
-                    .replaceAll("\n", "");
-            // different versions of mysql drivers use different quoting, so
-            // ignore quotes
-            String s = replaceQuotes(sql);
+            // SQL is whitespace-insensitive; collapse runs so that an unformatted
+            // captured query matches a multi-line indented expectation. Quotes are
+            // also normalised because mysql drivers vary on backtick vs. doublequote.
+            String s = replaceQuotes(sql).replaceAll("\\s+", " ").trim();
             String t = replaceQuotes(trigger);
             if (s.startsWith(t) && !foundMatch) {
                 foundMatch = true;

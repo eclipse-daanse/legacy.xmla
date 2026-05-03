@@ -61,7 +61,7 @@ class OrOperatorDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testComplexOrExpr(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.

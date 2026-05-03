@@ -565,7 +565,7 @@ public abstract class DBLoader {
                 return name;
             }
             if (this == Boolean) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case POSTGRES:
                     return name;
                 case MARIADB:
@@ -578,7 +578,7 @@ public abstract class DBLoader {
                 }
             }
             if (this == Bigint) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case ORACLE:
                 case FIREBIRD:
                     return "DECIMAL(15,0)";
@@ -587,7 +587,7 @@ public abstract class DBLoader {
                 }
             }
             if (this == Date) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case MSSQL:
                     return "DATETIME";
                 default:
@@ -595,7 +595,7 @@ public abstract class DBLoader {
                 }
             }
             if (this == Timestamp) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case MSSQL:
                 case MARIADB:
                 case MYSQL:
@@ -608,7 +608,7 @@ public abstract class DBLoader {
             }
             // for extra types
             if (name.startsWith("DECIMAL(")) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case ACCESS:
                     return "CURRENCY";
                 }
@@ -788,10 +788,10 @@ public abstract class DBLoader {
             return;
         }
         String tableName = table.getName();
-        StringBuilder quotedTableName = quoteId(tableName);
+        String quotedTableName = quoteId(tableName);
         for (int i = 0; i < dropIndexList.size(); i++) {
             String indexName = dropIndexList.get(i);
-            StringBuilder quotedIndexName = quoteId(indexName);
+            String quotedIndexName = quoteId(indexName);
             String dropIndexStmt =
                 "DROP INDEX " + quotedIndexName + " ON " + quotedTableName;
             dropIndexList.set(i, dropIndexStmt);
@@ -848,14 +848,14 @@ public abstract class DBLoader {
             return;
         }
         String tableName = table.getName();
-        StringBuilder quotedTableName = quoteId(tableName);
+        String quotedTableName = quoteId(tableName);
         for (int i = 0; i < createIndexList.size(); i++) {
             String indexAndColumnName = createIndexList.get(i);
             int index = indexAndColumnName.indexOf(' ');
             String indexName = indexAndColumnName.substring(0, index);
             String columnName = indexAndColumnName.substring(index + 1);
-            StringBuilder quotedIndexName = quoteId(indexName.trim());
-            StringBuilder quotedColumnName = quoteId(columnName.trim());
+            String quotedIndexName = quoteId(indexName.trim());
+            String quotedColumnName = quoteId(columnName.trim());
             String createIndexStmt =
                 new StringBuilder("CREATE INDEX ").append(quotedIndexName).append(" ON ")
                 .append(quotedTableName).append(" ( ").append(quotedColumnName).append(" )").toString();
@@ -1208,7 +1208,7 @@ public abstract class DBLoader {
      * @param name Identifier
      * @return Quoted identifier
      */
-    protected StringBuilder quoteId(String name) {
+    protected String quoteId(String name) {
         return this.dialect.quoteIdentifier(name);
     }
 
@@ -1289,7 +1289,7 @@ public abstract class DBLoader {
         } else if (type == Type.Timestamp) {
             if (value instanceof String) {
                 Timestamp ts = Timestamp.valueOf((String) value);
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case ORACLE:
                 case LUCIDDB:
                     return "TIMESTAMP '" + ts + "'";
@@ -1297,7 +1297,7 @@ public abstract class DBLoader {
                     return "'" + ts + "'";
                 }
             } else if (value instanceof Timestamp ts) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case ORACLE:
                 case LUCIDDB:
                     return "TIMESTAMP '" + ts + "'";
@@ -1312,7 +1312,7 @@ public abstract class DBLoader {
         } else if (type == Type.Date) {
             if (value instanceof String) {
                 Date dt = Date.valueOf((String) value);
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case ORACLE:
                 case LUCIDDB:
                     return "DATE '" + dateFormatter.format(dt) + "'";
@@ -1320,7 +1320,7 @@ public abstract class DBLoader {
                     return "'" + dateFormatter.format(dt) + "'";
                 }
             } else if (value instanceof Date dt) {
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case ORACLE:
                 case LUCIDDB:
                     return "DATE '" + dateFormatter.format(dt) + "'";
@@ -1366,7 +1366,7 @@ public abstract class DBLoader {
         } else if (type == Type.Boolean) {
             if (value instanceof String) {
                 String trimmedValue = ((String) value).trim();
-                switch (getDatabaseProduct(dialect.getDialectName())) {
+                switch (getDatabaseProduct(dialect.name())) {
                 case MARIADB:
                 case MYSQL:
                 case ORACLE:

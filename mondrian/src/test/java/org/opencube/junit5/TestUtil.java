@@ -464,7 +464,7 @@ public class TestUtil {
 		final String search = "fname \\+ ' ' \\+ lname";
 		final Dialect dialect = getDialect(connection);
 		final DatabaseProduct databaseProduct =
-				getDatabaseProduct(dialect.getDialectName());
+				getDatabaseProduct(dialect.name());
 		switch ( databaseProduct ) {
 			case MYSQL:
 			case MARIADB:
@@ -500,7 +500,7 @@ public class TestUtil {
 				break;
 		}
 
-		if ( getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ORACLE ) {
+		if ( getDatabaseProduct(dialect.name()) == DatabaseProduct.ORACLE ) {
 			// " + tableQualifier + "
 			sql = sql.replaceAll( " =as= ", " " );
 		} else {
@@ -596,7 +596,7 @@ public class TestUtil {
         //TODO Commented by reason context implementation
 		//final Dialect dialect = DialectManager.createDialect( null, connection );
         final Dialect dialect = null;
-        assert getDatabaseProduct(dialect.getDialectName()) == product;
+        assert getDatabaseProduct(dialect.name()) == product;
 		return dialect;
 	}
 
@@ -1512,7 +1512,7 @@ public class TestUtil {
 		// (We could optimize and run it once, collecting multiple queries, and
 		// comparing all queries at the end.)
 		Dialect dialect = getDialect(connection);
-		DatabaseProduct d = getDatabaseProduct(dialect.getDialectName());
+		DatabaseProduct d = getDatabaseProduct(dialect.name());
 		boolean patternFound = false;
 		for (SqlPattern sqlPattern : patterns) {
 			if (!sqlPattern.hasDatabaseProduct(d)) {

@@ -378,7 +378,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample8(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    if (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName()) == DatabaseProduct.INFOBRIGHT ) {
+    if (getDatabaseProduct(TestUtil.getDialect(connection).name()) == DatabaseProduct.INFOBRIGHT ) {
       // Skip this test on Infobright, because [Promotion Sales] is
       // defined wrong.
       return;
@@ -3811,7 +3811,7 @@ public class BasicQueryTest {
 
     String tableQualifier = "as ";
     final Dialect dialect = getDialect(connection);
-    if ( getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ORACLE ) {
+    if ( getDatabaseProduct(dialect.name()) == DatabaseProduct.ORACLE ) {
       // " + tableQualifier + "
       tableQualifier = "";
     }
@@ -5404,7 +5404,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testStatistics(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    final String product = getDialect(connection).getDialectName();
+    final String product = getDialect(connection).name();
     final String dialectClassName = getDialect(connection).getClass().getName();
 
 //    propSaver.set( new StringProperty( MondrianProperties.instance(), MondrianProperties.instance().StatisticsProviders
@@ -5590,7 +5590,7 @@ public class BasicQueryTest {
   }
 
   private void runMondrian1506(Context<?> context, Mondrian1506Lambda lambda ) throws Exception {
-    if ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) != DatabaseProduct.MYSQL ) {
+    if ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name()) != DatabaseProduct.MYSQL ) {
       // This only works on MySQL because of Sleep()
       return;
     }
@@ -5675,7 +5675,7 @@ public class BasicQueryTest {
         + "from [Sales] " + " \n" );
     // Some DBs return 0 when we ask for null. Like Oracle.
     final String returnedValue;
-    switch ( getDatabaseProduct(getDialect(connection).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(connection).name()) ) {
       case ORACLE:
         returnedValue = "0";
         break;

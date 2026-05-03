@@ -1482,7 +1482,7 @@ class VirtualCubeTest extends BatchTestCase {
         // Only need to run this against one db to verify caching
         // behavior is correct.
         final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
-        if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.DERBY) {
+        if (getDatabaseProduct(dialect.name()) != DatabaseProduct.DERBY) {
             return;
         }
 

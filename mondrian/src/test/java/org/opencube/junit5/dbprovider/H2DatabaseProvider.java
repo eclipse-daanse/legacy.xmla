@@ -80,7 +80,7 @@ public class H2DatabaseProvider implements DatabaseProvider {
 		cpDataSource.setPassword("sa");
 		try {
 			connection = cpDataSource.getConnection();
-			Dialect dialect = new H2Dialect(connection);
+			Dialect dialect = new H2Dialect(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.fromConnection(connection));
 
 			connection.close();
 			return new SimpleEntry<>(cpDataSource, dialect);

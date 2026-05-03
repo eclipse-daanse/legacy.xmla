@@ -73,10 +73,10 @@ class GroupingSetQueryTest extends BatchTestCase{
         if (context
                 .getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class)
                 .equals("ANY")
-                || getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ACCESS
-                || getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ORACLE)
+                || getDatabaseProduct(dialect.name()) == DatabaseProduct.ACCESS
+                || getDatabaseProduct(dialect.name()) == DatabaseProduct.ORACLE)
         {
-            ((TestContextImpl)context).setWarnIfNoPatternForDialect(getDatabaseProduct(dialect.getDialectName()).toString());
+            ((TestContextImpl)context).setWarnIfNoPatternForDialect(getDatabaseProduct(dialect.name()).toString());
         } else {
             // Do not warn unless the dialect is "ACCESS" or "ORACLE", or
             // if the test chooses to warn regardless of the dialect.

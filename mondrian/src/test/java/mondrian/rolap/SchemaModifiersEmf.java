@@ -7423,7 +7423,7 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1KE(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier1KE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -7504,7 +7504,7 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1OE(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier1OE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -7592,7 +7592,7 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1ME(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier1ME(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -7663,7 +7663,7 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1CE(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier1CE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -7745,7 +7745,7 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1NE(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier1NE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -7836,7 +7836,7 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public OrderByAliasTestModifier2(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier2(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -7959,7 +7959,7 @@ public class SchemaModifiersEmf {
         private StringBuilder colName;
         private Catalog catalog;
 
-        public OrderByAliasTestModifier3(Catalog catalogMapping, final StringBuilder colName) {
+        public OrderByAliasTestModifier3(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -8498,7 +8498,7 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public TestAggregationManagerModifier2(Catalog catalogMapping, final StringBuilder colName) {
+        public TestAggregationManagerModifier2(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()
@@ -8568,7 +8568,7 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public TestAggregationManagerModifier10(Catalog catalogMapping, final StringBuilder colName) {
+        public TestAggregationManagerModifier10(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = catalog.getCubes().stream()

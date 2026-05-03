@@ -73,7 +73,7 @@ class DrillThroughFieldListTest {
 
     String expectedSql;
     Connection connection = context.getConnectionWithDefaultRole();
-    switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
+    switch (getDatabaseProduct(getDialect(connection).name())) {
     case MARIADB:
     case MYSQL:
         expectedSql =
@@ -147,7 +147,7 @@ class DrillThroughFieldListTest {
         .asList(unitSalesAttribute, storeCostAttribute, quarterAttribute);
 
     String expectedSql;
-    switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
+    switch (getDatabaseProduct(getDialect(connection).name())) {
     case MARIADB:
     case MYSQL:
         expectedSql =
@@ -224,7 +224,7 @@ class DrillThroughFieldListTest {
         .asList(unitSalesAttribute, storeCostAttribute, quarterAttribute);
 
     String expectedSql;
-    switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
+    switch (getDatabaseProduct(getDialect(connection).name())) {
     case MARIADB:
     case MYSQL:
         expectedSql = "select\n"
@@ -303,7 +303,7 @@ class DrillThroughFieldListTest {
         .asList(StoreSqftAttribute);
 
     String expectedSql;
-    switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
+    switch (getDatabaseProduct(getDialect(connection).name())) {
     case MARIADB:
     case MYSQL:
         expectedSql =
@@ -351,7 +351,7 @@ class DrillThroughFieldListTest {
         .asList(StoreSqftAttribute);
 
     String expectedSql;
-    switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
+    switch (getDatabaseProduct(getDialect(connection).name())) {
     case MARIADB:
     case MYSQL:
         expectedSql = "select\n"

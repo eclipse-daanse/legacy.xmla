@@ -67,7 +67,7 @@ public class DataLoaderUtil {
 
 			buf.append(constraint.unique ? "CREATE UNIQUE INDEX " : "CREATE INDEX ")
 					.append(dialect.quoteIdentifier(constraint.name));
-			if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.TERADATA) {
+			if (getDatabaseProduct(dialect.name()) != DatabaseProduct.TERADATA) {
 				buf.append(" ON ").append(dialect.quoteIdentifier(table.schemaName, table.tableName));
 			}
 			buf.append(" (");
@@ -83,7 +83,7 @@ public class DataLoaderUtil {
 				buf.append(dialect.quoteIdentifier(columnName));
 			}
 			buf.append(")");
-			if (getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.TERADATA) {
+			if (getDatabaseProduct(dialect.name()) == DatabaseProduct.TERADATA) {
 				buf.append(" ON ").append(dialect.quoteIdentifier(table.schemaName, table.tableName));
 			}
 			final String createDDL = buf.toString();
@@ -158,7 +158,7 @@ public class DataLoaderUtil {
 //            }
 
 		buf.append(")");
-		switch (getDatabaseProduct(dialect.getDialectName())) {
+		switch (getDatabaseProduct(dialect.name())) {
 		case NEOVIEW:
 			// no unique keys defined
 			buf.append(" NO PARTITION");
@@ -249,7 +249,7 @@ public class DataLoaderUtil {
 				return name;
 			}
 			if (this == Boolean) {
-				switch (getDatabaseProduct(dialect.getDialectName())) {
+				switch (getDatabaseProduct(dialect.name())) {
 				case POSTGRES:
 				case GREENPLUM:
 				case LUCIDDB:
@@ -268,7 +268,7 @@ public class DataLoaderUtil {
 				}
 			}
 			if (this == Bigint) {
-				switch (getDatabaseProduct(dialect.getDialectName())) {
+				switch (getDatabaseProduct(dialect.name())) {
 				case ORACLE:
 				case FIREBIRD:
 					return "DECIMAL(15,0)";
@@ -277,7 +277,7 @@ public class DataLoaderUtil {
 				}
 			}
 			if (this == Date) {
-				switch (getDatabaseProduct(dialect.getDialectName())) {
+				switch (getDatabaseProduct(dialect.name())) {
 				case MSSQL:
 					return "DATETIME";
 				case INGRES:
@@ -287,7 +287,7 @@ public class DataLoaderUtil {
 				}
 			}
 			if (this == Timestamp) {
-				switch (getDatabaseProduct(dialect.getDialectName())) {
+				switch (getDatabaseProduct(dialect.name())) {
 				case MSSQL:
 				case MARIADB:
 				case MYSQL:

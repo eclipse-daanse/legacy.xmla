@@ -345,7 +345,7 @@ class CompatibilityTest {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         DataSource dataSource = connection.getDataSource();
         final Dialect dialect = foodMartContext.getDialect();
-        if (getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.LUCIDDB) {
+        if (getDatabaseProduct(dialect.name()) == DatabaseProduct.LUCIDDB) {
             // TODO jvs 29-Nov-2006:  LucidDB is strict about
             // null literals (type can't be inferred in this context);
             // maybe enhance the inline table to use the columndef
@@ -425,7 +425,7 @@ class CompatibilityTest {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         DataSource dataSource = connection.getDataSource();
         final Dialect dialect = foodMartContext.getDialect();
-        switch (getDatabaseProduct(dialect.getDialectName())) {
+        switch (getDatabaseProduct(dialect.name())) {
         case LUCIDDB:
             // TODO jvs 29-Nov-2006:  See corresponding comment in
             // testCaseInsensitiveNullMember

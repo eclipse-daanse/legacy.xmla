@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
+import org.eclipse.daanse.jdbc.db.dialect.db.common.AbstractJdbcDialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
@@ -106,10 +106,10 @@ class SqlQueryTest  extends BatchTestCase {
         if (connection.getContext()
                 .getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class)
                 .equals("ANY")
-                || getDatabaseProduct(dialect.getDialectName()) == MYSQL)
+                || getDatabaseProduct(dialect.name()) == MYSQL)
         {
             ((TestContextImpl)(connection.getContext())).setWarnIfNoPatternForDialect(
-                    getDatabaseProduct(dialect.getDialectName()).toString());
+                    getDatabaseProduct(dialect.name()).toString());
         } else {
             // Do not warn unless the dialect is "MYSQL", or
             // if the test chooses to warn regardless of the dialect.
@@ -166,9 +166,9 @@ class SqlQueryTest  extends BatchTestCase {
                     + "    (gs1, gs2, gs3))";
             }
             assertEquals(
-                dialectize(getDatabaseProduct(dialect.getDialectName()), expected),
+                dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
-                    getDatabaseProduct(sqlQuery.getDialect().getDialectName()),
+                    getDatabaseProduct(sqlQuery.getDialect().name()),
                     sqlQuery.toString()));
         }
     }
@@ -210,7 +210,7 @@ class SqlQueryTest  extends BatchTestCase {
         String expr, String alias, SortingDirection sortingDirection,
         boolean nullable, boolean collateNullsLast, boolean reqOrderByAlias)
     {
-        JdbcDialectImpl dialect = spy(new JdbcDialectImplForTest());
+        AbstractJdbcDialect dialect = spy(new AbstractJdbcDialectForTest());
         when(dialect.requiresOrderByAlias()).thenReturn(reqOrderByAlias);
         SqlQuery query = new SqlQuery(dialect, true);
         query.addOrderBy(
@@ -284,7 +284,7 @@ class SqlQueryTest  extends BatchTestCase {
         SqlPattern[] patterns)
     {
         Dialect dialect = getDialect(connection);
-        DatabaseProduct d = getDatabaseProduct(dialect.getDialectName());
+        DatabaseProduct d = getDatabaseProduct(dialect.name());
         boolean patternFound = false;
         for (SqlPattern sqlPattern : patterns) {
             if (!sqlPattern.hasDatabaseProduct(d)) {
@@ -301,9 +301,9 @@ class SqlQueryTest  extends BatchTestCase {
             trigger = dialectize(d, trigger);
 
             assertEquals(
-                dialectize(getDatabaseProduct(dialect.getDialectName()), trigger),
+                dialectize(getDatabaseProduct(dialect.name()), trigger),
                 dialectize(
-                    getDatabaseProduct(query.getDialect().getDialectName()),
+                    getDatabaseProduct(query.getDialect().name()),
                     query.toString()));
         }
 
@@ -563,9 +563,9 @@ class SqlQueryTest  extends BatchTestCase {
                     + "group by grouping sets ((), (gs1, gs2, gs3))";
             }
             assertEquals(
-                dialectize(getDatabaseProduct(dialect.getDialectName()), expected),
+                dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
-                    getDatabaseProduct(sqlQuery.getDialect().getDialectName()),
+                    getDatabaseProduct(sqlQuery.getDialect().name()),
                     sqlQuery.toString()));
         }
     }
@@ -625,9 +625,9 @@ class SqlQueryTest  extends BatchTestCase {
                     + "group by grouping sets ((c0, c1, c2), (c1, c2))";
             }
             assertEquals(
-                dialectize(getDatabaseProduct(dialect.getDialectName()), expected),
+                dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
-                    getDatabaseProduct(sqlQuery.getDialect().getDialectName()),
+                    getDatabaseProduct(sqlQuery.getDialect().name()),
                     sqlQuery.toString()));
         }
     }
@@ -645,7 +645,7 @@ class SqlQueryTest  extends BatchTestCase {
         Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
-        if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.LUCIDDB) {
+        if (getDatabaseProduct(dialect.name()) != DatabaseProduct.LUCIDDB) {
             return;
         }
 
@@ -1343,14 +1343,14 @@ class SqlQueryTest  extends BatchTestCase {
                 && getDialect(connection).supportsGroupingSets();
     }
 
-    public class JdbcDialectImplForTest extends JdbcDialectImpl{
+    public class AbstractJdbcDialectForTest extends AbstractJdbcDialect{
 
-        public JdbcDialectImplForTest() {
-
+        public AbstractJdbcDialectForTest() {
+            super(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.ansiDefaults());
         }
 
         @Override
-        public String getDialectName() {
+        public String name() {
             return null;
         }
     }

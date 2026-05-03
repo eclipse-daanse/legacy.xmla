@@ -77,7 +77,7 @@ public class SqlStatisticsProvider implements StatisticsProvider {
         buf.append(
             "select count(*) from (").append(sql).append(")");
         if (dialect.requiresAliasForFromQuery()) {
-            if (dialect.allowsAs()) {
+            if (dialect.allowsFromAlias()) {
                 buf.append(" as ");
             } else {
                 buf.append(" ");
@@ -157,7 +157,7 @@ public class SqlStatisticsProvider implements StatisticsProvider {
         String column)
     {
         final StringBuilder buf = new StringBuilder();
-        StringBuilder exprString = dialect.quoteIdentifier(column);
+        String exprString = dialect.quoteIdentifier(column);
         if (dialect.allowsCountDistinct()) {
             // e.g. "select count(distinct product_id) from product"
             buf.append("select count(distinct ")
@@ -175,7 +175,7 @@ public class SqlStatisticsProvider implements StatisticsProvider {
             dialect.quoteIdentifier(buf, schema, table);
             buf.append(")");
             if (dialect.requiresAliasForFromQuery()) {
-                if (dialect.allowsAs()) {
+                if (dialect.allowsFromAlias()) {
                     buf.append(" as ");
                 } else {
                     buf.append(' ');

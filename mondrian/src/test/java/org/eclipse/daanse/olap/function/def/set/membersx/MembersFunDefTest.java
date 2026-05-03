@@ -66,7 +66,7 @@ class MembersFunDefTest {
 
         // <Dimension>.members applied to a query with calc measures
         // Again, no calc measures are returned
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -94,7 +94,7 @@ class MembersFunDefTest {
 
         // <Level>.members applied to a query with calc measures
         // Again, no calc measures are returned
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.

@@ -524,7 +524,7 @@ class SegmentBuilderTest {
 
     private void doTestSegmentCreationForBoolean(Connection connection, boolean value) {
         DatabaseProduct db =
-            getDatabaseProduct(getDialect(connection).getDialectName());
+            getDatabaseProduct(getDialect(connection).name());
         if (db == DatabaseProduct.ORACLE) {
             // Oracle does not support boolean type
             return;

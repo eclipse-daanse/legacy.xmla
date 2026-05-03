@@ -83,7 +83,7 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 
 				Connection connection = dataSource.getConnection(MYSQL_USER, MYSQL_PASSWORD);
 				// wait until connection is possible
-				Dialect dialect = new MySqlDialect(connection);
+				Dialect dialect = new MySqlDialect(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.fromConnection(connection));
 				connection.close();
 				return new SimpleEntry<>(dataSource, dialect);
 

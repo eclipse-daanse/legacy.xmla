@@ -626,7 +626,7 @@ class InlineTableTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testInlineTableSnowflake(Context<?> context) {
-        if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+        if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
             == DatabaseProduct.INFOBRIGHT)
         {
             // Infobright has a bug joining an inline table. Gives error

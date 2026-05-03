@@ -504,7 +504,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
         // LucidDB has no limit on the size of IN list
         final boolean isLuciddb =
-            getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+            getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
             == DatabaseProduct.LUCIDDB;
 
       assertQueryReturns(context.getConnectionWithDefaultRole(),

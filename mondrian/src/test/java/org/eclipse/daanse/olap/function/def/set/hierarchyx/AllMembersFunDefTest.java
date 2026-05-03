@@ -72,7 +72,7 @@ class AllMembersFunDefTest {
 
         // <Dimension>.allmembers applied to a query with calc measures
         // Calc measures are returned
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -107,7 +107,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc measure members from schema and from query
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -170,7 +170,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc member in query and schema not seen
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -233,7 +233,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc member in query and schema not seen
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.

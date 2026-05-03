@@ -155,7 +155,7 @@ import mondrian.test.SqlPattern;
     private SqlPattern[] buildSqlPatternArray(Connection connection) {
         DiffRepository diffRepos = getDiffRepos();
         Dialect d = getDialect(connection);
-        DatabaseProduct dialect = getDatabaseProduct(d.getDialectName());
+        DatabaseProduct dialect = getDatabaseProduct(d.name());
         String testCaseName = getName();
         String sql = diffRepos.get(
             testCaseName, "expectedSql", dialect.name());

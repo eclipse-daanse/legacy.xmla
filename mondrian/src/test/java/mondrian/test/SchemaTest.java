@@ -11525,7 +11525,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBinaryLevelKey(Context<?> context) {
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case DERBY:
         case MARIADB:
         case MYSQL:
@@ -12598,7 +12598,7 @@ class SchemaTest {
         // until bug MONDRIAN-495, "Table filter concept does not support
         // dialects." is fixed, this test case only works on MySQL
         if (!Bug.Bug495Fixed
-            && getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+            && getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
             != MYSQL)
         {
             return;
@@ -14276,7 +14276,7 @@ class SchemaTest {
         withSchemaEmf(context, TestCaptionModifierEmf::new);
 
 
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case POSTGRES:
             // Postgres fails with:
             //   Internal error: while building member cache; sql=[select
@@ -14326,7 +14326,7 @@ class SchemaTest {
         // Test case requires a pecular inline view, and it works on dialects
         // that scalar subqery, viz oracle. I believe that the mondrian code
         // being works in all dialects.
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case ORACLE:
             break;
         default:
@@ -19916,7 +19916,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian1047(Context<?> context) {
         // Test case only works under MySQL, due to how columns are quoted.
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
         case MYSQL:
             break;
@@ -20078,7 +20078,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian1065(Context<?> context) {
         // Test case only works under Oracle
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case ORACLE:
             break;
         default:

@@ -853,7 +853,7 @@ class DrillThroughTest {
         final String caseStmt =
             " \\(case when `sales_fact_1997`.`promotion_id` = 0 then 0"
             + " else `sales_fact_1997`.`store_sales` end\\)";
-        switch (getDatabaseProduct(dialect.getDialectName())) {
+        switch (getDatabaseProduct(dialect.name())) {
         case ACCESS:
             expectedSql = expectedSql.replaceAll(
                 caseStmt,
@@ -939,7 +939,7 @@ class DrillThroughTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void  testDrillThroughDupKeysAndMeasure(Context<?> context) throws Exception {
-        if (!getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+        if (!getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
             .equals(DatabaseProduct.MYSQL))
         {
             // This test only works on MySQL because we
@@ -1061,7 +1061,7 @@ class DrillThroughTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void  testBug1438285(Context<?> context) {
         final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
-        if (getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.TERADATA) {
+        if (getDatabaseProduct(dialect.name()) == DatabaseProduct.TERADATA) {
             // On default Teradata express instance there isn't enough spool
             // space to run this query.
             return;
@@ -1248,7 +1248,7 @@ class DrillThroughTest {
             final ResultSet resultSet = statement.executeQuery(sql);
             final int columnCount = resultSet.getMetaData().getColumnCount();
             final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
-            if (getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.DERBY) {
+            if (getDatabaseProduct(dialect.name()) == DatabaseProduct.DERBY) {
                 // derby counts ORDER BY columns as columns. insane!
                 assertEquals(11, columnCount);
             } else {
@@ -1507,7 +1507,7 @@ class DrillThroughTest {
         assertTrue(cell.canDrillThrough());
         String sql = cell.getDrillThroughSQL(false);
         String expectedSql;
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
         case MYSQL:
             expectedSql =
@@ -1556,7 +1556,7 @@ class DrillThroughTest {
 
         // Note that gender and marital status get their own predicates,
         // independent of the time portion of the slicer
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
         case MYSQL:
             expectedSql =
@@ -1633,7 +1633,7 @@ class DrillThroughTest {
 
         // Note that gender and marital status get their own predicates,
         // independent of the time portion of the slicer
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
         case MYSQL:
             expectedSql =
@@ -1690,7 +1690,7 @@ class DrillThroughTest {
 
         // With overlapping slicer members, the first slicer predicate is
         // redundant, but does not affect the query's results
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
         case MYSQL:
             expectedSql =
@@ -1738,7 +1738,7 @@ class DrillThroughTest {
         cell = result.getCell(new int[]{0, 0});
         assertTrue(cell.canDrillThrough());
         sql = cell.getDrillThroughSQL(false);
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
         case MYSQL:
             expectedSql =
@@ -1832,7 +1832,7 @@ class DrillThroughTest {
         Cell cell = result.getCell(new int[]{0, 0});
         String sql = cell.getDrillThroughSQL(true);
         String expectedSql;
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case VECTORWISE:
             expectedSql =
                 "select \"store\".\"store_country\" as \"Store Country\","
@@ -1929,7 +1929,7 @@ class DrillThroughTest {
             assertEquals(
                 5, rs.getMetaData().getColumnCount());
             Object expectedYear;
-            switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+            switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
             case MARIADB:
             case MYSQL:
                 expectedYear = new Integer(1997);

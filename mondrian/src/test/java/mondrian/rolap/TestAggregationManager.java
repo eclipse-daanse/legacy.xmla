@@ -541,7 +541,7 @@ class TestAggregationManager extends BatchTestCase {
         // For now, only run it for derby.
         Connection connection = context.getConnectionWithDefaultRole();
         final Dialect dialect = getDialect(connection);
-        if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.DERBY) {
+        if (getDatabaseProduct(dialect.name()) != DatabaseProduct.DERBY) {
             return;
         }
         String mdxQuery =
@@ -2015,7 +2015,7 @@ class TestAggregationManager extends BatchTestCase {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         final boolean p;
-        switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(connection).name())) {
         case POSTGRES:
             // Results are slightly different order on Postgres. It collates
             // "Sale Winners" before "Sales Days", because " " < "A".
@@ -2033,7 +2033,7 @@ class TestAggregationManager extends BatchTestCase {
             + "from [Sales] "
             + "where {[Measures].[Unit Sales]}";
         // Provoke an error in the key resolution to prove it uses it.
-        final StringBuilder colName =
+        final String colName =
             getDialect(connection)
                 .quoteIdentifier("promotion_name");
         /*

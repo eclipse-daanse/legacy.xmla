@@ -467,7 +467,7 @@ class RaggedHierarchyTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHideIfBlankHidesWhitespace(Context<?> context) {
-        if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
+        if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
             != DatabaseProduct.ORACLE)
         {
             return;

@@ -1657,7 +1657,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCount(Context<?> context) {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -1687,7 +1687,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCmNativeTopCount(Context<?> context) {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -3544,7 +3544,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNotNativeVirtualCubeCrossJoin1(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -3581,7 +3581,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNotNativeVirtualCubeCrossJoinUnsupported(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;

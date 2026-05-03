@@ -258,7 +258,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 return dialect;
             }
         };
-        switch (getDatabaseProduct(dialect.getDialectName())) {
+        switch (getDatabaseProduct(dialect.name())) {
         case ORACLE:
         case TERADATA:
         case DB2:
@@ -921,7 +921,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         final Dialect dialect = getDialect(connection);
-        final DatabaseProduct product = getDatabaseProduct(dialect.getDialectName());
+        final DatabaseProduct product = getDatabaseProduct(dialect.name());
         switch (product) {
         case TERADATA:
         case INFOBRIGHT:
@@ -1062,7 +1062,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         // count(distinct).
         Connection connection = context.getConnectionWithDefaultRole();
         final Dialect dialect = getDialect(connection);
-        switch (getDatabaseProduct(dialect.getDialectName())) {
+        switch (getDatabaseProduct(dialect.name())) {
         case ORACLE:
             // Oracle gives 'feature not supported' in Express 10.2
         case ACCESS:
@@ -1105,7 +1105,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "   <Measure name=\"Store Count\" column=\"stores_id\" aggregator=\"count\" formatString=\"#,###\"/>"
                 + "</Cube>";
         cube = cube.replaceAll("`", dialect.getQuoteIdentifierString());
-        if (getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ORACLE) {
+        if (getDatabaseProduct(dialect.name()) == DatabaseProduct.ORACLE) {
             cube = cube.replaceAll(" AS ", " ");
         }
 

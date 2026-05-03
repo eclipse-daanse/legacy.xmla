@@ -107,7 +107,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetOnMember(Context<?> context) {
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case INFOBRIGHT:
             // Mondrian generates 'select ... sum(warehouse_sales) -
             // sum(warehouse_cost) as c ... order by c4', correctly, but
