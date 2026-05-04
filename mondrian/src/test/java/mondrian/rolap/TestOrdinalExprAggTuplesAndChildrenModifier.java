@@ -61,11 +61,11 @@ public class TestOrdinalExprAggTuplesAndChildrenModifier implements CatalogMappi
 
         JoinedQueryElement productJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productJoinLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-        productJoinLeft.setQuery(productTableQuery);
+        productJoinLeft.setSource(productTableQuery);
 
         JoinedQueryElement productClassJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productClassJoinRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-        productClassJoinRight.setQuery(productClassTableQuery);
+        productClassJoinRight.setSource(productClassTableQuery);
 
         JoinSource productJoinQuery = SourceFactory.eINSTANCE.createJoinSource();
         productJoinQuery.setLeft(productJoinLeft);
@@ -107,7 +107,7 @@ public class TestOrdinalExprAggTuplesAndChildrenModifier implements CatalogMappi
         ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-        productHierarchy.setQuery(productJoinQuery);
+        productHierarchy.setSource(productJoinQuery);
         productHierarchy.getLevels().add(productFamilyLevel);
         productHierarchy.getLevels().add(productDepartmentLevel);
         productHierarchy.getLevels().add(productCategoryLevel);
@@ -138,7 +138,7 @@ public class TestOrdinalExprAggTuplesAndChildrenModifier implements CatalogMappi
         ExplicitHierarchy genderHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         genderHierarchy.setHasAll(false);
         genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-        genderHierarchy.setQuery(customerTableQuery);
+        genderHierarchy.setSource(customerTableQuery);
         genderHierarchy.getLevels().add(genderLevel);
 
         StandardDimension genderDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -171,7 +171,7 @@ public class TestOrdinalExprAggTuplesAndChildrenModifier implements CatalogMappi
         // Create Sales_Prod_Ord cube
         PhysicalCube salesProdOrdCube = CubeFactory.eINSTANCE.createPhysicalCube();
         salesProdOrdCube.setName("Sales_Prod_Ord");
-        salesProdOrdCube.setQuery(salesFactQuery);
+        salesProdOrdCube.setSource(salesFactQuery);
         salesProdOrdCube.getDimensionConnectors().add(productDimensionConnector);
         salesProdOrdCube.getDimensionConnectors().add(genderDimensionConnector);
         salesProdOrdCube.getMeasureGroups().add(measureGroup);

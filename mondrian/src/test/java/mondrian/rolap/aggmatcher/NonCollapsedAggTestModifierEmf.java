@@ -384,7 +384,7 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("foo");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(dimensionConnector);
         cube.getMeasureGroups().add(measureGroup);
 
@@ -418,7 +418,7 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("foo2");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(dimensionConnector);
         cube.getMeasureGroups().add(measureGroup);
 
@@ -526,14 +526,14 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement tenantJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         tenantJoinedElement.setKey(tenantIdTenant);
-        tenantJoinedElement.setQuery(tenantQuery);
+        tenantJoinedElement.setSource(tenantQuery);
 
         TableSource lineTenantQuery = SourceFactory.eINSTANCE.createTableSource();
         lineTenantQuery.setTable(lineTenant);
 
         JoinedQueryElement lineTenantJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineTenantJoinedElement.setKey(tenantIdLineTenant);
-        lineTenantJoinedElement.setQuery(lineTenantQuery);
+        lineTenantJoinedElement.setSource(lineTenantQuery);
 
         JoinSource tenantJoin = SourceFactory.eINSTANCE.createJoinSource();
         tenantJoin.setLeft(lineTenantJoinedElement);
@@ -545,12 +545,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinedElement.setKey(lineIdLine);
-        lineJoinedElement.setQuery(lineQuery);
+        lineJoinedElement.setSource(lineQuery);
 
         JoinedQueryElement tenantJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         tenantJoinElement.setAlias("line_tenant");
         tenantJoinElement.setKey(lineIdLineTenant);
-        tenantJoinElement.setQuery(tenantJoin);
+        tenantJoinElement.setSource(tenantJoin);
 
         JoinSource fullJoin = SourceFactory.eINSTANCE.createJoinSource();
         fullJoin.setLeft(lineJoinedElement);
@@ -574,7 +574,7 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         hierarchy.setHasAll(true);
         hierarchy.setAllMemberName("All tenants");
         hierarchy.setPrimaryKey(lineIdLine);
-        hierarchy.setQuery(fullJoin);
+        hierarchy.setSource(fullJoin);
         hierarchy.getLevels().add(tenantLevel);
         hierarchy.getLevels().add(lineLevel);
 
@@ -588,14 +588,14 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement distributorJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         distributorJoinedElement.setKey(distributorIdDistributor);
-        distributorJoinedElement.setQuery(distributorQuery);
+        distributorJoinedElement.setSource(distributorQuery);
 
         TableSource lineClassDistributorQuery = SourceFactory.eINSTANCE.createTableSource();
         lineClassDistributorQuery.setTable(lineClassDistributor);
 
         JoinedQueryElement lineClassDistributorJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassDistributorJoinedElement.setKey(distributorIdLineClassDistributor);
-        lineClassDistributorJoinedElement.setQuery(lineClassDistributorQuery);
+        lineClassDistributorJoinedElement.setSource(lineClassDistributorQuery);
 
         JoinSource distributorJoin = SourceFactory.eINSTANCE.createJoinSource();
         distributorJoin.setLeft(lineClassDistributorJoinedElement);
@@ -607,12 +607,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineClassJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinedElement.setKey(lineClassIdLineClass);
-        lineClassJoinedElement.setQuery(lineClassQuery);
+        lineClassJoinedElement.setSource(lineClassQuery);
 
         JoinedQueryElement distributorJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         distributorJoinElement.setAlias("line_class_distributor");
         distributorJoinElement.setKey(lineClassIdLineClassDistributor);
-        distributorJoinElement.setQuery(distributorJoin);
+        distributorJoinElement.setSource(distributorJoin);
 
         JoinSource lineClassJoin = SourceFactory.eINSTANCE.createJoinSource();
         lineClassJoin.setLeft(lineClassJoinedElement);
@@ -624,12 +624,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineLineClassJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinedElement.setKey(lineClassIdLineLineClass);
-        lineLineClassJoinedElement.setQuery(lineLineClassQuery);
+        lineLineClassJoinedElement.setSource(lineLineClassQuery);
 
         JoinedQueryElement lineClassJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinElement.setAlias("line_class");
         lineClassJoinElement.setKey(lineClassIdLineClass);
-        lineClassJoinElement.setQuery(lineClassJoin);
+        lineClassJoinElement.setSource(lineClassJoin);
 
         JoinSource lineLineClassJoin = SourceFactory.eINSTANCE.createJoinSource();
         lineLineClassJoin.setLeft(lineLineClassJoinedElement);
@@ -641,12 +641,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinedElement.setKey(lineIdLine);
-        lineJoinedElement.setQuery(lineQuery);
+        lineJoinedElement.setSource(lineQuery);
 
         JoinedQueryElement lineLineClassJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinElement.setAlias("line_line_class");
         lineLineClassJoinElement.setKey(lineIdLineLineClass);
-        lineLineClassJoinElement.setQuery(lineLineClassJoin);
+        lineLineClassJoinElement.setSource(lineLineClassJoin);
 
         JoinSource fullJoin = SourceFactory.eINSTANCE.createJoinSource();
         fullJoin.setLeft(lineJoinedElement);
@@ -675,7 +675,7 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         hierarchy.setHasAll(true);
         hierarchy.setAllMemberName("All distributors");
         hierarchy.setPrimaryKey(lineIdLine);
-        hierarchy.setQuery(fullJoin);
+        hierarchy.setSource(fullJoin);
         hierarchy.getLevels().add(distributorLevel);
         hierarchy.getLevels().add(lineClassLevel);
         hierarchy.getLevels().add(lineLevel);
@@ -690,14 +690,14 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement networkJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         networkJoinedElement.setKey(networkIdNetwork);
-        networkJoinedElement.setQuery(networkQuery);
+        networkJoinedElement.setSource(networkQuery);
 
         TableSource lineClassNetworkQuery = SourceFactory.eINSTANCE.createTableSource();
         lineClassNetworkQuery.setTable(lineClassNetwork);
 
         JoinedQueryElement lineClassNetworkJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassNetworkJoinedElement.setKey(networkIdLineClassNetwork);
-        lineClassNetworkJoinedElement.setQuery(lineClassNetworkQuery);
+        lineClassNetworkJoinedElement.setSource(lineClassNetworkQuery);
 
         JoinSource networkJoin = SourceFactory.eINSTANCE.createJoinSource();
         networkJoin.setLeft(lineClassNetworkJoinedElement);
@@ -709,12 +709,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineClassJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinedElement.setKey(lineClassIdLineClass);
-        lineClassJoinedElement.setQuery(lineClassQuery);
+        lineClassJoinedElement.setSource(lineClassQuery);
 
         JoinedQueryElement networkJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         networkJoinElement.setAlias("line_class_network");
         networkJoinElement.setKey(lineClassIdLineClassNetwork);
-        networkJoinElement.setQuery(networkJoin);
+        networkJoinElement.setSource(networkJoin);
 
         JoinSource lineClassJoin = SourceFactory.eINSTANCE.createJoinSource();
         lineClassJoin.setLeft(lineClassJoinedElement);
@@ -726,12 +726,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineLineClassJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinedElement.setKey(lineClassIdLineLineClass);
-        lineLineClassJoinedElement.setQuery(lineLineClassQuery);
+        lineLineClassJoinedElement.setSource(lineLineClassQuery);
 
         JoinedQueryElement lineClassJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinElement.setAlias("line_class");
         lineClassJoinElement.setKey(lineClassIdLineClass);
-        lineClassJoinElement.setQuery(lineClassJoin);
+        lineClassJoinElement.setSource(lineClassJoin);
 
         JoinSource lineLineClassJoin = SourceFactory.eINSTANCE.createJoinSource();
         lineLineClassJoin.setLeft(lineLineClassJoinedElement);
@@ -743,12 +743,12 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
         JoinedQueryElement lineJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinedElement.setKey(lineIdLine);
-        lineJoinedElement.setQuery(lineQuery);
+        lineJoinedElement.setSource(lineQuery);
 
         JoinedQueryElement lineLineClassJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinElement.setAlias("line_line_class");
         lineLineClassJoinElement.setKey(lineIdLineLineClass);
-        lineLineClassJoinElement.setQuery(lineLineClassJoin);
+        lineLineClassJoinElement.setSource(lineLineClassJoin);
 
         JoinSource fullJoin = SourceFactory.eINSTANCE.createJoinSource();
         fullJoin.setLeft(lineJoinedElement);
@@ -777,7 +777,7 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         hierarchy.setHasAll(true);
         hierarchy.setAllMemberName("All networks");
         hierarchy.setPrimaryKey(lineIdLine);
-        hierarchy.setQuery(fullJoin);
+        hierarchy.setSource(fullJoin);
         hierarchy.getLevels().add(networkLevel);
         hierarchy.getLevels().add(lineClassLevel);
         hierarchy.getLevels().add(lineLevel);

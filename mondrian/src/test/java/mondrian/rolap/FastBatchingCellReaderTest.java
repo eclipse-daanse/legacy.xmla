@@ -1190,7 +1190,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 // Set up query
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_WAREHOUSE));
-                warehouse2Cube.setQuery(tableQuery);
+                warehouse2Cube.setSource(tableQuery);
 
                 // Create dimension connector for Store Type
                 DimensionConnector storeTypeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -1822,7 +1822,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 // Set up query
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-                twoCountDistinctsCube.setQuery(tableQuery);
+                twoCountDistinctsCube.setSource(tableQuery);
 
                 // Create dimension connector for Time
                 DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();

@@ -146,7 +146,7 @@ public class TestNotInMultiLevelMemberConstraintSingleNullParentModifier impleme
         HIERARCHY_WAREHOUSE2_1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_WAREHOUSE2_1.setHasAll(true);
         HIERARCHY_WAREHOUSE2_1.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
-        HIERARCHY_WAREHOUSE2_1.setQuery(TABLE_QUERY_WAREHOUSE_1);
+        HIERARCHY_WAREHOUSE2_1.setSource(TABLE_QUERY_WAREHOUSE_1);
         HIERARCHY_WAREHOUSE2_1.getLevels().addAll(List.of(
             LEVEL_FAX_1,
             LEVEL_ADDRESS1_1,
@@ -179,7 +179,7 @@ public class TestNotInMultiLevelMemberConstraintSingleNullParentModifier impleme
         HIERARCHY_WAREHOUSE2_2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_WAREHOUSE2_2.setHasAll(true);
         HIERARCHY_WAREHOUSE2_2.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
-        HIERARCHY_WAREHOUSE2_2.setQuery(TABLE_QUERY_WAREHOUSE_2);
+        HIERARCHY_WAREHOUSE2_2.setSource(TABLE_QUERY_WAREHOUSE_2);
         HIERARCHY_WAREHOUSE2_2.getLevels().addAll(List.of(
             LEVEL_FAX_2,
             LEVEL_ADDRESS1_2,
@@ -231,7 +231,7 @@ public class TestNotInMultiLevelMemberConstraintSingleNullParentModifier impleme
         // Create cube with THREE dimension connectors (unusual structure for testing)
         CUBE_WAREHOUSE2 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_WAREHOUSE2.setName("Warehouse2");
-        CUBE_WAREHOUSE2.setQuery(TABLE_QUERY_INVENTORY_FACT);
+        CUBE_WAREHOUSE2.setSource(TABLE_QUERY_INVENTORY_FACT);
         CUBE_WAREHOUSE2.getDimensionConnectors().addAll(List.of(
             CONNECTOR_PRODUCT,
             CONNECTOR_WAREHOUSE2_1,

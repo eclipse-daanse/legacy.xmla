@@ -233,7 +233,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         customerHierarchy.setVisible(true);
         customerHierarchy.setHasAll(true);
         customerHierarchy.setPrimaryKey(customerIdMondrian2225Customer);
-        customerHierarchy.setQuery(customerQuery);
+        customerHierarchy.setSource(customerQuery);
         customerHierarchy.getLevels().add(firstNameLevel);
 
         customerDimension.getHierarchies().add(customerHierarchy);
@@ -260,7 +260,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         productCodeHierarchy.setVisible(true);
         productCodeHierarchy.setHasAll(true);
         productCodeHierarchy.setPrimaryKey(productIdMondrian2225Dim);
-        productCodeHierarchy.setQuery(productCodeQuery);
+        productCodeHierarchy.setSource(productCodeQuery);
         productCodeHierarchy.getLevels().add(codeLevel);
 
         productCodeDimension.getHierarchies().add(productCodeHierarchy);
@@ -326,7 +326,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         mondrian2225Cube.setVisible(true);
         mondrian2225Cube.setCache(true);
         mondrian2225Cube.setEnabled(true);
-        mondrian2225Cube.setQuery(tableQuery);
+        mondrian2225Cube.setSource(tableQuery);
         mondrian2225Cube.getDimensionConnectors().add(customerConnector);
         mondrian2225Cube.getDimensionConnectors().add(productCodeConnector);
         mondrian2225Cube.getMeasureGroups().add(measureGroup);

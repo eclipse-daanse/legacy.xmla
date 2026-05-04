@@ -460,7 +460,7 @@ class CachedExistsTest{
                 TableSource tableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(tableQuery);
+                cube.setSource(tableQuery);
 
                 // Create Time Dimension with three hierarchies
                 TimeDimension timeDimension =
@@ -477,7 +477,7 @@ class CachedExistsTest{
                 TableSource timeTableQuery1 =
                     SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery1.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                timeHierarchy.setQuery(timeTableQuery1);
+                timeHierarchy.setSource(timeTableQuery1);
 
                 Level yearLevel1 =
                     LevelFactory.eINSTANCE.createLevel();
@@ -498,7 +498,7 @@ class CachedExistsTest{
                 TableSource timeTableQuery2 =
                     SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery2.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                weeklyHierarchy.setQuery(timeTableQuery2);
+                weeklyHierarchy.setSource(timeTableQuery2);
 
                 Level yearLevel2 =
                     LevelFactory.eINSTANCE.createLevel();
@@ -519,7 +519,7 @@ class CachedExistsTest{
                 TableSource timeTableQuery3 =
                     SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery3.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                weekly2Hierarchy.setQuery(timeTableQuery3);
+                weekly2Hierarchy.setSource(timeTableQuery3);
 
                 Level yearLevel3 =
                     LevelFactory.eINSTANCE.createLevel();

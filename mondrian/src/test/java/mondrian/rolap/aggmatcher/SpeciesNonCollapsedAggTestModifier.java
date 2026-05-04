@@ -468,14 +468,14 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
 
         JoinedQueryElement left = SourceFactory.eINSTANCE.createJoinedQueryElement();
         left.setKey(familyIdDimGenus);
-        left.setQuery(dimGenusQuery);
+        left.setSource(dimGenusQuery);
 
         TableSource dimFamilyQuery =  SourceFactory.eINSTANCE.createTableSource();
         dimFamilyQuery.setTable(dimFamily);
 
         JoinedQueryElement right = SourceFactory.eINSTANCE.createJoinedQueryElement();
         right.setKey(familyIdDimFamily);
-        right.setQuery(dimFamilyQuery);
+        right.setSource(dimFamilyQuery);
 
         JoinSource innerJoin =
             SourceFactory.eINSTANCE.createJoinSource();
@@ -487,12 +487,12 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
 
         JoinedQueryElement left1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         left1.setKey(genusIdDimSpecies);
-        left1.setQuery(dimSpeciesQuery);
+        left1.setSource(dimSpeciesQuery);
 
         JoinedQueryElement right1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         right1.setKey(genusIdDimGenus);
         right1.setAlias("DIM_GENUS");
-        right1.setQuery(innerJoin);
+        right1.setSource(innerJoin);
 
         JoinSource outerJoin =
             SourceFactory.eINSTANCE.createJoinSource();
@@ -506,7 +506,7 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         animalsHierarchy.setHasAll(true);
         animalsHierarchy.setAllMemberName("All Animals");
         animalsHierarchy.setPrimaryKey(speciesIdDimSpecies);
-        animalsHierarchy.setQuery(outerJoin);
+        animalsHierarchy.setSource(outerJoin);
         animalsHierarchy.getLevels().add(familyLevel);
         animalsHierarchy.getLevels().add(genusLevel);
         animalsHierarchy.getLevels().add(speciesLevel);
@@ -570,7 +570,7 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
             CubeFactory.eINSTANCE.createPhysicalCube();
         testCube.setName("Test");
         testCube.setDefaultMeasure(populationMeasure);
-        testCube.setQuery(cubeQuery);
+        testCube.setSource(cubeQuery);
         testCube.getDimensionConnectors().add(dimConnector);
         testCube.getMeasureGroups().add(measureGroup);
 

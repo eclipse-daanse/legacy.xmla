@@ -186,13 +186,13 @@ public class SchemaModifiersEmf {
 
         static {
             storyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storyHierarchy.setQuery(CatalogSupplier.QUERY_STORE);
+            storyHierarchy.setSource(CatalogSupplier.SOURCE_STORE);
             storyHierarchy.getLevels()
                     .addAll(List.of(CatalogSupplier.LEVEL_STORE_COUNTRY, CatalogSupplier.LEVEL_STORE_STATE,
                             CatalogSupplier.LEVEL_STORE_CITY, CatalogSupplier.LEVEL_STORE_NAME));
 
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            timeHierarchy.setQuery(CatalogSupplier.QUERY_TIME_BY_DAY);
+            timeHierarchy.setSource(CatalogSupplier.SOURCE_TIME_BY_DAY);
             timeHierarchy.getLevels().addAll(
                     List.of(CatalogSupplier.LEVEL_YEAR, CatalogSupplier.LEVEL_QUARTER, CatalogSupplier.LEVEL_MONTH));
 
@@ -231,7 +231,7 @@ public class SchemaModifiersEmf {
 
             sales1Cube.setName("Sales1");
             sales1Cube.setDefaultMeasure(m);
-            sales1Cube.setQuery(querySales1Cube);
+            sales1Cube.setSource(querySales1Cube);
             sales1Cube.getDimensionConnectors().add(dimensionConnectorStore);
             sales1Cube.getDimensionConnectors().add(dimensionConnectorTime);
             sales1Cube.getMeasureGroups().add(measureGroup);
@@ -511,7 +511,7 @@ public class SchemaModifiersEmf {
 
             // Cube
             storeWithCountMCube.setName("StoreWithCountM");
-            storeWithCountMCube.setQuery(storeQuery);
+            storeWithCountMCube.setSource(storeQuery);
             storeWithCountMCube.getDimensionConnectors()
                     .addAll(List.of(storeTypeConnector, storeConnector, hasCoffeeBarConnector));
             storeWithCountMCube.getMeasureGroups().add(measureGroup);
@@ -589,11 +589,11 @@ public class SchemaModifiersEmf {
 
             JoinedQueryElement queryHierarchyEmployeeLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             queryHierarchyEmployeeLeft.setKey((Column) copier.get(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE));
-            queryHierarchyEmployeeLeft.setQuery(employeeQuery);
+            queryHierarchyEmployeeLeft.setSource(employeeQuery);
 
             JoinedQueryElement queryHierarchyEmployeeRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             queryHierarchyEmployeeRight.setKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
-            queryHierarchyEmployeeRight.setQuery(employeeManagerQuery);
+            queryHierarchyEmployeeRight.setSource(employeeManagerQuery);
 
             JoinSource queryHierarchyEmployee = SourceFactory.eINSTANCE.createJoinSource();
             queryHierarchyEmployee.setId("_queryHierarchyEmployee");
@@ -613,7 +613,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy hierarchyEmployee = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchyEmployee.setHasAll(true);
             hierarchyEmployee.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
-            hierarchyEmployee.setQuery(queryHierarchyEmployee);
+            hierarchyEmployee.setSource(queryHierarchyEmployee);
             hierarchyEmployee.getLevels().add(levelRole);
             hierarchyEmployee.getLevels().add(levelTitle);
 
@@ -663,7 +663,7 @@ public class SchemaModifiersEmf {
             employeeConnectorA.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT));
 
             storeTypeConnectorA.setOverrideDimensionName("Store Type");
-            storeTypeConnectorA.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_EMPLOYEE));
+            storeTypeConnectorA.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_EMPLOYEE));
             storeTypeConnectorA.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT));
 
             // Dimension Connectors for Cube B
@@ -672,18 +672,18 @@ public class SchemaModifiersEmf {
             employeeConnectorB.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
 
             storeTypeConnectorB.setOverrideDimensionName("Store Type");
-            storeTypeConnectorB.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_EMPLOYEE));
+            storeTypeConnectorB.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_EMPLOYEE));
             storeTypeConnectorB.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT));
 
             // Cube A
             cubeAnalysisA.setName("Employee Store Analysis A");
-            cubeAnalysisA.setQuery(inventoryQuery);
+            cubeAnalysisA.setSource(inventoryQuery);
             cubeAnalysisA.getDimensionConnectors().addAll(List.of(employeeConnectorA, storeTypeConnectorA));
             cubeAnalysisA.getMeasureGroups().add(measureGroupA);
 
             // Cube B
             cubeAnalysisB.setName("Employee Store Analysis B");
-            cubeAnalysisB.setQuery(inventoryQuery);
+            cubeAnalysisB.setSource(inventoryQuery);
             cubeAnalysisB.getDimensionConnectors().addAll(List.of(employeeConnectorB, storeTypeConnectorB));
             cubeAnalysisB.getMeasureGroups().add(measureGroupB);
 
@@ -761,7 +761,7 @@ public class SchemaModifiersEmf {
 
             // Dimension Connectors
             storeTypeConnector1.setOverrideDimensionName("Store Type");
-            storeTypeConnector1.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
+            storeTypeConnector1.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_STORE));
             storeTypeConnector1.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_COST_SALESFACT));
 
             storeConnector.setOverrideDimensionName("Store");
@@ -783,7 +783,7 @@ public class SchemaModifiersEmf {
             storeSizeConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
 
             storeTypeConnector2.setOverrideDimensionName("Store Type");
-            storeTypeConnector2.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
+            storeTypeConnector2.setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_STORE));
             storeTypeConnector2.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
 
             timeConnector.setOverrideDimensionName("Time");
@@ -792,7 +792,7 @@ public class SchemaModifiersEmf {
 
             // Alternate Sales Cube
             alternateSalesCube.setName("Alternate Sales");
-            alternateSalesCube.setQuery(salesFactQuery);
+            alternateSalesCube.setSource(salesFactQuery);
             alternateSalesCube.getDimensionConnectors().addAll(List.of(storeTypeConnector1, storeConnector,
                     buyerConnector, buyerTwoConnector, storeSizeConnector, storeTypeConnector2, timeConnector));
             alternateSalesCube.getMeasureGroups().add(measureGroup);
@@ -854,7 +854,7 @@ public class SchemaModifiersEmf {
             // Custom Store Hierarchy
             customStoreHierarchy.setHasAll(true);
             customStoreHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            customStoreHierarchy.setQuery(storeQuery);
+            customStoreHierarchy.setSource(storeQuery);
             customStoreHierarchy.getLevels().addAll(List.of(storeCountryLevel, storeCityLevel, storeNameLevel));
 
             // Custom Store Dimension
@@ -885,7 +885,7 @@ public class SchemaModifiersEmf {
 
             // Custom Sales Cube
             customSalesCube.setName("CustomSales");
-            customSalesCube.setQuery(salesFactQuery);
+            customSalesCube.setSource(salesFactQuery);
             customSalesCube.getDimensionConnectors().add(customStoreConnector);
             customSalesCube.getMeasureGroups().add(measureGroup);
         }
@@ -1042,7 +1042,7 @@ public class SchemaModifiersEmf {
             // Configure custom store hierarchy
             customStoreHierarchy.setHasAll(true);
             customStoreHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            customStoreHierarchy.setQuery(queryStore);
+            customStoreHierarchy.setSource(queryStore);
             customStoreHierarchy.getLevels().addAll(List.of(levelStoreCountry, levelStoreCity, levelStoreName));
 
             // Configure custom store dimension
@@ -1073,7 +1073,7 @@ public class SchemaModifiersEmf {
 
             // Configure custom sales cube
             customSalesCube.setName("CustomSales");
-            customSalesCube.setQuery(querySalesFact);
+            customSalesCube.setSource(querySalesFact);
             customSalesCube.getDimensionConnectors().add(dimensionConnectorStore);
             customSalesCube.getMeasureGroups().add(measureGroup);
         }
@@ -1142,7 +1142,7 @@ public class SchemaModifiersEmf {
             customStoreHierarchy.setHasAll(true);
             customStoreHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             customStoreHierarchy.setUniqueKeyLevelName("Store Name");
-            customStoreHierarchy.setQuery(queryStore);
+            customStoreHierarchy.setSource(queryStore);
             customStoreHierarchy.getLevels().addAll(List.of(levelStoreCountry, levelStoreCity, levelStoreName));
 
             // Configure custom store dimension
@@ -1173,7 +1173,7 @@ public class SchemaModifiersEmf {
 
             // Configure custom sales cube
             customSalesCube.setName("CustomSales");
-            customSalesCube.setQuery(querySalesFact);
+            customSalesCube.setSource(querySalesFact);
             customSalesCube.getDimensionConnectors().add(dimensionConnectorStore);
             customSalesCube.getMeasureGroups().add(measureGroup);
         }
@@ -1242,7 +1242,7 @@ public class SchemaModifiersEmf {
             customStoreHierarchy.setHasAll(true);
             customStoreHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             customStoreHierarchy.setUniqueKeyLevelName("Store Name");
-            customStoreHierarchy.setQuery(queryStore);
+            customStoreHierarchy.setSource(queryStore);
             customStoreHierarchy.getLevels().addAll(List.of(levelStoreCountry, levelStoreCity, levelStoreName));
 
             // Configure custom store dimension
@@ -1273,7 +1273,7 @@ public class SchemaModifiersEmf {
 
             // Configure custom sales cube
             customSalesCube.setName("CustomSales");
-            customSalesCube.setQuery(querySalesFact);
+            customSalesCube.setSource(querySalesFact);
             customSalesCube.getDimensionConnectors().add(dimensionConnectorStore);
             customSalesCube.getMeasureGroups().add(measureGroup);
         }
@@ -1474,7 +1474,7 @@ public class SchemaModifiersEmf {
 
             educationLevelHierarchy.setHasAll(true);
             educationLevelHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
-            educationLevelHierarchy.setQuery(customerTableQuery1);
+            educationLevelHierarchy.setSource(customerTableQuery1);
             educationLevelHierarchy.getLevels().add(educationLevelLevel);
 
             educationLevelDimension.setName("Education Level");
@@ -1491,7 +1491,7 @@ public class SchemaModifiersEmf {
             genderHierarchy.setDefaultMember("[Gender].[F]");
             genderHierarchy.setAllMemberName("All Gender");
             genderHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
-            genderHierarchy.setQuery(customerTableQuery2);
+            genderHierarchy.setSource(customerTableQuery2);
             genderHierarchy.getLevels().add(genderLevel);
 
             genderDimension.setName("Gender");
@@ -1527,7 +1527,7 @@ public class SchemaModifiersEmf {
 
             // Configure Sales 3 cube
             sales3Cube.setName("Sales 3");
-            sales3Cube.setQuery(salesFactQuery);
+            sales3Cube.setSource(salesFactQuery);
             sales3Cube.getDimensionConnectors()
                     .addAll(List.of(timeConnector, educationLevelConnector, productConnector, genderConnector));
             sales3Cube.getMeasureGroups().add(measureGroup);
@@ -1625,10 +1625,10 @@ public class SchemaModifiersEmf {
             employee2TableQuery.setAlias("employee2");
 
             leftJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE_CLOSURE));
-            leftJoin.setQuery(employeeClosureTableQuery);
+            leftJoin.setSource(employeeClosureTableQuery);
 
             rightJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE));
-            rightJoin.setQuery(employee2TableQuery);
+            rightJoin.setSource(employee2TableQuery);
 
             joinQuery.setLeft(leftJoin);
             joinQuery.setRight(rightJoin);
@@ -1637,7 +1637,7 @@ public class SchemaModifiersEmf {
             employeesClosureHierarchy.setHasAll(true);
             employeesClosureHierarchy.setAllMemberName("All Employees");
             employeesClosureHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE_CLOSURE));
-            employeesClosureHierarchy.setQuery(joinQuery);
+            employeesClosureHierarchy.setSource(joinQuery);
             employeesClosureHierarchy.getLevels().addAll(List.of(closureLevel, employeeLevel));
 
             // Configure dimension
@@ -1733,11 +1733,11 @@ public class SchemaModifiersEmf {
                 storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
 
                 leftJoin.setKey(CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
-                leftJoin.setQuery(employeeTableQuery);
+                leftJoin.setSource(employeeTableQuery);
 
                 rightJoin.setKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
                 rightJoin.setAlias("store");
-                rightJoin.setQuery(storeTableQuery);
+                rightJoin.setSource(storeTableQuery);
 
                 joinQuery.setLeft(leftJoin);
                 joinQuery.setRight(rightJoin);
@@ -1752,7 +1752,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Employees");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-                hierarchy.setQuery(joinQuery);
+                hierarchy.setSource(joinQuery);
                 hierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
                 hierarchy.setNullParentValue("0");
                 hierarchy.setParentChildLink(parentChildLink);
@@ -1849,11 +1849,11 @@ public class SchemaModifiersEmf {
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
 
             leftJoin.setKey(CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
-            leftJoin.setQuery(employeeTableQuery);
+            leftJoin.setSource(employeeTableQuery);
 
             rightJoin.setKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
             rightJoin.setAlias("store");
-            rightJoin.setQuery(storeTableQuery);
+            rightJoin.setSource(storeTableQuery);
 
             joinQuery.setLeft(leftJoin);
             joinQuery.setRight(rightJoin);
@@ -1867,7 +1867,7 @@ public class SchemaModifiersEmf {
             // Configure shared employee hierarchy
             sharedEmployeeHierarchy.setHasAll(true);
             sharedEmployeeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            sharedEmployeeHierarchy.setQuery(joinQuery);
+            sharedEmployeeHierarchy.setSource(joinQuery);
             sharedEmployeeHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             sharedEmployeeHierarchy.setNullParentValue("0");
             sharedEmployeeHierarchy.setParentChildLink(parentChildLink);
@@ -1886,7 +1886,7 @@ public class SchemaModifiersEmf {
 
             departmentHierarchy.setHasAll(true);
             departmentHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_DEPARTMENT_ID_DEPARTMENT);
-            departmentHierarchy.setQuery(departmentTableQuery);
+            departmentHierarchy.setSource(departmentTableQuery);
             departmentHierarchy.getLevels().add(departmentLevel);
 
             departmentDimension.setName("Department");
@@ -1922,7 +1922,7 @@ public class SchemaModifiersEmf {
 
             // Configure cube
             employeeSharedClosureCube.setName("EmployeeSharedClosureCube");
-            employeeSharedClosureCube.setQuery(salaryTableQuery);
+            employeeSharedClosureCube.setSource(salaryTableQuery);
             employeeSharedClosureCube.getDimensionConnectors()
                     .addAll(List.of(sharedEmployeeConnector, departmentConnector, storeTypeConnector));
             employeeSharedClosureCube.getMeasureGroups().add(measureGroup);
@@ -2006,7 +2006,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Employees");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-                hierarchy.setQuery(employeeTableQuery);
+                hierarchy.setSource(employeeTableQuery);
                 hierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
                 hierarchy.setNullParentValue("0");
                 hierarchy.setLevel(employeeIdLevel);
@@ -2094,7 +2094,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Employees");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-                hierarchy.setQuery(employeeTableQuery);
+                hierarchy.setSource(employeeTableQuery);
                 hierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
                 hierarchy.setNullParentValue("0");
                 hierarchy.setLevel(employeeIdLevel);
@@ -2160,7 +2160,7 @@ public class SchemaModifiersEmf {
 
             departmentHierarchy.setHasAll(true);
             departmentHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_DEPARTMENT_ID_DEPARTMENT);
-            departmentHierarchy.setQuery(departmentTableQuery);
+            departmentHierarchy.setSource(departmentTableQuery);
             departmentHierarchy.getLevels().add(departmentLevel);
 
             departmentDimension.setName("Department");
@@ -2201,7 +2201,7 @@ public class SchemaModifiersEmf {
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All Employees");
             employeesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            employeesHierarchy.setQuery(employeeTableQuery);
+            employeesHierarchy.setSource(employeeTableQuery);
             employeesHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             employeesHierarchy.setNullParentValue("0");
             employeesHierarchy.setLevel(employeeIdLevel);
@@ -2234,7 +2234,7 @@ public class SchemaModifiersEmf {
 
             // Configure cube
             hrFewerDimsCube.setName("HR-fewer-dims");
-            hrFewerDimsCube.setQuery(salaryTableQuery);
+            hrFewerDimsCube.setSource(salaryTableQuery);
             hrFewerDimsCube.getDimensionConnectors().addAll(List.of(departmentConnector, employeesConnector));
             hrFewerDimsCube.getMeasureGroups().add(measureGroup);
         }
@@ -2304,7 +2304,7 @@ public class SchemaModifiersEmf {
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All Employees");
             employeesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            employeesHierarchy.setQuery(employeeTableQuery);
+            employeesHierarchy.setSource(employeeTableQuery);
             employeesHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             employeesHierarchy.setNullParentValue("0");
             employeesHierarchy.setParentChildLink(parentChildLink);
@@ -2334,7 +2334,7 @@ public class SchemaModifiersEmf {
 
             // Configure cube
             hrOrderedCube.setName("HR-ordered");
-            hrOrderedCube.setQuery(salaryTableQuery);
+            hrOrderedCube.setSource(salaryTableQuery);
             hrOrderedCube.getDimensionConnectors().add(employeesConnector);
             hrOrderedCube.getMeasureGroups().add(measureGroup);
         }
@@ -2403,7 +2403,7 @@ public class SchemaModifiersEmf {
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All Employees");
             employeesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            employeesHierarchy.setQuery(employeeTableQuery);
+            employeesHierarchy.setSource(employeeTableQuery);
             employeesHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             employeesHierarchy.setNullParentValue("0");
             employeesHierarchy.setParentChildLink(parentChildLink);
@@ -2425,7 +2425,7 @@ public class SchemaModifiersEmf {
             employeesConnector1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
 
             customSalesCube.setName("CustomSales");
-            customSalesCube.setQuery(salesFactTableQuery);
+            customSalesCube.setSource(salesFactTableQuery);
             customSalesCube.getDimensionConnectors().add(employeesConnector1);
             customSalesCube.getMeasureGroups().add(measureGroup1);
 
@@ -2442,7 +2442,7 @@ public class SchemaModifiersEmf {
             employeesConnector2.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
 
             customHRCube.setName("CustomHR");
-            customHRCube.setQuery(salaryTableQuery);
+            customHRCube.setSource(salaryTableQuery);
             customHRCube.getDimensionConnectors().add(employeesConnector2);
             customHRCube.getMeasureGroups().add(measureGroup2);
 
@@ -2516,7 +2516,7 @@ public class SchemaModifiersEmf {
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All");
             employeesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            employeesHierarchy.setQuery(employeeTableQuery);
+            employeesHierarchy.setSource(employeeTableQuery);
             employeesHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             employeesHierarchy.setNullParentValue("0");
             employeesHierarchy.setParentChildLink(parentChildLink);
@@ -2541,7 +2541,7 @@ public class SchemaModifiersEmf {
 
             // Configure cube
             hr4cCube.setName("HR4C");
-            hr4cCube.setQuery(salaryTableQuery);
+            hr4cCube.setSource(salaryTableQuery);
             hr4cCube.getDimensionConnectors().add(employeesConnector);
             hr4cCube.getMeasureGroups().add(measureGroup);
         }
@@ -2591,7 +2591,7 @@ public class SchemaModifiersEmf {
             employeesHierarchy.setHasAll(true);
             employeesHierarchy.setAllMemberName("All");
             employeesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            employeesHierarchy.setQuery(employeeTableQuery);
+            employeesHierarchy.setSource(employeeTableQuery);
             employeesHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             employeesHierarchy.setNullParentValue("0");
             employeesHierarchy.setLevel(employeeIdLevel);
@@ -2615,7 +2615,7 @@ public class SchemaModifiersEmf {
 
             // Configure cube
             hr4cCube.setName("HR4C");
-            hr4cCube.setQuery(salaryTableQuery);
+            hr4cCube.setSource(salaryTableQuery);
             hr4cCube.getDimensionConnectors().add(employeesConnector);
             hr4cCube.getMeasureGroups().add(measureGroup);
         }
@@ -2735,11 +2735,11 @@ public class SchemaModifiersEmf {
 
             JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin.setKey(employeeIdColumn);
-            leftJoin.setQuery(inlineTableQuery);
+            leftJoin.setSource(inlineTableQuery);
 
             JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin.setKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            rightJoin.setQuery(employeeTableQuery);
+            rightJoin.setSource(employeeTableQuery);
 
             joinQuery.setLeft(leftJoin);
             joinQuery.setRight(rightJoin);
@@ -2767,7 +2767,7 @@ public class SchemaModifiersEmf {
             hierarchy.setName("Employee");
             hierarchy.setHasAll(false);
             hierarchy.setPrimaryKey(storeIdColumn);
-            hierarchy.setQuery(joinQuery);
+            hierarchy.setSource(joinQuery);
             hierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             hierarchy.setNullParentValue("nullParentValue");
             hierarchy.setParentChildLink(parentChildLink);
@@ -2803,7 +2803,7 @@ public class SchemaModifiersEmf {
             salesBug441Cube.setName("Sales_Bug_441");
             salesBug441Cube.setCache(true);
             salesBug441Cube.setEnabled(true);
-            salesBug441Cube.setQuery(salesFactTableQuery);
+            salesBug441Cube.setSource(salesFactTableQuery);
             salesBug441Cube.getDimensionConnectors().add(employeeConnector);
             salesBug441Cube.getMeasureGroups().add(measureGroup);
 
@@ -2871,10 +2871,10 @@ public class SchemaModifiersEmf {
             productClassTableQuery1.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
             leftJoin1.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftJoin1.setQuery(productTableQuery1);
+            leftJoin1.setSource(productTableQuery1);
 
             rightJoin1.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightJoin1.setQuery(productClassTableQuery1);
+            rightJoin1.setSource(productClassTableQuery1);
 
             joinQuery1.setLeft(leftJoin1);
             joinQuery1.setRight(rightJoin1);
@@ -2882,7 +2882,7 @@ public class SchemaModifiersEmf {
             // Configure default hierarchy
             defaultHierarchy.setHasAll(true);
             defaultHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            defaultHierarchy.setQuery(joinQuery1);
+            defaultHierarchy.setSource(joinQuery1);
             defaultHierarchy.getLevels().add(productNameLevel);
 
             // Configure Product level for BrandOnly hierarchy
@@ -2895,10 +2895,10 @@ public class SchemaModifiersEmf {
             productClassTableQuery2.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
             leftJoin2.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftJoin2.setQuery(productTableQuery2);
+            leftJoin2.setSource(productTableQuery2);
 
             rightJoin2.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightJoin2.setQuery(productClassTableQuery2);
+            rightJoin2.setSource(productClassTableQuery2);
 
             joinQuery2.setLeft(leftJoin2);
             joinQuery2.setRight(rightJoin2);
@@ -2907,7 +2907,7 @@ public class SchemaModifiersEmf {
             brandOnlyHierarchy.setName("BrandOnly");
             brandOnlyHierarchy.setHasAll(true);
             brandOnlyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            brandOnlyHierarchy.setQuery(joinQuery2);
+            brandOnlyHierarchy.setSource(joinQuery2);
             brandOnlyHierarchy.getLevels().add(productLevel);
 
             // Configure Product dimension
@@ -2923,7 +2923,7 @@ public class SchemaModifiersEmf {
 
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(salesFactTableQuery1);
+            salesCube.setSource(salesFactTableQuery1);
             salesCube.getDimensionConnectors().add(productConnector1);
 
             // Configure Sales 1 cube
@@ -2938,7 +2938,7 @@ public class SchemaModifiersEmf {
             sales1Cube.setName("Sales 1");
             sales1Cube.setCache(true);
             sales1Cube.setEnabled(true);
-            sales1Cube.setQuery(salesFactTableQuery2);
+            sales1Cube.setSource(salesFactTableQuery2);
             sales1Cube.getMeasureGroups().add(measureGroup);
 
             // Configure Virtual Cube
@@ -3077,7 +3077,7 @@ public class SchemaModifiersEmf {
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            cube.setQuery(tableQuery);
+            cube.setSource(tableQuery);
 
             // Time_Alphabetical dimension
             TimeDimension timeAlphaDim = DimensionFactory.eINSTANCE.createTimeDimension();
@@ -3089,7 +3089,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeByDayQuery = SourceFactory.eINSTANCE.createTableSource();
             timeByDayQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
-            timeAlphaHierarchy.setQuery(timeByDayQuery);
+            timeAlphaHierarchy.setSource(timeByDayQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -3135,7 +3135,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeByDayQuery2 = SourceFactory.eINSTANCE.createTableSource();
             timeByDayQuery2.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
-            monthAlphaHierarchy.setQuery(timeByDayQuery2);
+            monthAlphaHierarchy.setSource(timeByDayQuery2);
 
             OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY));
@@ -3225,7 +3225,7 @@ public class SchemaModifiersEmf {
 
                 TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
-                storeHierarchy.setQuery(storeTableQuery);
+                storeHierarchy.setSource(storeTableQuery);
 
                 Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
                 storeCountryLevel.setName("Store Country");
@@ -3346,7 +3346,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level stateLevel = LevelFactory.eINSTANCE.createLevel();
                 stateLevel.setName("State");
@@ -3456,7 +3456,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
@@ -3520,7 +3520,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
@@ -3588,7 +3588,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
@@ -3657,7 +3657,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level yearLevel = LevelFactory.eINSTANCE.createLevel();
                 yearLevel.setName("Year");
@@ -3736,7 +3736,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level countryLevel = LevelFactory.eINSTANCE.createLevel();
                 countryLevel.setName("Store Country");
@@ -3833,7 +3833,7 @@ public class SchemaModifiersEmf {
 
             TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-            storeHierarchy.setQuery(storeTableQuery);
+            storeHierarchy.setSource(storeTableQuery);
 
             Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
             storeCountryLevel.setName("Store Country");
@@ -3858,7 +3858,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -3896,7 +3896,7 @@ public class SchemaModifiersEmf {
 
             TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            salesCube.setQuery(cubeTableQuery);
+            salesCube.setSource(cubeTableQuery);
 
             DimensionConnector storeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeConnector.setOverrideDimensionName("Store");
@@ -4032,7 +4032,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Gender");
                 hierarchy.setPrimaryKey(CUSTOMER_ID_COLUMN_IN_CUSTOMER);
-                hierarchy.setQuery(sqlSelectQuery);
+                hierarchy.setSource(sqlSelectQuery);
 
                 Level genderLevel = LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("Gender");
@@ -4100,18 +4100,18 @@ public class SchemaModifiersEmf {
                 leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
                 TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
                 leftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
-                leftJoin.setQuery(leftTable);
+                leftJoin.setSource(leftTable);
 
                 JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
                 TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
                 rightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-                rightJoin.setQuery(rightTable);
+                rightJoin.setSource(rightTable);
 
                 joinQuery.setLeft(leftJoin);
                 joinQuery.setRight(rightJoin);
 
-                hierarchy.setQuery(joinQuery);
+                hierarchy.setSource(joinQuery);
 
                 Level drinkLevel = LevelFactory.eINSTANCE.createLevel();
                 drinkLevel.setName("Drink");
@@ -4278,7 +4278,7 @@ public class SchemaModifiersEmf {
                 selectQuery.setAlias("productView");
                 selectQuery.setSql(sqlView);
 
-                hierarchy.setQuery(selectQuery);
+                hierarchy.setSource(selectQuery);
 
                 Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
                 productFamilyLevel.setName("Product Family");
@@ -4361,7 +4361,7 @@ public class SchemaModifiersEmf {
                 DimensionConnector otherStoreConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 otherStoreConnector.setOverrideDimensionName("Other Store");
                 otherStoreConnector
-                        .setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
+                        .setDimension((Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_STORE));
                 otherStoreConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
                 connectors.add(otherStoreConnector);
@@ -4409,7 +4409,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level genderLevel = LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("Gender");
@@ -4469,7 +4469,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_EMPLOYEE));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level managementRoleLevel = LevelFactory.eINSTANCE.createLevel();
                 managementRoleLevel.setName("Management Role");
@@ -4622,18 +4622,18 @@ public class SchemaModifiersEmf {
                 leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
                 TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
                 leftTable.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
-                leftJoin.setQuery(leftTable);
+                leftJoin.setSource(leftTable);
 
                 JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
                 TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
                 rightTable.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
-                rightJoin.setQuery(rightTable);
+                rightJoin.setSource(rightTable);
 
                 joinQuery.setLeft(leftJoin);
                 joinQuery.setRight(rightJoin);
 
-                hierarchy.setQuery(joinQuery);
+                hierarchy.setSource(joinQuery);
 
                 // IsZero Level
                 Level isZeroLevel = LevelFactory.eINSTANCE.createLevel();
@@ -4773,7 +4773,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level genderLevel = LevelFactory.eINSTANCE.createLevel();
                 genderLevel.setName("Gender");
@@ -4833,7 +4833,7 @@ public class SchemaModifiersEmf {
 
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 Level name1Level = LevelFactory.eINSTANCE.createLevel();
                 name1Level.setName("Name1");
@@ -4963,7 +4963,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
@@ -5034,7 +5034,7 @@ public class SchemaModifiersEmf {
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(tableQuery);
+            salesCube.setSource(tableQuery);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
             measureGroup.setPhysicalCube(salesCube);
@@ -5106,17 +5106,17 @@ public class SchemaModifiersEmf {
             leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
             leftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
-            leftJoin.setQuery(leftTable);
+            leftJoin.setSource(leftTable);
 
             JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
             rightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-            rightJoin.setQuery(rightTable);
+            rightJoin.setSource(rightTable);
 
             productJoin.setLeft(leftJoin);
             productJoin.setRight(rightJoin);
-            productHierarchy.setQuery(productJoin);
+            productHierarchy.setSource(productJoin);
 
             Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
             productSubcategoryLevel.setName("Product Subcategory");
@@ -5141,7 +5141,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             Level monthUpperLevel = LevelFactory.eINSTANCE.createLevel();
             monthUpperLevel.setName("Month Upper");
@@ -5186,7 +5186,7 @@ public class SchemaModifiersEmf {
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(tableQuery);
+            salesCube.setSource(tableQuery);
             salesCube.getDimensionConnectors().add(productConnector);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
@@ -5285,7 +5285,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -5324,17 +5324,17 @@ public class SchemaModifiersEmf {
             productLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
             TableSource productLeftTable = SourceFactory.eINSTANCE.createTableSource();
             productLeftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
-            productLeft.setQuery(productLeftTable);
+            productLeft.setSource(productLeftTable);
 
             JoinedQueryElement productRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
             TableSource productRightTable = SourceFactory.eINSTANCE.createTableSource();
             productRightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-            productRight.setQuery(productRightTable);
+            productRight.setSource(productRightTable);
 
             productJoin.setLeft(productLeft);
             productJoin.setRight(productRight);
-            productHierarchy.setQuery(productJoin);
+            productHierarchy.setSource(productJoin);
 
             Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
             productFamilyLevel.setName("Product Family");
@@ -5354,7 +5354,7 @@ public class SchemaModifiersEmf {
 
             TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseTableQuery.setTable(CatalogSupplier.TABLE_WAREHOUSE);
-            warehouseHierarchy.setQuery(warehouseTableQuery);
+            warehouseHierarchy.setSource(warehouseTableQuery);
 
             Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
@@ -5388,7 +5388,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            salesCube.setQuery(salesTableQuery);
+            salesCube.setSource(salesTableQuery);
 
             DimensionConnector salesTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             salesTimeConnector.setOverrideDimensionName("Time");
@@ -5420,7 +5420,7 @@ public class SchemaModifiersEmf {
 
             TableSource warehouseFactTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseFactTableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
-            warehouseCube.setQuery(warehouseFactTableQuery);
+            warehouseCube.setSource(warehouseFactTableQuery);
 
             DimensionConnector whTimeConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             whTimeConnector.setOverrideDimensionName("Time");
@@ -5550,7 +5550,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -5654,7 +5654,7 @@ public class SchemaModifiersEmf {
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(tableQuery);
+            salesCube.setSource(tableQuery);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
             measureGroup.setPhysicalCube(salesCube);
@@ -5728,7 +5728,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -5832,7 +5832,7 @@ public class SchemaModifiersEmf {
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(tableQuery);
+            salesCube.setSource(tableQuery);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
             measureGroup.setPhysicalCube(salesCube);
@@ -5906,7 +5906,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -6010,7 +6010,7 @@ public class SchemaModifiersEmf {
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(tableQuery);
+            salesCube.setSource(tableQuery);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
             measureGroup.setPhysicalCube(salesCube);
@@ -6065,7 +6065,7 @@ public class SchemaModifiersEmf {
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-            salesMemberVisCube.setQuery(tableQuery);
+            salesMemberVisCube.setSource(tableQuery);
 
             // Create measures
             SumMeasure unitSalesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
@@ -6192,17 +6192,17 @@ public class SchemaModifiersEmf {
             leftJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
             TableSource productTableQuery = SourceFactory.eINSTANCE.createTableSource();
             productTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
-            leftJoin.setQuery(productTableQuery);
+            leftJoin.setSource(productTableQuery);
 
             JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
             TableSource productClassTableQuery = SourceFactory.eINSTANCE.createTableSource();
             productClassTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
-            rightJoin.setQuery(productClassTableQuery);
+            rightJoin.setSource(productClassTableQuery);
 
             joinQuery.setLeft(leftJoin);
             joinQuery.setRight(rightJoin);
-            productHierarchy.setQuery(joinQuery);
+            productHierarchy.setSource(joinQuery);
 
             // Create Product levels
             Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
@@ -6255,7 +6255,7 @@ public class SchemaModifiersEmf {
 
             TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customerTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-            genderHierarchy.setQuery(customerTableQuery);
+            genderHierarchy.setSource(customerTableQuery);
 
             Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
@@ -6302,7 +6302,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-            salesDimWithoutAllCube.setQuery(salesTableQuery);
+            salesDimWithoutAllCube.setSource(salesTableQuery);
 
             salesDimWithoutAllCube.getDimensionConnectors().add(productConnector);
             salesDimWithoutAllCube.getDimensionConnectors().add(genderConnector);
@@ -6374,7 +6374,7 @@ public class SchemaModifiersEmf {
 
             TableSource citiesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             citiesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-            citiesHierarchy.setQuery(citiesTableQuery);
+            citiesHierarchy.setSource(citiesTableQuery);
 
             Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
@@ -6395,7 +6395,7 @@ public class SchemaModifiersEmf {
 
             TableSource customersTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customersTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-            customersHierarchy.setQuery(customersTableQuery);
+            customersHierarchy.setSource(customersTableQuery);
 
             Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
@@ -6455,7 +6455,7 @@ public class SchemaModifiersEmf {
 
             TableSource genderTableQuery = SourceFactory.eINSTANCE.createTableSource();
             genderTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_CUSTOMER));
-            genderHierarchy.setQuery(genderTableQuery);
+            genderHierarchy.setSource(genderTableQuery);
 
             Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
@@ -6512,7 +6512,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-            salesWithCitiesCube.setQuery(salesTableQuery);
+            salesWithCitiesCube.setSource(salesTableQuery);
 
             salesWithCitiesCube.getDimensionConnectors().add(timeConnector);
             salesWithCitiesCube.getDimensionConnectors().add(citiesConnector);
@@ -6569,7 +6569,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            salesWithBadMeasureCube.setQuery(salesTableQuery);
+            salesWithBadMeasureCube.setSource(salesTableQuery);
 
             salesWithBadMeasureCube.getDimensionConnectors().add(timeConnector);
 
@@ -6645,7 +6645,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-            salesWithBadMeasure2Cube.setQuery(salesTableQuery);
+            salesWithBadMeasure2Cube.setSource(salesTableQuery);
 
             salesWithBadMeasure2Cube.getDimensionConnectors().add(timeConnector);
 
@@ -6761,7 +6761,7 @@ public class SchemaModifiersEmf {
 
             TableSource inventoryTableQuery = SourceFactory.eINSTANCE.createTableSource();
             inventoryTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_INVENTORY_FACT));
-            defaultMeasureTestingCube.setQuery(inventoryTableQuery);
+            defaultMeasureTestingCube.setSource(inventoryTableQuery);
 
             defaultMeasureTestingCube.getDimensionConnectors().add(storeConnector);
             defaultMeasureTestingCube.getDimensionConnectors().add(storeTypeConnector);
@@ -6859,7 +6859,7 @@ public class SchemaModifiersEmf {
 
             TableSource inventoryTableQuery = SourceFactory.eINSTANCE.createTableSource();
             inventoryTableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
-            defaultMeasureTestingCube.setQuery(inventoryTableQuery);
+            defaultMeasureTestingCube.setSource(inventoryTableQuery);
 
             defaultMeasureTestingCube.getDimensionConnectors().add(storeConnector);
             defaultMeasureTestingCube.getDimensionConnectors().add(storeTypeConnector);
@@ -6907,7 +6907,7 @@ public class SchemaModifiersEmf {
 
             TableSource customerTableQuery = SourceFactory.eINSTANCE.createTableSource();
             customerTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            genderHierarchy.setQuery(customerTableQuery);
+            genderHierarchy.setSource(customerTableQuery);
 
             Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
@@ -6947,7 +6947,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            fooBarZerOneAnythingCube.setQuery(salesTableQuery);
+            fooBarZerOneAnythingCube.setSource(salesTableQuery);
 
             fooBarZerOneAnythingCube.getDimensionConnectors().add(genderConnector);
 
@@ -7063,7 +7063,7 @@ public class SchemaModifiersEmf {
             whereClause.setSql("sleep(0.1) = 0");
             warehouseTableQuery.setSqlWhereExpression(whereClause);
 
-            barCube.setQuery(warehouseTableQuery);
+            barCube.setSource(warehouseTableQuery);
             barCube.getDimensionConnectors().add(dimConnector);
 
             measureGroup.setPhysicalCube(barCube);
@@ -7140,12 +7140,12 @@ public class SchemaModifiersEmf {
             JoinedQueryElement leftBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftBug.setAlias("product_class");
             leftBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            leftBug.setQuery(productClassTable);
+            leftBug.setSource(productClassTable);
 
             JoinedQueryElement rightBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightBug.setAlias("product");
             rightBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            rightBug.setQuery(productTable);
+            rightBug.setSource(productTable);
 
             JoinSource joinBug = SourceFactory.eINSTANCE.createJoinSource();
             joinBug.setLeft(leftBug);
@@ -7161,7 +7161,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy hierarchyBug = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchyBug.setHasAll(true);
             hierarchyBug.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            hierarchyBug.setQuery(joinBug);
+            hierarchyBug.setSource(joinBug);
             hierarchyBug.getLevels().add(productFamilyLevelBug);
 
             // Create dimension for "Bug" cube
@@ -7187,7 +7187,7 @@ public class SchemaModifiersEmf {
             // Create "Bug" cube
             PhysicalCube bugCube = CubeFactory.eINSTANCE.createPhysicalCube();
             bugCube.setName("Bug");
-            bugCube.setQuery(salesFactTable);
+            bugCube.setSource(salesFactTable);
             bugCube.getDimensionConnectors().add(connectorBug);
             bugCube.getMeasureGroups().add(measureGroupBug);
 
@@ -7207,12 +7207,12 @@ public class SchemaModifiersEmf {
             JoinedQueryElement leftNoBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftNoBug.setAlias("product");
             leftNoBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftNoBug.setQuery(productTable2);
+            leftNoBug.setSource(productTable2);
 
             JoinedQueryElement rightNoBug = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightNoBug.setAlias("product_class");
             rightNoBug.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightNoBug.setQuery(productClassTable2);
+            rightNoBug.setSource(productClassTable2);
 
             JoinSource joinNoBug = SourceFactory.eINSTANCE.createJoinSource();
             joinNoBug.setLeft(leftNoBug);
@@ -7227,7 +7227,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy hierarchyNoBug = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchyNoBug.setHasAll(true);
             hierarchyNoBug.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            hierarchyNoBug.setQuery(joinNoBug);
+            hierarchyNoBug.setSource(joinNoBug);
             hierarchyNoBug.getLevels().add(productFamilyLevelNoBug);
 
             // Create dimension for "No Bug" cube
@@ -7253,7 +7253,7 @@ public class SchemaModifiersEmf {
             // Create "No Bug" cube
             PhysicalCube noBugCube = CubeFactory.eINSTANCE.createPhysicalCube();
             noBugCube.setName("No Bug");
-            noBugCube.setQuery(salesFactTable2);
+            noBugCube.setSource(salesFactTable2);
             noBugCube.getDimensionConnectors().add(connectorNoBug);
             noBugCube.getMeasureGroups().add(measureGroupNoBug);
 
@@ -7315,7 +7315,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            hierarchy.setQuery(storeTable);
+            hierarchy.setSource(storeTable);
             hierarchy.getLevels().add(storeSqftLevel);
 
             // Create dimension
@@ -7348,7 +7348,7 @@ public class SchemaModifiersEmf {
             PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales");
             cube.setDefaultMeasure(unitSalesMeasure);
-            cube.setQuery(salesFactTable);
+            cube.setSource(salesFactTable);
             cube.getDimensionConnectors().add(connector1);
             cube.getDimensionConnectors().add(connector2);
             cube.getMeasureGroups().add(measureGroup);
@@ -7464,7 +7464,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
-                hierarchy.setQuery(promotionTable);
+                hierarchy.setSource(promotionTable);
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
@@ -7552,7 +7552,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
-                hierarchy.setQuery(promotionTable);
+                hierarchy.setSource(promotionTable);
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
@@ -7623,7 +7623,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
-                hierarchy.setQuery(promotionTable);
+                hierarchy.setSource(promotionTable);
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
@@ -7705,7 +7705,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
-                hierarchy.setQuery(promotionTable);
+                hierarchy.setSource(promotionTable);
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
@@ -7787,7 +7787,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
-                hierarchy.setQuery(promotionTable);
+                hierarchy.setSource(promotionTable);
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
@@ -7914,7 +7914,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setHasAll(true);
                 hierarchy.setAllMemberName("All Employees");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-                hierarchy.setQuery(employeeTable);
+                hierarchy.setSource(employeeTable);
                 hierarchy.setParentColumn(parentExpressionColumn);
                 hierarchy.setNullParentValue("0");
                 hierarchy.setParentChildLink(parentChildLink);
@@ -8006,7 +8006,7 @@ public class SchemaModifiersEmf {
                 hierarchy.setAllMemberName("All Promotions");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 hierarchy.setDefaultMember("[All Promotions]");
-                hierarchy.setQuery(promotionTable);
+                hierarchy.setSource(promotionTable);
                 hierarchy.getLevels().add(promotionNameLevel);
 
                 // Create dimension
@@ -8105,7 +8105,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy timeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeByDayTable);
+            timeHierarchy.setSource(timeByDayTable);
             timeHierarchy.getLevels().add(yearLevel);
             timeHierarchy.getLevels().add(quarterLevel);
 
@@ -8122,11 +8122,11 @@ public class SchemaModifiersEmf {
 
             JoinedQueryElement leftProduct = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftProduct.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftProduct.setQuery(productTable);
+            leftProduct.setSource(productTable);
 
             JoinedQueryElement rightProductClass = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightProductClass.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightProductClass.setQuery(productClassTable);
+            rightProductClass.setSource(productClassTable);
 
             JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
             productJoin.setLeft(leftProduct);
@@ -8140,7 +8140,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            productHierarchy.setQuery(productJoin);
+            productHierarchy.setSource(productJoin);
             productHierarchy.getLevels().add(productFamilyLevel);
 
             StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -8171,7 +8171,7 @@ public class SchemaModifiersEmf {
 
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
-            salesCube.setQuery(salesFactTable);
+            salesCube.setSource(salesFactTable);
             salesCube.getDimensionConnectors().add(salesTimeConnector);
             salesCube.getDimensionConnectors().add(salesProductConnector);
             salesCube.getMeasureGroups().add(salesMeasureGroup);
@@ -8200,7 +8200,7 @@ public class SchemaModifiersEmf {
 
             PhysicalCube warehouseCube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouseCube.setName("Warehouse");
-            warehouseCube.setQuery(inventoryFactTable);
+            warehouseCube.setSource(inventoryFactTable);
             warehouseCube.getDimensionConnectors().add(warehouseTimeConnector);
             warehouseCube.getDimensionConnectors().add(warehouseProductConnector);
             warehouseCube.getMeasureGroups().add(warehouseMeasureGroup);
@@ -8433,7 +8433,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level1 = LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Store Country");
@@ -8516,7 +8516,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable((Table) copier.get(CatalogSupplier.TABLE_PROMOTION));
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Promotion Name");
@@ -8586,7 +8586,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_PROMOTION);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Promotion Name");
@@ -8661,7 +8661,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table2 = SourceFactory.eINSTANCE.createTableSource();
                 table2.setTable(CatalogSupplier.TABLE_STORE_RAGGED);
-                hierarchy2.setQuery(table2);
+                hierarchy2.setSource(table2);
 
                 Level level2_1 = LevelFactory.eINSTANCE.createLevel();
                 level2_1.setName("Store Country");
@@ -8697,7 +8697,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table3 = SourceFactory.eINSTANCE.createTableSource();
                 table3.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy3.setQuery(table3);
+                hierarchy3.setSource(table3);
 
                 Level level3_1 = LevelFactory.eINSTANCE.createLevel();
                 level3_1.setName("Store Country");
@@ -8767,7 +8767,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_STORE_RAGGED);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(CatalogSupplier.COLUMN_REGION_ID_STORE_RAGGED);
@@ -8827,7 +8827,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_CUSTOMER);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName(
@@ -8888,7 +8888,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_CUSTOMER);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Gender");
@@ -8959,7 +8959,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE_RAGGED));
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level1 = LevelFactory.eINSTANCE.createLevel();
                 level1.setName("Store Country");
@@ -9030,7 +9030,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable((Table) copier.get(CatalogSupplier.TABLE_PROMOTION));
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Promotion2 Name");
@@ -9175,7 +9175,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTable = SourceFactory.eINSTANCE.createTableSource();
             timeTable.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeTable);
+            timeHierarchy.setSource(timeTable);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -9220,7 +9220,7 @@ public class SchemaModifiersEmf {
             aggName.getAggregationLevels().add(aggLevel);
 
             salesTable.getAggregationTables().add(aggName);
-            cubeSales.setQuery(salesTable);
+            cubeSales.setSource(salesTable);
 
             DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDimConnector.setOverrideDimensionName("Time");
@@ -9560,7 +9560,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table1 = SourceFactory.eINSTANCE.createTableSource();
                 table1.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy1.setQuery(table1);
+                hierarchy1.setSource(table1);
 
                 Level level1_1 = LevelFactory.eINSTANCE.createLevel();
                 level1_1.setName("NuStore Country");
@@ -9613,7 +9613,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table2 = SourceFactory.eINSTANCE.createTableSource();
                 table2.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy2.setQuery(table2);
+                hierarchy2.setSource(table2);
 
                 Level level2_1 = LevelFactory.eINSTANCE.createLevel();
                 level2_1.setName("NuStore City");
@@ -9720,7 +9720,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table1 = SourceFactory.eINSTANCE.createTableSource();
                 table1.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy1.setQuery(table1);
+                hierarchy1.setSource(table1);
 
                 Level level1_1 = LevelFactory.eINSTANCE.createLevel();
                 level1_1.setName("NuStore Country");
@@ -9757,7 +9757,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table2 = SourceFactory.eINSTANCE.createTableSource();
                 table2.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy2.setQuery(table2);
+                hierarchy2.setSource(table2);
 
                 Level level2_1 = LevelFactory.eINSTANCE.createLevel();
                 level2_1.setName("NuStore City");
@@ -9836,7 +9836,7 @@ public class SchemaModifiersEmf {
 
                 TableSource accTable = SourceFactory.eINSTANCE.createTableSource();
                 accTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-                accHierarchy.setQuery(accTable);
+                accHierarchy.setSource(accTable);
 
                 Level accLevel = LevelFactory.eINSTANCE.createLevel();
                 accLevel.setName("CODE");
@@ -9865,7 +9865,7 @@ public class SchemaModifiersEmf {
 
                 TableSource storeTable = SourceFactory.eINSTANCE.createTableSource();
                 storeTable.setTable(CatalogSupplier.TABLE_STORE);
-                storeHierarchy.setQuery(storeTable);
+                storeHierarchy.setSource(storeTable);
 
                 OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(CatalogSupplier.COLUMN_STORE_NAME_STORE);
@@ -9939,7 +9939,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_STORE);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Store Type");
@@ -10032,7 +10032,7 @@ public class SchemaModifiersEmf {
                 ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(id);
-                hierarchy.setQuery(i);
+                hierarchy.setSource(i);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("SameName");
@@ -10088,7 +10088,7 @@ public class SchemaModifiersEmf {
 
                 TableSource table = SourceFactory.eINSTANCE.createTableSource();
                 table.setTable(CatalogSupplier.TABLE_CUSTOMER);
-                hierarchy.setQuery(table);
+                hierarchy.setSource(table);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Last Name");
@@ -10190,7 +10190,7 @@ public class SchemaModifiersEmf {
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            cube.setQuery(tableQuery);
+            cube.setSource(tableQuery);
 
             // Time dimension connector
             DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -10207,7 +10207,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy altPromoHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             altPromoHierarchy.setHasAll(true);
             altPromoHierarchy.setPrimaryKey(promoId);
-            altPromoHierarchy.setQuery(itq);
+            altPromoHierarchy.setSource(itq);
 
             Level altPromoLevel = LevelFactory.eINSTANCE.createLevel();
             altPromoLevel.setName("Alternative Promotion");
@@ -10285,7 +10285,7 @@ public class SchemaModifiersEmf {
 
                     TableSource table = SourceFactory.eINSTANCE.createTableSource();
                     table.setTable(CatalogSupplier.TABLE_CUSTOMER);
-                    hierarchy.setQuery(table);
+                    hierarchy.setSource(table);
 
                     Level level = LevelFactory.eINSTANCE.createLevel();
                     level.setName("Gender");
@@ -10614,7 +10614,7 @@ public class SchemaModifiersEmf {
                 InlineTableSource itq = SourceFactory.eINSTANCE.createInlineTableSource();
                 itq.setAlias("foo");
                 itq.setTable(itt);
-                hierarchy.setQuery(itq);
+                hierarchy.setSource(itq);
 
                 Level level = LevelFactory.eINSTANCE.createLevel();
                 level.setName("Scenario");
@@ -11218,7 +11218,7 @@ public class SchemaModifiersEmf {
                 promotionHierarchy.setHasAll(true);
                 promotionHierarchy.setAllMemberName("All Media");
                 promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-                promotionHierarchy.setQuery(promotionQuery);
+                promotionHierarchy.setSource(promotionQuery);
                 promotionHierarchy.getLevels().add(mediaTypeLevel);
 
                 // Promotion Media2 Dimension
@@ -11289,7 +11289,7 @@ public class SchemaModifiersEmf {
                 promotionHierarchy.setHasAll(true);
                 promotionHierarchy.setAllMemberName("All Media");
                 promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-                promotionHierarchy.setQuery(promotionQuery);
+                promotionHierarchy.setSource(promotionQuery);
                 promotionHierarchy.getLevels().add(mediaTypeLevel);
 
                 // Promotion Media2 Dimension
@@ -11365,7 +11365,7 @@ public class SchemaModifiersEmf {
                 promotionHierarchy.setAllMemberName("All Promotions");
                 promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 promotionHierarchy.setDefaultMember("[All Promotions]");
-                promotionHierarchy.setQuery(promotionQuery);
+                promotionHierarchy.setSource(promotionQuery);
                 promotionHierarchy.getLevels().add(promotionNameLevel);
 
                 // Promotions2 Dimension
@@ -11443,7 +11443,7 @@ public class SchemaModifiersEmf {
                 promotionHierarchy.setAllMemberName("All Promotions");
                 promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 promotionHierarchy.setDefaultMember("[All Promotions]");
-                promotionHierarchy.setQuery(promotionQuery);
+                promotionHierarchy.setSource(promotionQuery);
                 promotionHierarchy.getLevels().add(promotionNameLevel);
 
                 // Promotions2 Dimension
@@ -11526,7 +11526,7 @@ public class SchemaModifiersEmf {
                 promotionHierarchy.setAllMemberName("All Promotions");
                 promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 promotionHierarchy.setDefaultMember("[All Promotions]");
-                promotionHierarchy.setQuery(promotionQuery);
+                promotionHierarchy.setSource(promotionQuery);
                 promotionHierarchy.getLevels().add(promotionNameLevel);
 
                 // Promotions2 Dimension
@@ -11937,10 +11937,10 @@ public class SchemaModifiersEmf {
             productClassTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
 
             leftJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftJoin.setQuery(productTable);
+            leftJoin.setSource(productTable);
 
             rightJoin.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightJoin.setQuery(productClassTable);
+            rightJoin.setSource(productClassTable);
 
             joinQuery.setLeft(leftJoin);
             joinQuery.setRight(rightJoin);
@@ -11951,7 +11951,7 @@ public class SchemaModifiersEmf {
 
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            productHierarchy.setQuery(joinQuery);
+            productHierarchy.setSource(joinQuery);
             productHierarchy.getLevels().add(productFamilyLevel);
 
             productDimension.setName("Product");
@@ -11964,7 +11964,7 @@ public class SchemaModifiersEmf {
             // Foo Cube
             fooCube.setName("Foo");
             fooCube.setDefaultMeasure(unitSalesMeasure);
-            fooCube.setQuery(salesFactQuery);
+            fooCube.setSource(salesFactQuery);
             fooCube.getDimensionConnectors().add(productConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
@@ -12037,7 +12037,7 @@ public class SchemaModifiersEmf {
             genderHierarchy.setHasAll(true);
             genderHierarchy.setAllMemberName("All Gender");
             genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            genderHierarchy.setQuery(customerQuery);
+            genderHierarchy.setSource(customerQuery);
             genderHierarchy.getLevels().add(genderLevel);
 
             // Gender Dimension
@@ -12052,7 +12052,7 @@ public class SchemaModifiersEmf {
             // Sales Cube
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(salesFactQuery);
+            salesCube.setSource(salesFactQuery);
             salesCube.getDimensionConnectors().add(genderConnector);
             salesCube.getMeasureGroups().add(measureGroup);
 
@@ -12190,7 +12190,7 @@ public class SchemaModifiersEmf {
 
             timeHierarchy.setHasAll(true);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeByDayTable);
+            timeHierarchy.setSource(timeByDayTable);
             timeHierarchy.getLevels().addAll(List.of(yearLevel, quarterLevel));
 
             timeDimension.setName("Time");
@@ -12203,7 +12203,7 @@ public class SchemaModifiersEmf {
             // Sales Cube
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(salesFactQuery);
+            salesCube.setSource(salesFactQuery);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
 
@@ -12476,7 +12476,7 @@ public class SchemaModifiersEmf {
             weeklyHierarchy.setName("Weekly");
             weeklyHierarchy.setHasAll(true);
             weeklyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            weeklyHierarchy.setQuery(timeByDayTable);
+            weeklyHierarchy.setSource(timeByDayTable);
             weeklyHierarchy.getLevels().add(yearLevel);
             weeklyHierarchy.getLevels().add(weekLevel);
             weeklyHierarchy.getLevels().add(dayLevel);
@@ -12525,11 +12525,11 @@ public class SchemaModifiersEmf {
 
             JoinedQueryElement productLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            productLeft.setQuery(productTable);
+            productLeft.setSource(productTable);
 
             JoinedQueryElement productRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             productRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            productRight.setQuery(productClassTable);
+            productRight.setSource(productClassTable);
 
             JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
             productJoin.setLeft(productLeft);
@@ -12538,7 +12538,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            productHierarchy.setQuery(productJoin);
+            productHierarchy.setSource(productJoin);
             productHierarchy.getLevels().add(productFamilyLevel);
             productHierarchy.getLevels().add(productDepartmentLevel);
             productHierarchy.getLevels().add(productCategoryLevel);
@@ -12672,7 +12672,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            customersHierarchy.setQuery(customerTable);
+            customersHierarchy.setSource(customerTable);
             customersHierarchy.getLevels().add(countryLevel);
             customersHierarchy.getLevels().add(stateProvinceLevel);
             customersHierarchy.getLevels().add(cityLevel);
@@ -12735,7 +12735,7 @@ public class SchemaModifiersEmf {
             PhysicalCube salesFooCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesFooCube.setName("Sales_Foo");
             salesFooCube.setDefaultMeasure(unitSalesMeasure);
-            salesFooCube.setQuery(salesFactTable);
+            salesFooCube.setSource(salesFactTable);
             salesFooCube.getDimensionConnectors().add(timeConnector);
             salesFooCube.getDimensionConnectors().add(productConnector);
             salesFooCube.getDimensionConnectors().add(customersConnector);
@@ -12963,7 +12963,7 @@ public class SchemaModifiersEmf {
 
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storeHierarchy.setQuery(storeTable);
+            storeHierarchy.setSource(storeTable);
             storeHierarchy.getLevels()
                     .addAll(List.of(storeCountryLevel, storeStateLevel, storeCityLevel, storeNameLevel));
 
@@ -13002,7 +13002,7 @@ public class SchemaModifiersEmf {
 
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeByDayTable);
+            timeHierarchy.setSource(timeByDayTable);
             timeHierarchy.getLevels().addAll(List.of(yearLevel, quarterLevel, monthLevel, dayLevel));
 
             timeDimension.setName("Time");
@@ -13015,7 +13015,7 @@ public class SchemaModifiersEmf {
             // Sales1 Cube
             sales1Cube.setName("Sales1");
             sales1Cube.setDefaultMeasure(unitSalesMeasure);
-            sales1Cube.setQuery(salesFactQuery);
+            sales1Cube.setSource(salesFactQuery);
             sales1Cube.getDimensionConnectors().addAll(List.of(storeConnector, timeConnector));
             sales1Cube.getMeasureGroups().add(measureGroup);
 
@@ -13145,7 +13145,7 @@ public class SchemaModifiersEmf {
 
             timeHierarchy.setHasAll(false);
             timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            timeHierarchy.setQuery(timeByDayTable);
+            timeHierarchy.setSource(timeByDayTable);
             timeHierarchy.getLevels().addAll(List.of(yearLevel, quarterLevel));
 
             timeDimension.setName("Time");
@@ -13158,7 +13158,7 @@ public class SchemaModifiersEmf {
             // Sales Cube
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(unitSalesMeasure);
-            salesCube.setQuery(salesFactQuery);
+            salesCube.setSource(salesFactQuery);
             salesCube.getDimensionConnectors().add(timeConnector);
             salesCube.getMeasureGroups().add(measureGroup);
 
@@ -13328,7 +13328,7 @@ public class SchemaModifiersEmf {
             promotionHierarchy.setAllMemberName("All Promotions");
             promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
             promotionHierarchy.setDefaultMember("[All Promotions]");
-            promotionHierarchy.setQuery(promotionTable);
+            promotionHierarchy.setSource(promotionTable);
             promotionHierarchy.getLevels().add(mediaTypeLevel);
 
             promotionDimension.setName("Promotions");
@@ -13341,7 +13341,7 @@ public class SchemaModifiersEmf {
             // Foo Cube
             fooCube.setName("Foo");
             fooCube.setDefaultMeasure(unitSalesMeasure);
-            fooCube.setQuery(salesFactQuery);
+            fooCube.setSource(salesFactQuery);
             fooCube.getDimensionConnectors().add(promotionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
@@ -13563,7 +13563,7 @@ public class SchemaModifiersEmf {
 
             TableSource storeTable = SourceFactory.eINSTANCE.createTableSource();
             storeTable.setTable(CatalogSupplier.TABLE_STORE);
-            storeHierarchy.setQuery(storeTable);
+            storeHierarchy.setSource(storeTable);
 
             Level levelStoreCountry = LevelFactory.eINSTANCE.createLevel();
             levelStoreCountry.setName("Store Country");
@@ -13602,7 +13602,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTable1 = SourceFactory.eINSTANCE.createTableSource();
             timeTable1.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy1.setQuery(timeTable1);
+            timeHierarchy1.setSource(timeTable1);
 
             Level levelYear1 = LevelFactory.eINSTANCE.createLevel();
             levelYear1.setName("Year");
@@ -13637,7 +13637,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTable2 = SourceFactory.eINSTANCE.createTableSource();
             timeTable2.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            timeHierarchy2.setQuery(timeTable2);
+            timeHierarchy2.setSource(timeTable2);
 
             Level levelYear2 = LevelFactory.eINSTANCE.createLevel();
             levelYear2.setName("Year");
@@ -13716,7 +13716,7 @@ public class SchemaModifiersEmf {
             PhysicalCube cubeSales1 = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeSales1.setName("Sales1");
             cubeSales1.setDefaultMeasure(mUnitSalesSales1);
-            cubeSales1.setQuery(t);
+            cubeSales1.setSource(t);
 
             DimensionConnector dcStore1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStore1.setOverrideDimensionName("Store");
@@ -13736,7 +13736,7 @@ public class SchemaModifiersEmf {
             PhysicalCube cubeSales2 = CubeFactory.eINSTANCE.createPhysicalCube();
             cubeSales2.setName("Sales2");
             cubeSales2.setDefaultMeasure(mUnitSalesSales2);
-            cubeSales2.setQuery(t);
+            cubeSales2.setSource(t);
 
             DimensionConnector dcStore2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcStore2.setOverrideDimensionName("Store");
@@ -13852,7 +13852,7 @@ public class SchemaModifiersEmf {
 
             genderHierarchy.setHasAll(false);
             genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            genderHierarchy.setQuery(queryCustomer);
+            genderHierarchy.setSource(queryCustomer);
             genderHierarchy.getLevels().add(levelGender);
 
             genderDimension.setName("Gender");
@@ -13903,7 +13903,7 @@ public class SchemaModifiersEmf {
             dimensionConnectorGender.setDimension(genderDimension);
 
             salesBugCube.setName("Sales_Bug1410383");
-            salesBugCube.setQuery(querySalesCube);
+            salesBugCube.setSource(querySalesCube);
             salesBugCube.getDimensionConnectors().add(dimensionConnectorGender);
             salesBugCube.getMeasureGroups().add(measureGroup);
             salesBugCube.getCalculatedMembers().add(calcMemberAposInDq);
@@ -14039,7 +14039,7 @@ public class SchemaModifiersEmf {
             dimensionConnectorCountry.setDimension(countryDimension);
 
             store5Cube.setName("Store5");
-            store5Cube.setQuery(queryStore);
+            store5Cube.setSource(queryStore);
             store5Cube.getDimensionConnectors().add(dimensionConnectorStoreType);
             store5Cube.getDimensionConnectors().add(dimensionConnectorCountry);
             store5Cube.getMeasureGroups().add(measureGroup);
@@ -14106,7 +14106,7 @@ public class SchemaModifiersEmf {
 
             genderHierarchy.setHasAll(false);
             genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            genderHierarchy.setQuery(queryCustomer);
+            genderHierarchy.setSource(queryCustomer);
             genderHierarchy.getLevels().add(levelGender);
 
             genderDimension.setName("Gender");
@@ -14134,7 +14134,7 @@ public class SchemaModifiersEmf {
             dimensionConnectorGender.setDimension(genderDimension);
 
             salesBracketCube.setName("Sales_BracketInCubeCalcMemberName");
-            salesBracketCube.setQuery(querySalesCube);
+            salesBracketCube.setSource(querySalesCube);
             salesBracketCube.getDimensionConnectors().add(dimensionConnectorGender);
             salesBracketCube.getMeasureGroups().add(measureGroup);
             salesBracketCube.getCalculatedMembers().add(calcMemberBracket);
@@ -14256,7 +14256,7 @@ public class SchemaModifiersEmf {
 
             hierarchyStoreX.setHasAll(true);
             hierarchyStoreX.setPrimaryKey(storeIdX);
-            hierarchyStoreX.setQuery(queryStoreX);
+            hierarchyStoreX.setSource(queryStoreX);
             hierarchyStoreX.getLevels().add(levelStoreX);
 
             dimensionStoreX.setName("StoreX");
@@ -14281,7 +14281,7 @@ public class SchemaModifiersEmf {
 
             hierarchyStoreY.setHasAll(true);
             hierarchyStoreY.setPrimaryKey(storeIdY);
-            hierarchyStoreY.setQuery(queryStoreY);
+            hierarchyStoreY.setSource(queryStoreY);
             hierarchyStoreY.getLevels().add(levelStoreY);
 
             dimensionStoreY.setName("StoreY");
@@ -14380,7 +14380,7 @@ public class SchemaModifiersEmf {
 
             PhysicalCube chequesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             chequesCube.setName("Cheques");
-            chequesCube.setQuery(queryCheques);
+            chequesCube.setSource(queryCheques);
             chequesCube.getDimensionConnectors().add(dcStoreX);
             chequesCube.getDimensionConnectors().add(dcStoreY);
             chequesCube.getMeasureGroups().add(measureGroup);
@@ -14484,7 +14484,7 @@ public class SchemaModifiersEmf {
             hierarchyStore.setVisible(true);
             hierarchyStore.setHasAll(true);
             hierarchyStore.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            hierarchyStore.setQuery(queryStore);
+            hierarchyStore.setSource(queryStore);
             hierarchyStore.getLevels().add(levelStoreId);
 
             dimensionStore.setName("Store");
@@ -14519,7 +14519,7 @@ public class SchemaModifiersEmf {
             hierarchyTime.setVisible(true);
             hierarchyTime.setHasAll(true);
             hierarchyTime.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            hierarchyTime.setQuery(queryTimeByDay);
+            hierarchyTime.setSource(queryTimeByDay);
             hierarchyTime.getLevels().add(levelYear);
             hierarchyTime.getLevels().add(levelQuarter);
             hierarchyTime.getLevels().add(levelMonth);
@@ -14541,7 +14541,7 @@ public class SchemaModifiersEmf {
             hierarchyWarehouse.setVisible(true);
             hierarchyWarehouse.setHasAll(true);
             hierarchyWarehouse.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
-            hierarchyWarehouse.setQuery(queryWarehouse);
+            hierarchyWarehouse.setSource(queryWarehouse);
             hierarchyWarehouse.getLevels().add(levelWarehouseName);
 
             dimensionWarehouse.setName("Warehouse");
@@ -14585,7 +14585,7 @@ public class SchemaModifiersEmf {
             cubeSales.setVisible(true);
             cubeSales.setCache(true);
             cubeSales.setEnabled(true);
-            cubeSales.setQuery(querySalesFact);
+            cubeSales.setSource(querySalesFact);
             cubeSales.getDimensionConnectors().add(dcStoreInSales);
             cubeSales.getDimensionConnectors().add(dcTimeInSales);
             cubeSales.getMeasureGroups().add(mgSales);
@@ -14616,7 +14616,7 @@ public class SchemaModifiersEmf {
             cubeWarehouse.setVisible(true);
             cubeWarehouse.setCache(true);
             cubeWarehouse.setEnabled(true);
-            cubeWarehouse.setQuery(queryInventoryFact);
+            cubeWarehouse.setSource(queryInventoryFact);
             cubeWarehouse.getDimensionConnectors().add(dcStoreInWarehouse);
             cubeWarehouse.getDimensionConnectors().add(dcTimeInWarehouse);
             cubeWarehouse.getDimensionConnectors().add(dcWarehouseInWarehouse);
@@ -14738,7 +14738,7 @@ public class SchemaModifiersEmf {
 
             hierarchyPromotion.setHasAll(true);
             hierarchyPromotion.setPrimaryKey(promoId);
-            hierarchyPromotion.setQuery(queryInlinePromotion);
+            hierarchyPromotion.setSource(queryInlinePromotion);
             hierarchyPromotion.getLevels().add(levelPromotion);
 
             dimensionAlternativePromotion.setName("Alternative Promotion");
@@ -14766,7 +14766,7 @@ public class SchemaModifiersEmf {
             dimensionConnectorPromotion.setDimension(dimensionAlternativePromotion);
 
             salesInlineCube.setName("Sales_inline");
-            salesInlineCube.setQuery(querySalesFact);
+            salesInlineCube.setSource(querySalesFact);
             salesInlineCube.getDimensionConnectors().add(dimensionConnectorTime);
             salesInlineCube.getDimensionConnectors().add(dimensionConnectorPromotion);
             salesInlineCube.getMeasureGroups().add(measureGroup);
@@ -14903,7 +14903,7 @@ public class SchemaModifiersEmf {
             dimensionConnectorStore.setDimension(dimensionStore);
 
             storeNullsCube.setName("Store_NullsCollation");
-            storeNullsCube.setQuery(queryStore);
+            storeNullsCube.setSource(queryStore);
             storeNullsCube.getDimensionConnectors().add(dimensionConnectorStore);
             storeNullsCube.getMeasureGroups().add(measureGroup);
         }
@@ -15831,7 +15831,7 @@ public class SchemaModifiersEmf {
             hCustomers.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             TableSource tq1 = SourceFactory.eINSTANCE.createTableSource();
             tq1.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            hCustomers.setQuery(tq1);
+            hCustomers.setSource(tq1);
 
             Level levelCountry1 = LevelFactory.eINSTANCE.createLevel();
             levelCountry1.setName("Country");
@@ -15864,7 +15864,7 @@ public class SchemaModifiersEmf {
             hCustomers2.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             TableSource tq2 = SourceFactory.eINSTANCE.createTableSource();
             tq2.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            hCustomers2.setQuery(tq2);
+            hCustomers2.setSource(tq2);
 
             Level levelCountry2 = LevelFactory.eINSTANCE.createLevel();
             levelCountry2.setName("Country");
@@ -15897,7 +15897,7 @@ public class SchemaModifiersEmf {
             hCustomers3.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             TableSource tq3 = SourceFactory.eINSTANCE.createTableSource();
             tq3.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            hCustomers3.setQuery(tq3);
+            hCustomers3.setSource(tq3);
 
             Level levelCountry3 = LevelFactory.eINSTANCE.createLevel();
             levelCountry3.setName("Country");
@@ -15947,7 +15947,7 @@ public class SchemaModifiersEmf {
 
             TableSource factTable = SourceFactory.eINSTANCE.createTableSource();
             factTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            cube.setQuery(factTable);
+            cube.setSource(factTable);
 
             DimensionConnector dcTime = DimensionFactory.eINSTANCE.createDimensionConnector();
             dcTime.setOverrideDimensionName("Time");
@@ -17553,7 +17553,7 @@ public class SchemaModifiersEmf {
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
             tableQuery.setTable(CatalogSupplier.TABLE_STORE);
-            store2Hierarchy.setQuery(tableQuery);
+            store2Hierarchy.setSource(tableQuery);
 
             Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
             storeCountryLevel.setName("Store Country");
@@ -17576,7 +17576,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesFactQuery = SourceFactory.eINSTANCE.createTableSource();
             salesFactQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            tinySalesCube.setQuery(salesFactQuery);
+            tinySalesCube.setSource(salesFactQuery);
 
             // Product dimension connector
             DimensionConnector productConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -17792,7 +17792,7 @@ public class SchemaModifiersEmf {
             sales1Cube = CubeFactory.eINSTANCE.createPhysicalCube();
             sales1Cube.setName("Sales1");
 
-            sales1Cube.setQuery(CatalogSupplier.QUERY_SALES_FACT);
+            sales1Cube.setSource(CatalogSupplier.SOURCE_SALES_FACT);
 
             // Create Customers dimension
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -17805,7 +17805,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-            customersHierarchy.setQuery(CatalogSupplier.QUERY_CUSTOMER);
+            customersHierarchy.setSource(CatalogSupplier.SOURCE_CUSTOMER);
             ;
 
             // Country level
@@ -17897,7 +17897,7 @@ public class SchemaModifiersEmf {
             genderHierarchy.setHasAll(true);
             genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
 
-            genderHierarchy.setQuery(CatalogSupplier.QUERY_CUSTOMER);
+            genderHierarchy.setSource(CatalogSupplier.SOURCE_CUSTOMER);
 
             Level genderLevel = LevelFactory.eINSTANCE.createLevel();
             genderLevel.setName("Gender");
@@ -17921,7 +17921,7 @@ public class SchemaModifiersEmf {
             maritalStatusHierarchy.setVisible(true);
             maritalStatusHierarchy.setHasAll(true);
             maritalStatusHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            maritalStatusHierarchy.setQuery(CatalogSupplier.QUERY_CUSTOMER);
+            maritalStatusHierarchy.setSource(CatalogSupplier.SOURCE_CUSTOMER);
 
             Level maritalStatusLevel = LevelFactory.eINSTANCE.createLevel();
             maritalStatusLevel.setName("Marital Status");
@@ -17960,7 +17960,7 @@ public class SchemaModifiersEmf {
             storeHierarchy.setVisible(true);
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storeHierarchy.setQuery(CatalogSupplier.QUERY_STORE);
+            storeHierarchy.setSource(CatalogSupplier.SOURCE_STORE);
 
             // Store ID level
             Level storeIdLevel = LevelFactory.eINSTANCE.createLevel();
@@ -18718,7 +18718,7 @@ public class SchemaModifiersEmf {
             warehouseSharedHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
             TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouseTableQuery.setTable(CatalogSupplier.TABLE_WAREHOUSE);
-            warehouseSharedHierarchy.setQuery(warehouseTableQuery);
+            warehouseSharedHierarchy.setSource(warehouseTableQuery);
 
             Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
@@ -18745,7 +18745,7 @@ public class SchemaModifiersEmf {
             warehouse1Cube.setName("Warehouse1");
             TableSource warehouse1TableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouse1TableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
-            warehouse1Cube.setQuery(warehouse1TableQuery);
+            warehouse1Cube.setSource(warehouse1TableQuery);
 
             DimensionConnector dc1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dc1.setOverrideDimensionName("WarehouseShared");
@@ -18782,7 +18782,7 @@ public class SchemaModifiersEmf {
             warehouse2Cube.setName("Warehouse2");
             TableSource warehouse2TableQuery = SourceFactory.eINSTANCE.createTableSource();
             warehouse2TableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
-            warehouse2Cube.setQuery(warehouse2TableQuery);
+            warehouse2Cube.setSource(warehouse2TableQuery);
 
             DimensionConnector dc2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dc2.setOverrideDimensionName("WarehouseShared");
@@ -18937,7 +18937,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            hierarchy.setQuery(timeTableQuery);
+            hierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -18974,7 +18974,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            salesCube.setQuery(salesTableQuery);
+            salesCube.setSource(salesTableQuery);
 
             DimensionConnector timeDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDc.setOverrideDimensionName("Time");
@@ -19047,7 +19047,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            hierarchy.setQuery(timeTableQuery);
+            hierarchy.setSource(timeTableQuery);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
             yearLevel.setName("Year");
@@ -19100,7 +19100,7 @@ public class SchemaModifiersEmf {
             salesTableQuery.getAggregationExcludes().add(aggExclude1);
             salesTableQuery.getAggregationExcludes().add(aggExclude2);
 
-            salesCube.setQuery(salesTableQuery);
+            salesCube.setSource(salesTableQuery);
 
             DimensionConnector timeDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDc.setOverrideDimensionName("Time");
@@ -19178,7 +19178,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             timeTableQuery.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-            hierarchy.setQuery(timeTableQuery);
+            hierarchy.setSource(timeTableQuery);
 
             Level dayLevel = LevelFactory.eINSTANCE.createLevel();
             dayLevel.setName("Day");
@@ -19208,7 +19208,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            dateLiteralTestCube.setQuery(salesTableQuery);
+            dateLiteralTestCube.setSource(salesTableQuery);
 
             DimensionConnector timeDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             timeDc.setOverrideDimensionName("Time");
@@ -19273,7 +19273,7 @@ public class SchemaModifiersEmf {
 
             TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-            hierarchy.setQuery(storeTableQuery);
+            hierarchy.setSource(storeTableQuery);
 
             Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
             storeSqftLevel.setName("StoreSqft");
@@ -19309,7 +19309,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTableQuery = SourceFactory.eINSTANCE.createTableSource();
             salesTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            bigIntTestCube.setQuery(salesTableQuery);
+            bigIntTestCube.setSource(salesTableQuery);
 
             DimensionConnector storeSqftDc = DimensionFactory.eINSTANCE.createDimensionConnector();
             storeSqftDc.setOverrideDimensionName("StoreSqft");
@@ -19398,7 +19398,7 @@ public class SchemaModifiersEmf {
 
             TableSource frozenSqftTable = SourceFactory.eINSTANCE.createTableSource();
             frozenSqftTable.setTable(CatalogSupplier.TABLE_STORE);
-            frozenSqftHierarchy.setQuery(frozenSqftTable);
+            frozenSqftHierarchy.setSource(frozenSqftTable);
 
             Level frozenSqftLevel = LevelFactory.eINSTANCE.createLevel();
             frozenSqftLevel.setName("Frozen sqft");
@@ -19417,7 +19417,7 @@ public class SchemaModifiersEmf {
 
             TableSource grocerySqftTable = SourceFactory.eINSTANCE.createTableSource();
             grocerySqftTable.setTable(CatalogSupplier.TABLE_STORE);
-            grocerySqftHierarchy.setQuery(grocerySqftTable);
+            grocerySqftHierarchy.setSource(grocerySqftTable);
 
             Level grocerySqftLevel = LevelFactory.eINSTANCE.createLevel();
             grocerySqftLevel.setName("Grocery sqft");
@@ -19436,7 +19436,7 @@ public class SchemaModifiersEmf {
 
             TableSource meatSqftTable = SourceFactory.eINSTANCE.createTableSource();
             meatSqftTable.setTable(CatalogSupplier.TABLE_STORE);
-            meatSqftHierarchy.setQuery(meatSqftTable);
+            meatSqftHierarchy.setSource(meatSqftTable);
 
             Level meatSqftLevel = LevelFactory.eINSTANCE.createLevel();
             meatSqftLevel.setName("Meat sqft");
@@ -19455,7 +19455,7 @@ public class SchemaModifiersEmf {
 
             TableSource storeSqftTable = SourceFactory.eINSTANCE.createTableSource();
             storeSqftTable.setTable(CatalogSupplier.TABLE_STORE);
-            storeSqftHierarchy.setQuery(storeSqftTable);
+            storeSqftHierarchy.setSource(storeSqftTable);
 
             Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
             storeSqftLevel.setName("Store sqft");
@@ -19471,7 +19471,7 @@ public class SchemaModifiersEmf {
 
             TableSource dsadCubeTable = SourceFactory.eINSTANCE.createTableSource();
             dsadCubeTable.setTable(CatalogSupplier.TABLE_STORE);
-            dsadCube.setQuery(dsadCubeTable);
+            dsadCube.setSource(dsadCubeTable);
 
             DimensionConnector frozenSqftConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             frozenSqftConnector.setOverrideDimensionName("Frozen sqft");
@@ -19563,7 +19563,7 @@ public class SchemaModifiersEmf {
 
             TableSource customersTable = SourceFactory.eINSTANCE.createTableSource();
             customersTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(customersTable);
+            customersHierarchy.setSource(customersTable);
 
             Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer Level Name");
@@ -19587,7 +19587,7 @@ public class SchemaModifiersEmf {
 
             TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
-            productHierarchy.setQuery(productTable);
+            productHierarchy.setSource(productTable);
 
             Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product Level Name");
@@ -19606,7 +19606,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTable = SourceFactory.eINSTANCE.createTableSource();
             salesTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            salesShortCube.setQuery(salesTable);
+            salesShortCube.setSource(salesTable);
 
             DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers Dimension");
@@ -19675,7 +19675,7 @@ public class SchemaModifiersEmf {
 
             TableSource customersTable = SourceFactory.eINSTANCE.createTableSource();
             customersTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(customersTable);
+            customersHierarchy.setSource(customersTable);
 
             Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer Level Name");
@@ -19698,7 +19698,7 @@ public class SchemaModifiersEmf {
 
             TableSource productTable = SourceFactory.eINSTANCE.createTableSource();
             productTable.setTable(CatalogSupplier.TABLE_PRODUCT);
-            productHierarchy.setQuery(productTable);
+            productHierarchy.setSource(productTable);
 
             Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product Level Name");
@@ -19716,7 +19716,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesTable = SourceFactory.eINSTANCE.createTableSource();
             salesTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
-            salesShortCube.setQuery(salesTable);
+            salesShortCube.setSource(salesTable);
 
             DimensionConnector customersConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             customersConnector.setOverrideDimensionName("Customers Dimension");
@@ -19790,7 +19790,7 @@ public class SchemaModifiersEmf {
 
             TableSource promotionsTable = SourceFactory.eINSTANCE.createTableSource();
             promotionsTable.setTable((Table) copier.get(CatalogSupplier.TABLE_PROMOTION));
-            promotionsHierarchy.setQuery(promotionsTable);
+            promotionsHierarchy.setSource(promotionsTable);
 
             Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
             promotionNameLevel.setName("Promotion Name");
@@ -19813,7 +19813,7 @@ public class SchemaModifiersEmf {
 
             TableSource fooTable = SourceFactory.eINSTANCE.createTableSource();
             fooTable.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-            fooCube.setQuery(fooTable);
+            fooCube.setSource(fooTable);
 
             DimensionConnector promotionsConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             promotionsConnector.setOverrideDimensionName("Promotions");
@@ -19885,7 +19885,7 @@ public class SchemaModifiersEmf {
             storesHierarchy.setName("Stores");
             storesHierarchy.setHasAll(true);
             storesHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storesHierarchy.setQuery(storeQuery);
+            storesHierarchy.setSource(storeQuery);
             storesHierarchy.getLevels().add(storeCountryLevel);
             storesHierarchy.getLevels().add(storeStateLevel);
             storesHierarchy.getLevels().add(storeCityLevel);
@@ -19929,7 +19929,7 @@ public class SchemaModifiersEmf {
             timeByWeekHierarchy.setHasAll(true);
             timeByWeekHierarchy.setName("Time By Week");
             timeByWeekHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            timeByWeekHierarchy.setQuery(timeByDayQuery1);
+            timeByWeekHierarchy.setSource(timeByDayQuery1);
             timeByWeekHierarchy.getLevels().add(year2Level1);
             timeByWeekHierarchy.getLevels().add(weekLevel);
             timeByWeekHierarchy.getLevels().add(date2Level);
@@ -19963,7 +19963,7 @@ public class SchemaModifiersEmf {
             time2Hierarchy.setHasAll(false);
             time2Hierarchy.setName("Time2");
             time2Hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            time2Hierarchy.setQuery(timeByDayQuery2);
+            time2Hierarchy.setSource(timeByDayQuery2);
             time2Hierarchy.getLevels().add(year2Level2);
             time2Hierarchy.getLevels().add(quarterLevel);
             time2Hierarchy.getLevels().add(monthLevel);
@@ -20018,11 +20018,11 @@ public class SchemaModifiersEmf {
 
             JoinedQueryElement leftJoin1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin1.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftJoin1.setQuery(productTableQuery1);
+            leftJoin1.setSource(productTableQuery1);
 
             JoinedQueryElement rightJoin1 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin1.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightJoin1.setQuery(productClassTableQuery1);
+            rightJoin1.setSource(productClassTableQuery1);
 
             JoinSource joinQuery1 = SourceFactory.eINSTANCE.createJoinSource();
             joinQuery1.setLeft(leftJoin1);
@@ -20032,7 +20032,7 @@ public class SchemaModifiersEmf {
             productsHierarchy.setHasAll(true);
             productsHierarchy.setName("Products");
             productsHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            productsHierarchy.setQuery(joinQuery1);
+            productsHierarchy.setSource(joinQuery1);
             productsHierarchy.getLevels().add(productFamilyLevel);
             productsHierarchy.getLevels().add(productDepartmentLevel);
             productsHierarchy.getLevels().add(productCategoryLevel);
@@ -20054,11 +20054,11 @@ public class SchemaModifiersEmf {
 
             JoinedQueryElement leftJoin2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             leftJoin2.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            leftJoin2.setQuery(productTableQuery2);
+            leftJoin2.setSource(productTableQuery2);
 
             JoinedQueryElement rightJoin2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
             rightJoin2.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            rightJoin2.setQuery(productClassTableQuery2);
+            rightJoin2.setSource(productClassTableQuery2);
 
             JoinSource joinQuery2 = SourceFactory.eINSTANCE.createJoinSource();
             joinQuery2.setLeft(leftJoin2);
@@ -20068,7 +20068,7 @@ public class SchemaModifiersEmf {
             productNameHierarchy.setName("Product Name");
             productNameHierarchy.setHasAll(true);
             productNameHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            productNameHierarchy.setQuery(joinQuery2);
+            productNameHierarchy.setSource(joinQuery2);
             productNameHierarchy.getLevels().add(productNameLevel2);
 
             StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20095,7 +20095,7 @@ public class SchemaModifiersEmf {
             promotionHierarchy.setAllMemberName("All Promotions");
             promotionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
             promotionHierarchy.setDefaultMember("[All Promotions]");
-            promotionHierarchy.setQuery(promotionQuery);
+            promotionHierarchy.setSource(promotionQuery);
             promotionHierarchy.getLevels().add(promotionNameLevel);
 
             StandardDimension promotionDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20119,7 +20119,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy currencyHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             currencyHierarchy.setHasAll(true);
             currencyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-            currencyHierarchy.setQuery(promotionQuery2);
+            currencyHierarchy.setSource(promotionQuery2);
             currencyHierarchy.getLevels().add(currencyLevel);
 
             StandardDimension currencyDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20160,7 +20160,7 @@ public class SchemaModifiersEmf {
             customerHierarchy.setHasAll(true);
             customerHierarchy.setAllMemberName("All Customers");
             customerHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-            customerHierarchy.setQuery(customerQuery);
+            customerHierarchy.setSource(customerQuery);
             customerHierarchy.getLevels().add(countryLevel);
             customerHierarchy.getLevels().add(stateProvinceLevel);
             customerHierarchy.getLevels().add(cityLevel);
@@ -20188,7 +20188,7 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy storeSizeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeSizeHierarchy.setHasAll(true);
             storeSizeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storeSizeHierarchy.setQuery(storeQuery2);
+            storeSizeHierarchy.setSource(storeQuery2);
             storeSizeHierarchy.getLevels().add(storeSqftLevel);
 
             StandardDimension storeSizeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20210,7 +20210,7 @@ public class SchemaModifiersEmf {
             PhysicalCube warehouseAndSalesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             warehouseAndSalesCube.setName("Warehouse and Sales");
             warehouseAndSalesCube.setDefaultMeasure(unitSalesMeasure);
-            warehouseAndSalesCube.setQuery(salesFactQuery);
+            warehouseAndSalesCube.setSource(salesFactQuery);
             warehouseAndSalesCube.getDimensionConnectors().add(storeConnector);
             warehouseAndSalesCube.getDimensionConnectors().add(timeConnector);
             warehouseAndSalesCube.getDimensionConnectors().add(productConnector);
@@ -20346,7 +20346,7 @@ public class SchemaModifiersEmf {
 
             TableSource marketsQuery = SourceFactory.eINSTANCE.createTableSource();
             marketsQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            marketsHierarchy.setQuery(marketsQuery);
+            marketsHierarchy.setSource(marketsQuery);
 
             territoryLevel = LevelFactory.eINSTANCE.createLevel();
             territoryLevel.setName("Territory");
@@ -20428,7 +20428,7 @@ public class SchemaModifiersEmf {
 
             TableSource customersQuery = SourceFactory.eINSTANCE.createTableSource();
             customersQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(customersQuery);
+            customersHierarchy.setSource(customersQuery);
 
             Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer");
@@ -20486,7 +20486,7 @@ public class SchemaModifiersEmf {
 
             TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
             productQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
-            productHierarchy.setQuery(productQuery);
+            productHierarchy.setSource(productQuery);
 
             Level lineLevel = LevelFactory.eINSTANCE.createLevel();
             lineLevel.setName("Line");
@@ -20543,7 +20543,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeQuery = SourceFactory.eINSTANCE.createTableSource();
             timeQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_TIME);
-            timeHierarchy.setQuery(timeQuery);
+            timeHierarchy.setSource(timeQuery);
 
             Level yearsLevel = LevelFactory.eINSTANCE.createLevel();
             yearsLevel.setName("Years");
@@ -20623,7 +20623,7 @@ public class SchemaModifiersEmf {
 
             TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
-            steelWheelsSalesCube.setQuery(cubeQuery);
+            steelWheelsSalesCube.setSource(cubeQuery);
 
             DimensionConnector marketsConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector.setDimension(marketsDimension);
@@ -20847,7 +20847,7 @@ public class SchemaModifiersEmf {
 
             TableSource marketsQuery = SourceFactory.eINSTANCE.createTableSource();
             marketsQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            marketsHierarchy.setQuery(marketsQuery);
+            marketsHierarchy.setSource(marketsQuery);
 
             Level territoryLevel = LevelFactory.eINSTANCE.createLevel();
             territoryLevel.setName("Territory");
@@ -20895,7 +20895,7 @@ public class SchemaModifiersEmf {
 
             TableSource customersQuery = SourceFactory.eINSTANCE.createTableSource();
             customersQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(customersQuery);
+            customersHierarchy.setSource(customersQuery);
 
             Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer");
@@ -20952,7 +20952,7 @@ public class SchemaModifiersEmf {
 
             TableSource productQuery = SourceFactory.eINSTANCE.createTableSource();
             productQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
-            productHierarchy.setQuery(productQuery);
+            productHierarchy.setSource(productQuery);
 
             Level lineLevel = LevelFactory.eINSTANCE.createLevel();
             lineLevel.setName("Line");
@@ -21009,7 +21009,7 @@ public class SchemaModifiersEmf {
 
             TableSource timeQuery = SourceFactory.eINSTANCE.createTableSource();
             timeQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_TIME);
-            timeHierarchy.setQuery(timeQuery);
+            timeHierarchy.setSource(timeQuery);
 
             Level yearsLevel = LevelFactory.eINSTANCE.createLevel();
             yearsLevel.setName("Years");
@@ -21076,7 +21076,7 @@ public class SchemaModifiersEmf {
 
             TableSource cube1Query = SourceFactory.eINSTANCE.createTableSource();
             cube1Query.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
-            cube1.setQuery(cube1Query);
+            cube1.setSource(cube1Query);
 
             DimensionConnector marketsConnector1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector1.setDimension(marketsDimension);
@@ -21125,7 +21125,7 @@ public class SchemaModifiersEmf {
 
             TableSource cube2Query = SourceFactory.eINSTANCE.createTableSource();
             cube2Query.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
-            cube2.setQuery(cube2Query);
+            cube2.setSource(cube2Query);
 
             DimensionConnector marketsConnector2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector2.setDimension(marketsDimension);
@@ -21174,7 +21174,7 @@ public class SchemaModifiersEmf {
 
             TableSource cube3Query = SourceFactory.eINSTANCE.createTableSource();
             cube3Query.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
-            cube3.setQuery(cube3Query);
+            cube3.setSource(cube3Query);
 
             DimensionConnector marketsConnector3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             marketsConnector3.setDimension(marketsDimension);
@@ -21372,7 +21372,7 @@ public class SchemaModifiersEmf {
             ordersHierarchy.setHasAll(true);
             ordersHierarchy.setAllMemberName("All Orders");
             ordersHierarchy.setPrimaryKey(ordernumber);
-            ordersHierarchy.setQuery(ordersTableQuery);
+            ordersHierarchy.setSource(ordersTableQuery);
             ordersHierarchy.getLevels().add(orderLevel);
 
             StandardDimension ordersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -21392,8 +21392,8 @@ public class SchemaModifiersEmf {
             ExplicitHierarchy customersHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             customersHierarchy.setHasAll(true);
             customersHierarchy.setAllMemberName("All Customers");
-            customersHierarchy.setQuery(
-                    org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLEQUERY_CUSTOMER);
+            customersHierarchy.setSource(
+                    org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLESOURCE_CUSTOMER);
             customersHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
 
@@ -21437,7 +21437,7 @@ public class SchemaModifiersEmf {
 
             PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
             fooCube.setName("Foo");
-            fooCube.setQuery(cubeQuery);
+            fooCube.setSource(cubeQuery);
             fooCube.getDimensionConnectors().add(ordersConnector);
             fooCube.getDimensionConnectors().add(customersConnector);
             fooCube.getMeasureGroups().add(measureGroup);
@@ -21545,7 +21545,7 @@ public class SchemaModifiersEmf {
             productHierarchy.setAllMemberName("All Products");
             productHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_PRODUCTCODE_PRODUCTS);
-            productHierarchy.setQuery(productTableQuery);
+            productHierarchy.setSource(productTableQuery);
             productHierarchy.getLevels().add(productLineLevel);
             productHierarchy.getLevels().add(vendorLevel);
             productHierarchy.getLevels().add(productLevel);
@@ -21600,7 +21600,7 @@ public class SchemaModifiersEmf {
             marketsHierarchy.setAllMemberName("All Markets");
             marketsHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
-            marketsHierarchy.setQuery(marketsTableQuery);
+            marketsHierarchy.setSource(marketsTableQuery);
             marketsHierarchy.getLevels().add(territoryLevel);
             marketsHierarchy.getLevels().add(countryLevel);
             marketsHierarchy.getLevels().add(stateLevel);
@@ -21635,7 +21635,7 @@ public class SchemaModifiersEmf {
             customersHierarchy.setAllMemberName("All Customers");
             customersHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
-            customersHierarchy.setQuery(customersTableQuery);
+            customersHierarchy.setSource(customersTableQuery);
             customersHierarchy.getLevels().add(customerLevel);
 
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -21700,7 +21700,7 @@ public class SchemaModifiersEmf {
             timeHierarchy.setAllMemberName("All Years");
             timeHierarchy.setPrimaryKey(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TIME_ID_TIME);
-            timeHierarchy.setQuery(timeTableQuery);
+            timeHierarchy.setSource(timeTableQuery);
             timeHierarchy.getLevels().add(yearsLevel);
             timeHierarchy.getLevels().add(quartersLevel);
             timeHierarchy.getLevels().add(monthsLevel);
@@ -21767,7 +21767,7 @@ public class SchemaModifiersEmf {
             PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("SteelWheelsSales");
             cube.setEnabled(true);
-            cube.setQuery(cubeQuery);
+            cube.setSource(cubeQuery);
             cube.getDimensionConnectors().add(marketsConnector);
             cube.getDimensionConnectors().add(customersConnector);
             cube.getDimensionConnectors().add(productConnector);
@@ -22004,7 +22004,7 @@ public class SchemaModifiersEmf {
             TableSource hierarchyQuery = SourceFactory.eINSTANCE.createTableSource();
             hierarchyQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(hierarchyQuery);
+            customersHierarchy.setSource(hierarchyQuery);
 
             // Address Level
             Level addressLevel = LevelFactory.eINSTANCE.createLevel();
@@ -22042,7 +22042,7 @@ public class SchemaModifiersEmf {
             TableSource cubeQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
-            customersCube.setQuery(cubeQuery);
+            customersCube.setSource(cubeQuery);
 
             // Dimension Usage
             DimensionConnector dimUsage = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -22188,7 +22188,7 @@ public class SchemaModifiersEmf {
             TableSource hierarchyQuery = SourceFactory.eINSTANCE.createTableSource();
             hierarchyQuery.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(hierarchyQuery);
+            customersHierarchy.setSource(hierarchyQuery);
 
             // Address Level
             Level addressLevel = LevelFactory.eINSTANCE.createLevel();
@@ -22233,7 +22233,7 @@ public class SchemaModifiersEmf {
             TableSource cubeTable = SourceFactory.eINSTANCE.createTableSource();
             cubeTable.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
-            customersCube.setQuery(cubeTable);
+            customersCube.setSource(cubeTable);
 
             customersCube.getDimensionConnectors().add(dimConnector);
 
@@ -22403,7 +22403,7 @@ public class SchemaModifiersEmf {
             TableSource dimension1Query = SourceFactory.eINSTANCE.createTableSource();
             dimension1Query.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_PRODUCTS);
-            dimension1Hierarchy.setQuery(dimension1Query);
+            dimension1Hierarchy.setSource(dimension1Query);
 
             Level level1 = LevelFactory.eINSTANCE.createLevel();
             level1.setName("Level1");
@@ -22433,7 +22433,7 @@ public class SchemaModifiersEmf {
             TableSource dimension2Query = SourceFactory.eINSTANCE.createTableSource();
             dimension2Query.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_CUSTOMER);
-            dimension2Hierarchy.setQuery(dimension2Query);
+            dimension2Hierarchy.setSource(dimension2Query);
 
             Level level2 = LevelFactory.eINSTANCE.createLevel();
             level2.setName("Level2");
@@ -22459,7 +22459,7 @@ public class SchemaModifiersEmf {
             rolesTest1Table.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             rolesTest1Table.setAlias("rolesTest1");
-            rolesTest1.setQuery(rolesTest1Table);
+            rolesTest1.setSource(rolesTest1Table);
 
             DimensionConnector dimUsage1_1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage1_1.setOverrideDimensionName("Dimension1");
@@ -22499,7 +22499,7 @@ public class SchemaModifiersEmf {
             rolesTest2Table.setTable(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.TABLE_ORDERFACT);
             rolesTest2Table.setAlias("rolesTest2");
-            rolesTest2.setQuery(rolesTest2Table);
+            rolesTest2.setSource(rolesTest2Table);
 
             DimensionConnector dimUsage2_1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage2_1.setOverrideDimensionName("Dimension2");
@@ -22694,7 +22694,7 @@ public class SchemaModifiersEmf {
 
             TableSource customersTable = SourceFactory.eINSTANCE.createTableSource();
             customersTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-            customersHierarchy.setQuery(customersTable);
+            customersHierarchy.setSource(customersTable);
 
             Level countryLevel = LevelFactory.eINSTANCE.createLevel();
             countryLevel.setName("Country");
@@ -22715,7 +22715,7 @@ public class SchemaModifiersEmf {
 
             TableSource salesFactTable = SourceFactory.eINSTANCE.createTableSource();
             salesFactTable.setTable(CatalogSupplier.TABLE_SALES_FACT1998);
-            salesCube.setQuery(salesFactTable);
+            salesCube.setSource(salesFactTable);
 
             DimensionConnector dimUsage = DimensionFactory.eINSTANCE.createDimensionConnector();
             dimUsage.setOverrideDimensionName("Customers-Alias");

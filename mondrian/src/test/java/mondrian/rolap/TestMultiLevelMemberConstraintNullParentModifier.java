@@ -139,7 +139,7 @@ public class TestMultiLevelMemberConstraintNullParentModifier implements Catalog
         HIERARCHY_WAREHOUSE2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_WAREHOUSE2.setHasAll(true);
         HIERARCHY_WAREHOUSE2.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
-        HIERARCHY_WAREHOUSE2.setQuery(TABLE_QUERY_WAREHOUSE);
+        HIERARCHY_WAREHOUSE2.setSource(TABLE_QUERY_WAREHOUSE);
         HIERARCHY_WAREHOUSE2.getLevels().addAll(List.of(
             LEVEL_ADDRESS3,
             LEVEL_ADDRESS2,
@@ -187,7 +187,7 @@ public class TestMultiLevelMemberConstraintNullParentModifier implements Catalog
         // Create cube
         CUBE_WAREHOUSE2 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_WAREHOUSE2.setName("Warehouse2");
-        CUBE_WAREHOUSE2.setQuery(TABLE_QUERY_INVENTORY_FACT);
+        CUBE_WAREHOUSE2.setSource(TABLE_QUERY_INVENTORY_FACT);
         CUBE_WAREHOUSE2.getDimensionConnectors().addAll(List.of(
             CONNECTOR_PRODUCT,
             CONNECTOR_WAREHOUSE2

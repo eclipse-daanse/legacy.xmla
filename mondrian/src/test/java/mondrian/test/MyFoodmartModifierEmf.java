@@ -90,7 +90,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
         storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
-        ((ExplicitHierarchy) storeHierarchy).setQuery(storeTableQuery);
+        ((ExplicitHierarchy) storeHierarchy).setSource(storeTableQuery);
 
         // Store Hierarchy Levels
         storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
@@ -173,7 +173,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource storeSizeTable = SourceFactory.eINSTANCE.createTableSource();
         storeSizeTable.setTable(CatalogSupplier.TABLE_STORE);
-        storeSizeHierarchy.setQuery(storeSizeTable);
+        storeSizeHierarchy.setSource(storeSizeTable);
 
         Level storeSqftLevel = LevelFactory.eINSTANCE.createLevel();
         storeSqftLevel.setName("Store Sqft");
@@ -193,7 +193,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource storeTypeTable = SourceFactory.eINSTANCE.createTableSource();
         storeTypeTable.setTable(CatalogSupplier.TABLE_STORE);
-        storeTypeHierarchy.setQuery(storeTypeTable);
+        storeTypeHierarchy.setSource(storeTypeTable);
 
         Level storeTypeLevel = LevelFactory.eINSTANCE.createLevel();
         storeTypeLevel.setName("Store Type");
@@ -213,7 +213,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource timeTable = SourceFactory.eINSTANCE.createTableSource();
         timeTable.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-        timeHierarchy.setQuery(timeTable);
+        timeHierarchy.setSource(timeTable);
 
         Level yearLevel = LevelFactory.eINSTANCE.createLevel();
         yearLevel.setName("Year");
@@ -276,17 +276,17 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
         productLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
         TableSource productTableLeft = SourceFactory.eINSTANCE.createTableSource();
         productTableLeft.setTable(CatalogSupplier.TABLE_PRODUCT);
-        productLeft.setQuery(productTableLeft);
+        productLeft.setSource(productTableLeft);
 
         JoinedQueryElement productRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
         TableSource productClassTable = SourceFactory.eINSTANCE.createTableSource();
         productClassTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-        productRight.setQuery(productClassTable);
+        productRight.setSource(productClassTable);
 
         productJoin.setLeft(productLeft);
         productJoin.setRight(productRight);
-        productHierarchy.setQuery(productJoin);
+        productHierarchy.setSource(productJoin);
 
         Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
         productFamilyLevel.setName("Product Family");
@@ -334,7 +334,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource warehouseTable = SourceFactory.eINSTANCE.createTableSource();
         warehouseTable.setTable(CatalogSupplier.TABLE_WAREHOUSE);
-        warehouseHierarchy.setQuery(warehouseTable);
+        warehouseHierarchy.setSource(warehouseTable);
 
         Level warehouseCountryLevel = LevelFactory.eINSTANCE.createLevel();
         warehouseCountryLevel.setName("Country");
@@ -372,7 +372,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
         AggregationExclude aggExclude = AggregationFactory.eINSTANCE.createAggregationExclude();
         aggExclude.setPattern(".*");
         salesTableQuery.getAggregationExcludes().add(aggExclude);
-        sales.setQuery(salesTableQuery);
+        sales.setSource(salesTableQuery);
 
         // Store dimension connector
         DimensionConnector storeDimConn = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -415,7 +415,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource promotionTable = SourceFactory.eINSTANCE.createTableSource();
         promotionTable.setTable(CatalogSupplier.TABLE_PROMOTION);
-        promotionMediaHierarchy.setQuery(promotionTable);
+        promotionMediaHierarchy.setSource(promotionTable);
 
         Level mediaTypeLevel = LevelFactory.eINSTANCE.createLevel();
         mediaTypeLevel.setName("Media Type");
@@ -441,7 +441,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource promotionsTable = SourceFactory.eINSTANCE.createTableSource();
         promotionsTable.setTable(CatalogSupplier.TABLE_PROMOTION);
-        promotionsHierarchy.setQuery(promotionsTable);
+        promotionsHierarchy.setSource(promotionsTable);
 
         Level promotionNameLevel = LevelFactory.eINSTANCE.createLevel();
         promotionNameLevel.setName("Promotion Name");
@@ -467,7 +467,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource customerTable = SourceFactory.eINSTANCE.createTableSource();
         customerTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-        customersHierarchy.setQuery(customerTable);
+        customersHierarchy.setSource(customerTable);
 
         Level customerCountryLevel = LevelFactory.eINSTANCE.createLevel();
         customerCountryLevel.setName("Country");
@@ -556,7 +556,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource educationTable = SourceFactory.eINSTANCE.createTableSource();
         educationTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-        educationHierarchy.setQuery(educationTable);
+        educationHierarchy.setSource(educationTable);
 
         Level educationLevelLevel = LevelFactory.eINSTANCE.createLevel();
         educationLevelLevel.setName("Education Level");
@@ -582,7 +582,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource genderTable = SourceFactory.eINSTANCE.createTableSource();
         genderTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-        genderHierarchy.setQuery(genderTable);
+        genderHierarchy.setSource(genderTable);
 
         Level genderLevel = LevelFactory.eINSTANCE.createLevel();
         genderLevel.setName("Gender");
@@ -608,7 +608,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource maritalStatusTable = SourceFactory.eINSTANCE.createTableSource();
         maritalStatusTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-        maritalStatusHierarchy.setQuery(maritalStatusTable);
+        maritalStatusHierarchy.setSource(maritalStatusTable);
 
         Level maritalStatusLevel = LevelFactory.eINSTANCE.createLevel();
         maritalStatusLevel.setName("Marital Status");
@@ -634,7 +634,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource yearlyIncomeTable = SourceFactory.eINSTANCE.createTableSource();
         yearlyIncomeTable.setTable(CatalogSupplier.TABLE_CUSTOMER);
-        yearlyIncomeHierarchy.setQuery(yearlyIncomeTable);
+        yearlyIncomeHierarchy.setSource(yearlyIncomeTable);
 
         Level yearlyIncomeLevel = LevelFactory.eINSTANCE.createLevel();
         yearlyIncomeLevel.setName("Yearly Income");
@@ -724,7 +724,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource warehouseTableQuery = SourceFactory.eINSTANCE.createTableSource();
         warehouseTableQuery.setTable(CatalogSupplier.TABLE_INVENTORY_FACT);
-        warehouse.setQuery(warehouseTableQuery);
+        warehouse.setSource(warehouseTableQuery);
 
         // Warehouse Cube Dimension Connectors
         DimensionConnector whStoreDimConn = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -808,7 +808,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource storeTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
         storeTableQuery2.setTable(CatalogSupplier.TABLE_STORE);
-        storeCube.setQuery(storeTableQuery2);
+        storeCube.setSource(storeTableQuery2);
 
         // Store Type Dimension (private for Store cube)
         StandardDimension storeTypePrivateDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -879,7 +879,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource hrTableQuery = SourceFactory.eINSTANCE.createTableSource();
         hrTableQuery.setTable(CatalogSupplier.TABLE_SALARY);
-        hrCube.setQuery(hrTableQuery);
+        hrCube.setSource(hrTableQuery);
 
         // Time Dimension (private for HR cube)
         TimeDimension hrTimeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
@@ -891,7 +891,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource hrTimeTable = SourceFactory.eINSTANCE.createTableSource();
         hrTimeTable.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
-        hrTimeHierarchy.setQuery(hrTimeTable);
+        hrTimeHierarchy.setSource(hrTimeTable);
 
         Level hrYearLevel = LevelFactory.eINSTANCE.createLevel();
         hrYearLevel.setName("Year");
@@ -935,7 +935,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         TableSource employeeTable = SourceFactory.eINSTANCE.createTableSource();
         employeeTable.setTable(CatalogSupplier.TABLE_EMPLOYEE);
-        employeesHierarchy.setQuery(employeeTable);
+        employeesHierarchy.setSource(employeeTable);
 
         employeesHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
         employeesHierarchy.setNullParentValue("0");

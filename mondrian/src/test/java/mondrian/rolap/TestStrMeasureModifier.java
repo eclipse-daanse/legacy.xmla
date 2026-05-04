@@ -101,7 +101,7 @@ public class TestStrMeasureModifier implements CatalogMappingSupplier {
         // Create cube
         CUBE_STR_MEASURE = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_STR_MEASURE.setName("StrMeasure");
-        CUBE_STR_MEASURE.setQuery(TABLE_QUERY_PROMOTION);
+        CUBE_STR_MEASURE.setSource(TABLE_QUERY_PROMOTION);
         CUBE_STR_MEASURE.getDimensionConnectors().add(CONNECTOR_PROMOTIONS);
         CUBE_STR_MEASURE.getMeasureGroups().add(MEASURE_GROUP);
 

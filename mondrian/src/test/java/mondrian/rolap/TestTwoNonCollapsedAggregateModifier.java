@@ -271,13 +271,13 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         productLeft.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
         TableSource productTableQuery = SourceFactory.eINSTANCE.createTableSource();
         productTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT));
-        productLeft.setQuery(productTableQuery);
+        productLeft.setSource(productTableQuery);
 
         JoinedQueryElement productRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productRight.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
         TableSource productClassTableQuery = SourceFactory.eINSTANCE.createTableSource();
         productClassTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
-        productRight.setQuery(productClassTableQuery);
+        productRight.setSource(productClassTableQuery);
 
         JoinSource productJoin = SourceFactory.eINSTANCE.createJoinSource();
         productJoin.setLeft(productLeft);
@@ -287,7 +287,7 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         HIERARCHY_PRODUCT = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_PRODUCT.setHasAll(true);
         HIERARCHY_PRODUCT.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
-        HIERARCHY_PRODUCT.setQuery(productJoin);
+        HIERARCHY_PRODUCT.setSource(productJoin);
         HIERARCHY_PRODUCT.getLevels().addAll(List.of(
             LEVEL_PRODUCT_FAMILY,
             LEVEL_PRODUCT_DEPARTMENT,
@@ -318,13 +318,13 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         storeLeft.setKey((Column) copier.get(CatalogSupplier.COLUMN_REGION_ID_STORE));
         TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
         storeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
-        storeLeft.setQuery(storeTableQuery);
+        storeLeft.setSource(storeTableQuery);
 
         JoinedQueryElement storeRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         storeRight.setKey(COLUMN_REGION_ID_REGION);
         TableSource regionTableQuery = SourceFactory.eINSTANCE.createTableSource();
         regionTableQuery.setTable(TABLE_REGION);
-        storeRight.setQuery(regionTableQuery);
+        storeRight.setSource(regionTableQuery);
 
         JoinSource storeJoin = SourceFactory.eINSTANCE.createJoinSource();
         storeJoin.setLeft(storeLeft);
@@ -334,7 +334,7 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         HIERARCHY_STORE = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_STORE.setHasAll(true);
         HIERARCHY_STORE.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-        HIERARCHY_STORE.setQuery(storeJoin);
+        HIERARCHY_STORE.setSource(storeJoin);
         HIERARCHY_STORE.getLevels().addAll(List.of(
             LEVEL_STORE_REGION,
             LEVEL_STORE_ID
@@ -370,7 +370,7 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         CUBE_FOO = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_FOO.setName("Foo");
         CUBE_FOO.setDefaultMeasure(MEASURE_UNIT_SALES);
-        CUBE_FOO.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_FOO.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_FOO.getDimensionConnectors().addAll(List.of(
             CONNECTOR_PRODUCT,
             CONNECTOR_STORE

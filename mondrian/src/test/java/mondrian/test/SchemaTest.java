@@ -391,7 +391,7 @@ class SchemaTest {
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setDefaultMember("[Gender with default].[All Gender with defaults].[M]");
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -523,7 +523,7 @@ class SchemaTest {
                     // Create left joined query element using RolapMappingFactory
                     JoinedQueryElement leftElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
                     leftElement.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-                    leftElement.setQuery(leftTableQuery);
+                    leftElement.setSource(leftTableQuery);
 
                     // Create right table query using RolapMappingFactory
                     TableSource rightTableQuery = SourceFactory.eINSTANCE.createTableSource();
@@ -531,7 +531,7 @@ class SchemaTest {
                     // Create right joined query element using RolapMappingFactory
                     JoinedQueryElement rightElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
                     rightElement.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                    rightElement.setQuery(rightTableQuery);
+                    rightElement.setSource(rightTableQuery);
 
                     // Create join query using RolapMappingFactory
                     JoinSource join = SourceFactory.eINSTANCE.createJoinSource();
@@ -562,7 +562,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(false);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                    hierarchy.setQuery(join);
+                    hierarchy.setSource(join);
                     hierarchy.getLevels().add(level1);
                     hierarchy.getLevels().add(level2);
                     hierarchy.getLevels().add(level3);
@@ -682,7 +682,7 @@ class SchemaTest {
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setDefaultMember("[Gender with default].[F]");
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -785,7 +785,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     // Note: No levels added - this should fail validation
 
                     // Create standard dimension using RolapMappingFactory
@@ -907,7 +907,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level1);
                     hierarchy.getLevels().add(level2);  // Adding duplicate level name - should fail validation
 
@@ -1127,7 +1127,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(customer_id);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -1254,7 +1254,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(customer_id);  // This column is from non-existent table
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -1376,7 +1376,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -1483,7 +1483,7 @@ class SchemaTest {
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
                     hierarchy.setDefaultMember("[Gender with default].[Non].[Existent]");  // Non-existent member
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -1601,7 +1601,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CITY_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -1718,7 +1718,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -1843,7 +1843,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -2101,7 +2101,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -2222,7 +2222,7 @@ class SchemaTest {
                     ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create standard dimension using RolapMappingFactory
@@ -2533,13 +2533,13 @@ class SchemaTest {
 
                 JoinedQueryElement j1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Left.setKey(sales_district_id);
-                j1Left.setQuery(regionTableQuery);
+                j1Left.setSource(regionTableQuery);
 
                 TableSource promotionTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 promotionTableQuery.setTable(CatalogSupplier.TABLE_PROMOTION);
                 JoinedQueryElement j1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Right.setKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-                j1Right.setQuery(promotionTableQuery);
+                j1Right.setSource(promotionTableQuery);
 
                 JoinSource j1 = SourceFactory.eINSTANCE.createJoinSource();
                 j1.setLeft(j1Left);
@@ -2550,11 +2550,11 @@ class SchemaTest {
                 storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
                 JoinedQueryElement join11Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Left.setKey((Column) CatalogSupplier.COLUMN_REGION_ID_STORE);
-                join11Left.setQuery(storeTableQuery);
+                join11Left.setSource(storeTableQuery);
 
                 JoinedQueryElement join11Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Right.setKey(region_id);
-                join11Right.setQuery(j1);
+                join11Right.setSource(j1);
 
                 JoinSource join11 = SourceFactory.eINSTANCE.createJoinSource();
                 join11.setLeft(join11Left);
@@ -2565,14 +2565,14 @@ class SchemaTest {
                 customerTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
                 JoinedQueryElement join12Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
-                join12Left.setQuery(customerTableQuery);
+                join12Left.setSource(customerTableQuery);
 
                 TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
                 JoinedQueryElement join12Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Right.setKey(region_id);
-                join12Right.setQuery(regionTableQuery2);
+                join12Right.setSource(regionTableQuery2);
 
                 JoinSource join12 = SourceFactory.eINSTANCE.createJoinSource();
                 join12.setLeft(join12Left);
@@ -2584,14 +2584,14 @@ class SchemaTest {
 
                 JoinedQueryElement join21Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
-                join21Left.setQuery(customerTableQuery2);
+                join21Left.setSource(customerTableQuery2);
 
                 TableSource regionTableQuery3 = SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery3.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
                 JoinedQueryElement join21Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Right.setKey(region_id);
-                join21Right.setQuery(regionTableQuery3);
+                join21Right.setSource(regionTableQuery3);
 
                 JoinSource join21 = SourceFactory.eINSTANCE.createJoinSource();
                 join21.setLeft(join21Left);
@@ -2658,7 +2658,7 @@ class SchemaTest {
                 ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(true);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-                h11.setQuery(join11);
+                h11.setSource(join11);
                 h11.getLevels().add(l11);
                 h11.getLevels().add(l12);
                 h11.getLevels().add(l13);
@@ -2667,7 +2667,7 @@ class SchemaTest {
                 h12.setName("MyHierarchy");
                 h12.setHasAll(true);
                 h12.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                h12.setQuery(join12);
+                h12.setSource(join12);
                 h12.getLevels().add(l21);
                 h12.getLevels().add(l22);
                 h12.getLevels().add(l23);
@@ -2677,7 +2677,7 @@ class SchemaTest {
                 h21.setHasAll(true);
                 h21.setAllMemberName("All Customers");
                 h21.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                h21.setQuery(join21);
+                h21.setSource(join21);
                 h21.getLevels().add(l31);
                 h21.getLevels().add(l32);
                 h21.getLevels().add(l33);
@@ -2721,7 +2721,7 @@ class SchemaTest {
 
                 TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(cubeTableQuery);
+                cube.setSource(cubeTableQuery);
 
                 cube.getDimensionConnectors().add(dimension1);
                 cube.getDimensionConnectors().add(dimension2);
@@ -3027,14 +3027,14 @@ class SchemaTest {
 
                 JoinedQueryElement j1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Left.setKey(sales_district_id);
-                j1Left.setQuery(regionTableQuery);
+                j1Left.setSource(regionTableQuery);
 
                 TableSource promotionTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 promotionTableQuery.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) CatalogSupplier.TABLE_PROMOTION);
 
                 JoinedQueryElement j1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Right.setKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-                j1Right.setQuery(promotionTableQuery);
+                j1Right.setSource(promotionTableQuery);
 
                 JoinSource j1 = SourceFactory.eINSTANCE.createJoinSource();
                 j1.setLeft(j1Left);
@@ -3045,11 +3045,11 @@ class SchemaTest {
                 storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
                 JoinedQueryElement join11Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Left.setKey(CatalogSupplier.COLUMN_REGION_ID_STORE);
-                join11Left.setQuery(storeTableQuery);
+                join11Left.setSource(storeTableQuery);
 
                 JoinedQueryElement join11Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join11Right.setKey(region_id);
-                join11Right.setQuery(j1);
+                join11Right.setSource(j1);
 
                 JoinSource join11 = SourceFactory.eINSTANCE.createJoinSource();
                 join11.setLeft(join11Left);
@@ -3060,14 +3060,14 @@ class SchemaTest {
                 storeTableQuery2.setTable(CatalogSupplier.TABLE_STORE);
                 JoinedQueryElement join12Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Left.setKey(CatalogSupplier.COLUMN_REGION_ID_STORE);
-                join12Left.setQuery(storeTableQuery2);
+                join12Left.setSource(storeTableQuery2);
 
                 TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
                 JoinedQueryElement join12Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join12Right.setKey(region_id);
-                join12Right.setQuery(regionTableQuery2);
+                join12Right.setSource(regionTableQuery2);
 
                 JoinSource join12 = SourceFactory.eINSTANCE.createJoinSource();
                 join12.setLeft(join12Left);
@@ -3078,14 +3078,14 @@ class SchemaTest {
                 customerTableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
                 JoinedQueryElement join21Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
-                join21Left.setQuery(customerTableQuery);
+                join21Left.setSource(customerTableQuery);
 
                 TableSource regionTableQuery3 = SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery3.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
                 JoinedQueryElement join21Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join21Right.setKey(region_id);
-                join21Right.setQuery(regionTableQuery3);
+                join21Right.setSource(regionTableQuery3);
 
                 JoinSource join21 = SourceFactory.eINSTANCE.createJoinSource();
                 join21.setLeft(join21Left);
@@ -3143,7 +3143,7 @@ class SchemaTest {
                 ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(true);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-                h11.setQuery(join11);
+                h11.setSource(join11);
                 h11.getLevels().add(l11);
                 h11.getLevels().add(l12);
                 h11.getLevels().add(l13);
@@ -3152,7 +3152,7 @@ class SchemaTest {
                 h12.setName("MyHierarchy");
                 h12.setHasAll(true);
                 h12.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-                h12.setQuery(join12);
+                h12.setSource(join12);
                 h12.getLevels().add(l21);
                 h12.getLevels().add(l22);
                 h12.getLevels().add(l23);
@@ -3161,7 +3161,7 @@ class SchemaTest {
                 h21.setHasAll(true);
                 h21.setAllMemberName("All Customers");
                 h21.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                h21.setQuery(join21);
+                h21.setSource(join21);
                 h21.getLevels().add(l31);
                 h21.getLevels().add(l32);
                 h21.getLevels().add(l33);
@@ -3211,7 +3211,7 @@ class SchemaTest {
                 TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 cubeTableQuery.getAggregationExcludes().add(aggExclude);
-                cube.setQuery(cubeTableQuery);
+                cube.setSource(cubeTableQuery);
 
                 cube.getDimensionConnectors().add(dimension1);
                 cube.getDimensionConnectors().add(dimension2);
@@ -3474,14 +3474,14 @@ class SchemaTest {
 
                 JoinedQueryElement join1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join1Left.setKey((Column) CatalogSupplier.COLUMN_REGION_ID_STORE);
-                join1Left.setQuery(storeTableQuery);
+                join1Left.setSource(storeTableQuery);
 
                 TableSource regionTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery1.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
                 JoinedQueryElement join1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join1Right.setKey(region_id);
-                join1Right.setQuery(regionTableQuery1);
+                join1Right.setSource(regionTableQuery1);
 
                 JoinSource join1 = SourceFactory.eINSTANCE.createJoinSource();
                 join1.setLeft(join1Left);
@@ -3507,7 +3507,7 @@ class SchemaTest {
                 ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h1.setHasAll(true);
                 h1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-                h1.setQuery(join1);
+                h1.setSource(join1);
                 h1.getLevels().add(l11);
                 h1.getLevels().add(l12);
                 h1.getLevels().add(l13);
@@ -3518,14 +3518,14 @@ class SchemaTest {
 
                 JoinedQueryElement join2Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join2Left.setKey(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER);
-                join2Left.setQuery(customerTableQuery);
+                join2Left.setSource(customerTableQuery);
 
                 TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
                 regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
 
                 JoinedQueryElement join2Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 join2Right.setKey(region_id);
-                join2Right.setQuery(regionTableQuery2);
+                join2Right.setSource(regionTableQuery2);
 
                 JoinSource join2 = SourceFactory.eINSTANCE.createJoinSource();
                 join2.setLeft(join2Left);
@@ -3558,7 +3558,7 @@ class SchemaTest {
                 h2.setHasAll(true);
                 h2.setAllMemberName("All Customers");
                 h2.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                h2.setQuery(join2);
+                h2.setSource(join2);
                 h2.getLevels().add(l21);
                 h2.getLevels().add(l22);
                 h2.getLevels().add(l23);
@@ -3613,7 +3613,7 @@ class SchemaTest {
                 TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
                 cubeTableQuery.getAggregationExcludes().add(aggExclude);
-                cube.setQuery(cubeTableQuery);
+                cube.setSource(cubeTableQuery);
 
                 cube.getDimensionConnectors().add(d1);
                 cube.getDimensionConnectors().add(d2);
@@ -3925,7 +3925,7 @@ class SchemaTest {
 
             JoinedQueryElement join1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_REGION_ID_STORE));
-            join1Left.setQuery(storeTableQuery);
+            join1Left.setSource(storeTableQuery);
 
             TableSource regionTableQuery1 = SourceFactory.eINSTANCE.createTableSource();
             regionTableQuery1.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
@@ -3933,7 +3933,7 @@ class SchemaTest {
 
             JoinedQueryElement join1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Right.setKey(region_id);
-            join1Right.setQuery(regionTableQuery1);
+            join1Right.setSource(regionTableQuery1);
 
             JoinSource join1 = SourceFactory.eINSTANCE.createJoinSource();
             join1.setLeft(join1Left);
@@ -3959,7 +3959,7 @@ class SchemaTest {
             ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-            h1.setQuery(join1);
+            h1.setSource(join1);
             h1.getLevels().add(l11);
             h1.getLevels().add(l12);
             h1.getLevels().add(l13);
@@ -3970,7 +3970,7 @@ class SchemaTest {
 
             JoinedQueryElement join2Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER));
-            join2Left.setQuery(customerTableQuery);
+            join2Left.setSource(customerTableQuery);
 
             TableSource regionTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             regionTableQuery2.setTable((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) region);
@@ -3978,7 +3978,7 @@ class SchemaTest {
 
             JoinedQueryElement join2Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Right.setKey(region_id);
-            join2Right.setQuery(regionTableQuery2);
+            join2Right.setSource(regionTableQuery2);
 
             JoinSource join2 = SourceFactory.eINSTANCE.createJoinSource();
             join2.setLeft(join2Left);
@@ -4013,7 +4013,7 @@ class SchemaTest {
             h2.setHasAll(true);
             h2.setAllMemberName("All Customers");
             h2.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
-            h2.setQuery(join2);
+            h2.setSource(join2);
             h2.getLevels().add(l21);
             h2.getLevels().add(l22);
             h2.getLevels().add(l23);
@@ -4069,7 +4069,7 @@ class SchemaTest {
             TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             cubeTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
             cubeTableQuery.getAggregationExcludes().add(aggExclude);
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
 
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
@@ -4329,7 +4329,7 @@ class SchemaTest {
 
             JoinedQueryElement join1Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_REGION_ID_STORE));
-            join1Left.setQuery(tableQuery1Left);
+            join1Left.setSource(tableQuery1Left);
 
             TableSource tableQuery1Right = SourceFactory.eINSTANCE.createTableSource();
             tableQuery1Right.setTable(regionTable);
@@ -4337,7 +4337,7 @@ class SchemaTest {
 
             JoinedQueryElement join1Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join1Right.setKey(region_id);
-            join1Right.setQuery(tableQuery1Right);
+            join1Right.setSource(tableQuery1Right);
 
             JoinSource join1 = SourceFactory.eINSTANCE.createJoinSource();
             join1.setLeft(join1Left);
@@ -4365,7 +4365,7 @@ class SchemaTest {
             ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-            h1.setQuery(join1);
+            h1.setSource(join1);
             h1.getLevels().add(l11);
             h1.getLevels().add(l12);
             h1.getLevels().add(l13);
@@ -4376,7 +4376,7 @@ class SchemaTest {
 
             JoinedQueryElement join2Left = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Left.setKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_REGION_ID_CUSTOMER));
-            join2Left.setQuery(tableQuery2Left);
+            join2Left.setSource(tableQuery2Left);
 
             TableSource tableQuery2Right = SourceFactory.eINSTANCE.createTableSource();
             tableQuery2Right.setTable(regionTable);
@@ -4384,7 +4384,7 @@ class SchemaTest {
 
             JoinedQueryElement join2Right = SourceFactory.eINSTANCE.createJoinedQueryElement();
             join2Right.setKey(region_id);
-            join2Right.setQuery(tableQuery2Right);
+            join2Right.setSource(tableQuery2Right);
 
             JoinSource join2 = SourceFactory.eINSTANCE.createJoinSource();
             join2.setLeft(join2Left);
@@ -4419,7 +4419,7 @@ class SchemaTest {
             h2.setHasAll(true);
             h2.setAllMemberName("All Customers");
             h2.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER));
-            h2.setQuery(join2);
+            h2.setSource(join2);
             h2.getLevels().add(l21);
             h2.getLevels().add(l22);
             h2.getLevels().add(l23);
@@ -4471,7 +4471,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
@@ -4710,7 +4710,7 @@ class SchemaTest {
             ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-            h1.setQuery(tableQuery1);
+            h1.setSource(tableQuery1);
             h1.getLevels().add(l11);
             h1.getLevels().add(l12);
 
@@ -4733,7 +4733,7 @@ class SchemaTest {
             ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h2.setHasAll(true);
             h2.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-            h2.setQuery(tableQuery2);
+            h2.setSource(tableQuery2);
             h2.getLevels().add(l21);
             h2.getLevels().add(l22);
 
@@ -4783,7 +4783,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
             cube.setDefaultMeasure(measure2);
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
@@ -4984,7 +4984,7 @@ class SchemaTest {
             ExplicitHierarchy h1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h1.setHasAll(true);
             h1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            h1.setQuery(tableQuery1);
+            h1.setSource(tableQuery1);
             h1.getLevels().add(l11);
             h1.getLevels().add(l12);
 
@@ -5007,7 +5007,7 @@ class SchemaTest {
             ExplicitHierarchy h2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             h2.setHasAll(true);
             h2.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            h2.setQuery(tableQuery2);
+            h2.setSource(tableQuery2);
             h2.getLevels().add(l21);
             h2.getLevels().add(l22);
 
@@ -5056,7 +5056,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("AliasedDimensionsTesting");
             cube.setDefaultMeasure(measure2);
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
@@ -5227,7 +5227,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Dimensions");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getDimensionConnectors().add(d3);
@@ -5412,7 +5412,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Dimensions");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getDimensionConnectors().add(d3);
@@ -5553,7 +5553,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Create Dimension");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
@@ -5707,7 +5707,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Customer Usage Level");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getMeasureGroups().add(measureGroup);
 
@@ -5871,7 +5871,7 @@ class SchemaTest {
             hierarchy.setHasAll(true);
             hierarchy.setAllMemberName("All Stores");
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
-            hierarchy.setQuery(hierarchyTableQuery);
+            hierarchy.setSource(hierarchyTableQuery);
             hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_COUNTRY);
             hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_STATE);
             hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_CITY);
@@ -5909,7 +5909,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Sales Dimensions");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
@@ -6050,7 +6050,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Sales Two Dimensions");
-            cube.setQuery(cubeTableQuery);
+            cube.setSource(cubeTableQuery);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
@@ -6312,7 +6312,7 @@ class SchemaTest {
             warehouseLevel.setColumnType(org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType.NUMERIC);
 
             ExplicitHierarchy warehouseHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-            warehouseHierarchy.setQuery(sqlView1);
+            warehouseHierarchy.setSource(sqlView1);
             warehouseHierarchy.getLevels().add(warehouseLevel);
 
             StandardDimension warehouseDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -6383,7 +6383,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Warehouse (based on view)");
-            cube.setQuery(cubeView);
+            cube.setSource(cubeView);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getDimensionConnectors().add(d3);
@@ -6632,7 +6632,7 @@ class SchemaTest {
             h1.setHasAll(true);
             h1.setDefaultMember("[USA]");
             h1.setPrimaryKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE);
-            h1.setQuery(warehouseTableQuery);
+            h1.setSource(warehouseTableQuery);
             h1.getLevels().add(l1);
             h1.getLevels().add(l2);
             h1.getLevels().add(l3);
@@ -6691,7 +6691,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Warehouse (based on view)");
-            cube.setQuery(view);
+            cube.setSource(view);
             cube.getDimensionConnectors().add(d1);
             cube.getDimensionConnectors().add(d2);
             cube.getDimensionConnectors().add(d3);
@@ -6929,7 +6929,7 @@ class SchemaTest {
             // Create cube
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
             cube.setName("Store2");
-            cube.setQuery(view);
+            cube.setSource(view);
             cube.getDimensionConnectors().add(d1);
             cube.getMeasureGroups().add(measureGroup);
 
@@ -7305,7 +7305,7 @@ class SchemaTest {
                 ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(false);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-                h11.setQuery(timeTableQuery);
+                h11.setSource(timeTableQuery);
                 h11.getLevels().add(l11);
                 h11.getLevels().add(l12);
                 h11.getLevels().add(l13);
@@ -7362,7 +7362,7 @@ class SchemaTest {
                 // Create cube
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c = CubeFactory.eINSTANCE.createPhysicalCube();
                 c.setName("Sales Degen");
-                c.setQuery(t);
+                c.setSource(t);
                 c.getDimensionConnectors().add(d1);
                 c.getDimensionConnectors().add(d2);
                 c.getMeasureGroups().add(measureGroup);
@@ -7719,7 +7719,7 @@ class SchemaTest {
                 ExplicitHierarchy h11 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(false);
                 h11.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-                h11.setQuery(timeTableQuery);
+                h11.setSource(timeTableQuery);
                 h11.getLevels().add(l11);
                 h11.getLevels().add(l12);
                 h11.getLevels().add(l13);
@@ -7794,7 +7794,7 @@ class SchemaTest {
                 // Create cube
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c = CubeFactory.eINSTANCE.createPhysicalCube();
                 c.setName("Denormalized Sales");
-                c.setQuery(t);
+                c.setSource(t);
                 c.getDimensionConnectors().add(d1);
                 c.getDimensionConnectors().add(d2);
                 c.getDimensionConnectors().add(d3);
@@ -8004,7 +8004,7 @@ class SchemaTest {
                     hierarchy.setHasAll(true);
                     hierarchy.setAllMemberName("All Stores");
                     hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED));
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level);
 
                     // Create StandardDimension using RolapMappingFactory
@@ -8197,7 +8197,7 @@ class SchemaTest {
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Sales2");
             c.setDefaultMeasure(unitSalesMeasure);
-            c.setQuery(tableQuery);
+            c.setSource(tableQuery);
             c.getDimensionConnectors().add(d1);
             c.getDimensionConnectors().add(d2);
             c.getMeasureGroups().add(measureGroup);
@@ -8390,7 +8390,7 @@ class SchemaTest {
             hierarchy.setHasAll(true);
             hierarchy.setAllMemberName("All Stores");
             hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
-            hierarchy.setQuery(tableQuery);
+            hierarchy.setSource(tableQuery);
             hierarchy.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
@@ -8529,7 +8529,7 @@ class SchemaTest {
                 h1.setAllMemberName("All Media");
                 h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
                 h1.setDefaultMember("All Media");
-                h1.setQuery(promotionTableQuery);
+                h1.setSource(promotionTableQuery);
                 h1.getLevels().add(level);
 
                 // Create StandardDimension using RolapMappingFactory
@@ -8566,7 +8566,7 @@ class SchemaTest {
                     CubeFactory.eINSTANCE.createPhysicalCube();
                 c.setName("OneDim");
                 c.setDefaultMeasure(unitSalesMeasure);
-                c.setQuery(factTableQuery);
+                c.setSource(factTableQuery);
                 c.getDimensionConnectors().add(d1);
                 c.getMeasureGroups().add(measureGroup);
                 catalog.getCubes().add(c);
@@ -8685,7 +8685,7 @@ class SchemaTest {
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("OneDimUsage");
             c.setDefaultMeasure(unitSalesMeasure);
-            c.setQuery(tableQuery);
+            c.setSource(tableQuery);
             c.getDimensionConnectors().add(d1);
             c.getMeasureGroups().add(measureGroup);
 
@@ -8841,7 +8841,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Cube with caption");
-            c.setQuery(tableQuery);
+            c.setSource(tableQuery);
 
             // Create DimensionConnector for VirtualCube using RolapMappingFactory
             //org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
@@ -8941,7 +8941,7 @@ class SchemaTest {
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("NoDim");
             c.setDefaultMeasure(m);
-            c.setQuery(tableQuery);
+            c.setSource(tableQuery);
             c.getMeasureGroups().add(measureGroup);
 
             catalog.getCubes().add(c);
@@ -9060,7 +9060,7 @@ class SchemaTest {
             h1.setAllMemberName("All Media");
             h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
             h1.setDefaultMember("All Media");
-            h1.setQuery(promotionTableQuery);
+            h1.setSource(promotionTableQuery);
             h1.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
@@ -9096,7 +9096,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("NoMeasures");
-            c.setQuery(factTableQuery);
+            c.setSource(factTableQuery);
             c.getDimensionConnectors().add(d1);
             c.getMeasureGroups().add(measureGroup);
 
@@ -9224,7 +9224,7 @@ class SchemaTest {
             h1.setAllMemberName("All Media");
             h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
             h1.setDefaultMember("All Media");
-            h1.setQuery(promotionTableQuery);
+            h1.setSource(promotionTableQuery);
             h1.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
@@ -9254,7 +9254,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("OneCalcMeasure");
-            c.setQuery(factTableQuery);
+            c.setSource(factTableQuery);
             c.getDimensionConnectors().add(d1);
             c.getCalculatedMembers().add(calculatedMember);
 
@@ -10018,7 +10018,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Sales Two Dimensions");
-            c.setQuery(tableQuery);
+            c.setSource(tableQuery);
             c.getDimensionConnectors().add(d1);
             c.getDimensionConnectors().add(d2);
             c.getDimensionConnectors().add(d3);
@@ -10203,7 +10203,7 @@ class SchemaTest {
             hierarchy.setHasAll(true);
             hierarchy.setAllMemberName("All Gender");
             hierarchy.setPrimaryKey(customerIdColumn);
-            hierarchy.setQuery(sqlSelectQuery);
+            hierarchy.setSource(sqlSelectQuery);
             hierarchy.getLevels().add(level);
 
             // Create StandardDimension using RolapMappingFactory
@@ -10254,7 +10254,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("GenderCube");
-            c.setQuery(tableQuery);
+            c.setSource(tableQuery);
             c.getDimensionConnectors().add(d1);
             c.getMeasureGroups().add(measureGroup);
 
@@ -10526,7 +10526,7 @@ class SchemaTest {
             h1.setHasAll(true);
             h1.setAllMemberName("All TIME(CALENDAR)");
             h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-            h1.setQuery(timeTableQuery);
+            h1.setSource(timeTableQuery);
             h1.getLevels().add(yearsLevel);
             h1.getLevels().add(quartersLevel);
             h1.getLevels().add(monthsLevel);
@@ -10580,7 +10580,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c =
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Sales Special Time");
-            c.setQuery(factTableQuery);
+            c.setSource(factTableQuery);
             c.getDimensionConnectors().add(d1);
             c.getDimensionConnectors().add(d2);
             c.getMeasureGroups().add(measureGroup);
@@ -11212,7 +11212,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
                 hierarchy.getLevels().add(level);
 
                 // Create StandardDimension
@@ -11489,7 +11489,7 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey(idColumn);
-                hierarchy.setQuery(inlineTableQuery);
+                hierarchy.setSource(inlineTableQuery);
                 hierarchy.getLevels().add(level1);
                 hierarchy.getLevels().add(level2);
 
@@ -11781,7 +11781,7 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey(idColumn);
-                hierarchy.setQuery(inlineTableQuery);
+                hierarchy.setSource(inlineTableQuery);
                 hierarchy.getLevels().add(level1);
                 hierarchy.getLevels().add(level2);
 
@@ -12015,7 +12015,7 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(false);
                 hierarchy.setPrimaryKey(idColumn);
-                hierarchy.setQuery(inlineTableQuery);
+                hierarchy.setSource(inlineTableQuery);
                 hierarchy.getLevels().add(level1);
                 hierarchy.getLevels().add(level2);
 
@@ -12207,7 +12207,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement leftElement =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftElement.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-                leftElement.setQuery(productTableQuery);
+                leftElement.setSource(productTableQuery);
 
                 // Create TableSource for product_class table
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
@@ -12218,7 +12218,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement rightElement =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightElement.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-                rightElement.setQuery(productClassTableQuery);
+                rightElement.setSource(productClassTableQuery);
 
                 // Create JoinSource
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource joinQuery =
@@ -12240,7 +12240,7 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
-                hierarchy.setQuery(joinQuery);
+                hierarchy.setSource(joinQuery);
                 hierarchy.getLevels().add(level);
 
                 // Create StandardDimension
@@ -12372,7 +12372,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement leftElement =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftElement.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                leftElement.setQuery(productTableQuery);
+                leftElement.setSource(productTableQuery);
 
                 // Create TableSource for product_class table
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productClassTableQuery =
@@ -12382,7 +12382,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement rightElement =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightElement.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                rightElement.setQuery(productClassTableQuery);
+                rightElement.setSource(productClassTableQuery);
 
                 // Create JoinSource
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource joinQuery =
@@ -12404,7 +12404,7 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
                 hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                hierarchy.setQuery(joinQuery);
+                hierarchy.setSource(joinQuery);
                 hierarchy.getLevels().add(level);
 
                 // Create StandardDimension
@@ -12578,7 +12578,7 @@ class SchemaTest {
                 CubeFactory.eINSTANCE.createPhysicalCube();
             sales2Cube.setName("Sales2");
             sales2Cube.setDefaultMeasure(unitSalesMeasure);
-            sales2Cube.setQuery(tableQuery);
+            sales2Cube.setSource(tableQuery);
             sales2Cube.getDimensionConnectors().add(storeConnector);
             sales2Cube.getDimensionConnectors().add(productConnector);
             sales2Cube.getMeasureGroups().add(measureGroup);
@@ -12858,7 +12858,7 @@ class SchemaTest {
                         HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(level1);
                     hierarchy.getLevels().add(level2);
                     hierarchy.getLevels().add(level3);
@@ -12933,7 +12933,7 @@ class SchemaTest {
                     ExplicitHierarchy h = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     h.setHasAll(true);
                     h.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-                    h.setQuery(query);
+                    h.setSource(query);
                     h.getLevels().addAll(List.of(l1, l2, l3, l4));
 
                     TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
@@ -13461,7 +13461,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource timeTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                timeHierarchy.setQuery(timeTableQuery);
+                timeHierarchy.setSource(timeTableQuery);
 
                 // Create Time levels
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level yearLevel =
@@ -13505,7 +13505,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource warehouseTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 warehouseTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_WAREHOUSE);
-                warehouseHierarchy.setQuery(warehouseTableQuery);
+                warehouseHierarchy.setSource(warehouseTableQuery);
 
                 // Create Warehouse levels
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level countryLevel =
@@ -13548,12 +13548,12 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j111Left =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j111Left.setKey(sales_district_id);
-                j111Left.setQuery(regionTableQuery);
+                j111Left.setSource(regionTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j111Right =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j111Right.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-                j111Right.setQuery(promotionTableQuery);
+                j111Right.setSource(promotionTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j111 =
                     SourceFactory.eINSTANCE.createJoinSource();
@@ -13566,12 +13566,12 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j11Left =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j11Left.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE);
-                j11Left.setQuery(storeTableQuery);
+                j11Left.setSource(storeTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j11Right =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j11Right.setKey(region_id);
-                j11Right.setQuery(j111);
+                j11Right.setSource(j111);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j11 =
                     SourceFactory.eINSTANCE.createJoinSource();
@@ -13590,7 +13590,7 @@ class SchemaTest {
                 hierarchyAnnotation.setName("a");
                 hierarchyAnnotation.setValue("Hierarchy");
                 h11.getAnnotations().add(hierarchyAnnotation);
-                h11.setQuery(j11);
+                h11.setSource(j11);
 
                 // Create Store Country level with annotations
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeCountryLevel =
@@ -13705,7 +13705,7 @@ class SchemaTest {
                 cubeAnnotation.setValue("Cube");
                 c1.getAnnotations().add(cubeAnnotation);
 
-                c1.setQuery(salesTableQuery);
+                c1.setSource(salesTableQuery);
                 c1.getDimensionConnectors().add(d1);
                 c1.getDimensionConnectors().add(d2);
                 c1.getDimensionConnectors().add(d3);
@@ -13755,7 +13755,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c2 =
                     CubeFactory.eINSTANCE.createPhysicalCube();
                 c2.setName(warehouseCubeName);
-                c2.setQuery(inventoryTableQuery);
+                c2.setSource(inventoryTableQuery);
                 c2.getDimensionConnectors().add(warehouseTimeConnector);
                 c2.getDimensionConnectors().add(warehouseConnector);
                 c2.getMeasureGroups().add(warehouseMeasureGroup);
@@ -14232,7 +14232,7 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
                         SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_CUSTOMER);
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
                     hierarchy.getLevels().add(genderLevel);
 
                     // Create dimension
@@ -14536,7 +14536,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-                storeHierarchy.setQuery(storeTableQuery);
+                storeHierarchy.setSource(storeTableQuery);
 
                 // Create Store levels
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level countryLevel =
@@ -14585,7 +14585,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
-                productHierarchy.setQuery(productTableQuery);
+                productHierarchy.setSource(productTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productNameLevel =
                     LevelFactory.eINSTANCE.createLevel();
@@ -14631,7 +14631,7 @@ class SchemaTest {
                 c1.setName("cube1");
                 c1.setCache(true);
                 c1.setEnabled(true);
-                c1.setQuery(cube1TableQuery);
+                c1.setSource(cube1TableQuery);
                 c1.getDimensionConnectors().add(dc1Store);
                 c1.getDimensionConnectors().add(dc1Product);
                 c1.getMeasureGroups().add(measureGroup1);
@@ -14696,7 +14696,7 @@ class SchemaTest {
                 c2.setName("cube2");
                 c2.setCache(true);
                 c2.setEnabled(true);
-                c2.setQuery(vv);
+                c2.setSource(vv);
                 c2.getDimensionConnectors().add(dc2Store);
                 c2.getDimensionConnectors().add(dc2Product);
                 c2.getMeasureGroups().add(measureGroup2);
@@ -15103,12 +15103,12 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Left =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Left.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE));
-                    j1Left.setQuery(storeTableQuery);
+                    j1Left.setSource(storeTableQuery);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Right =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Right.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-                    j1Right.setQuery(productClassTableQuery);
+                    j1Right.setSource(productClassTableQuery);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j1 =
                         SourceFactory.eINSTANCE.createJoinSource();
@@ -15122,12 +15122,12 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jLeft =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jLeft.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-                    jLeft.setQuery(productTableQuery);
+                    jLeft.setSource(productTableQuery);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jRight =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jRight.setKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE));
-                    jRight.setQuery(j1);
+                    jRight.setSource(j1);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j =
                         SourceFactory.eINSTANCE.createJoinSource();
@@ -15139,7 +15139,7 @@ class SchemaTest {
                         HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
-                    hierarchy.setQuery(j);
+                    hierarchy.setSource(j);
                     hierarchy.getLevels().add(l1);
                     hierarchy.getLevels().add(l2);
                     hierarchy.getLevels().add(l3);
@@ -15414,12 +15414,12 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Left =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Left.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE);
-                j1Left.setQuery(storeTableQuery);
+                j1Left.setSource(storeTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Right =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 j1Right.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                j1Right.setQuery(productClassTableQuery);
+                j1Right.setSource(productClassTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j1 =
                     SourceFactory.eINSTANCE.createJoinSource();
@@ -15432,12 +15432,12 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jLeft =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 jLeft.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-                jLeft.setQuery(productTableQuery);
+                jLeft.setSource(productTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jRight =
                     SourceFactory.eINSTANCE.createJoinedQueryElement();
                 jRight.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
-                jRight.setQuery(j1);
+                jRight.setSource(j1);
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j =
                     SourceFactory.eINSTANCE.createJoinSource();
@@ -15449,7 +15449,7 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h1.setHasAll(true);
                 h1.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                h1.setQuery(j);
+                h1.setSource(j);
                 h1.getLevels().add(l1);
                 h1.getLevels().add(l2);
                 h1.getLevels().add(l3);
@@ -15477,7 +15477,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource timeTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 timeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                timeHierarchy.setQuery(timeTableQuery);
+                timeHierarchy.setSource(timeTableQuery);
 
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level yearLevel =
                     LevelFactory.eINSTANCE.createLevel();
@@ -15536,7 +15536,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
                     CubeFactory.eINSTANCE.createPhysicalCube();
                 salesCube.setName("Sales");
-                salesCube.setQuery(salesTableQuery);
+                salesCube.setSource(salesTableQuery);
                 salesCube.getDimensionConnectors().add(timeConnector);
                 salesCube.getDimensionConnectors().add(product3Connector);
                 salesCube.getMeasureGroups().add(measureGroup);
@@ -15791,12 +15791,12 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Left =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Left.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-                    j1Left.setQuery(productTableQuery);
+                    j1Left.setSource(productTableQuery);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement j1Right =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     j1Right.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_REGION_ID_STORE);
-                    j1Right.setQuery(storeTableQuery);
+                    j1Right.setSource(storeTableQuery);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j1 =
                         SourceFactory.eINSTANCE.createJoinSource();
@@ -15810,12 +15810,12 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jLeft =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jLeft.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
-                    jLeft.setQuery(j1);  // LEFT side is a JOIN - this should cause error!
+                    jLeft.setSource(j1);  // LEFT side is a JOIN - this should cause error!
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement jRight =
                         SourceFactory.eINSTANCE.createJoinedQueryElement();
                     jRight.setKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-                    jRight.setQuery(productClassTableQuery);
+                    jRight.setSource(productClassTableQuery);
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource j =
                         SourceFactory.eINSTANCE.createJoinSource();
@@ -15827,7 +15827,7 @@ class SchemaTest {
                         HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                     hierarchy.setHasAll(true);
                     hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                    hierarchy.setQuery(j);
+                    hierarchy.setSource(j);
                     hierarchy.getLevels().add(l1);
                     hierarchy.getLevels().add(l2);
                     hierarchy.getLevels().add(l3);
@@ -15989,7 +15989,7 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
                         SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_EMPLOYEE));
-                    hierarchy.setQuery(tableQuery);
+                    hierarchy.setSource(tableQuery);
 
                     hierarchy.getLevels().add(managementRoleLevel);
                     hierarchy.getLevels().add(positionTitleLevel);
@@ -16332,7 +16332,7 @@ class SchemaTest {
                         CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
                     fooCube.setVisible(testValue);
-                    fooCube.setQuery(tableQuery);
+                    fooCube.setSource(tableQuery);
                     fooCube.getDimensionConnectors().add(dimensionConnector);
                     fooCube.getMeasureGroups().add(measureGroup);
 
@@ -16604,7 +16604,7 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
                         CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
-                    fooCube.setQuery(tableQuery);
+                    fooCube.setSource(tableQuery);
                     fooCube.getDimensionConnectors().add(dimensionConnector);
                     fooCube.getMeasureGroups().add(measureGroup);
 
@@ -16918,7 +16918,7 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
                         CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
-                    fooCube.setQuery(tableQuery);
+                    fooCube.setSource(tableQuery);
                     fooCube.getDimensionConnectors().add(baconDimensionConnector);
                     fooCube.getDimensionConnectors().add(barDimensionConnector);
                     fooCube.getMeasureGroups().add(measureGroup);
@@ -17087,7 +17087,7 @@ class SchemaTest {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
                         CubeFactory.eINSTANCE.createPhysicalCube();
                     fooCube.setName("Foo");
-                    fooCube.setQuery(tableQuery);
+                    fooCube.setSource(tableQuery);
                     fooCube.getDimensionConnectors().add(dimensionConnector);
                     fooCube.getMeasureGroups().add(measureGroup);
 
@@ -17205,7 +17205,7 @@ class SchemaTest {
 
                     TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                     tableQuery.setTable(CatalogSupplier.TABLE_STORE);
-                    fooCube.setQuery(tableQuery);
+                    fooCube.setSource(tableQuery);
 
                     DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                     dimConnector.setOverrideDimensionName("Bar");
@@ -17529,7 +17529,7 @@ class SchemaTest {
                 PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
                 fooCube.setName("Foo");
                 fooCube.setDefaultMeasure(measure);
-                fooCube.setQuery(tableQuery);
+                fooCube.setSource(tableQuery);
 
                 DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
                 dimConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
@@ -17548,17 +17548,17 @@ class SchemaTest {
                 left.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
                 TableSource leftTable = SourceFactory.eINSTANCE.createTableSource();
                 leftTable.setTable(CatalogSupplier.TABLE_PRODUCT);
-                left.setQuery(leftTable);
+                left.setSource(leftTable);
 
                 JoinedQueryElement right = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 right.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
                 TableSource rightTable = SourceFactory.eINSTANCE.createTableSource();
                 rightTable.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
-                right.setQuery(rightTable);
+                right.setSource(rightTable);
 
                 joinQuery.setLeft(left);
                 joinQuery.setRight(right);
-                hierarchy.setQuery(joinQuery);
+                hierarchy.setSource(joinQuery);
 
                 hierarchy.getLevels().add(l1);
                 hierarchy.getLevels().add(l2);
@@ -17669,13 +17669,13 @@ class SchemaTest {
 
             JoinedQueryElement storeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeJoinLeft.setKey(CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
-            storeJoinLeft.setQuery(employeeTableWithWhere1);
+            storeJoinLeft.setSource(employeeTableWithWhere1);
 
             TableSource storeTableQuery = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery.setTable(CatalogSupplier.TABLE_STORE);
             JoinedQueryElement storeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeJoinRight.setKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storeJoinRight.setQuery(storeTableQuery);
+            storeJoinRight.setSource(storeTableQuery);
 
             JoinSource storeJoin = SourceFactory.eINSTANCE.createJoinSource();
             storeJoin.setLeft(storeJoinLeft);
@@ -17751,7 +17751,7 @@ class SchemaTest {
             ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            storeHierarchy.setQuery(storeJoin);
+            storeHierarchy.setSource(storeJoin);
             storeHierarchy.getLevels().add(storeLevel1);
             storeHierarchy.getLevels().add(storeLevel2);
             storeHierarchy.getLevels().add(storeLevel3);
@@ -17776,13 +17776,13 @@ class SchemaTest {
 
             JoinedQueryElement payTypeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             payTypeJoinLeft.setKey(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);
-            payTypeJoinLeft.setQuery(employeeTableWithWhere2);
+            payTypeJoinLeft.setSource(employeeTableWithWhere2);
 
             TableSource positionTableQuery = SourceFactory.eINSTANCE.createTableSource();
             positionTableQuery.setTable(CatalogSupplier.TABLE_POSITION);
             JoinedQueryElement payTypeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             payTypeJoinRight.setKey(CatalogSupplier.COLUMN_POSITION_ID_POSITION);
-            payTypeJoinRight.setQuery(positionTableQuery);
+            payTypeJoinRight.setSource(positionTableQuery);
 
             JoinSource payTypeJoin = SourceFactory.eINSTANCE.createJoinSource();
             payTypeJoin.setLeft(payTypeJoinLeft);
@@ -17796,7 +17796,7 @@ class SchemaTest {
             ExplicitHierarchy payTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             payTypeHierarchy.setHasAll(true);
             payTypeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            payTypeHierarchy.setQuery(payTypeJoin);
+            payTypeHierarchy.setSource(payTypeJoin);
             payTypeHierarchy.getLevels().add(payTypeLevel);
 
             StandardDimension payTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -17818,13 +17818,13 @@ class SchemaTest {
 
             JoinedQueryElement storeTypeJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeTypeJoinLeft.setKey(CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
-            storeTypeJoinLeft.setQuery(employeeTableWithWhere3);
+            storeTypeJoinLeft.setSource(employeeTableWithWhere3);
 
             TableSource storeTableQuery2 = SourceFactory.eINSTANCE.createTableSource();
             storeTableQuery2.setTable(CatalogSupplier.TABLE_STORE);
             JoinedQueryElement storeTypeJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
             storeTypeJoinRight.setKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storeTypeJoinRight.setQuery(storeTableQuery2);
+            storeTypeJoinRight.setSource(storeTableQuery2);
 
             JoinSource storeTypeJoin = SourceFactory.eINSTANCE.createJoinSource();
             storeTypeJoin.setLeft(storeTypeJoinLeft);
@@ -17837,7 +17837,7 @@ class SchemaTest {
             ExplicitHierarchy storeTypeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             storeTypeHierarchy.setHasAll(true);
             storeTypeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            storeTypeHierarchy.setQuery(storeTypeJoin);
+            storeTypeHierarchy.setSource(storeTypeJoin);
             storeTypeHierarchy.getLevels().add(storeTypeLevel);
 
             StandardDimension storeTypeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -17875,7 +17875,7 @@ class SchemaTest {
             positionHierarchy.setHasAll(true);
             positionHierarchy.setAllMemberName("All Position");
             positionHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            positionHierarchy.setQuery(employeeTableWithWhere4);
+            positionHierarchy.setSource(employeeTableWithWhere4);
             positionHierarchy.getLevels().add(positionLevel1);
             positionHierarchy.getLevels().add(positionLevel2);
 
@@ -17944,7 +17944,7 @@ class SchemaTest {
             employeeHierarchy.setHasAll(true);
             employeeHierarchy.setAllMemberName("All Employees");
             employeeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
-            employeeHierarchy.setQuery(employeeTableWithWhere5);
+            employeeHierarchy.setSource(employeeTableWithWhere5);
             employeeHierarchy.setParentColumn(CatalogSupplier.COLUMN_SUPERVISOR_ID_EMPLOYEE);
             employeeHierarchy.setNullParentValue("0");
             employeeHierarchy.setParentChildLink(parentChildLink);
@@ -17972,7 +17972,7 @@ class SchemaTest {
 
             PhysicalCube hrCube = CubeFactory.eINSTANCE.createPhysicalCube();
             hrCube.setName("HR");
-            hrCube.setQuery(salaryTableQuery);
+            hrCube.setSource(salaryTableQuery);
             hrCube.getDimensionConnectors().add(d1);
             hrCube.getDimensionConnectors().add(d2);
             hrCube.getDimensionConnectors().add(d3);
@@ -18160,7 +18160,7 @@ class SchemaTest {
             hierarchy.getLevels().add(level1);
             hierarchy.getLevels().add(level2);
             hierarchy.getLevels().add(level3);
-            hierarchy.setQuery(inlineTableQuery);
+            hierarchy.setSource(inlineTableQuery);
 
             // Create dimension
             dimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -18317,10 +18317,10 @@ class SchemaTest {
             tableQueryProductClass.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
 
             joinLeft.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-            joinLeft.setQuery(tableQueryProduct);
+            joinLeft.setSource(tableQueryProduct);
 
             joinRight.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-            joinRight.setQuery(tableQueryProductClass);
+            joinRight.setSource(tableQueryProductClass);
 
             joinQuery.setLeft(joinLeft);
             joinQuery.setRight(joinRight);
@@ -18328,7 +18328,7 @@ class SchemaTest {
             // Product hierarchy
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
-            productHierarchy.setQuery(joinQuery);
+            productHierarchy.setSource(joinQuery);
             productHierarchy.getLevels().add(level1);
             productHierarchy.getLevels().add(level2);
             productHierarchy.getLevels().add(level3);
@@ -18357,7 +18357,7 @@ class SchemaTest {
             // Cube
             fooCube.setName("Foo");
             fooCube.setDefaultMeasure(measure);
-            fooCube.setQuery(tableQuery);
+            fooCube.setSource(tableQuery);
             fooCube.getDimensionConnectors().add(dimensionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
@@ -18541,10 +18541,10 @@ class SchemaTest {
             tableQueryProduct.setTable(CatalogSupplier.TABLE_PRODUCT);
             tableQueryProductClass.setTable(CatalogSupplier.TABLE_PRODUCT_CLASS);
             productJoinLeft.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT);
-            productJoinLeft.setQuery(tableQueryProduct);
+            productJoinLeft.setSource(tableQueryProduct);
 
             productJoinRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            productJoinRight.setQuery(tableQueryProductClass);
+            productJoinRight.setSource(tableQueryProductClass);
 
             productJoinQuery.setLeft(productJoinLeft);
             productJoinQuery.setRight(productJoinRight);
@@ -18552,7 +18552,7 @@ class SchemaTest {
             // Product hierarchy
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-            productHierarchy.setQuery(productJoinQuery);
+            productHierarchy.setSource(productJoinQuery);
             productHierarchy.getLevels().add(productLevel1);
             productHierarchy.getLevels().add(productLevel2);
             productHierarchy.getLevels().add(productLevel3);
@@ -18583,10 +18583,10 @@ class SchemaTest {
             tableQueryStore.setTable(CatalogSupplier.TABLE_STORE);
             tableQueryRegion.setTable(regionTable);
             storeJoinLeft.setKey(CatalogSupplier.COLUMN_REGION_ID_STORE);
-            storeJoinLeft.setQuery(tableQueryStore);
+            storeJoinLeft.setSource(tableQueryStore);
 
             storeJoinRight.setKey(regionIdColumn);
-            storeJoinRight.setQuery(tableQueryRegion);
+            storeJoinRight.setSource(tableQueryRegion);
 
             storeJoinQuery.setLeft(storeJoinLeft);
             storeJoinQuery.setRight(storeJoinRight);
@@ -18594,7 +18594,7 @@ class SchemaTest {
             // Store hierarchy
             storeHierarchy.setHasAll(true);
             storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            storeHierarchy.setQuery(storeJoinQuery);
+            storeHierarchy.setSource(storeJoinQuery);
             storeHierarchy.getLevels().add(storeLevel1);
             storeHierarchy.getLevels().add(storeLevel2);
 
@@ -18618,7 +18618,7 @@ class SchemaTest {
             // Cube
             fooCube.setName("Foo");
             fooCube.setDefaultMeasure(measure);
-            fooCube.setQuery(tableQuery);
+            fooCube.setSource(tableQuery);
             fooCube.getDimensionConnectors().add(productDimensionConnector);
             fooCube.getDimensionConnectors().add(storeDimensionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
@@ -18757,10 +18757,10 @@ class SchemaTest {
             tableQueryProductClass.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
 
             joinLeft.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-            joinLeft.setQuery(tableQueryProduct);
+            joinLeft.setSource(tableQueryProduct);
 
             joinRight.setKey(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS);
-            joinRight.setQuery(tableQueryProductClass);
+            joinRight.setSource(tableQueryProductClass);
 
             joinQuery.setLeft(joinLeft);
             joinQuery.setRight(joinRight);
@@ -18768,7 +18768,7 @@ class SchemaTest {
             // Product hierarchy
             productHierarchy.setHasAll(true);
             productHierarchy.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
-            productHierarchy.setQuery(joinQuery);
+            productHierarchy.setSource(joinQuery);
             productHierarchy.getLevels().add(level1);
             productHierarchy.getLevels().add(level2);
             productHierarchy.getLevels().add(level3);
@@ -18797,7 +18797,7 @@ class SchemaTest {
             // Cube
             fooCube.setName("Foo");
             fooCube.setDefaultMeasure(measure);
-            fooCube.setQuery(tableQuery);
+            fooCube.setSource(tableQuery);
             fooCube.getDimensionConnectors().add(dimensionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
@@ -18925,12 +18925,12 @@ class SchemaTest {
             // Dimension Connector A (Store Type)
             dimensionConnectorA.setOverrideDimensionName("Store Type");
             dimensionConnectorA.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
-            dimensionConnectorA.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE));
+            dimensionConnectorA.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_STORE));
 
             // Dimension Connector B (Store Type)
             dimensionConnectorB.setOverrideDimensionName("Store Type");
             dimensionConnectorB.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-            dimensionConnectorB.setDimension(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE);
+            dimensionConnectorB.setDimension(CatalogSupplier.DIMENSION_STORE_TYPE_WITH_SOURCE_STORE);
 
             // Measure Group A
             measureGroupA.getMeasures().add(measureA);
@@ -18944,14 +18944,14 @@ class SchemaTest {
             // Cube A
             cubeA.setName("CubeA");
             cubeA.setDefaultMeasure(measureA);
-            cubeA.setQuery(tableQueryA);
+            cubeA.setSource(tableQueryA);
             cubeA.getDimensionConnectors().add(dimensionConnectorA);
             cubeA.getMeasureGroups().add(measureGroupA);
 
             // Cube B
             cubeB.setName("CubeB");
             cubeB.setDefaultMeasure(measureB);
-            cubeB.setQuery(tableQueryB);
+            cubeB.setSource(tableQueryB);
             cubeB.getDimensionConnectors().add(dimensionConnectorB);
             cubeB.getMeasureGroups().add(measureGroupB);
 
@@ -19049,7 +19049,7 @@ class SchemaTest {
             ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-            hierarchy.setQuery(storeTableQuery);
+            hierarchy.setSource(storeTableQuery);
             hierarchy.getLevels().add(level);
 
             // Create dimension with annotation
@@ -19099,7 +19099,7 @@ class SchemaTest {
             PhysicalCube salesCube = CubeFactory.eINSTANCE.createPhysicalCube();
             salesCube.setName("Sales");
             salesCube.setDefaultMeasure(measure);
-            salesCube.setQuery(salesTableQuery);
+            salesCube.setSource(salesTableQuery);
             salesCube.getDimensionConnectors().add(dimensionConnector);
             salesCube.getMeasureGroups().add(measureGroup);
 
@@ -20015,7 +20015,7 @@ class SchemaTest {
                 hierarchy.setAllMemberName("All Position");
                 hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_EMPLOYEE);
                 hierarchy.getLevels().add(level);
-                hierarchy.setQuery(tableQuery);
+                hierarchy.setSource(tableQuery);
 
                 dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("Position" + n);

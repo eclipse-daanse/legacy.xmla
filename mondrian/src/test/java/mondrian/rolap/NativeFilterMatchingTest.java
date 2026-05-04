@@ -469,7 +469,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 TableSource storeTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 storeTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
-                hierarchy.setQuery(storeTableQuery);
+                hierarchy.setSource(storeTableQuery);
                 hierarchy.getLevels().add(storeCountryLevel);
                 hierarchy.getLevels().add(storeStateLevel);
 
@@ -501,7 +501,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 TableSource salesTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 salesTableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT));
-                tinySalesCube.setQuery(salesTableQuery);
+                tinySalesCube.setSource(salesTableQuery);
 
                 // Create dimension connector for Product
                 DimensionConnector productDimConnector =

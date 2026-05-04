@@ -155,7 +155,7 @@ public class HangerDimensionTestModifiers {
             ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
             hierarchy.setHasAll(true);
             hierarchy.setPrimaryKey(hangerKey);
-            hierarchy.setQuery(inlineTableQuery);
+            hierarchy.setSource(inlineTableQuery);
             hierarchy.getLevels().add(hangerLevel);
 
             // Create dimension using RolapMappingFactory

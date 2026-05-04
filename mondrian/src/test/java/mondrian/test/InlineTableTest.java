@@ -223,7 +223,7 @@ class InlineTableTest {
                 ExplicitHierarchy altPromoHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 altPromoHierarchy.setHasAll(true);
                 altPromoHierarchy.setPrimaryKey(promoIdColumn);
-                altPromoHierarchy.setQuery(inlineTableQuery);
+                altPromoHierarchy.setSource(inlineTableQuery);
                 altPromoHierarchy.getLevels().add(altPromoLevel);
 
                 // Create dimension
@@ -238,7 +238,7 @@ class InlineTableTest {
                 // Set up query
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(tableQuery);
+                cube.setSource(tableQuery);
 
                 // Create dimension connector for Time
                 DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -507,7 +507,7 @@ class InlineTableTest {
                 ExplicitHierarchy altPromoHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 altPromoHierarchy.setHasAll(true);
                 altPromoHierarchy.setPrimaryKey(PROMO_ID_COLUMN);
-                altPromoHierarchy.setQuery(inlineTableQuery);
+                altPromoHierarchy.setSource(inlineTableQuery);
                 altPromoHierarchy.getLevels().add(altPromoLevel);
 
                 // Create shared dimension
@@ -521,7 +521,7 @@ class InlineTableTest {
                 // Set up query
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
-                cube.setQuery(tableQuery);
+                cube.setSource(tableQuery);
 
                 // Create dimension connector for Time
                 DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -826,11 +826,11 @@ class InlineTableTest {
                 // Create join: store LEFT JOIN nation
                 JoinedQueryElement leftJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 leftJoin.setKey(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
-                leftJoin.setQuery(storeTableQuery);
+                leftJoin.setSource(storeTableQuery);
 
                 JoinedQueryElement rightJoin = SourceFactory.eINSTANCE.createJoinedQueryElement();
                 rightJoin.setKey(nationNameColumn);
-                rightJoin.setQuery(nationInlineTableQuery);
+                rightJoin.setSource(nationInlineTableQuery);
 
                 JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
                 joinQuery.setLeft(leftJoin);
@@ -862,7 +862,7 @@ class InlineTableTest {
                 ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 storeHierarchy.setHasAll(true);
                 storeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-                storeHierarchy.setQuery(joinQuery);
+                storeHierarchy.setSource(joinQuery);
                 storeHierarchy.getLevels().add(storeCountryLevel);
                 storeHierarchy.getLevels().add(storeStateLevel);
                 storeHierarchy.getLevels().add(storeCityLevel);
@@ -880,7 +880,7 @@ class InlineTableTest {
                 // Set up query for cube (sales_fact_1997)
                 TableSource cubeTableQuery = SourceFactory.eINSTANCE.createTableSource();
                 cubeTableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(cubeTableQuery);
+                cube.setSource(cubeTableQuery);
 
                 // Create dimension connector for Time
                 DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -1181,7 +1181,7 @@ class InlineTableTest {
                 ExplicitHierarchy altPromoHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 altPromoHierarchy.setHasAll(true);
                 altPromoHierarchy.setPrimaryKey(idColumn);
-                altPromoHierarchy.setQuery(inlineTableQuery);
+                altPromoHierarchy.setSource(inlineTableQuery);
                 altPromoHierarchy.getLevels().add(altPromoLevel);
 
                 // Create dimension
@@ -1196,7 +1196,7 @@ class InlineTableTest {
                 // Set up query
                 TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(tableQuery);
+                cube.setSource(tableQuery);
 
                 // Create dimension connector for Time
                 DimensionConnector timeDimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();

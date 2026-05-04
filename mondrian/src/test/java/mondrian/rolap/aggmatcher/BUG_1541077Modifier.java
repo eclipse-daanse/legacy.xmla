@@ -395,7 +395,7 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
         storeHierarchy.setPrimaryKey(store_id_store_x);
-        storeHierarchy.setQuery(storeQuery);
+        storeHierarchy.setSource(storeQuery);
         storeHierarchy.getLevels().add(storeValueLevel);
 
         StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -419,7 +419,7 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setPrimaryKey(prod_id_product_x);
-        productHierarchy.setQuery(productQuery);
+        productHierarchy.setSource(productQuery);
         productHierarchy.getLevels().add(storeNameLevel);
 
         StandardDimension productDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -463,7 +463,7 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         // Create cube using RolapMappingFactory
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("Cheques");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(storeConnector);
         cube.getDimensionConnectors().add(productConnector);
         cube.getMeasureGroups().add(measureGroup);

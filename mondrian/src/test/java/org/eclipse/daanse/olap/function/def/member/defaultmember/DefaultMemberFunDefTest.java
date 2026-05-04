@@ -101,7 +101,7 @@ class DefaultMemberFunDefTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy1.setHasAll(false);
                 hierarchy1.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
-                hierarchy1.setQuery(tableQuery1);
+                hierarchy1.setSource(tableQuery1);
                 hierarchy1.getLevels().add(yearLevel1);
                 hierarchy1.getLevels().add(quarterLevel);
                 hierarchy1.getLevels().add(monthLevel);
@@ -141,7 +141,7 @@ class DefaultMemberFunDefTest {
                 hierarchy2.setHasAll(true);
                 hierarchy2.setPrimaryKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
                 hierarchy2.setDefaultMember("[Time2].[Weekly].[1997].[23]"); // Set explicit default member
-                hierarchy2.setQuery(tableQuery2);
+                hierarchy2.setSource(tableQuery2);
                 hierarchy2.getLevels().add(yearLevel2);
                 hierarchy2.getLevels().add(weekLevel);
                 hierarchy2.getLevels().add(dayLevel);

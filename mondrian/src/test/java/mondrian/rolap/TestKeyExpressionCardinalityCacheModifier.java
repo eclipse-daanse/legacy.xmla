@@ -197,7 +197,7 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         HIERARCHY_STORE1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_STORE1.setHasAll(true);
         HIERARCHY_STORE1.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-        HIERARCHY_STORE1.setQuery(TABLE_QUERY_STORE1);
+        HIERARCHY_STORE1.setSource(TABLE_QUERY_STORE1);
         HIERARCHY_STORE1.getLevels().add(LEVEL_STORE1_COUNTRY);
 
         DIMENSION_STORE1 = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -216,7 +216,7 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         HIERARCHY_STORE2 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_STORE2.setHasAll(true);
         HIERARCHY_STORE2.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
-        HIERARCHY_STORE2.setQuery(TABLE_QUERY_STORE2);
+        HIERARCHY_STORE2.setSource(TABLE_QUERY_STORE2);
         HIERARCHY_STORE2.getLevels().add(LEVEL_STORE2_COUNTRY);
 
         DIMENSION_STORE2 = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -251,7 +251,7 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         CUBE_SALES1 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_SALES1.setName("Sales1");
         CUBE_SALES1.setDefaultMeasure(MEASURE_SALES1_UNIT_SALES);
-        CUBE_SALES1.setQuery(TABLE_QUERY_SALES1_FACT);
+        CUBE_SALES1.setSource(TABLE_QUERY_SALES1_FACT);
         CUBE_SALES1.getDimensionConnectors().add(CONNECTOR_SALES1_STORE1);
         CUBE_SALES1.getMeasureGroups().add(MEASURE_GROUP_SALES1);
 
@@ -275,7 +275,7 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         CUBE_SALES2 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_SALES2.setName("Sales2");
         CUBE_SALES2.setDefaultMeasure(MEASURE_SALES2_UNIT_SALES);
-        CUBE_SALES2.setQuery(TABLE_QUERY_SALES2_FACT);
+        CUBE_SALES2.setSource(TABLE_QUERY_SALES2_FACT);
         CUBE_SALES2.getDimensionConnectors().add(CONNECTOR_SALES2_STORE2);
         CUBE_SALES2.getMeasureGroups().add(MEASURE_GROUP_SALES2);
     }

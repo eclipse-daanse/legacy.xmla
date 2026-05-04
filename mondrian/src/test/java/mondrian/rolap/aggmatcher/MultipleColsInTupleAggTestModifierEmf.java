@@ -277,7 +277,7 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
         storeHierarchy.setPrimaryKey(storeIdStoreCsv);
-        storeHierarchy.setQuery(storeQuery);
+        storeHierarchy.setSource(storeQuery);
         storeHierarchy.getLevels().add(storeValueLevel);
 
         StandardDimension storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -329,14 +329,14 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
 
         JoinedQueryElement catJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         catJoinedElement.setKey(catCat);
-        catJoinedElement.setQuery(catQuery);
+        catJoinedElement.setSource(catQuery);
 
         TableSource productCatQuery = SourceFactory.eINSTANCE.createTableSource();
         productCatQuery.setTable(productCat);
 
         JoinedQueryElement productCatJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productCatJoinedElement.setKey(catProductCat);
-        productCatJoinedElement.setQuery(productCatQuery);
+        productCatJoinedElement.setSource(productCatQuery);
 
         JoinSource innerJoin = SourceFactory.eINSTANCE.createJoinSource();
         innerJoin.setLeft(productCatJoinedElement);
@@ -348,12 +348,12 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
 
         JoinedQueryElement productCsvJoinedElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productCsvJoinedElement.setKey(prodCatProductCsv);
-        productCsvJoinedElement.setQuery(productCsvQuery);
+        productCsvJoinedElement.setSource(productCsvQuery);
 
         JoinedQueryElement innerJoinElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         innerJoinElement.setAlias("product_cat");
         innerJoinElement.setKey(prodCatProductCat);
-        innerJoinElement.setQuery(innerJoin);
+        innerJoinElement.setSource(innerJoin);
 
         JoinSource outerJoin = SourceFactory.eINSTANCE.createJoinSource();
         outerJoin.setLeft(productCsvJoinedElement);
@@ -362,7 +362,7 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         ExplicitHierarchy productHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         productHierarchy.setHasAll(true);
         productHierarchy.setPrimaryKey(prodIdProductCsv);
-        productHierarchy.setQuery(outerJoin);
+        productHierarchy.setSource(outerJoin);
         productHierarchy.getLevels().add(categoryLevel);
         productHierarchy.getLevels().add(productCategoryLevel);
         productHierarchy.getLevels().add(productNameLevel);
@@ -389,7 +389,7 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("Fact");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(storeConnector);
         cube.getDimensionConnectors().add(productConnector);
         cube.getMeasureGroups().add(measureGroup);

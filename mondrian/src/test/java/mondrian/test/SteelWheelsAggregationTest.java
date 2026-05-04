@@ -131,7 +131,7 @@ class SteelWheelsAggregationTest {
     customersHierarchy.setHasAll(true);
     customersHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMERNUMBER_CUSTOMER);
     //.withCaption("Customer Hierarchy")
-    customersHierarchy.setQuery(customerQuery);
+    customersHierarchy.setSource(customerQuery);
     customersHierarchy.getLevels().addAll(List.of(
                 addressLevel,
                 nameLevel
@@ -164,7 +164,7 @@ class SteelWheelsAggregationTest {
     customersCube.setVisible(true);
     customersCube.setCache(true);
     customersCube.setEnabled(true);
-    customersCube.setQuery(tq);
+    customersCube.setSource(tq);
     customersCube.getDimensionConnectors().add(dcCustomer);
     customersCube.getMeasureGroups().add(mg);
     }

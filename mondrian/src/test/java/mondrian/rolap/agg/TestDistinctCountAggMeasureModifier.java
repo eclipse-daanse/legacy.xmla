@@ -167,7 +167,7 @@ public class TestDistinctCountAggMeasureModifier implements CatalogMappingSuppli
         HIERARCHY_TIME = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_TIME.setHasAll(false);
         HIERARCHY_TIME.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY));
-        HIERARCHY_TIME.setQuery(TABLE_QUERY_TIME_BY_DAY);
+        HIERARCHY_TIME.setSource(TABLE_QUERY_TIME_BY_DAY);
         HIERARCHY_TIME.getLevels().addAll(List.of(LEVEL_YEAR, LEVEL_QUARTER, LEVEL_MONTH));
 
         // Create Time dimension
@@ -304,7 +304,7 @@ public class TestDistinctCountAggMeasureModifier implements CatalogMappingSuppli
         CUBE_SALES = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_SALES.setName("Sales");
         CUBE_SALES.setDefaultMeasure(MEASURE_UNIT_SALES);
-        CUBE_SALES.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_SALES.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_SALES.getDimensionConnectors().add(CONNECTOR_TIME);
         CUBE_SALES.getMeasureGroups().add(MEASURE_GROUP);
 

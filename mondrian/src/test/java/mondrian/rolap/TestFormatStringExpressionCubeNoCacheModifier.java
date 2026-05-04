@@ -127,7 +127,7 @@ public class TestFormatStringExpressionCubeNoCacheModifier implements CatalogMap
         // Create physical cube "Warehouse No Cache"
         CUBE_WAREHOUSE_NO_CACHE = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_WAREHOUSE_NO_CACHE.setName("Warehouse No Cache");
-        CUBE_WAREHOUSE_NO_CACHE.setQuery(TABLE_QUERY_INVENTORY_FACT);
+        CUBE_WAREHOUSE_NO_CACHE.setSource(TABLE_QUERY_INVENTORY_FACT);
         CUBE_WAREHOUSE_NO_CACHE.getDimensionConnectors().addAll(List.of(CONNECTOR_TIME, CONNECTOR_STORE));
         CUBE_WAREHOUSE_NO_CACHE.getMeasureGroups().add(MEASURE_GROUP_WAREHOUSE_NO_CACHE);
 

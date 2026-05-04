@@ -100,7 +100,7 @@ public class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier implements Cata
         HIERARCHY_DATE = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_DATE.setHasAll(false);
         HIERARCHY_DATE.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-        HIERARCHY_DATE.setQuery(TABLE_QUERY);
+        HIERARCHY_DATE.setSource(TABLE_QUERY);
         HIERARCHY_DATE.getLevels().addAll(List.of(LEVEL_YEAR, LEVEL_QUARTER, LEVEL_MONTH));
 
         // Create Time Dimension

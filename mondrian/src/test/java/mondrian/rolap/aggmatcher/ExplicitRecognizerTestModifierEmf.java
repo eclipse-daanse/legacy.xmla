@@ -167,7 +167,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
         TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
         storeQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
-        storeHierarchy.setQuery(storeQuery);
+        storeHierarchy.setSource(storeQuery);
 
         // Store Country level
         Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
@@ -226,20 +226,20 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
         JoinedQueryElement productElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productElement.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-        productElement.setQuery(productQuery);
+        productElement.setSource(productQuery);
 
         TableSource productClassQuery = SourceFactory.eINSTANCE.createTableSource();
         productClassQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
 
         JoinedQueryElement productClassElement = SourceFactory.eINSTANCE.createJoinedQueryElement();
         productClassElement.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-        productClassElement.setQuery(productClassQuery);
+        productClassElement.setSource(productClassQuery);
 
         JoinSource joinQuery = SourceFactory.eINSTANCE.createJoinSource();
         joinQuery.setLeft(productElement);
         joinQuery.setRight(productClassElement);
 
-        productHierarchy.setQuery(joinQuery);
+        productHierarchy.setSource(joinQuery);
 
         // Product Family level
         Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
@@ -287,7 +287,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_SALES_FACT));
         tableQuery.getAggregationExcludes().addAll(getAggExcludes());
         tableQuery.getAggregationTables().addAll(getAggTables());
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
 
         // Create TimeExtra dimension
         DimensionConnector timeExtraConnector = createTimeExtraDimension();
@@ -368,7 +368,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
         TableSource timeQuery = SourceFactory.eINSTANCE.createTableSource();
         timeQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_TIME_BY_DAY));
-        timeHierarchy.setQuery(timeQuery);
+        timeHierarchy.setSource(timeQuery);
 
         // Year level
         Level yearLevel = LevelFactory.eINSTANCE.createLevel();
@@ -442,7 +442,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
         TableSource customerQuery = SourceFactory.eINSTANCE.createTableSource();
         customerQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-        genderHierarchy.setQuery(customerQuery);
+        genderHierarchy.setSource(customerQuery);
 
         // Gender level
         Level genderLevel = LevelFactory.eINSTANCE.createLevel();

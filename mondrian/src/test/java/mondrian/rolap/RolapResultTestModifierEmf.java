@@ -286,7 +286,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         ExplicitHierarchy d1Hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         d1Hierarchy.setHasAll(true);
         d1Hierarchy.setPrimaryKey(d1IdD1);
-        d1Hierarchy.setQuery(d1Query);
+        d1Hierarchy.setSource(d1Query);
         d1Hierarchy.getLevels().add(d1NameLevel);
 
         d1Dimension.getHierarchies().add(d1Hierarchy);
@@ -313,7 +313,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         ExplicitHierarchy d2Hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         d2Hierarchy.setHasAll(true);
         d2Hierarchy.setPrimaryKey(d2IdD2);
-        d2Hierarchy.setQuery(d2Query);
+        d2Hierarchy.setSource(d2Query);
         d2Hierarchy.getLevels().add(d2NameLevel);
 
         d2Dimension.getHierarchies().add(d2Hierarchy);
@@ -337,7 +337,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("FTAll");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(d1Connector);
         cube.getDimensionConnectors().add(d2Connector);
         cube.getMeasureGroups().add(measureGroup);
@@ -367,7 +367,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d1Hierarchy.setHasAll(false);
         d1Hierarchy.setDefaultMember("[D1].[d]");
         d1Hierarchy.setPrimaryKey(d1IdD1);
-        d1Hierarchy.setQuery(d1Query);
+        d1Hierarchy.setSource(d1Query);
         d1Hierarchy.getLevels().add(d1NameLevel);
 
         d1Dimension.getHierarchies().add(d1Hierarchy);
@@ -395,7 +395,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d2Hierarchy.setHasAll(false);
         d2Hierarchy.setDefaultMember("[D2].[w]");
         d2Hierarchy.setPrimaryKey(d2IdD2);
-        d2Hierarchy.setQuery(d2Query);
+        d2Hierarchy.setSource(d2Query);
         d2Hierarchy.getLevels().add(d2NameLevel);
 
         d2Dimension.getHierarchies().add(d2Hierarchy);
@@ -419,7 +419,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("FT1");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(d1Connector);
         cube.getDimensionConnectors().add(d2Connector);
         cube.getMeasureGroups().add(measureGroup);
@@ -449,7 +449,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d1Hierarchy.setHasAll(true);
         d1Hierarchy.setDefaultMember("[D1].[d]");
         d1Hierarchy.setPrimaryKey(d1IdD1);
-        d1Hierarchy.setQuery(d1Query);
+        d1Hierarchy.setSource(d1Query);
         d1Hierarchy.getLevels().add(d1NameLevel);
 
         d1Dimension.getHierarchies().add(d1Hierarchy);
@@ -477,7 +477,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d2Hierarchy.setHasAll(true);
         d2Hierarchy.setDefaultMember("[D2].[w]");
         d2Hierarchy.setPrimaryKey(d2IdD2);
-        d2Hierarchy.setQuery(d2Query);
+        d2Hierarchy.setSource(d2Query);
         d2Hierarchy.getLevels().add(d2NameLevel);
 
         d2Dimension.getHierarchies().add(d2Hierarchy);
@@ -501,7 +501,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("FT2");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(d1Connector);
         cube.getDimensionConnectors().add(d2Connector);
         cube.getMeasureGroups().add(measureGroup);
@@ -531,7 +531,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d1Hierarchy.setHasAll(true);
         d1Hierarchy.setDefaultMember("[D1].[d]");
         d1Hierarchy.setPrimaryKey(d1IdD1);
-        d1Hierarchy.setQuery(d1Query);
+        d1Hierarchy.setSource(d1Query);
         d1Hierarchy.getLevels().add(d1NameLevel);
 
         d1Dimension.getHierarchies().add(d1Hierarchy);
@@ -559,7 +559,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d2Hierarchy.setHasAll(false);
         d2Hierarchy.setDefaultMember("[D2].[w]");
         d2Hierarchy.setPrimaryKey(d2IdD2);
-        d2Hierarchy.setQuery(d2Query);
+        d2Hierarchy.setSource(d2Query);
         d2Hierarchy.getLevels().add(d2NameLevel);
 
         d2Dimension.getHierarchies().add(d2Hierarchy);
@@ -589,7 +589,7 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // Create cube
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("FT2Extra");
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(d1Connector);
         cube.getDimensionConnectors().add(d2Connector);
         cube.getMeasureGroups().add(measureGroup);

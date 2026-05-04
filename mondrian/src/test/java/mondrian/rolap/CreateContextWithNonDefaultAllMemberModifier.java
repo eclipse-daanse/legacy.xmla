@@ -117,7 +117,7 @@ public class CreateContextWithNonDefaultAllMemberModifier implements CatalogMapp
         HIERARCHY_WAREHOUSE.setHasAll(false);
         HIERARCHY_WAREHOUSE.setDefaultMember("[USA]");
         HIERARCHY_WAREHOUSE.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_WAREHOUSE_ID_WAREHOUSE));
-        HIERARCHY_WAREHOUSE.setQuery(warehouseTableQuery);
+        HIERARCHY_WAREHOUSE.setSource(warehouseTableQuery);
         HIERARCHY_WAREHOUSE.getLevels().addAll(List.of(LEVEL_WAREHOUSE_COUNTRY, LEVEL_WAREHOUSE_STATE_PROVINCE,
                 LEVEL_WAREHOUSE_CITY, LEVEL_WAREHOUSE_NAME));
 
@@ -168,7 +168,7 @@ public class CreateContextWithNonDefaultAllMemberModifier implements CatalogMapp
         // Create physical cube "Warehouse (Default USA)"
         CUBE_WAREHOUSE_DEFAULT_USA = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_WAREHOUSE_DEFAULT_USA.setName("Warehouse (Default USA)");
-        CUBE_WAREHOUSE_DEFAULT_USA.setQuery(TABLE_QUERY_INVENTORY_FACT);
+        CUBE_WAREHOUSE_DEFAULT_USA.setSource(TABLE_QUERY_INVENTORY_FACT);
         CUBE_WAREHOUSE_DEFAULT_USA.getDimensionConnectors()
                 .addAll(List.of(CONNECTOR_TIME, CONNECTOR_PRODUCT, CONNECTOR_STORE, CONNECTOR_WAREHOUSE));
         CUBE_WAREHOUSE_DEFAULT_USA.getMeasureGroups().add(MEASURE_GROUP_WAREHOUSE);

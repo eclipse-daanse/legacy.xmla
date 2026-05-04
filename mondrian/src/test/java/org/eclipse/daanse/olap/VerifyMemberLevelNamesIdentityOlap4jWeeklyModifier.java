@@ -102,7 +102,7 @@ public class VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier implements Catal
         HIERARCHY_WEEKLY.setName("Weekly");
         HIERARCHY_WEEKLY.setHasAll(true);
         HIERARCHY_WEEKLY.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-        HIERARCHY_WEEKLY.setQuery(TABLE_QUERY);
+        HIERARCHY_WEEKLY.setSource(TABLE_QUERY);
         HIERARCHY_WEEKLY.getLevels().addAll(List.of(LEVEL_YEAR, LEVEL_WEEK, LEVEL_DAY));
 
         // Create Time Dimension

@@ -119,7 +119,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
         HIERARCHY_PROMOTIONS = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_PROMOTIONS.setHasAll(false);
         HIERARCHY_PROMOTIONS.setPrimaryKey(CatalogSupplier.COLUMN_PROMOTION_ID_PROMOTION);
-        HIERARCHY_PROMOTIONS.setQuery(TABLE_QUERY_PROMOTION);
+        HIERARCHY_PROMOTIONS.setSource(TABLE_QUERY_PROMOTION);
         HIERARCHY_PROMOTIONS.getLevels().add(LEVEL_PROMOTION_NAME);
 
         DIMENSION_PROMOTIONS = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -160,7 +160,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
         HIERARCHY_CUSTOMERS.setHasAll(true);
         HIERARCHY_CUSTOMERS.setAllMemberName("All Customers");
         HIERARCHY_CUSTOMERS.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-        HIERARCHY_CUSTOMERS.setQuery(TABLE_QUERY_CUSTOMER);
+        HIERARCHY_CUSTOMERS.setSource(TABLE_QUERY_CUSTOMER);
         HIERARCHY_CUSTOMERS.getLevels().addAll(List.of(LEVEL_COUNTRY, LEVEL_STATE_PROVINCE, LEVEL_CITY, LEVEL_NAME));
 
         DIMENSION_CUSTOMERS = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -188,7 +188,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
         // Create cube
         CUBE_BUG1515302 = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_BUG1515302.setName("Bug1515302");
-        CUBE_BUG1515302.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_BUG1515302.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_BUG1515302.getDimensionConnectors().addAll(List.of(CONNECTOR_PROMOTIONS, CONNECTOR_CUSTOMERS));
         CUBE_BUG1515302.getMeasureGroups().add(MEASURE_GROUP);
 

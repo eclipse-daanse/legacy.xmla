@@ -151,7 +151,7 @@ class CellKeyTest  {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 cityHierarchy.setHasAll(true);
                 cityHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                cityHierarchy.setQuery(customerQuery);
+                cityHierarchy.setSource(customerQuery);
                 cityHierarchy.getLevels().add(cityLevel);
 
                 // Create City dimension
@@ -182,7 +182,7 @@ class CellKeyTest  {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 genderHierarchy.setHasAll(true);
                 genderHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                genderHierarchy.setQuery(customerQuery1);
+                genderHierarchy.setSource(customerQuery1);
                 genderHierarchy.getLevels().add(genderLevel);
 
                 // Create Gender dimension
@@ -213,7 +213,7 @@ class CellKeyTest  {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 addrHierarchy.setHasAll(true);
                 addrHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                addrHierarchy.setQuery(customerQuery2);
+                addrHierarchy.setSource(customerQuery2);
                 addrHierarchy.getLevels().add(addrLevel);
 
                 // Create Address2 dimension
@@ -242,7 +242,7 @@ class CellKeyTest  {
                     CubeFactory.eINSTANCE.createPhysicalCube();
                 salesTestCube.setName("SalesTest");
                 salesTestCube.setDefaultMeasure(measure);
-                salesTestCube.setQuery(cubeQuery);
+                salesTestCube.setSource(cubeQuery);
                 salesTestCube.getDimensionConnectors().add(cityConnector);
                 salesTestCube.getDimensionConnectors().add(genderConnector);
                 salesTestCube.getDimensionConnectors().add(addrConnector);

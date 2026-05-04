@@ -131,7 +131,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         HIERARCHY_DEFAULT.setHasAll(true);
         HIERARCHY_DEFAULT.setAllMemberName("All");
         HIERARCHY_DEFAULT.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-        HIERARCHY_DEFAULT.setQuery(TABLE_QUERY_STORE_1);
+        HIERARCHY_DEFAULT.setSource(TABLE_QUERY_STORE_1);
         HIERARCHY_DEFAULT.getLevels().addAll(List.of(
             LEVEL_STORE_NAME_1,
             LEVEL_STORE_CITY_1
@@ -157,7 +157,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         HIERARCHY_CITY.setHasAll(true);
         HIERARCHY_CITY.setAllMemberName("All");
         HIERARCHY_CITY.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-        HIERARCHY_CITY.setQuery(TABLE_QUERY_STORE_2);
+        HIERARCHY_CITY.setSource(TABLE_QUERY_STORE_2);
         HIERARCHY_CITY.getLevels().addAll(List.of(
             LEVEL_STORE_CITY_2,
             LEVEL_STORE_NAME_2
@@ -188,7 +188,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         HIERARCHY_STATE.setHasAll(true);
         HIERARCHY_STATE.setAllMemberName("All");
         HIERARCHY_STATE.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE);
-        HIERARCHY_STATE.setQuery(TABLE_QUERY_STORE_3);
+        HIERARCHY_STATE.setSource(TABLE_QUERY_STORE_3);
         HIERARCHY_STATE.getLevels().addAll(List.of(
             LEVEL_STORE_STATE,
             LEVEL_STORE_CITY_3,
@@ -239,7 +239,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         // Create cube
         CUBE_3STORE_H_CUBE = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_3STORE_H_CUBE.setName("3StoreHCube");
-        CUBE_3STORE_H_CUBE.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_3STORE_H_CUBE.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_3STORE_H_CUBE.getDimensionConnectors().addAll(List.of(
             CONNECTOR_ALT_STORE,
             CONNECTOR_TIME,

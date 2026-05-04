@@ -112,7 +112,7 @@ public class TestCalculatedDefaultMeasureOnVirtualCubeNoThrowExceptionModifier i
         // Create physical cube
         CUBE_SALES = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_SALES.setName("Sales");
-        CUBE_SALES.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_SALES.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_SALES.getDimensionConnectors().add(CONNECTOR_STORE);
         CUBE_SALES.getMeasureGroups().add(MEASURE_GROUP);
         CUBE_SALES.getCalculatedMembers().add(CALCULATED_MEMBER_DUMMY);

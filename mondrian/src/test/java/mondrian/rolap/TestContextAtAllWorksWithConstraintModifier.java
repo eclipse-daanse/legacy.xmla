@@ -91,7 +91,7 @@ public class TestContextAtAllWorksWithConstraintModifier implements CatalogMappi
         HIERARCHY_GENDER.setHasAll(true);
         HIERARCHY_GENDER.setAllMemberName("All Gender");
         HIERARCHY_GENDER.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-        HIERARCHY_GENDER.setQuery(TABLE_QUERY_CUSTOMER);
+        HIERARCHY_GENDER.setSource(TABLE_QUERY_CUSTOMER);
         HIERARCHY_GENDER.getLevels().add(LEVEL_GENDER);
 
         // Create dimension Gender
@@ -121,7 +121,7 @@ public class TestContextAtAllWorksWithConstraintModifier implements CatalogMappi
         // Create cube
         CUBE_ONLY_GENDER = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_ONLY_GENDER.setName("onlyGender");
-        CUBE_ONLY_GENDER.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_ONLY_GENDER.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_ONLY_GENDER.getDimensionConnectors().add(CONNECTOR_GENDER);
         CUBE_ONLY_GENDER.getMeasureGroups().add(MEASURE_GROUP);
     }

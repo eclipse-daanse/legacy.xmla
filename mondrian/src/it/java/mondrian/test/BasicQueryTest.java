@@ -2907,11 +2907,11 @@ class BasicQueryTest extends FoodMartTestCase {
    * would resemble:
    *
    * <blockquote>
-   * 
+   *
    * <pre>
    * [Time].[1998].[1]:[Time].[1998].[6]
    * </pre>
-   * 
+   *
    * </blockquote>
    *
    * <p>
@@ -4020,7 +4020,7 @@ class BasicQueryTest extends FoodMartTestCase {
     final CountDownLatch okToGo = new CountDownLatch( 1 );
     AtomicLong rows = new AtomicLong();
     Appender canceler = new SqlCancelingAppender( component, triggerSql, exec, okToGo, rows );
-    stmt.setQuery( conn.parseQuery( query ) );
+    stmt.setSource( conn.parseQuery( query ) );
     //sqlLog.addAppender( canceler );
     Util.addAppender(canceler, sqlLog, null);
     try {

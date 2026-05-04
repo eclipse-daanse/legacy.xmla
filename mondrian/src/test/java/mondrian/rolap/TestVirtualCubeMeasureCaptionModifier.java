@@ -113,7 +113,7 @@ public class TestVirtualCubeMeasureCaptionModifier implements CatalogMappingSupp
         HIERARCHY_HCB = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_HCB.setHasAll(true);
         HIERARCHY_HCB.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-        HIERARCHY_HCB.setQuery(TABLE_QUERY_STORE);
+        HIERARCHY_HCB.setSource(TABLE_QUERY_STORE);
         HIERARCHY_HCB.getLevels().add(LEVEL_HAS_COFFEE_BAR);
 
         // Create dimension HCB
@@ -139,7 +139,7 @@ public class TestVirtualCubeMeasureCaptionModifier implements CatalogMappingSupp
         // Create physical cube "TestStore"
         CUBE_TEST_STORE = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_TEST_STORE.setName("TestStore");
-        CUBE_TEST_STORE.setQuery(TABLE_QUERY_STORE);
+        CUBE_TEST_STORE.setSource(TABLE_QUERY_STORE);
         CUBE_TEST_STORE.getDimensionConnectors().add(CONNECTOR_HCB);
         CUBE_TEST_STORE.getMeasureGroups().add(MEASURE_GROUP_TEST_STORE);
 

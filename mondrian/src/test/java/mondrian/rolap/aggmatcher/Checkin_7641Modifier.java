@@ -327,7 +327,7 @@ public class Checkin_7641Modifier implements CatalogMappingSupplier {
         geographyHierarchy.setHasAll(true);
         geographyHierarchy.setAllMemberName("All Regions");
         geographyHierarchy.setPrimaryKey(custLocIdGeography7641);
-        geographyHierarchy.setQuery(geographyQuery);
+        geographyHierarchy.setSource(geographyQuery);
         geographyHierarchy.getLevels().add(stateLevel);
         geographyHierarchy.getLevels().add(cityLevel);
         geographyHierarchy.getLevels().add(zipCodeLevel);
@@ -367,7 +367,7 @@ public class Checkin_7641Modifier implements CatalogMappingSupplier {
         productHierarchy.setHasAll(false);
         productHierarchy.setDefaultMember("Class2");
         productHierarchy.setPrimaryKey(prodIdProd7611);
-        productHierarchy.setQuery(productQuery);
+        productHierarchy.setSource(productQuery);
         productHierarchy.getLevels().add(classLevel);
         productHierarchy.getLevels().add(brandLevel);
         productHierarchy.getLevels().add(itemLevel);
@@ -410,7 +410,7 @@ public class Checkin_7641Modifier implements CatalogMappingSupplier {
         // Create cube using RolapMappingFactory
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("ImplicitMember");
-        cube.setQuery(cubeQuery);
+        cube.setSource(cubeQuery);
         cube.getDimensionConnectors().add(geographyConnector);
         cube.getDimensionConnectors().add(productConnector);
         cube.getMeasureGroups().add(measureGroup);

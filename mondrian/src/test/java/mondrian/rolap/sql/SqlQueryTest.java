@@ -795,7 +795,7 @@ class SqlQueryTest  extends BatchTestCase {
                 TableSource tableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(tableQuery);
+                cube.setSource(tableQuery);
 
                 // Create SQL expression for caption column
                 ExpressionColumn captionExpression =
@@ -829,7 +829,7 @@ class SqlQueryTest  extends BatchTestCase {
                 TableSource employeeTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 employeeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_EMPLOYEE);
-                hierarchy.setQuery(employeeTableQuery);
+                hierarchy.setSource(employeeTableQuery);
 
                 hierarchy.getLevels().add(salaryLevel);
 
@@ -1029,7 +1029,7 @@ class SqlQueryTest  extends BatchTestCase {
                 TableSource tableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                cube.setQuery(tableQuery);
+                cube.setSource(tableQuery);
 
                 // Create Gender level
                 Level genderLevel =
@@ -1050,7 +1050,7 @@ class SqlQueryTest  extends BatchTestCase {
                 TableSource customerTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
                 customerTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_CUSTOMER);
-                hierarchy.setQuery(customerTableQuery);
+                hierarchy.setSource(customerTableQuery);
 
                 hierarchy.getLevels().add(genderLevel);
 

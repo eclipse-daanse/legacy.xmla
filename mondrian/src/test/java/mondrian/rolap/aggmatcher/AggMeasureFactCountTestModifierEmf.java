@@ -575,7 +575,7 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
         storeHierarchy.setPrimaryKey( (Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
-        storeHierarchy.setQuery(storeQuery);
+        storeHierarchy.setSource(storeQuery);
         storeHierarchy.getLevels().add(storeCountryLevel);
         storeHierarchy.getLevels().add(storeStateLevel);
         storeHierarchy.getLevels().add(storeCityLevel);
@@ -614,7 +614,7 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         ExplicitHierarchy timeHierarchy1 = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         timeHierarchy1.setHasAll(false);
         timeHierarchy1.setPrimaryKey(timeIdColumnInTimeCsv);
-        timeHierarchy1.setQuery(timeQuery);
+        timeHierarchy1.setSource(timeQuery);
         timeHierarchy1.getLevels().add(yearLevel1);
         timeHierarchy1.getLevels().add(quarterLevel);
         timeHierarchy1.getLevels().add(monthLevel);
@@ -645,7 +645,7 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         timeHierarchy2.setHasAll(true);
         timeHierarchy2.setName("Weekly");
         timeHierarchy2.setPrimaryKey(timeIdColumnInTimeCsv);
-        timeHierarchy2.setQuery(timeQuery);
+        timeHierarchy2.setSource(timeQuery);
         timeHierarchy2.getLevels().add(yearLevel2);
         timeHierarchy2.getLevels().add(weekLevel);
         timeHierarchy2.getLevels().add(dayLevel);
@@ -709,7 +709,7 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         PhysicalCube cube = CubeFactory.eINSTANCE.createPhysicalCube();
         cube.setName("Sales");
         cube.setDefaultMeasure(unitSalesMeasure);
-        cube.setQuery(tableQuery);
+        cube.setSource(tableQuery);
         cube.getDimensionConnectors().add(timeConnector);
         cube.getDimensionConnectors().add(storeConnector);
         cube.getMeasureGroups().add(measureGroup);

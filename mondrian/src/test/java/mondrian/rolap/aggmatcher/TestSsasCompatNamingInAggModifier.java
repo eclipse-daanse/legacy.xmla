@@ -315,11 +315,11 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement tenantJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         tenantJoinRight.setKey(tenantIdTenant);
-        tenantJoinRight.setQuery(tenantQuery);
+        tenantJoinRight.setSource(tenantQuery);
 
         JoinedQueryElement tenantLineJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         tenantLineJoinLeft.setKey(tenantIdLineTenant);
-        tenantLineJoinLeft.setQuery(lineTenantQuery);
+        tenantLineJoinLeft.setSource(lineTenantQuery);
 
         JoinSource lineTenantToTenant = SourceFactory.eINSTANCE.createJoinSource();
         lineTenantToTenant.setLeft(tenantLineJoinLeft);
@@ -328,14 +328,14 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         JoinedQueryElement lineTenantJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineTenantJoinRight.setKey(lineIdLineTenant);
         lineTenantJoinRight.setAlias("line_tenant");
-        lineTenantJoinRight.setQuery(lineTenantToTenant);
+        lineTenantJoinRight.setSource(lineTenantToTenant);
 
         TableSource lineQuery1 = SourceFactory.eINSTANCE.createTableSource();
         lineQuery1.setTable(line);
 
         JoinedQueryElement lineJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinLeft.setKey(lineIdLine);
-        lineJoinLeft.setQuery(lineQuery1);
+        lineJoinLeft.setSource(lineQuery1);
 
         JoinSource tenantHierarchyJoin = SourceFactory.eINSTANCE.createJoinSource();
         tenantHierarchyJoin.setLeft(lineJoinLeft);
@@ -357,7 +357,7 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         tenantHierarchy.setHasAll(true);
         tenantHierarchy.setAllMemberName("All tenants");
         tenantHierarchy.setPrimaryKey(lineIdLine);
-        tenantHierarchy.setQuery(tenantHierarchyJoin);
+        tenantHierarchy.setSource(tenantHierarchyJoin);
         tenantHierarchy.getLevels().add(tenantLevel);
         tenantHierarchy.getLevels().add(lineLevel1);
 
@@ -380,11 +380,11 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         // Build distributor hierarchy join (innermost to outermost)
         JoinedQueryElement distributorJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         distributorJoinLeft.setKey(distributorIdLineClassDistributor);
-        distributorJoinLeft.setQuery(lineClassDistributorQuery);
+        distributorJoinLeft.setSource(lineClassDistributorQuery);
 
         JoinedQueryElement distributorJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         distributorJoinRight.setKey(distributorIdDistributor);
-        distributorJoinRight.setQuery(distributorQuery);
+        distributorJoinRight.setSource(distributorQuery);
 
         JoinSource lineClassDistributorToDistributor = SourceFactory.eINSTANCE.createJoinSource();
         lineClassDistributorToDistributor.setLeft(distributorJoinLeft);
@@ -392,12 +392,12 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement lineClassJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinLeft.setKey(lineClassIdLineClass);
-        lineClassJoinLeft.setQuery(lineClassQuery1);
+        lineClassJoinLeft.setSource(lineClassQuery1);
 
         JoinedQueryElement lineClassDistributorJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassDistributorJoinRight.setKey(lineClassIdLineClassDistributor);
         lineClassDistributorJoinRight.setAlias("line_class_distributor");
-        lineClassDistributorJoinRight.setQuery(lineClassDistributorToDistributor);
+        lineClassDistributorJoinRight.setSource(lineClassDistributorToDistributor);
 
         JoinSource lineClassToDistributor = SourceFactory.eINSTANCE.createJoinSource();
         lineClassToDistributor.setLeft(lineClassJoinLeft);
@@ -405,12 +405,12 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement lineLineClassJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinLeft.setKey(lineClassIdLineLineClass);
-        lineLineClassJoinLeft.setQuery(lineLineClassQuery);
+        lineLineClassJoinLeft.setSource(lineLineClassQuery);
 
         JoinedQueryElement lineClassJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinRight.setKey(lineClassIdLineClassDistributor);
         lineClassJoinRight.setAlias("line_class");
-        lineClassJoinRight.setQuery(lineClassToDistributor);
+        lineClassJoinRight.setSource(lineClassToDistributor);
 
         JoinSource lineLineClassToLineClass = SourceFactory.eINSTANCE.createJoinSource();
         lineLineClassToLineClass.setLeft(lineLineClassJoinLeft);
@@ -418,12 +418,12 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement lineJoinLeft2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinLeft2.setKey(lineIdLine);
-        lineJoinLeft2.setQuery(lineQuery2);
+        lineJoinLeft2.setSource(lineQuery2);
 
         JoinedQueryElement lineLineClassJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinRight.setKey(lineIdLineLineClass);
         lineLineClassJoinRight.setAlias("line_line_class");
-        lineLineClassJoinRight.setQuery(lineLineClassToLineClass);
+        lineLineClassJoinRight.setSource(lineLineClassToLineClass);
 
         JoinSource distributorHierarchyJoin = SourceFactory.eINSTANCE.createJoinSource();
         distributorHierarchyJoin.setLeft(lineJoinLeft2);
@@ -450,7 +450,7 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         distributorHierarchy.setHasAll(true);
         distributorHierarchy.setAllMemberName("All distributors");
         distributorHierarchy.setPrimaryKey(lineIdLine);
-        distributorHierarchy.setQuery(distributorHierarchyJoin);
+        distributorHierarchy.setSource(distributorHierarchyJoin);
         distributorHierarchy.getLevels().add(distributorLevel);
         distributorHierarchy.getLevels().add(lineClassLevel1);
         distributorHierarchy.getLevels().add(lineLevel2);
@@ -474,11 +474,11 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         // Build network hierarchy join
         JoinedQueryElement lineClassNetworkJoinLeft = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassNetworkJoinLeft.setKey(networkIdLineClassNetwork);
-        lineClassNetworkJoinLeft.setQuery(lineClassNetworkQuery);
+        lineClassNetworkJoinLeft.setSource(lineClassNetworkQuery);
 
         JoinedQueryElement networkJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         networkJoinRight.setKey(networkIdNetwork);
-        networkJoinRight.setQuery(networkQuery);
+        networkJoinRight.setSource(networkQuery);
 
         JoinSource lineClassNetworkToNetwork = SourceFactory.eINSTANCE.createJoinSource();
         lineClassNetworkToNetwork.setLeft(lineClassNetworkJoinLeft);
@@ -486,12 +486,12 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement lineClassJoinLeft2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinLeft2.setKey(lineClassIdLineClass);
-        lineClassJoinLeft2.setQuery(lineClassQuery2);
+        lineClassJoinLeft2.setSource(lineClassQuery2);
 
         JoinedQueryElement lineClassNetworkJoinRight = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassNetworkJoinRight.setKey(lineClassIdLineClassNetwork);
         lineClassNetworkJoinRight.setAlias("line_class_network");
-        lineClassNetworkJoinRight.setQuery(lineClassNetworkToNetwork);
+        lineClassNetworkJoinRight.setSource(lineClassNetworkToNetwork);
 
         JoinSource lineClassToNetwork = SourceFactory.eINSTANCE.createJoinSource();
         lineClassToNetwork.setLeft(lineClassJoinLeft2);
@@ -499,12 +499,12 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement lineLineClassJoinLeft2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinLeft2.setKey(lineClassIdLineLineClass);
-        lineLineClassJoinLeft2.setQuery(lineLineClassQuery2);
+        lineLineClassJoinLeft2.setSource(lineLineClassQuery2);
 
         JoinedQueryElement lineClassJoinRight2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineClassJoinRight2.setKey(lineClassIdLineClass);
         lineClassJoinRight2.setAlias("line_class");
-        lineClassJoinRight2.setQuery(lineClassToNetwork);
+        lineClassJoinRight2.setSource(lineClassToNetwork);
 
         JoinSource lineLineClassToLineClass2 = SourceFactory.eINSTANCE.createJoinSource();
         lineLineClassToLineClass2.setLeft(lineLineClassJoinLeft2);
@@ -512,12 +512,12 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
 
         JoinedQueryElement lineJoinLeft3 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineJoinLeft3.setKey(lineIdLine);
-        lineJoinLeft3.setQuery(lineQuery3);
+        lineJoinLeft3.setSource(lineQuery3);
 
         JoinedQueryElement lineLineClassJoinRight2 = SourceFactory.eINSTANCE.createJoinedQueryElement();
         lineLineClassJoinRight2.setKey(lineIdLineLineClass);
         lineLineClassJoinRight2.setAlias("line_line_class");
-        lineLineClassJoinRight2.setQuery(lineLineClassToLineClass2);
+        lineLineClassJoinRight2.setSource(lineLineClassToLineClass2);
 
         JoinSource networkHierarchyJoin = SourceFactory.eINSTANCE.createJoinSource();
         networkHierarchyJoin.setLeft(lineJoinLeft3);
@@ -544,7 +544,7 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         networkHierarchy.setHasAll(true);
         networkHierarchy.setAllMemberName("All networks");
         networkHierarchy.setPrimaryKey(lineIdLine);
-        networkHierarchy.setQuery(networkHierarchyJoin);
+        networkHierarchy.setSource(networkHierarchyJoin);
         networkHierarchy.getLevels().add(networkLevel);
         networkHierarchy.getLevels().add(lineClassLevel2);
         networkHierarchy.getLevels().add(lineLevel3);
@@ -575,7 +575,7 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         // Create cube
         PhysicalCube testSsasCube = CubeFactory.eINSTANCE.createPhysicalCube();
         testSsasCube.setName("testSsas");
-        testSsasCube.setQuery(fooFactQuery);
+        testSsasCube.setSource(fooFactQuery);
         testSsasCube.getDimensionConnectors().add(dimensionConnector);
         testSsasCube.getMeasureGroups().add(measureGroup);
 

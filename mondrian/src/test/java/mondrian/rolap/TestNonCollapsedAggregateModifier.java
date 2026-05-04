@@ -269,14 +269,14 @@ public class TestNonCollapsedAggregateModifier implements CatalogMappingSupplier
 
         JOIN_LEFT_PRODUCT = SourceFactory.eINSTANCE.createJoinedQueryElement();
         JOIN_LEFT_PRODUCT.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT));
-        JOIN_LEFT_PRODUCT.setQuery(productTableQuery);
+        JOIN_LEFT_PRODUCT.setSource(productTableQuery);
 
         TableSource productClassTableQuery = SourceFactory.eINSTANCE.createTableSource();
         productClassTableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_PRODUCT_CLASS));
 
         JOIN_RIGHT_PRODUCT_CLASS = SourceFactory.eINSTANCE.createJoinedQueryElement();
         JOIN_RIGHT_PRODUCT_CLASS.setKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_CLASS_ID_PRODUCT_CLASS));
-        JOIN_RIGHT_PRODUCT_CLASS.setQuery(productClassTableQuery);
+        JOIN_RIGHT_PRODUCT_CLASS.setSource(productClassTableQuery);
 
         JOIN_QUERY_PRODUCT = SourceFactory.eINSTANCE.createJoinSource();
         JOIN_QUERY_PRODUCT.setLeft(JOIN_LEFT_PRODUCT);
@@ -286,7 +286,7 @@ public class TestNonCollapsedAggregateModifier implements CatalogMappingSupplier
         HIERARCHY_PRODUCT = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         HIERARCHY_PRODUCT.setHasAll(true);
         HIERARCHY_PRODUCT.setPrimaryKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT));
-        HIERARCHY_PRODUCT.setQuery(JOIN_QUERY_PRODUCT);
+        HIERARCHY_PRODUCT.setSource(JOIN_QUERY_PRODUCT);
         HIERARCHY_PRODUCT.getLevels().addAll(List.of(
             LEVEL_PRODUCT_FAMILY,
             LEVEL_PRODUCT_DEPARTMENT,
@@ -316,7 +316,7 @@ public class TestNonCollapsedAggregateModifier implements CatalogMappingSupplier
         CUBE_FOO = CubeFactory.eINSTANCE.createPhysicalCube();
         CUBE_FOO.setName("Foo");
         CUBE_FOO.setDefaultMeasure(MEASURE_UNIT_SALES);
-        CUBE_FOO.setQuery(TABLE_QUERY_SALES_FACT);
+        CUBE_FOO.setSource(TABLE_QUERY_SALES_FACT);
         CUBE_FOO.getDimensionConnectors().add(CONNECTOR_PRODUCT);
         CUBE_FOO.getMeasureGroups().add(MEASURE_GROUP);
 
