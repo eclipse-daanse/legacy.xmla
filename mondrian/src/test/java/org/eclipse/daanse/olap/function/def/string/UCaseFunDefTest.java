@@ -80,12 +80,12 @@ class UCaseFunDefTest {
                     + " UCase(NULL) = \"\" "
                     + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
                     + "on 0 from sales" );
-        } catch ( DaanseEvaluationException e ) {
+        } catch ( Exception e ) {
             assertEquals( "No method with the signature UCase(NULL) matches known functions.",
-                e.getMessage() );
+                e.getCause().getMessage() );
             return;
         }
-        fail( "MondrianEvaluationException is expected here" );
+        fail( "DaanseException is expected here" );
     }
 
 }

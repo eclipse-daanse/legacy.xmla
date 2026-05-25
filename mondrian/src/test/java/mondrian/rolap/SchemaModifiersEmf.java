@@ -596,7 +596,7 @@ public class SchemaModifiersEmf {
             queryHierarchyEmployeeRight.setSource(employeeManagerQuery);
 
             JoinSource queryHierarchyEmployee = SourceFactory.eINSTANCE.createJoinSource();
-            queryHierarchyEmployee.setId("_queryHierarchyEmployee");
+            //queryHierarchyEmployee.setId("_queryHierarchyEmployee");
             queryHierarchyEmployee.setLeft(queryHierarchyEmployeeLeft);
             queryHierarchyEmployee.setRight(queryHierarchyEmployeeRight);
 

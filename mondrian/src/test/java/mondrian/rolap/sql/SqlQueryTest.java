@@ -182,7 +182,7 @@ class SqlQueryTest  extends BatchTestCase {
         assertEquals(
             queryUnixString("expr", "alias", SortingDirection.ASC, true, true, true),
             "\norder by\n"
-            + "    CASE WHEN alias IS NULL THEN 1 ELSE 0 END, alias ASC");
+            + "    CASE WHEN \"alias\" IS NULL THEN 1 ELSE 0 END, \"alias\" ASC");
         // requireAlias = false
         assertEquals(
             "\norder by\n"
@@ -196,7 +196,7 @@ class SqlQueryTest  extends BatchTestCase {
         //  ascending=false, collateNullsLast=false
         assertEquals(
             "\norder by\n"
-            + "    CASE WHEN alias IS NULL THEN 0 ELSE 1 END, alias DESC",
+            + "    CASE WHEN \"alias\" IS NULL THEN 0 ELSE 1 END, \"alias\" DESC",
             queryUnixString("expr", "alias", SortingDirection.DESC, true, false, true));
     }
 
