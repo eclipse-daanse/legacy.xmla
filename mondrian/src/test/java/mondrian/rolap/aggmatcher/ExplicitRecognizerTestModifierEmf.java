@@ -196,7 +196,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         // Street address property
         MemberProperty streetAddressProp = LevelFactory.eINSTANCE.createMemberProperty();
         streetAddressProp.setName("Street address");
-        streetAddressProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STREET_ADDRESS_STORE));
+        streetAddressProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STREET_ADDRESS_STORE));
         streetAddressProp.setPropertyType(ColumnInternalDataType.STRING);
 
         storeNameLevel.getMemberProperties().add(streetAddressProp);

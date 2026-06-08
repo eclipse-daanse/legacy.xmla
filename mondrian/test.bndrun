@@ -51,7 +51,7 @@
 	com.sun.jna;version='[5.18.1,5.18.2)',\
 	com.sun.xml.bind.jaxb-core;version='[4.0.6,4.0.7)',\
 	com.sun.xml.bind.jaxb-impl;version='[4.0.6,4.0.7)',\
-	de.siegmar.fastcsv;version='[3.0.0,3.0.1)',\
+	de.siegmar.fastcsv;version='[3.1.0,3.1.1)',\
 	jakarta.activation-api;version='[2.1.4,2.1.5)',\
 	jakarta.xml.bind-api;version='[4.0.4,4.0.5)',\
 	junit-jupiter-api;version='[5.12.2,5.12.3)',\
@@ -66,7 +66,12 @@
 	org.apache.commons.lang3;version='[3.17.0,3.17.1)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
-	org.eclipse.daanse.cwm.model;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.data.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.data.sink.jdbc;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.data.source.csv;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.resource.relational.ddl;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.testkit;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.util;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
