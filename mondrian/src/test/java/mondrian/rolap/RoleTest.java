@@ -87,7 +87,7 @@ public class RoleTest {
             assertTrue(oT.isPresent());
             cList = oT.get().getDbColumns();
             assertEquals(
-                    7,
+                    15,
                     cList.size());
 
             oT = tList.stream().filter(t -> "salary".equals(t.getName())).findFirst();
