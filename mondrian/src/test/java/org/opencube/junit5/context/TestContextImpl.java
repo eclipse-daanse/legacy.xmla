@@ -780,8 +780,16 @@ public class TestContextImpl extends BasicContext implements TestContext {
 
     @Override
     public String toString() {
-        try {
-            return dataSource.getConnection().getMetaData().getURL();
+        // JUnit5 calls toString() on the Context parameter of every
+        // @ParameterizedTest invocation (display name). The previous
+        // implementation opened a new physical JDBC connection here and never
+        // closed it: one leaked server session per test. MySQL hid the leak
+        // (Connector/J reaps abandoned connections, max_connections=10000),
+        // but Oracle's dedicated server processes are never reaped, so the
+        // instance hit its PROCESSES ceiling mid-run (ORA-12516) and poisoned
+        // every subsequent catalog load. Always close the connection.
+        try (java.sql.Connection jdbcConnection = dataSource.getConnection()) {
+            return jdbcConnection.getMetaData().getURL();
         } catch (SQLException e) {
             e.printStackTrace();
 

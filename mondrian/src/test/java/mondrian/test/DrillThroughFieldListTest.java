@@ -13,7 +13,7 @@ package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertSqlEquals;
+import static org.opencube.junit5.TestUtil.assertSqlEqualsIgnoreFormatting;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
 
@@ -81,11 +81,12 @@ class DrillThroughFieldListTest {
             + "    time_by_day.quarter as Quarter,\n"
             + "    sales_fact_1997.unit_sales as Unit Sales\n"
             + "from\n"
-            + "    sales_fact_1997 as sales_fact_1997,\n"
+            + "    sales_fact_1997 as sales_fact_1997\n"
+            + "join\n"
             + "    time_by_day as time_by_day\n"
-            + "where\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
+            + "where\n"
             + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    time_by_day.quarter = 'Q1'\n"
@@ -100,11 +101,12 @@ class DrillThroughFieldListTest {
             + "    time_by_day.quarter as Quarter,\n"
             + "    sales_fact_1997.unit_sales as Unit Sales\n"
             + "from\n"
-            + "    sales_fact_1997 sales_fact_1997,\n"
+            + "    sales_fact_1997 sales_fact_1997\n"
+            + "join\n"
             + "    time_by_day time_by_day\n"
-            + "where\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
+            + "where\n"
             + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    time_by_day.quarter = 'Q1'\n"
@@ -118,7 +120,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 21588;
 
-    assertSqlEquals(connection, expectedSql, actual, expectedRowsNumber);
+    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @ParameterizedTest
@@ -156,11 +158,12 @@ class DrillThroughFieldListTest {
             + "    sales_fact_1997.unit_sales as Unit Sales,\n"
             + "    sales_fact_1997.store_cost as Store Cost\n"
             + "from\n"
-            + "    sales_fact_1997 as sales_fact_1997,\n"
+            + "    sales_fact_1997 as sales_fact_1997\n"
+            + "join\n"
             + "    time_by_day as time_by_day\n"
-            + "where\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
+            + "where\n"
             + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    time_by_day.quarter = 'Q1'\n"
@@ -176,11 +179,12 @@ class DrillThroughFieldListTest {
             + "    sales_fact_1997.unit_sales as Unit Sales,\n"
             + "    sales_fact_1997.store_cost as Store Cost\n"
             + "from\n"
-            + "    sales_fact_1997 sales_fact_1997,\n"
+            + "    sales_fact_1997 sales_fact_1997\n"
+            + "join\n"
             + "    time_by_day time_by_day\n"
-            + "where\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
+            + "where\n"
             + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    time_by_day.quarter = 'Q1'\n"
@@ -194,7 +198,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 21588;
 
-    assertSqlEquals(connection, expectedSql, actual, expectedRowsNumber);
+    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @ParameterizedTest
@@ -232,17 +236,19 @@ class DrillThroughFieldListTest {
             + "    sales_fact_1997.unit_sales as Unit Sales,\n"
             + "    sales_fact_1997.store_cost as Store Cost\n"
             + "from\n"
-            + "    sales_fact_1997 as sales_fact_1997,\n"
-            + "    time_by_day as time_by_day,\n"
-            + "    product as product\n"
-            + "where\n"
+            + "    sales_fact_1997 as sales_fact_1997\n"
+            + "join\n"
+            + "    time_by_day as time_by_day\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
+            + "join\n"
+            + "    product as product\n"
+            + "on\n"
+            + "    sales_fact_1997.product_id = product.product_id\n"
+            + "where\n"
             + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    time_by_day.quarter = 'Q1'\n"
-            + "and\n"
-            + "    sales_fact_1997.product_id = product.product_id\n"
             + "and\n"
             + "    product.product_name = 'Good Imported Beer'\n"
             + "order by\n"
@@ -256,17 +262,19 @@ class DrillThroughFieldListTest {
             + "    sales_fact_1997.unit_sales as Unit Sales,\n"
             + "    sales_fact_1997.store_cost as Store Cost\n"
             + "from\n"
-            + "    sales_fact_1997 sales_fact_1997,\n"
-            + "    time_by_day time_by_day,\n"
-            + "    product product\n"
-            + "where\n"
+            + "    sales_fact_1997 sales_fact_1997\n"
+            + "join\n"
+            + "    time_by_day time_by_day\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
+            + "join\n"
+            + "    product product\n"
+            + "on\n"
+            + "    sales_fact_1997.product_id = product.product_id\n"
+            + "where\n"
             + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    time_by_day.quarter = 'Q1'\n"
-            + "and\n"
-            + "    sales_fact_1997.product_id = product.product_id\n"
             + "and\n"
             + "    product.product_name = 'Good Imported Beer'\n"
             + "order by\n"
@@ -279,7 +287,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 7;
 
-    assertSqlEquals(connection, expectedSql, actual, expectedRowsNumber);
+    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @ParameterizedTest
@@ -326,7 +334,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 25;
 
-    assertSqlEquals(connection, expectedSql, actual, expectedRowsNumber);
+    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @ParameterizedTest
@@ -357,15 +365,17 @@ class DrillThroughFieldListTest {
         expectedSql = "select\n"
             + "    sales_fact_1997.unit_sales as Unit Sales\n"
             + "from\n"
-            + "    sales_fact_1997 as sales_fact_1997,\n"
-            + "    time_by_day as time_by_day,\n"
-            + "    customer as customer\n"
-            + "where\n"
+            + "    sales_fact_1997 as sales_fact_1997\n"
+            + "join\n"
+            + "    time_by_day as time_by_day\n"
+            + "on\n"
             + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
-            + "    time_by_day.the_year = 1997\n"
-            + "and\n"
+            + "join\n"
+            + "    customer as customer\n"
+            + "on\n"
             + "    sales_fact_1997.customer_id = customer.customer_id\n"
+            + "where\n"
+            + "    time_by_day.the_year = 1997\n"
             + "and\n"
             + "    customer.gender = 'F'";
         break;
@@ -373,15 +383,17 @@ class DrillThroughFieldListTest {
         expectedSql = "select\n"
              + "    sales_fact_1997.unit_sales as Unit Sales\n"
              + "from\n"
-             + "    sales_fact_1997 sales_fact_1997,\n"
-             + "    time_by_day time_by_day,\n"
-             + "    customer customer\n"
-             + "where\n"
+             + "    sales_fact_1997 sales_fact_1997\n"
+             + "join\n"
+             + "    time_by_day time_by_day\n"
+             + "on\n"
              + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-             + "and\n"
-             + "    time_by_day.the_year = 1997\n"
-             + "and\n"
+             + "join\n"
+             + "    customer customer\n"
+             + "on\n"
              + "    sales_fact_1997.customer_id = customer.customer_id\n"
+             + "where\n"
+             + "    time_by_day.the_year = 1997\n"
              + "and\n"
              + "    customer.gender = 'F'";
         break;
@@ -392,6 +404,6 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 42831;
 
-    assertSqlEquals(connection, expectedSql, actual, expectedRowsNumber);
+    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 }

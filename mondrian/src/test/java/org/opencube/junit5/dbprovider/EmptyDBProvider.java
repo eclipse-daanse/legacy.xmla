@@ -28,6 +28,11 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 public class EmptyDBProvider implements DatabaseProvider {
 
 	@Override
+	public String id() {
+		return "empty";
+	}
+
+	@Override
 	public void close() throws IOException {
 
 	}

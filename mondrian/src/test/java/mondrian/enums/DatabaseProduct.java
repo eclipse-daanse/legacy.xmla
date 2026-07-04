@@ -71,7 +71,8 @@ public enum DatabaseProduct {
     MARIADB,
     PDI,
     GOOGLEBIGQUERY,
-    SNOWFLAKE;
+    SNOWFLAKE,
+    SQLITE;
 
     /**
      * Return the root of the family of products this database product

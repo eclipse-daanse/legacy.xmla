@@ -64,11 +64,12 @@ import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggStar;
-import org.eclipse.daanse.rolap.common.constraint.SqlConstraintUtils;
+import org.eclipse.daanse.rolap.common.constraint.CalculatedMemberExpander;
+import org.eclipse.daanse.rolap.common.constraint.LevelConstraintGenerator;
 import org.eclipse.daanse.rolap.common.constraint.TupleConstraintStruct;
 import org.eclipse.daanse.rolap.common.evaluator.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.evaluator.RolapEvaluatorRoot;
-import org.eclipse.daanse.rolap.common.sql.SqlQuery;
+import org.eclipse.daanse.rolap.common.sql.QueryRecorder;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.element.CompoundSlicerRolapMember;
 import org.eclipse.daanse.rolap.element.RolapCube;
@@ -80,11 +81,11 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 /**
- * <code>SqlConstraintUtilsTest</code> tests the functions defined in
- * {@link SqlConstraintUtils}.
+ * <code>CalculatedMemberExpanderTest</code> tests the functions defined in
+ * {@link CalculatedMemberExpander} and {@link LevelConstraintGenerator}.
  *
  */
-class SqlConstraintUtilsTest {
+class CalculatedMemberExpanderTest {
 
     private void assertSameContent(
         String msg, Collection<Member> expected, Collection<Member> actual)
@@ -117,17 +118,17 @@ class SqlConstraintUtilsTest {
       assertSameContent(
           msg + " - (list, eval)",
           expectedListByDefault,
-          SqlConstraintUtils.expandSupportedCalculatedMembers(
+          CalculatedMemberExpander.expandSupportedCalculatedMembers(
               argMembersList, evaluator).getMembers());
       assertSameContent(
           msg + " - (list, eval, false)",
           expectedListByDefault,
-          SqlConstraintUtils.expandSupportedCalculatedMembers(
+          CalculatedMemberExpander.expandSupportedCalculatedMembers(
               argMembersList, evaluator, false).getMembers());
       assertSameContent(
           msg + " - (list, eval, true)",
           expectedListOnDisjoin,
-          SqlConstraintUtils.expandSupportedCalculatedMembers(
+          CalculatedMemberExpander.expandSupportedCalculatedMembers(
               argMembersList, evaluator, true).getMembers());
     }
 
@@ -169,7 +170,7 @@ class SqlConstraintUtilsTest {
         Mockito.doReturn(slicerHierarchy)
         .when(placeHolderMember).getHierarchy();
         // tested call
-        Member r = SqlConstraintUtils.replaceCompoundSlicerPlaceholder(
+        Member r = CalculatedMemberExpander.replaceCompoundSlicerPlaceholder(
             placeHolderMember, rolapEvaluator);
         // test
         assertSame(expectedMember, r);
@@ -277,7 +278,7 @@ class SqlConstraintUtilsTest {
             .thenReturn(setEvaluatorMock);
 
         TupleConstraintStruct constraint = new TupleConstraintStruct();
-        SqlConstraintUtils.expandSetFromCalculatedMember(
+        CalculatedMemberExpander.expandSetFromCalculatedMember(
             evaluatorMock, memberMock, constraint);
         return constraint;
     }
@@ -292,16 +293,16 @@ class SqlConstraintUtilsTest {
 
         final AggStar aggStar = null;
         final Dialect dialect =  context.getDialect();
-        final SqlQuery query = new SqlQuery(dialect, context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
+        final QueryRecorder query = new QueryRecorder(context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
 
         when(level.getBaseStarKeyColumn(baseCube)).thenReturn(column);
         when(column.getNameColumn()).thenReturn(column);
-        when(column.generateExprString(query)).thenReturn("dummyName");
+        when(column.generateExprString(dialect)).thenReturn("dummyName");
 
         String[] columnValue = new String[1];
         columnValue[0] = "dummyValue";
 
-        StringBuilder levelStrBuilder = SqlConstraintUtils.constrainLevel(level, query, baseCube, aggStar, columnValue, false);
+        StringBuilder levelStrBuilder = LevelConstraintGenerator.constrainLevel(dialect, level, query, baseCube, aggStar, columnValue, false);
         assertEquals("dummyName = 'dummyValue'",  levelStrBuilder.toString());
     }
 

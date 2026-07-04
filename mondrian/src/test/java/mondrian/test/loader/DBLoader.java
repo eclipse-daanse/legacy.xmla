@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li>
  * JDBC Driver: This is used both for the generation of the SQL (using the
- * SqlQuery.Dialect) and loading the database itself.
+ * SqlSelectQuery.Dialect) and loading the database itself.
  * </li>
  * <li>
  * JDBC URL: How to connect to the database.
@@ -178,7 +178,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Richard M. Emberson
  */
-public abstract class DBLoader {
+public abstract class DBLoader implements AutoCloseable {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DBLoader.class);
     public static final String nl = System.getProperty("line.separator");
     private static final int DEFAULT_BATCH_SIZE = 50;
@@ -932,11 +932,15 @@ public abstract class DBLoader {
     }
 
     /**
-     * Releases resources.
+     * Releases resources (in particular the JDBC connection handed in via
+     * {@link #setConnection}; without this every load leaks one server
+     * session, which is fatal on Oracle where dedicated processes are never
+     * reaped).
      *
      * <p>Call this method when the load process is finished and the connection
      * is no longer going to be used.
      */
+    @Override
     public void close() {
         if (connection != null) {
             Util.close(null, null, connection);

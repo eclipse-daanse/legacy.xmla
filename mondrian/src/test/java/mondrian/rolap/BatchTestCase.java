@@ -235,7 +235,7 @@ public class BatchTestCase{
                     new BatchLoader(
                         ExecutionContext.current(),
                         ((AggregationManager)abc.getAggregationManager()).getCacheMgr(),
-                        cube.getStar().getSqlQueryDialect(),
+                        cube.getStar().getDialect(),
                         cube);
                 BatchLoader.Batch batch =
                     createBatch(connection,
@@ -299,7 +299,7 @@ public class BatchTestCase{
         final RolapStar star = requests[0].getMeasure().getStar();
         final String cubeName = requests[0].getMeasure().getCubeName();
         final RolapCube cube = lookupCube(connection, cubeName);
-        final Dialect sqlDialect = star.getSqlQueryDialect();
+        final Dialect sqlDialect = star.getDialect();
         DatabaseProduct d = getDatabaseProduct(sqlDialect.name());
         SqlPattern sqlPattern = SqlPattern.getPattern(d, patterns);
         if (d == DatabaseProduct.UNKNOWN) {
@@ -546,11 +546,17 @@ public class BatchTestCase{
                     fail("expected query [" + sql + "] did not occur");
                 }
                 if (bomb != null) {
+                    // The TriggerHook already matched whitespace-insensitively (it collapses
+                    // whitespace runs before startsWith). The statement builder/DialectSqlRenderer
+                    // emits compact single-line SQL, whereas the expected pattern may be
+                    // pretty-printed (setGenerateFormattedSql); they are token-for-token equal but
+                    // not format-equal. Compare the same whitespace-insensitive way so this
+                    // secondary check verifies token equality rather than failing on formatting.
                     assertEquals(
                         replaceQuotes(
-                            sql.replaceAll("\r\n", "\n")),
+                            sql.replaceAll("\\s+", " ").trim()),
                         replaceQuotes(
-                            bomb.sql.replaceAll("\r\n", "\n")));
+                            bomb.sql.replaceAll("\\s+", " ").trim()));
                 }
             }
         }

@@ -375,6 +375,31 @@ public class TestUtil {
 		checkSqlAgainstDatasource(connection, actualSql, expectedRows );
 	}
 
+	/**
+	 * Like {@link #assertSqlEquals(Connection, String, String, int)}, but compares the SQL
+	 * whitespace-insensitively (every run of whitespace — including newlines — collapsed to a
+	 * single space, then trimmed). Use this for queries produced by the generic statement
+	 * builder, whose {@code DialectSqlRenderer} emits compact single-line SQL that is
+	 * token-for-token equal to the legacy {@code SqlSelectQuery} output but not format-equal. The
+	 * datasource row-count check still runs against the actual SQL.
+	 */
+	public static void assertSqlEqualsIgnoreFormatting(Connection connection,
+			String expectedSql,
+			String actualSql,
+			int expectedRows ) {
+		assertEqualsVerbose( actualSql, dialectize(connection, actualSql));
+
+		String transformedExpectedSql = normalizeWhitespace( removeQuotes( dialectize(connection, expectedSql)));
+		String transformedActualSql = normalizeWhitespace( removeQuotes( actualSql ));
+		assertEquals( transformedExpectedSql, transformedActualSql );
+
+		checkSqlAgainstDatasource(connection, actualSql, expectedRows );
+	}
+
+	private static String normalizeWhitespace( String sql ) {
+		return sql.replaceAll( "\\s+", " " ).trim();
+	}
+
 	private static void checkSqlAgainstDatasource(Connection connection,
 			String actualSql,
 			int expectedRows ) {

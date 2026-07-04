@@ -145,7 +145,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
     }
 
     private BatchLoader createFbcr(Boolean useGroupingSets, RolapCube cube) {
-        Dialect dialect = cube.getStar().getSqlQueryDialect();
+        Dialect dialect = cube.getStar().getDialect();
         if (useGroupingSets != null) {
             dialect = dialectWithGroupingSets(dialect, useGroupingSets);
         }
@@ -1320,15 +1320,15 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
                 + "from \"warehouse_class\" AS \"warehouse_class\" "
                 + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" "
-                + "from \"warehouse\" as \"warehouse\", \"store\" as \"store\" "
-                + "where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
+                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
+                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
 
         String loadCountDistinct_luciddb2 = "select " + "\"store\".\"store_type\" as \"c0\", " + "count(distinct "
                 + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
                 + "from \"warehouse_class\" AS \"warehouse_class\" "
                 + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" "
-                + "from \"warehouse\" as \"warehouse\", \"store\" as \"store\" "
-                + "where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
+                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
+                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
 
         String loadOtherAggs_luciddb = "select " + "\"store\".\"store_type\" as \"c0\", " + "count("
                 + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
@@ -1336,14 +1336,14 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", "
                 + "count(distinct \"store_id\"+\"warehouse_id\") as \"m1\", "
                 + "count(\"store_id\"+\"warehouse_id\") as \"m2\", " + "count(\"warehouse\".\"stores_id\") as \"m3\" "
-                + "from \"warehouse\" as \"warehouse\", \"store\" as \"store\" "
-                + "where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
+                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
+                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
 
         // Derby splits into multiple statements.
-        String loadCountDistinct_derby1 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" from \"store\" as \"store\", \"warehouse\" as \"warehouse\" where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-        String loadCountDistinct_derby2 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" from \"store\" as \"store\", \"warehouse\" as \"warehouse\" where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-        String loadCountDistinct_derby3 = "select \"store\".\"store_type\" as \"c0\", count(distinct \"store_id\"+\"warehouse_id\") as \"m0\" from \"store\" as \"store\", \"warehouse\" as \"warehouse\" where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-        String loadOtherAggs_derby = "select \"store\".\"store_type\" as \"c0\", count((select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", count(\"store_id\"+\"warehouse_id\") as \"m1\", count(\"warehouse\".\"stores_id\") as \"m2\" from \"store\" as \"store\", \"warehouse\" as \"warehouse\" where \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadCountDistinct_derby1 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" from \"store\" as \"store\" join \"warehouse\" as \"warehouse\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadCountDistinct_derby2 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" from \"store\" as \"store\" join \"warehouse\" as \"warehouse\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadCountDistinct_derby3 = "select \"store\".\"store_type\" as \"c0\", count(distinct \"store_id\"+\"warehouse_id\") as \"m0\" from \"store\" as \"store\" join \"warehouse\" as \"warehouse\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadOtherAggs_derby = "select \"store\".\"store_type\" as \"c0\", count((select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", count(\"store_id\"+\"warehouse_id\") as \"m1\", count(\"warehouse\".\"stores_id\") as \"m2\" from \"store\" as \"store\" join \"warehouse\" as \"warehouse\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
 
         // MySQL does it in one statement.
         String load_mysql = "select" + " `store`.`store_type` as `c0`,"
@@ -1351,8 +1351,8 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + " count(distinct (select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')) as `m1`,"
                 + " count((select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')) as `m2`,"
                 + " count(distinct `store_id`+`warehouse_id`) as `m3`," + " count(`store_id`+`warehouse_id`) as `m4`,"
-                + " count(`warehouse`.`stores_id`) as `m5` " + "from `warehouse` as `warehouse`,"
-                + " `store` as `store` " + "where `warehouse`.`stores_id` = `store`.`store_id` "
+                + " count(`warehouse`.`stores_id`) as `m5` " + "from `warehouse` as `warehouse`"
+                + " join `store` as `store` " + "on `warehouse`.`stores_id` = `store`.`store_id` "
                 + "group by `store`.`store_type`";
 
         SqlPattern[] patterns = {
@@ -1454,21 +1454,21 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "\"time_by_day\".\"the_year\" as \"c0\", \"time_by_day\".\"quarter\" as \"c1\", "
                 + "\"promotion\".\"media_type\" as \"c2\", "
                 + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" " + "from "
-                + "\"sales_fact_1997\" \"sales_fact_1997\",  \"time_by_day\" \"time_by_day\", "
-                + "\"promotion\" \"promotion\" " + "where "
-                + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
+                + "\"sales_fact_1997\" \"sales_fact_1997\" "
+                + "join \"time_by_day\" \"time_by_day\" on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "join \"promotion\" \"promotion\" on \"sales_fact_1997\".\"promotion_id\" = \"promotion\".\"promotion_id\" "
+                + "where "
                 + "\"time_by_day\".\"the_year\" = 1997 and " + "\"time_by_day\".\"quarter\" = 'Q1' and "
-                + "\"sales_fact_1997\".\"promotion_id\" = \"promotion\".\"promotion_id\" and "
                 + "\"promotion\".\"media_type\" in ('Radio', 'TV') " + "group by "
                 + "\"time_by_day\".\"the_year\", \"time_by_day\".\"quarter\", " + "\"promotion\".\"media_type\"";
 
         final String mysqlSql = "select " + "`time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, "
                 + "`promotion`.`media_type` as `c2`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` " + "from "
-                + "`sales_fact_1997` as `sales_fact_1997`, `time_by_day` as `time_by_day`, "
-                + "`promotion` as `promotion` " + "where "
-                + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
-                + "`time_by_day`.`the_year` = 1997 and `time_by_day`.`quarter` = 'Q1' and `"
-                + "sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` and "
+                + "`sales_fact_1997` as `sales_fact_1997` "
+                + "join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "join `promotion` as `promotion` on `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` "
+                + "where "
+                + "`time_by_day`.`the_year` = 1997 and `time_by_day`.`quarter` = 'Q1' and "
                 + "`promotion`.`media_type` in ('Radio', 'TV') " + "group by "
                 + "`time_by_day`.`the_year`, `time_by_day`.`quarter`, `promotion`.`media_type`";
 
@@ -1476,11 +1476,11 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "\"time_by_day\".\"the_year\" as \"c0\", \"time_by_day\".\"quarter\" as \"c1\", "
                 + "\"promotion\".\"media_type\" as \"c2\", "
                 + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" " + "from "
-                + "\"sales_fact_1997\" as \"sales_fact_1997\", \"time_by_day\" as \"time_by_day\", "
-                + "\"promotion\" as \"promotion\" " + "where "
-                + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
+                + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+                + "join \"time_by_day\" as \"time_by_day\" on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "join \"promotion\" as \"promotion\" on \"sales_fact_1997\".\"promotion_id\" = \"promotion\".\"promotion_id\" "
+                + "where "
                 + "\"time_by_day\".\"the_year\" = 1997 and \"time_by_day\".\"quarter\" = 'Q1' and "
-                + "\"sales_fact_1997\".\"promotion_id\" = \"promotion\".\"promotion_id\" and "
                 + "\"promotion\".\"media_type\" in ('Radio', 'TV') " + "group by "
                 + "\"time_by_day\".\"the_year\", \"time_by_day\".\"quarter\", " + "\"promotion\".\"media_type\"";
 
@@ -1548,18 +1548,18 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
         String derbySql = "select \"store\".\"store_state\" as \"c0\", " + "\"time_by_day\".\"the_year\" as \"c1\", "
                 + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" "
-                + "from \"sales_fact_1997\" as \"sales_fact_1997\", \"store\" as \"store\", "
-                + "\"time_by_day\" as \"time_by_day\" "
-                + "where \"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" "
-                + "and \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
-                + "and \"time_by_day\".\"the_year\" = 1997 "
+                + "from \"sales_fact_1997\" as \"sales_fact_1997\" "
+                + "join \"store\" as \"store\" on \"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" "
+                + "join \"time_by_day\" as \"time_by_day\" on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "where \"time_by_day\".\"the_year\" = 1997 "
                 + "group by \"store\".\"store_state\", \"time_by_day\".\"the_year\"";
 
         String mysqlSql = "select `store`.`store_state` as `c0`, `time_by_day`.`the_year` as `c1`, "
                 + "count(distinct `sales_fact_1997`.`customer_id`) as `m0` "
-                + "from `sales_fact_1997` as `sales_fact_1997`, `store` as `store`, "
-                + "`time_by_day` as `time_by_day` " + "where `sales_fact_1997`.`store_id` = `store`.`store_id` "
-                + "and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` " + "and `time_by_day`.`the_year` = 1997 "
+                + "from `sales_fact_1997` as `sales_fact_1997` "
+                + "join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` "
+                + "join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "where `time_by_day`.`the_year` = 1997 "
                 + "group by `store`.`store_state`, `time_by_day`.`the_year`";
 
         SqlPattern[] patterns = { new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql),
@@ -1624,39 +1624,40 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
         String mysqlSql = "select " + "`store`.`store_state` as `c0`, `time_by_day`.`the_year` as `c1`, "
                 + "count(distinct `sales_fact_1997`.`customer_id`) as `m0` " + "from "
-                + "`sales_fact_1997` as `sales_fact_1997`, `store` as `store`, "
-                + "`time_by_day` as `time_by_day`, `product_class` as `product_class`, " + "`product` as `product` "
-                + "where " + "`sales_fact_1997`.`store_id` = `store`.`store_id` " + "and `store`.`store_state` = 'WA' "
-                + "and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` " + "and `time_by_day`.`the_year` = 1997 "
-                + "and `sales_fact_1997`.`product_id` = `product`.`product_id` "
-                + "and `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "`sales_fact_1997` as `sales_fact_1997` "
+                + "join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` "
+                + "join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "join `product` as `product` on `sales_fact_1997`.`product_id` = `product`.`product_id` "
+                + "join `product_class` as `product_class` on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where " + "`store`.`store_state` = 'WA' "
+                + "and `time_by_day`.`the_year` = 1997 "
                 + "and (`product_class`.`product_department` = 'Deli' "
                 + "and `product_class`.`product_family` = 'Food') "
                 + "group by `store`.`store_state`, `time_by_day`.`the_year`";
 
         String accessSql = "select `d0` as `c0`," + " `d1` as `c1`," + " count(`m0`) as `c2` "
                 + "from (select distinct `store`.`store_state` as `d0`," + " `time_by_day`.`the_year` as `d1`,"
-                + " `sales_fact_1997`.`customer_id` as `m0` " + "from `sales_fact_1997` as `sales_fact_1997`,"
-                + " `store` as `store`," + " `time_by_day` as `time_by_day`," + " `product_class` as `product_class`,"
-                + " `product` as `product` " + "where `sales_fact_1997`.`store_id` = `store`.`store_id` "
-                + "and `store`.`store_state` = 'WA' " + "and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + " `sales_fact_1997`.`customer_id` as `m0` " + "from `sales_fact_1997` as `sales_fact_1997`"
+                + " join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id`"
+                + " join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` as `product` on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` as `product_class` on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where `store`.`store_state` = 'WA' "
                 + "and `time_by_day`.`the_year` = 1997 "
-                + "and `sales_fact_1997`.`product_id` = `product`.`product_id` "
-                + "and `product`.`product_class_id` = `product_class`.`product_class_id` "
                 + "and (`product_class`.`product_department` = 'Deli' "
                 + "and `product_class`.`product_family` = 'Food')) as `dummyname` " + "group by `d0`, `d1`";
 
         String derbySql = "select " + "\"store\".\"store_state\" as \"c0\", "
                 + "\"time_by_day\".\"the_year\" as \"c1\", "
                 + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" " + "from "
-                + "\"sales_fact_1997\" as \"sales_fact_1997\", " + "\"store\" as \"store\", "
-                + "\"time_by_day\" as \"time_by_day\", " + "\"product_class\" as \"product_class\", "
-                + "\"product\" as \"product\" " + "where "
-                + "\"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" " + "and \"store\".\"store_state\" = 'WA' "
-                + "and \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+                + "join \"store\" as \"store\" on \"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" "
+                + "join \"time_by_day\" as \"time_by_day\" on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "join \"product\" as \"product\" on \"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" "
+                + "join \"product_class\" as \"product_class\" on \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" "
+                + "where "
+                + "\"store\".\"store_state\" = 'WA' "
                 + "and \"time_by_day\".\"the_year\" = 1997 "
-                + "and \"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" "
-                + "and \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" "
                 + "and (\"product_class\".\"product_department\" = 'Deli' "
                 + "and \"product_class\".\"product_family\" = 'Food') "
                 + "group by \"store\".\"store_state\", \"time_by_day\".\"the_year\"";
@@ -1683,21 +1684,22 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
         String mysqlSql = "select " + "`time_by_day`.`the_year` as `c0`, "
                 + "count(distinct `sales_fact_1997`.`customer_id`) as `m0` " + "from "
-                + "`sales_fact_1997` as `sales_fact_1997`, " + "`time_by_day` as `time_by_day` "
-                + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
-                + "and `time_by_day`.`the_year` = 1997 " + "group by `time_by_day`.`the_year`";
+                + "`sales_fact_1997` as `sales_fact_1997` "
+                + "join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "where `time_by_day`.`the_year` = 1997 " + "group by `time_by_day`.`the_year`";
 
         String accessSql = "select `d0` as `c0`," + " count(`m0`) as `c1` "
                 + "from (select distinct `time_by_day`.`the_year` as `d0`,"
-                + " `sales_fact_1997`.`customer_id` as `m0` " + "from `sales_fact_1997` as `sales_fact_1997`, "
-                + "`time_by_day` as `time_by_day` " + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
-                + "and `time_by_day`.`the_year` = 1997) as `dummyname` group by `d0`";
+                + " `sales_fact_1997`.`customer_id` as `m0` " + "from `sales_fact_1997` as `sales_fact_1997` "
+                + "join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "where `time_by_day`.`the_year` = 1997) as `dummyname` group by `d0`";
 
         String derbySql = "select " + "\"time_by_day\".\"the_year\" as \"c0\", "
                 + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" " + "from "
-                + "\"sales_fact_1997\" as \"sales_fact_1997\", " + "\"time_by_day\" as \"time_by_day\" " + "where "
-                + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
-                + "and \"time_by_day\".\"the_year\" = 1997 " + "group by \"time_by_day\".\"the_year\"";
+                + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+                + "join \"time_by_day\" as \"time_by_day\" on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "where "
+                + "\"time_by_day\".\"the_year\" = 1997 " + "group by \"time_by_day\".\"the_year\"";
 
         SqlPattern[] patterns = { new SqlPattern(DatabaseProduct.ACCESS, accessSql, accessSql),
                 new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql),
@@ -1943,27 +1945,26 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
         String mysqlSql = "select " + "`store`.`store_state` as `c0`, `time_by_day`.`the_year` as `c1`, "
                 + "count(distinct `sales_fact_1997`.`customer_id`) as `m0` " + "from "
-                + "`sales_fact_1997` as `sales_fact_1997`, `store` as `store`, "
-                + "`time_by_day` as `time_by_day`, `product_class` as `product_class`, " + "`product` as `product` "
-                + "where " + "`sales_fact_1997`.`store_id` = `store`.`store_id` and "
-                + "`store`.`store_state` in ('CA', 'OR') and "
-                + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and " + "`time_by_day`.`the_year` = 1997 and "
-                + "`sales_fact_1997`.`product_id` = `product`.`product_id` and "
-                + "`product`.`product_class_id` = `product_class`.`product_class_id` and "
+                + "`sales_fact_1997` as `sales_fact_1997` "
+                + "join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` "
+                + "join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "join `product` as `product` on `sales_fact_1997`.`product_id` = `product`.`product_id` "
+                + "join `product_class` as `product_class` on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where " + "`store`.`store_state` in ('CA', 'OR') and "
+                + "`time_by_day`.`the_year` = 1997 and "
                 + "`product_class`.`product_family` in ('Drink', 'Food') " + "group by "
                 + "`store`.`store_state`, `time_by_day`.`the_year`";
 
         String derbySql = "select " + "\"store\".\"store_state\" as \"c0\", \"time_by_day\".\"the_year\" as \"c1\", "
                 + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" " + "from "
-                + "\"sales_fact_1997\" as \"sales_fact_1997\", \"store\" as \"store\", "
-                + "\"time_by_day\" as \"time_by_day\", \"product_class\" as \"product_class\", "
-                + "\"product\" as \"product\" " + "where "
-                + "\"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" and "
+                + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+                + "join \"store\" as \"store\" on \"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" "
+                + "join \"time_by_day\" as \"time_by_day\" on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                + "join \"product\" as \"product\" on \"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" "
+                + "join \"product_class\" as \"product_class\" on \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" "
+                + "where "
                 + "\"store\".\"store_state\" in ('CA', 'OR') and "
-                + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
                 + "\"time_by_day\".\"the_year\" = 1997 and "
-                + "\"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" and "
-                + "\"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" and "
                 + "\"product_class\".\"product_family\" in ('Drink', 'Food') " + "group by "
                 + "\"store\".\"store_state\", \"time_by_day\".\"the_year\"";
 

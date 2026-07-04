@@ -161,8 +161,8 @@ class AggSchemaScanTest {
       List<? extends Schema> schemas = catalogMapping.getDbschemas();
       Schema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
-      //The foodmart schema has 26 tables in module.
-      assertEquals( 22, jdbcSchema.getTablesMap().size() );
+      //The foodmart schema has 26 tables in module; 23 distinct tables/views are loaded.
+      assertEquals( 23, jdbcSchema.getTablesMap().size() );
     } finally {
       if (sqlConnection != null) {
         try {

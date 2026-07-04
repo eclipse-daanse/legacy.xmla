@@ -23,6 +23,8 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.Date;
@@ -31,13 +33,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
+import org.duckdb.DuckDBAppender;
+import org.duckdb.DuckDBConnection;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.common.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.siegmar.fastcsv.reader.CloseableIterator;
 import de.siegmar.fastcsv.reader.CsvReader;
@@ -46,7 +57,36 @@ import mondrian.enums.DatabaseProduct;
 
 public class DataLoaderUtil {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderUtil.class);
+
 	public static final String nl = Util.NL;
+
+	/**
+	 * Rows per {@link PreparedStatement#executeBatch()} flush in
+	 * {@link #importTable}. Historically the whole CSV was one giant batch
+	 * (87k rows for sales_fact_1997); flushing in chunks caps the driver-side
+	 * batch buffer across the parallel per-table connections and measured
+	 * slightly faster on H2 (docs/multi-dialect-activation/driver-tuning.md).
+	 * All chunks of one table still commit in ONE transaction (unchanged).
+	 * 10k rows is also comfortably above ClickHouse's recommended minimum
+	 * insert-block size, so chunking does not fragment MergeTree parts.
+	 */
+	private static final int BATCH_CHUNK_ROWS = 10_000;
+
+	/**
+	 * System property gating the DuckDB native-appender fast path in
+	 * {@link #importTable} (default: enabled). DuckDB's JDBC
+	 * {@code executeBatch()} is a loop of single-row engine executions — there
+	 * is no batch protocol — which makes the generic path ~113x slower than
+	 * the native {@link DuckDBAppender} on the fact tables
+	 * (docs/multi-dialect-activation/driver-tuning.md §3). Set
+	 * {@code -Dmondrian.test.duckdb.appender=false} to force the generic JDBC
+	 * batch path (used by the standalone row-count verification).
+	 */
+	private static final String DUCKDB_APPENDER_PROPERTY = "mondrian.test.duckdb.appender";
+
+	/** WARN once (not per table) if the appender fast path has to fall back. */
+	private static final AtomicBoolean DUCKDB_APPENDER_WARNED = new AtomicBoolean();
 
 	/**
 	 * Creates an index.
@@ -58,6 +98,11 @@ public class DataLoaderUtil {
 	public static List<String> createIndexSqls(Table table, Dialect dialect) {
 
 		if (table.constraints == null) {
+			return List.of();
+		}
+
+		if (!supportsIndexDdl(dialect)) {
+			// index creation is OPTIONAL per database product — see supportsIndexDdl
 			return List.of();
 		}
 
@@ -93,6 +138,24 @@ public class DataLoaderUtil {
 	}
 
 	/**
+	 * Whether the database product supports (needs) classic secondary-index DDL.
+	 * Index creation is OPTIONAL: products where {@code CREATE INDEX} is not the
+	 * plain b-tree statement simply skip the whole index phase instead of firing
+	 * statements that can only fail. ClickHouse: {@code CREATE INDEX} without a
+	 * skip-index {@code TYPE} is rejected ("CREATE INDEX without TYPE is
+	 * forbidden", INCORRECT_QUERY code 80), and MergeTree tables need no b-tree
+	 * indexes for TCK data volumes. All other products are unchanged.
+	 */
+	public static boolean supportsIndexDdl(Dialect dialect) {
+		switch (getDatabaseProduct(dialect.name())) {
+		case CLICKHOUSE:
+			return false;
+		default:
+			return true;
+		}
+	}
+
+	/**
 	 * Creates a table definition.
 	 *
 	 * @param table   Table
@@ -121,6 +184,8 @@ public class DataLoaderUtil {
 		buf.append("CREATE TABLE ").append(schemaTable).append("(");
 
 		boolean first = true;
+		final boolean clickhouse =
+				getDatabaseProduct(dialect.name()) == DatabaseProduct.CLICKHOUSE;
 		for (Column column : table.columns) {
 			if (first) {
 				first = false;
@@ -129,7 +194,15 @@ public class DataLoaderUtil {
 			}
 			buf.append(nl);
 			buf.append("    ").append(dialect.quoteIdentifier(column.name));
-			buf.append(" ").append(column.type.toPhysical(dialect));
+			String physical = column.type.toPhysical(dialect);
+			if (clickhouse && column.constraint.equals("")) {
+				// ClickHouse columns are non-Nullable by default; NULLs bound into them
+				// are silently converted to defaults (0/'') at insert, so nullable CSV
+				// columns must be declared Nullable(...) explicitly or NULL-keyed members
+				// ([#null]) never exist.
+				physical = "Nullable(" + physical + ")";
+			}
+			buf.append(" ").append(physical);
 			if (!column.constraint.equals("")) {
 				buf.append(" ").append(column.constraint);
 			}
@@ -389,8 +462,9 @@ public class DataLoaderUtil {
 		}
 	}
 
-	public static void importCSV(DataSource dataSource, Dialect dialect, List<Table> tables, Path csvDir)
+	public static long importCSV(DataSource dataSource, Dialect dialect, List<Table> tables, Path csvDir)
 			throws SQLException {
+		long tCsv = System.nanoTime();
         CsvReader.CsvReaderBuilder builder = CsvReader.builder()
             .fieldSeparator(',')
             .quoteCharacter('"')
@@ -399,17 +473,150 @@ public class DataLoaderUtil {
             .ignoreDifferentFieldCount(false);
 
 
+		if (isSqlite(dialect)) {
+			// SQLite: single writer — load the tables SEQUENTIALLY over ONE connection
+			// (per-table parallel connections deadlock/starve on the shared cache).
+			long seqRows = 0;
+			try (Connection connection = dataSource.getConnection()) {
+				for (Table table : tables) {
+					seqRows += importTable(connection, dialect, table, builder, csvDir);
+				}
+			}
+			logCsvLoad(dialect, tCsv, seqRows);
+			return seqRows;
+		}
+
+		AtomicLong rows = new AtomicLong();
 		tables.parallelStream().forEach(table -> {
 			try (Connection connection = dataSource.getConnection();) {
-				System.out.println("+" + table.tableName);
+				rows.addAndGet(importTable(connection, dialect, table, builder, csvDir));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-				Path p = csvDir.resolve(table.tableName + ".csv");
+		});
+		logCsvLoad(dialect, tCsv, rows.get());
+		return rows.get();
+	}
 
-				if (!p.toFile().exists()) {
-					System.out.println("file does not exist-" + table.tableName);
+	/**
+	 * DBTIMING db=&lt;id&gt; phase=&lt;name&gt; ms=&lt;duration&gt; [detail=...] — stable grep
+	 * format for the harness collector (dbtiming_report.sh); one line per phase occurrence.
+	 */
+	private static void logCsvLoad(Dialect dialect, long startNanos, long rows) {
+		LOGGER.warn("DBTIMING db={} phase=csv-load ms={} detail=rows:{}", dbId(dialect),
+				(System.nanoTime() - startNanos) / 1_000_000, rows);
+	}
 
+	/** lowercase db id matching {@code DatabaseProvider#id()} (mysql, postgres, ...). */
+	static String dbId(Dialect dialect) {
+		return dialect == null || dialect.name() == null ? "unknown" : dialect.name().toLowerCase(Locale.ROOT);
+	}
+
+	/** @return the number of CSV rows batched for this table (0 on failure) */
+	private static long importTable(Connection connection, Dialect dialect, Table table,
+			CsvReader.CsvReaderBuilder builder, Path csvDir) {
+		System.out.println("+" + table.tableName);
+
+		Path p = csvDir.resolve(table.tableName + ".csv");
+
+		if (!p.toFile().exists()) {
+			System.out.println("file does not exist-" + table.tableName);
+		}
+
+		if (isDuckDb(dialect) && Boolean.parseBoolean(System.getProperty(DUCKDB_APPENDER_PROPERTY, "true"))) {
+			try {
+				return importTableDuckDbAppender(connection, table, builder, p);
+			} catch (Exception e) {
+				if (DUCKDB_APPENDER_WARNED.compareAndSet(false, true)) {
+					LOGGER.warn("DuckDB appender fast path failed for table {} — falling back to generic JDBC batch",
+							table.tableName, e);
 				}
+				try {
+					// drop partially appended rows before re-loading generically
+					executeDDL(connection,
+							"DELETE FROM " + dialect.quoteIdentifier(table.schemaName, table.tableName));
+				} catch (Exception cleanupFailure) {
+					LOGGER.warn("DuckDB appender fallback: could not clean partially loaded table {}",
+							table.tableName, cleanupFailure);
+					return 0;
+				}
+			}
+		}
+		return importTableJdbcBatch(connection, dialect, table, builder, p);
+	}
 
+	/**
+	 * DuckDB-only CSV import through the native {@link DuckDBAppender}
+	 * (measured 113x faster than the JDBC batch path on sales_fact_1997 —
+	 * docs/multi-dialect-activation/driver-tuning.md §3). Value semantics
+	 * mirror {@link #importTableJdbcBatch} exactly: {@code null}/"NULL" → SQL
+	 * NULL, empty string → 0/false for numeric/boolean columns. Appender rows
+	 * are positional in physical table-column order, which is
+	 * {@code table.columns} (the generic path already relies on the CSV header
+	 * having that same order when it binds by {@code table.columns}). Boolean
+	 * columns are physically SMALLINT on DuckDB ({@link Type#toPhysical}
+	 * default branch), so booleans append as 0/1 shorts — same coercion the
+	 * driver applies to {@code setBoolean}. No transaction handling: the
+	 * appender commits on {@code close()}.
+	 */
+	private static long importTableDuckDbAppender(Connection connection, Table table,
+			CsvReader.CsvReaderBuilder builder, Path csvFile) throws Exception {
+		DuckDBConnection duck = connection.unwrap(DuckDBConnection.class);
+		String schema = table.schemaName != null ? table.schemaName : DuckDBConnection.DEFAULT_SCHEMA;
+		long rows = 0;
+		try (CloseableIterator<NamedCsvRecord> it = builder.ofNamedCsvRecord(csvFile).iterator();
+				DuckDBAppender appender = duck.createAppender(schema, table.tableName)) {
+			while (it.hasNext()) {
+				NamedCsvRecord r = it.next();
+				appender.beginRow();
+				for (Column col : table.columns) {
+					String field = r.getField(col.name);
+					if (field == null || field.equals("NULL")) {
+						appender.appendNull();
+					} else if (col.type.equals(Type.Bigint)) {
+						appender.append(field.equals("") ? 0L : Long.parseLong(field));
+					} else if (col.type.equals(Type.Boolean)) {
+						appender.append((short) (Boolean.parseBoolean(field) ? 1 : 0));
+					} else if (col.type.equals(Type.Currency)) {
+						// the appender requires the exact column scale
+						// (DECIMAL(10,4)); CSV values carry 0-4 decimals.
+						// HALF_UP matches the double->DECIMAL cast rounding
+						// of the generic setDouble path.
+						appender.append((field.equals("") ? BigDecimal.ZERO : new BigDecimal(field)).setScale(4,
+								RoundingMode.HALF_UP));
+					} else if (col.type.equals(Type.Date)) {
+						appender.append(Date.valueOf(field).toLocalDate());
+					} else if (col.type.equals(Type.Integer)) {
+						appender.append(field.equals("") ? 0 : Integer.parseInt(field));
+					} else if (col.type.equals(Type.Real)) {
+						// generic path binds via setDouble; DuckDB REAL is float32
+						appender.append((float) (field.equals("") ? 0.0 : Double.parseDouble(field)));
+					} else if (col.type.equals(Type.Smallint)) {
+						appender.append(field.equals("") ? (short) 0 : Short.parseShort(field));
+					} else if (col.type.equals(Type.Timestamp)) {
+						appender.append(Timestamp.valueOf(field).toLocalDateTime());
+					} else {
+						// Varchar30/60/255
+						appender.append(field);
+					}
+				}
+				appender.endRow();
+				rows++;
+			}
+		}
+		return rows;
+	}
+
+	/** Generic per-row JDBC prepared-statement batch import (all databases). */
+	private static long importTableJdbcBatch(Connection connection, Dialect dialect, Table table,
+			CsvReader.CsvReaderBuilder builder, Path p) {
+		long rows = 0;
+		// ClickHouse (jdbc-v2) throws SQLFeatureNotSupportedException on
+		// setAutoCommit(false) — transactions are unsupported and the metadata says
+		// so; gate the whole autocommit/commit dance on supportsTransactions().
+		final boolean transactional = supportsTransactions(connection);
+		try {
 //				if (table.tableName.startsWith("agg_")) {
 //					//aggregation tables are calculated
 //					//TODO: also load them
@@ -421,6 +628,7 @@ public class DataLoaderUtil {
                     }
                     PreparedStatement ps = null;
                     boolean first = true;
+                    int pending = 0;
                     while (it.hasNext()) {
                         NamedCsvRecord r = it.next();
                         if (first) {
@@ -437,7 +645,9 @@ public class DataLoaderUtil {
                             b.append(headers.stream().map(h -> "?").collect(Collectors.joining(",")));
                             b.append(" ) ");
                             ps = connection.prepareStatement(b.toString());
-                            ps.getConnection().setAutoCommit(false);
+                            if (transactional) {
+                                ps.getConnection().setAutoCommit(false);
+                            }
 
                         } else {
                          //   ps.clearParameters();
@@ -484,6 +694,12 @@ public class DataLoaderUtil {
                             i++;
                         }
                         ps.addBatch();
+                        rows++;
+                        pending++;
+                        if (pending >= BATCH_CHUNK_ROWS) {
+                            ps.executeBatch();
+                            pending = 0;
+                        }
                     }
 
                     long start = System.currentTimeMillis();
@@ -491,27 +707,76 @@ public class DataLoaderUtil {
                     ps.executeBatch();
                     System.out.println(System.currentTimeMillis() - start);
 
-                    connection.commit();
+                    if (transactional) {
+                        connection.commit();
+                    }
                     System.out.println(System.currentTimeMillis() - start);
-                    connection.setAutoCommit(true);
+                    if (transactional) {
+                        connection.setAutoCommit(true);
+                    }
                 }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+		return rows;
 	}
 
 	public static void executeSql(Connection connection, List<String> sqls, boolean paralel) throws SQLException {
-		Stream<String> s = paralel ? sqls.parallelStream() : sqls.stream();
+		// SQLite serializes writers; run its DDL/DML sequentially on the one connection.
+		Stream<String> s = (paralel && !isSqlite(connection)) ? sqls.parallelStream() : sqls.stream();
+		AtomicInteger failed = new AtomicInteger();
+		AtomicReference<String> firstFailure = new AtomicReference<>();
 		s.forEach(sql -> {
 			try (Statement statement = connection.createStatement();) {
 				System.out.println(sql);
 				statement.execute(sql);
 			} catch (Exception e) {
-				e.printStackTrace();
+				failed.incrementAndGet();
+				firstFailure.compareAndSet(null, sql + " -> " + e);
+				LOGGER.debug("DDL statement failed: {}", sql, e);
 			}
 		});
+		if (failed.get() > 0) {
+			LOGGER.warn("DDL: {}/{} statements failed (expected on dialects without DROP TABLE IF EXISTS); first: {}",
+					failed.get(), sqls.size(), firstFailure.get());
+		}
 
+	}
+
+	/**
+	 * Whether the connection's database supports transactions; databases that do
+	 * not (ClickHouse) reject {@link Connection#setAutoCommit setAutoCommit(false)}
+	 * with a {@link java.sql.SQLFeatureNotSupportedException}, so the CSV import
+	 * must not touch the transaction API there.
+	 */
+	private static boolean supportsTransactions(Connection connection) {
+		try {
+			return connection.getMetaData().supportsTransactions();
+		} catch (SQLException e) {
+			// keep the pre-existing (transactional) behavior when metadata is coy
+			return true;
+		}
+	}
+
+	private static boolean isSqlite(Connection connection) {
+		try {
+			String url = connection.getMetaData().getURL();
+			if (url != null && url.startsWith("jdbc:sqlite")) {
+				return true;
+			}
+			String product = connection.getMetaData().getDatabaseProductName();
+			return product != null && product.toLowerCase().contains("sqlite");
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+
+	private static boolean isSqlite(Dialect dialect) {
+		return dialect != null && dialect.name() != null && dialect.name().equalsIgnoreCase("SQLITE");
+	}
+
+	private static boolean isDuckDb(Dialect dialect) {
+		return dialect != null && dialect.name() != null && dialect.name().equalsIgnoreCase("DUCKDB");
 	}
 }

@@ -28,11 +28,21 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.db.h2.H2Dialect;
 import org.h2.jdbcx.JdbcDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//@ServiceProvider(value = DatabaseProvider.class)
+import aQute.bnd.annotation.spi.ServiceProvider;
+
+@ServiceProvider(value = DatabaseProvider.class)
 public class H2DatabaseProvider implements DatabaseProvider {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(H2DatabaseProvider.class);
+
+	@Override
+	public String id() {
+		return "h2";
+	}
 
 //	private Path testDirPath;
 //	private Path testFilePath;
@@ -71,18 +81,29 @@ public class H2DatabaseProvider implements DatabaseProvider {
 	@Override
 	public Entry<DataSource, Dialect> activate() {
 
+		long tActivate = System.nanoTime();
 
-
-		String JDBC_SQLITE_MEMORY = "jdbc:h2:memFS:" + UUID.randomUUID().toString() + ";DATABASE_TO_UPPER=false";
+		// mem: (pure in-memory) instead of memFS: (H2 file format on an in-memory
+		// filesystem): measured 3.4x faster full FoodMart load (14.1s -> 4.1s,
+		// docs/multi-dialect-activation/driver-tuning.md). DB_CLOSE_DELAY=-1 keeps
+		// the named database alive after the probe connection below closes (memFS
+		// survived implicitly because its files stay in the in-memory FS registry).
+		String JDBC_SQLITE_MEMORY = "jdbc:h2:mem:" + UUID.randomUUID().toString()
+				+ ";DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1";
 		JdbcDataSource cpDataSource = new JdbcDataSource();
 		cpDataSource.setUrl(JDBC_SQLITE_MEMORY);
 		cpDataSource.setUser("sa");
 		cpDataSource.setPassword("sa");
 		try {
 			connection = cpDataSource.getConnection();
-			Dialect dialect = new H2Dialect(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.fromConnection(connection));
+			Dialect dialect = TestDialects.resolve(connection);
 
 			connection.close();
+			// embedded: db-ready = the (tiny) connect duration, for comparability with docker DBs
+			long ms = (System.nanoTime() - tActivate) / 1_000_000;
+			LOGGER.warn("DBTIMING db={} phase=db-ready ms={}", id(), ms);
+			LOGGER.warn("DBTIMING db={} phase=context-first ms={} detail=fresh,epoch={}", id(), ms,
+					System.currentTimeMillis() / 1000);
 			return new SimpleEntry<>(cpDataSource, dialect);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

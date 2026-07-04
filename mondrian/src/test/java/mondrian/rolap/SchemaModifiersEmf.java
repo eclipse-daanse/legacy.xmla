@@ -4222,11 +4222,40 @@ public class SchemaModifiersEmf {
 
                 productViewDimension.setName("ProductView");
 
+                // The view owns FRESH columns. Never add the shared
+                // CatalogSupplier.COLUMN_* objects to a containment reference
+                // (Classifier.feature is containment with opposite
+                // Column.owner): that would STEAL them from the shared
+                // FoodMart product/product_class tables and corrupt the
+                // supplier's model for every later test.
+                Column colProductId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colProductId.setName("product_id");
+                colProductId.setType(SqlSimpleTypes.Sql99.integerType());
+                Column colProductFamily = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colProductFamily.setName("product_family");
+                colProductFamily.setType(SqlSimpleTypes.varcharType(255));
+                Column colProductDepartment = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colProductDepartment.setName("product_department");
+                colProductDepartment.setType(SqlSimpleTypes.varcharType(255));
+                Column colProductCategory = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colProductCategory.setName("product_category");
+                colProductCategory.setType(SqlSimpleTypes.varcharType(255));
+                Column colProductSubcategory = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colProductSubcategory.setName("product_subcategory");
+                colProductSubcategory.setType(SqlSimpleTypes.varcharType(255));
+                Column colBrandName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colBrandName.setName("brand_name");
+                colBrandName.setType(SqlSimpleTypes.varcharType(255));
+                Column colProductName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                colProductName.setName("product_name");
+                colProductName.setType(SqlSimpleTypes.varcharType(255));
+
                 ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
-                hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
+                hierarchy.setPrimaryKey(colProductId);
 
                 DialectSqlView sqlView = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+                sqlView.setName("productView");
 
                 // DB2 SQL
                 SqlStatement db2Sql = SourceFactory.eINSTANCE.createSqlStatement();
@@ -4249,9 +4278,10 @@ public class SchemaModifiersEmf {
                         + "FROM \"product\" inner join \"product_class\"\n"
                         + "ON \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"\n");
 
-                // MySQL SQL
+                // MySQL SQL (MariaDB shares the backtick flavor)
                 SqlStatement mysqlSql = SourceFactory.eINSTANCE.createSqlStatement();
                 mysqlSql.getDialects().add("mysql");
+                mysqlSql.getDialects().add("mariadb");
                 mysqlSql.setSql("SELECT `product`.`product_id`,\n" + "`product`.`brand_name`,\n"
                         + "`product`.`product_name`,\n" + "`product`.`SKU`,\n" + "`product`.`SRP`,\n"
                         + "`product`.`gross_weight`,\n" + "`product`.`net_weight`,\n"
@@ -4263,16 +4293,24 @@ public class SchemaModifiersEmf {
                         + "`product_class`.`product_subcategory` \n" + "FROM `product`, `product_class`\n"
                         + "WHERE `product`.`product_class_id` = `product_class`.`product_class_id`\n");
 
+                // Generic SQL (the original XML schema had a generic branch)
+                SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
+                genericSql.getDialects().add("generic");
+                genericSql.setSql(
+                        "SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"");
+
                 sqlView.getDialectStatements().add(db2Sql);
                 sqlView.getDialectStatements().add(mssqlSql);
                 sqlView.getDialectStatements().add(mysqlSql);
+                sqlView.getDialectStatements().add(genericSql);
 
-                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
-                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
-                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
-                sqlView.getFeature().add(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
-                sqlView.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
+                sqlView.getFeature().add(colProductId);
+                sqlView.getFeature().add(colProductFamily);
+                sqlView.getFeature().add(colProductDepartment);
+                sqlView.getFeature().add(colProductCategory);
+                sqlView.getFeature().add(colProductSubcategory);
+                sqlView.getFeature().add(colBrandName);
+                sqlView.getFeature().add(colProductName);
 
                 SqlSelectSource selectQuery = SourceFactory.eINSTANCE.createSqlSelectSource();
                 selectQuery.setAlias("productView");
@@ -4282,32 +4320,32 @@ public class SchemaModifiersEmf {
 
                 Level productFamilyLevel = LevelFactory.eINSTANCE.createLevel();
                 productFamilyLevel.setName("Product Family");
-                productFamilyLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_FAMILY_PRODUCT_CLASS);
+                productFamilyLevel.setColumn(colProductFamily);
                 productFamilyLevel.setUniqueMembers(true);
 
                 Level productDepartmentLevel = LevelFactory.eINSTANCE.createLevel();
                 productDepartmentLevel.setName("Product Department");
-                productDepartmentLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_DEPARTMENT_PRODUCT_CLASS);
+                productDepartmentLevel.setColumn(colProductDepartment);
                 productDepartmentLevel.setUniqueMembers(false);
 
                 Level productCategoryLevel = LevelFactory.eINSTANCE.createLevel();
                 productCategoryLevel.setName("Product Category");
-                productCategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_CATEGORY_PRODUCT_CLASS);
+                productCategoryLevel.setColumn(colProductCategory);
                 productCategoryLevel.setUniqueMembers(false);
 
                 Level productSubcategoryLevel = LevelFactory.eINSTANCE.createLevel();
                 productSubcategoryLevel.setName("Product Subcategory");
-                productSubcategoryLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_SUBCATEGORY_PRODUCT_CLASS);
+                productSubcategoryLevel.setColumn(colProductSubcategory);
                 productSubcategoryLevel.setUniqueMembers(false);
 
                 Level brandNameLevel = LevelFactory.eINSTANCE.createLevel();
                 brandNameLevel.setName("Brand Name");
-                brandNameLevel.setColumn(CatalogSupplier.COLUMN_BRAND_NAME_PRODUCT);
+                brandNameLevel.setColumn(colBrandName);
                 brandNameLevel.setUniqueMembers(false);
 
                 Level productNameLevel = LevelFactory.eINSTANCE.createLevel();
                 productNameLevel.setName("Product Name");
-                productNameLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
+                productNameLevel.setColumn(colProductName);
                 productNameLevel.setUniqueMembers(false);
 
                 hierarchy.getLevels().add(productFamilyLevel);
@@ -4320,7 +4358,7 @@ public class SchemaModifiersEmf {
                 productViewDimension.getHierarchies().add(hierarchy);
 
                 productViewConnector.setOverrideDimensionName("ProductView");
-                productViewConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
+                productViewConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
                 productViewConnector.setDimension(productViewDimension);
 
                 List<DimensionConnector> connectors = (List<DimensionConnector>) cube.getDimensionConnectors();
@@ -4542,8 +4580,32 @@ public class SchemaModifiersEmf {
                 verticaSql.getDialects().add("vertica");
                 verticaSql.setSql(" NULL::FLOAT ");
 
+                // H2 rejects SUM over an untyped NULL ("SUM or AVG on wrong data type"); give it a typed NULL.
+                SqlStatement h2Sql = SourceFactory.eINSTANCE.createSqlStatement();
+                h2Sql.getDialects().add("h2");
+                h2Sql.setSql(" CAST(NULL AS DECIMAL) ");
+
+                // MSSQL ("Operand data type NULL is invalid for sum operator"), PostgreSQL
+                // ("function sum(unknown) is not unique") and Derby likewise reject SUM over
+                // an untyped NULL; give them typed NULLs too (same treatment as h2/vertica).
+                SqlStatement mssqlSql = SourceFactory.eINSTANCE.createSqlStatement();
+                mssqlSql.getDialects().add("mssql");
+                mssqlSql.setSql(" CAST(NULL AS INT) ");
+
+                SqlStatement postgresSql = SourceFactory.eINSTANCE.createSqlStatement();
+                postgresSql.getDialects().add("postgres");
+                postgresSql.setSql(" CAST(NULL AS NUMERIC) ");
+
+                SqlStatement derbySql = SourceFactory.eINSTANCE.createSqlStatement();
+                derbySql.getDialects().add("derby");
+                derbySql.setSql(" CAST(NULL AS INT) ");
+
                 expressionColumn.getSqls().add(genericSql);
                 expressionColumn.getSqls().add(verticaSql);
+                expressionColumn.getSqls().add(h2Sql);
+                expressionColumn.getSqls().add(mssqlSql);
+                expressionColumn.getSqls().add(postgresSql);
+                expressionColumn.getSqls().add(derbySql);
 
                 zeroMeasure.setColumn(expressionColumn);
 
@@ -9548,7 +9610,12 @@ public class SchemaModifiersEmf {
                 Column nuStoreId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nuStoreId.setName("NuStore_id");
                 nuStoreId.setType(SqlSimpleTypes.Sql99.integerType());
-                CatalogSupplier.TABLE_STORE.getFeature().add(nuStoreId);
+                // Add the extra column to the COPIED store table, never to the
+                // shared CatalogSupplier.TABLE_STORE (Classifier.feature is a
+                // containment list; mutating the shared table leaks into every
+                // later test).
+                ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) copier
+                        .get(CatalogSupplier.TABLE_STORE)).getFeature().add(nuStoreId);
 
                 StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("NuStore");
@@ -9708,7 +9775,12 @@ public class SchemaModifiersEmf {
                 Column nuStoreId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nuStoreId.setName("NuStore_id");
                 nuStoreId.setType(SqlSimpleTypes.Sql99.integerType());
-                CatalogSupplier.TABLE_STORE.getFeature().add(nuStoreId);
+                // Add the extra column to the COPIED store table, never to the
+                // shared CatalogSupplier.TABLE_STORE (Classifier.feature is a
+                // containment list; mutating the shared table leaks into every
+                // later test).
+                ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Table) copier
+                        .get(CatalogSupplier.TABLE_STORE)).getFeature().add(nuStoreId);
 
                 StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
                 dimension.setName("NuStore");

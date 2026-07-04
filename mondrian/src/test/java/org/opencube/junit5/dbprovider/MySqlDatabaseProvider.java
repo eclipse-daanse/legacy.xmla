@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.db.mysql.MySqlDialect;
 
 import com.github.dockerjava.api.model.PortBinding;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -44,6 +43,22 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 	public static String MYSQL_PASSWORD = "the.pw";
 	public static int PORT = 3306;
 	public static String serverName = "0.0.0.0";
+
+	@Override
+	public String id() {
+		return "mysql";
+	}
+
+	@Override
+	protected String containerNamePrefix() {
+		// byte-identical to the historical container name
+		return "mysql-t";
+	}
+
+	@Override
+	protected List<String> cmd() {
+		return List.of("--max_connections=10000");
+	}
 
 	@Override
 	protected PortBinding portBinding() {
@@ -75,7 +90,9 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		for (int i = 0; i < 1000; i++) {
+		// readinessSeconds() * 10 iterations x 100ms sleep; default 100s = the
+		// historical 1000-iteration budget, so MySQL's effective timing is unchanged.
+		for (int i = 0; i < readinessSeconds() * 10; i++) {
 			System.out.print(".");
 
 			try {
@@ -83,7 +100,7 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 
 				Connection connection = dataSource.getConnection(MYSQL_USER, MYSQL_PASSWORD);
 				// wait until connection is possible
-				Dialect dialect = new MySqlDialect(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.fromConnection(connection));
+				Dialect dialect = TestDialects.resolve(connection);
 				connection.close();
 				return new SimpleEntry<>(dataSource, dialect);
 

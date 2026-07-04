@@ -28,7 +28,6 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.eclipse.daanse.rolap.common.util.ExpressionUtil.getExpression;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertSqlEquals;
+import static org.opencube.junit5.TestUtil.assertSqlEqualsIgnoreFormatting;
 import static org.opencube.junit5.TestUtil.checkThrowable;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.executeStatement;
@@ -204,15 +204,25 @@ class DrillThroughTest {
             "select `time_by_day`.`the_year` as `Year`,"
             + " `product_class`.`product_family` as `Product Family`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product` "
-            + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-            + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-            + " and `product_class`.`product_family` = 'Drink' "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink' "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink'"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " and `product`.`product_class_id` = `product_class`.`product_class_id` ")
             + "order by "
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "`Year` ASC,"
@@ -231,15 +241,25 @@ class DrillThroughTest {
             "select `time_by_day`.`the_year` as `Year`,"
             + " `product_class`.`product_family` as `Product Family`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product` "
-            + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-            + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-            + " and `product_class`.`product_family` = 'Drink' "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink' "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink'"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " and `product`.`product_class_id` = `product_class`.`product_class_id` ")
             + "order by "
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "`Year` ASC,"
@@ -332,24 +352,42 @@ class DrillThroughTest {
         final Cell cell = result.getCell(new int[]{});
         assertTrue(cell.canDrillThrough());
         assertEquals(3584, cell.getDrillThroughCount());
-        assertSqlEquals(context.getConnectionWithDefaultRole(),
+        // The generic statement builder emits compact single-line SQL (token-equal to the
+        // legacy pretty-printed output); compare whitespace-insensitively.
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(),
             "select\n"
             + "    time_by_day.the_year as Year,\n"
             + "    promotion.media_type as Media Type,\n"
             + "    sales_fact_1997.unit_sales as Unit Sales\n"
-            + "from\n"
-            + "    sales_fact_1997 =as= sales_fact_1997,\n"
-            + "    time_by_day =as= time_by_day,\n"
-            + "    promotion =as= promotion\n"
-            + "where\n"
-            + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-            + "and\n"
-            + "    time_by_day.the_year = 1997\n"
-            + "and\n"
-            + "    sales_fact_1997.promotion_id = promotion.promotion_id\n"
-            + "and\n"
-            + "    ((promotion.media_type in "
-            + "('Bulk Mail', 'Cash Register Handout')))\n"
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from\n"
+                + "    sales_fact_1997 =as= sales_fact_1997\n"
+                + "join\n"
+                + "    time_by_day =as= time_by_day\n"
+                + "on\n"
+                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
+                + "join\n"
+                + "    promotion =as= promotion\n"
+                + "on\n"
+                + "    sales_fact_1997.promotion_id = promotion.promotion_id\n"
+                + "where\n"
+                + "    time_by_day.the_year = 1997\n"
+                + "and\n"
+                + "    ((promotion.media_type in "
+                + "('Bulk Mail', 'Cash Register Handout')))\n"
+                : "from\n"
+                + "    sales_fact_1997 =as= sales_fact_1997,\n"
+                + "    time_by_day =as= time_by_day,\n"
+                + "    promotion =as= promotion\n"
+                + "where\n"
+                + "    time_by_day.the_year = 1997\n"
+                + "and\n"
+                + "    ((promotion.media_type in "
+                + "('Bulk Mail', 'Cash Register Handout')))\n"
+                + "and\n"
+                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
+                + "and\n"
+                + "    sales_fact_1997.promotion_id = promotion.promotion_id\n")
             + "order by\n"
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "    Year ASC"
@@ -373,15 +411,25 @@ class DrillThroughTest {
             "select `time_by_day`.`the_year` as `Year`,"
             + " `product_class`.`product_family` as `Product Family`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product` "
-            + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-            + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-            + " and `product_class`.`product_family` = 'Drink' "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink' "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink'"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " and `product`.`product_class_id` = `product_class`.`product_class_id` ")
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "order by `Year` ASC,"
                 + " `Product Family` ASC"
@@ -414,7 +462,18 @@ class DrillThroughTest {
         for (Level l : h.getLevels()) {
             if (l.getName().equals(levelName)) {
             	SqlExpression exp = ((RolapLevel) l).getNameExp();
-                String nameExpStr = getExpression(exp, star.getSqlQuery());
+                // chooseQuery removed: compute the expected name-expression SQL the way the renderer does —
+                // the per-dialect variant else "generic" for a computed expression, or the quoted column —
+                // matching the engine's RawVariant rendering.
+                String nameExpStr;
+                if (exp instanceof org.eclipse.daanse.rolap.element.RolapColumn rc) {
+                    nameExpStr = star.getDialect().quoteIdentifier(rc.getTable(), rc.getName());
+                } else {
+                    java.util.Map<String, String> variants =
+                        org.eclipse.daanse.rolap.common.util.SqlExpressionResolver.sqlVariants(exp);
+                    String best = variants.get(star.getDialect().name());
+                    nameExpStr = best != null ? best : variants.get("generic");
+                }
                 nameExpStr = nameExpStr.replace('"', '`') ;
                 return nameExpStr;
             }
@@ -464,21 +523,37 @@ class DrillThroughTest {
             + " `customer`.`education` as `Education`,"
             + " `customer`.`yearly_income` as `Yearly Income`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `store` =as= `store`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product`,"
-            + " `promotion` =as= `promotion`,"
-            + " `customer` =as= `customer` "
-            + "where `sales_fact_1997`.`store_id` = `store`.`store_id`"
-            + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-            + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-            + " and `product_class`.`product_family` = 'Drink'"
-            + " and `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
-            + " and `sales_fact_1997`.`customer_id` = `customer`.`customer_id` "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `store` =as= `store`"
+                + " on `sales_fact_1997`.`store_id` = `store`.`store_id`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id`"
+                + " join `promotion` =as= `promotion`"
+                + " on `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
+                + " join `customer` =as= `customer`"
+                + " on `sales_fact_1997`.`customer_id` = `customer`.`customer_id` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink' "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `store` =as= `store`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class`,"
+                + " `promotion` =as= `promotion`,"
+                + " `customer` =as= `customer` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink'"
+                + " and `sales_fact_1997`.`store_id` = `store`.`store_id`"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
+                + " and `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
+                + " and `sales_fact_1997`.`customer_id` = `customer`.`customer_id` ")
             + "order by"
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? " `Store Country` ASC,"
@@ -534,9 +609,9 @@ class DrillThroughTest {
                 + nameExpStr
                 + " ASC,"
                 + " `customer`.`customer_id` ASC,"
-                + " `customer`.`education` ASC,"
                 + " `customer`.`gender` ASC,"
                 + " `customer`.`marital_status` ASC,"
+                + " `customer`.`education` ASC,"
                 + " `customer`.`yearly_income` ASC");
 
         assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
@@ -594,24 +669,43 @@ class DrillThroughTest {
             + " `customer`.`education` as `Education`,"
             + " `customer`.`yearly_income` as `Yearly Income`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`, "
-            + "`store =as= `store`, "
-            + "`time_by_day` =as= `time_by_day`, "
-            + "`product_class` =as= `product_class`, "
-            + "`product` =as= `product`, "
-            + "`promotion` =as= `promotion`, "
-            + "`customer` =as= `customer` "
-            + "where `sales_fact_1997`.`store_id` = `store`.`store_id` and "
-            + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
-            + "`time_by_day`.`the_year` = 1997 and "
-            + "`time_by_day`.`quarter` = 'Q4' and "
-            + "`time_by_day`.`month_of_year` = 12 and "
-            + "`sales_fact_1997`.`product_id` = `product`.`product_id` and "
-            + "`product`.`product_class_id` = `product_class`.`product_class_id` and "
-            + "`product_class`.`product_family` = 'Drink' and "
-            + "`product_class`.`product_department` = 'Dairy' and "
-            + "`sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` and "
-            + "`sales_fact_1997`.`customer_id` = `customer`.`customer_id` "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997` "
+                + "join `store` =as= `store` "
+                + "on `sales_fact_1997`.`store_id` = `store`.`store_id` "
+                + "join `time_by_day` =as= `time_by_day` "
+                + "on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
+                + "join `product` =as= `product` "
+                + "on `sales_fact_1997`.`product_id` = `product`.`product_id` "
+                + "join `product_class` =as= `product_class` "
+                + "on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "join `promotion` =as= `promotion` "
+                + "on `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` "
+                + "join `customer` =as= `customer` "
+                + "on `sales_fact_1997`.`customer_id` = `customer`.`customer_id` "
+                + "where `time_by_day`.`the_year` = 1997 and "
+                + "`time_by_day`.`quarter` = 'Q4' and "
+                + "`time_by_day`.`month_of_year` = 12 and "
+                + "`product_class`.`product_family` = 'Drink' and "
+                + "`product_class`.`product_department` = 'Dairy' "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`, "
+                + "`store` =as= `store`, "
+                + "`time_by_day` =as= `time_by_day`, "
+                + "`product` =as= `product`, "
+                + "`product_class` =as= `product_class`, "
+                + "`promotion` =as= `promotion`, "
+                + "`customer` =as= `customer` "
+                + "where `time_by_day`.`the_year` = 1997 and "
+                + "`time_by_day`.`quarter` = 'Q4' and "
+                + "`time_by_day`.`month_of_year` = 12 and "
+                + "`product_class`.`product_family` = 'Drink' and "
+                + "`product_class`.`product_department` = 'Dairy' and "
+                + "`sales_fact_1997`.`store_id` = `store`.`store_id` and "
+                + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
+                + "`sales_fact_1997`.`product_id` = `product`.`product_id` and "
+                + "`product`.`product_class_id` = `product_class`.`product_class_id` and "
+                + "`sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` and "
+                + "`sales_fact_1997`.`customer_id` = `customer`.`customer_id` ")
             + "order by"
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? " `Store Country` ASC,"
@@ -646,8 +740,8 @@ class DrillThroughTest {
                 + " `store`.`store_state` ASC,"
                 + " `store`.`store_city` ASC,"
                 + " `store`.`store_name` ASC,"
-                + " `store`.`store_sqft` ASC,"
                 + " `store`.`store_type` ASC,"
+                + " `store`.`store_sqft` ASC,"
                 + " `time_by_day`.`the_year` ASC,"
                 + " `time_by_day`.`quarter` ASC,"
                 + " `time_by_day`.`month_of_year` ASC,"
@@ -736,21 +830,37 @@ class DrillThroughTest {
             + " `customer`.`education` as `Education`,"
             + " `customer`.`yearly_income` as `Yearly Income`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `store` =as= `store`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product`,"
-            + " `promotion` =as= `promotion`,"
-            + " `customer` =as= `customer` "
-            + "where `sales_fact_1997`.`store_id` = `store`.`store_id` and"
-            + " `store`.`store_state` = 'CA' and"
-            + " `store`.`store_city` = 'Beverly Hills' and"
-            + " `sales_fact_1997`.time_id` = `time_by_day`.`time_id` and"
-            + " `sales_fact_1997`.`product_id` = `product`.`product_id` and"
-            + " `product`.`product_class_id` = `product_class`.`product_class_id` and"
-            + " `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` and"
-            + " `sales_fact_1997`.`customer_id` = `customer`.`customer_id`"
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `store` =as= `store`"
+                + " on `sales_fact_1997`.`store_id` = `store`.`store_id`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id`"
+                + " join `promotion` =as= `promotion`"
+                + " on `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
+                + " join `customer` =as= `customer`"
+                + " on `sales_fact_1997`.`customer_id` = `customer`.`customer_id` "
+                + "where `store`.`store_state` = 'CA' and"
+                + " `store`.`store_city` = 'Beverly Hills'"
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `store` =as= `store`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class`,"
+                + " `promotion` =as= `promotion`,"
+                + " `customer` =as= `customer` "
+                + "where `store`.`store_state` = 'CA' and"
+                + " `store`.`store_city` = 'Beverly Hills' and"
+                + " `sales_fact_1997`.`store_id` = `store`.`store_id` and"
+                + " `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and"
+                + " `sales_fact_1997`.`product_id` = `product`.`product_id` and"
+                + " `product`.`product_class_id` = `product_class`.`product_class_id` and"
+                + " `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` and"
+                + " `sales_fact_1997`.`customer_id` = `customer`.`customer_id`")
             + " order by"
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? " `Store State` ASC,"
@@ -783,8 +893,8 @@ class DrillThroughTest {
                 : " `store`.`store_state` ASC,"
                 + " `store`.`store_city` ASC,"
                 + " `store`.`store_name` ASC,"
-                + " `store`.`store_sqft` ASC,"
                 + " `store`.`store_type` ASC,"
+                + " `store`.`store_sqft` ASC,"
                 + " `time_by_day`.`the_year` ASC,"
                 + " `time_by_day`.`quarter` ASC,"
                 + " `time_by_day`.`month_of_year` ASC,"
@@ -832,15 +942,25 @@ class DrillThroughTest {
             + " (case when `sales_fact_1997`.`promotion_id` = 0 then 0"
             + " else `sales_fact_1997`.`store_sales` end)"
             + " as `Promotion Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product` "
-            + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-            + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-            + " and `product_class`.`product_family` = 'Drink' "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink' "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `product_class`.`product_family` = 'Drink'"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " and `product`.`product_class_id` = `product_class`.`product_class_id` ")
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "order by `Year` ASC, `Product Family` ASC"
                 : "order by `time_by_day`.`the_year` ASC, `product_class`.`product_family` ASC");
@@ -849,7 +969,7 @@ class DrillThroughTest {
         RolapStar star = ((RolapCube) cube).getStar();
 
         // Adjust expected SQL for dialect differences in FoodMart.xml.
-        Dialect dialect = star.getSqlQueryDialect();
+        Dialect dialect = star.getDialect();
         final String caseStmt =
             " \\(case when `sales_fact_1997`.`promotion_id` = 0 then 0"
             + " else `sales_fact_1997`.`store_sales` end\\)";
@@ -918,16 +1038,27 @@ class DrillThroughTest {
             + " `store_ragged`.`store_id` as `Store Id`,"
             + " `store`.`store_id` as `Store Id_0`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
-            + "from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `store_ragged` =as= `store_ragged`,"
-            + " `store` =as= `store` "
-            + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`store_id` = `store_ragged`.`store_id`"
-            + " and `store_ragged`.`store_id` = 19"
-            + " and `sales_fact_1997`.`store_id` = `store`.`store_id`"
-            + " and `store`.`store_id` = 2 "
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? "from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `store_ragged` =as= `store_ragged`"
+                + " on `sales_fact_1997`.`store_id` = `store_ragged`.`store_id`"
+                + " join `store` =as= `store`"
+                + " on `sales_fact_1997`.`store_id` = `store`.`store_id` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `store_ragged`.`store_id` = 19"
+                + " and `store`.`store_id` = 2 "
+                : "from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `store_ragged` =as= `store_ragged`,"
+                + " `store` =as= `store` "
+                + "where `time_by_day`.`the_year` = 1997"
+                + " and `store_ragged`.`store_id` = 19"
+                + " and `store`.`store_id` = 2"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`store_id` = `store_ragged`.`store_id`"
+                + " and `sales_fact_1997`.`store_id` = `store`.`store_id` ")
             + "order by "
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "`Year` ASC, `Store Id` ASC, `Store Id_0` ASC"
@@ -1024,17 +1155,29 @@ class DrillThroughTest {
             + " `customer`.`city` as `City`,"
             + " `customer`.`gender` as `Gender`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales`"
-            + " from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `customer` =as= `customer`"
-            + " where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and"
-            + " `time_by_day`.`the_year` = 1997 and"
-            + " `time_by_day`.`quarter` = 'Q4' and"
-            + " `time_by_day`.`month_of_year` = 12 and"
-            + " `sales_fact_1997`.`customer_id` = `customer`.customer_id` and"
-            + " `customer`.`state_province` = 'OR' and"
-            + " `customer`.`city` = 'Albany' and"
-            + " `customer`.`gender` = 'F'"
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? " from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `customer` =as= `customer`"
+                + " on `sales_fact_1997`.`customer_id` = `customer`.`customer_id`"
+                + " where `time_by_day`.`the_year` = 1997 and"
+                + " `time_by_day`.`quarter` = 'Q4' and"
+                + " `time_by_day`.`month_of_year` = 12 and"
+                + " `customer`.`state_province` = 'OR' and"
+                + " `customer`.`city` = 'Albany' and"
+                + " `customer`.`gender` = 'F'"
+                : " from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `customer` =as= `customer`"
+                + " where `time_by_day`.`the_year` = 1997 and"
+                + " `time_by_day`.`quarter` = 'Q4' and"
+                + " `time_by_day`.`month_of_year` = 12 and"
+                + " `customer`.`state_province` = 'OR' and"
+                + " `customer`.`city` = 'Albany' and"
+                + " `customer`.`gender` = 'F' and"
+                + " `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and"
+                + " `sales_fact_1997`.`customer_id` = `customer`.`customer_id`")
             + " order by "
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "`Year` ASC,"
@@ -1124,22 +1267,39 @@ class DrillThroughTest {
             + " `customer`.`education` as `Education`,"
             + " `customer`.`yearly_income` as `Yearly Income`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales`"
-            + " from `sales_fact_1997` =as= `sales_fact_1997`,"
-            + " `store` =as= `store`,"
-            + " `time_by_day` =as= `time_by_day`,"
-            + " `product_class` =as= `product_class`,"
-            + " `product` =as= `product`,"
-            + " `store_ragged` =as= `store_ragged`,"
-            + " `promotion` =as= `promotion`,"
-            + " `customer` =as= `customer`"
-            + " where `sales_fact_1997`.`store_id` = `store`.`store_id`"
-            + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-            + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-            + " and `sales_fact_1997`.`store_id` = `store_ragged`.`store_id`"
-            + " and `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
-            + " and `sales_fact_1997`.`customer_id` = `customer`.`customer_id`"
+            + (getDialect(context.getConnectionWithDefaultRole()).allowsJoinOn()
+                ? " from `sales_fact_1997` =as= `sales_fact_1997`"
+                + " join `store` =as= `store`"
+                + " on `sales_fact_1997`.`store_id` = `store`.`store_id`"
+                + " join `time_by_day` =as= `time_by_day`"
+                + " on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " join `product` =as= `product`"
+                + " on `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " join `product_class` =as= `product_class`"
+                + " on `product`.`product_class_id` = `product_class`.`product_class_id`"
+                + " join `store_ragged` =as= `store_ragged`"
+                + " on `sales_fact_1997`.`store_id` = `store_ragged`.`store_id`"
+                + " join `promotion` =as= `promotion`"
+                + " on `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
+                + " join `customer` =as= `customer`"
+                + " on `sales_fact_1997`.`customer_id` = `customer`.`customer_id`"
+                + " where `time_by_day`.`the_year` = 1997"
+                : " from `sales_fact_1997` =as= `sales_fact_1997`,"
+                + " `store` =as= `store`,"
+                + " `time_by_day` =as= `time_by_day`,"
+                + " `product` =as= `product`,"
+                + " `product_class` =as= `product_class`,"
+                + " `store_ragged` =as= `store_ragged`,"
+                + " `promotion` =as= `promotion`,"
+                + " `customer` =as= `customer`"
+                + " where `time_by_day`.`the_year` = 1997"
+                + " and `sales_fact_1997`.`store_id` = `store`.`store_id`"
+                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
+                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
+                + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
+                + " and `sales_fact_1997`.`store_id` = `store_ragged`.`store_id`"
+                + " and `sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id`"
+                + " and `sales_fact_1997`.`customer_id` = `customer`.`customer_id`")
             + " order by"
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? " `Store Country` ASC,"
@@ -1175,8 +1335,8 @@ class DrillThroughTest {
                 + " `store`.`store_state` ASC,"
                 + " `store`.`store_city` ASC,"
                 + " `store`.`store_name` ASC,"
-                + " `store`.`store_sqft` ASC,"
                 + " `store`.`store_type` ASC,"
+                + " `store`.`store_sqft` ASC,"
                 + " `time_by_day`.`the_year` ASC,"
                 + " `time_by_day`.`quarter` ASC,"
                 + " `time_by_day`.`month_of_year` ASC,"
@@ -1516,14 +1676,17 @@ class DrillThroughTest {
                 + "    time_by_day.quarter as Quarter,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 as sales_fact_1997,\n"
+                + "    sales_fact_1997 as sales_fact_1997\n"
+                + "join\n"
                 + "    time_by_day as time_by_day\n"
-                + "where\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "where\n"
                 + "    (((time_by_day.the_year, time_by_day.quarter) in ((1997, 'Q1'), (1997, 'Q2'))))";
             break;
         case ORACLE:
+            // Oracle does not allow JOIN ... ON: tables are comma-listed and the
+            // join equalities appended at the end of WHERE, after the filters.
             expectedSql =
                 "select\n"
                 + "    time_by_day.the_year as Year,\n"
@@ -1533,14 +1696,15 @@ class DrillThroughTest {
                 + "    sales_fact_1997 sales_fact_1997,\n"
                 + "    time_by_day time_by_day\n"
                 + "where\n"
-                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
+                + "    ((((time_by_day.the_year = 1997 and time_by_day.quarter = 'Q1') or (time_by_day.the_year = 1997 and time_by_day.quarter = 'Q2'))))\n"
                 + "and\n"
-                + "    ((time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (time_by_day.quarter = 'Q2' and time_by_day.the_year = 1997))";
+                + "    sales_fact_1997.time_id = time_by_day.time_id";
             break;
         default:
                 return;
         }
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 41956);
+        // Builder emits compact single-line SQL; compare whitespace-insensitively.
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 41956);
 
         // A query with a slightly more complex multi-position compound slicer
         result =
@@ -1567,17 +1731,19 @@ class DrillThroughTest {
                 + "    time_by_day.quarter as Quarter,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 as sales_fact_1997,\n"
-                + "    customer as customer,\n"
-                + "    time_by_day as time_by_day\n"
-                + "where\n"
+                + "    sales_fact_1997 as sales_fact_1997\n"
+                + "join\n"
+                + "    customer as customer\n"
+                + "on\n"
                 + "    sales_fact_1997.customer_id = customer.customer_id\n"
-                + "and\n"
+                + "join\n"
+                + "    time_by_day as time_by_day\n"
+                + "on\n"
+                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
+                + "where\n"
                 + "    customer.gender = 'F'\n"
                 + "and\n"
                 + "    customer.marital_status = 'M'\n"
-                + "and\n"
-                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
                 + "and\n"
                 + "    (((time_by_day.the_year, time_by_day.quarter) in ((1997, 'Q1'), (1997, 'Q2'))))\n"
                 + "order by\n"
@@ -1596,17 +1762,19 @@ class DrillThroughTest {
                 + "    time_by_day.quarter as Quarter,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 sales_fact_1997,\n"
-                + "    customer customer,\n"
-                + "    time_by_day time_by_day\n"
-                + "where\n"
+                + "    sales_fact_1997 sales_fact_1997\n"
+                + "join\n"
+                + "    customer customer\n"
+                + "on\n"
                 + "    sales_fact_1997.customer_id = customer.customer_id\n"
-                + "and\n"
+                + "join\n"
+                + "    time_by_day time_by_day\n"
+                + "on\n"
+                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
+                + "where\n"
                 + "    customer.gender = 'F'\n"
                 + "and\n"
                 + "    customer.marital_status = 'M'\n"
-                + "and\n"
-                + "    sales_fact_1997.time_id = time_by_day.time_id\n"
                 + "and\n"
                 + "    ((time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (time_by_day.quarter = 'Q2' and time_by_day.the_year = 1997))\n"
                 + "order by\n"
@@ -1616,7 +1784,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 10430);
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 10430);
 
         // A query with an even more complex multi-position compound slicer
         // (gender must be in the slicer predicate along with time)
@@ -1643,14 +1811,16 @@ class DrillThroughTest {
                 + "    customer.gender as Gender,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 as sales_fact_1997,\n"
-                + "    time_by_day as time_by_day,\n"
-                + "    customer as customer\n"
-                + "where\n"
+                + "    sales_fact_1997 as sales_fact_1997\n"
+                + "join\n"
+                + "    time_by_day as time_by_day\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "join\n"
+                + "    customer as customer\n"
+                + "on\n"
                 + "    sales_fact_1997.customer_id = customer.customer_id\n"
-                + "and\n"
+                + "where\n"
                 + "    (((time_by_day.the_year, time_by_day.quarter, customer.gender) in ((1997, 'Q1', 'F'), (1997, 'Q2', 'M'))))";
             break;
         case ORACLE:
@@ -1661,20 +1831,22 @@ class DrillThroughTest {
                 + "    customer.gender as Gender,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 sales_fact_1997,\n"
-                + "    time_by_day time_by_day,\n"
-                + "    customer customer\n"
-                + "where\n"
+                + "    sales_fact_1997 sales_fact_1997\n"
+                + "join\n"
+                + "    time_by_day time_by_day\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "join\n"
+                + "    customer customer\n"
+                + "on\n"
                 + "    sales_fact_1997.customer_id = customer.customer_id\n"
-                + "and\n"
+                + "where\n"
                 + "    ((customer.gender = 'F' and time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (customer.gender = 'M' and time_by_day.quarter = 'Q2' and time_by_day.the_year = 1997))";
             break;
         default:
             return;
         }
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 20971);
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 20971);
 
         // A query with a simple multi-position compound slicer with
         // different levels (overlapping)
@@ -1700,11 +1872,12 @@ class DrillThroughTest {
                 + "    time_by_day.month_of_year as Month,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 as sales_fact_1997,\n"
+                + "    sales_fact_1997 as sales_fact_1997\n"
+                + "join\n"
                 + "    time_by_day as time_by_day\n"
-                + "where\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "where\n"
                 + "    ((time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (time_by_day.month_of_year = 1 and time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997))";
             break;
         case ORACLE:
@@ -1715,17 +1888,18 @@ class DrillThroughTest {
                 + "    time_by_day.month_of_year as Month,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 sales_fact_1997,\n"
+                + "    sales_fact_1997 sales_fact_1997\n"
+                + "join\n"
                 + "    time_by_day time_by_day\n"
-                + "where\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "where\n"
                 + "    ((time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (time_by_day.month_of_year = 1 and time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997))";
             break;
         default:
             return;
         }
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 21588);
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 21588);
 
         // A query with a simple multi-position compound slicer with
         // different levels (non-overlapping)
@@ -1748,11 +1922,12 @@ class DrillThroughTest {
                 + "    time_by_day.month_of_year as Month,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 as sales_fact_1997,\n"
+                + "    sales_fact_1997 as sales_fact_1997\n"
+                + "join\n"
                 + "    time_by_day as time_by_day\n"
-                + "where\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "where\n"
                 + "    ((time_by_day.month_of_year = 1 and time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (time_by_day.quarter = 'Q2' and time_by_day.the_year = 1997))";
             break;
         case ORACLE:
@@ -1763,17 +1938,18 @@ class DrillThroughTest {
                 + "    time_by_day.month_of_year as Month,\n"
                 + "    sales_fact_1997.unit_sales as Unit Sales\n"
                 + "from\n"
-                + "    sales_fact_1997 sales_fact_1997,\n"
+                + "    sales_fact_1997 sales_fact_1997\n"
+                + "join\n"
                 + "    time_by_day time_by_day\n"
-                + "where\n"
+                + "on\n"
                 + "    sales_fact_1997.time_id = time_by_day.time_id\n"
-                + "and\n"
+                + "where\n"
                 + "    ((time_by_day.month_of_year = 1 and time_by_day.quarter = 'Q1' and time_by_day.the_year = 1997) or (time_by_day.quarter = 'Q2' and time_by_day.the_year = 1997))";
             break;
         default:
             return;
         }
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 27402);
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 27402);
     }
 
     @ParameterizedTest
@@ -1899,7 +2075,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 11);
+        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 11);
     }
 
     @ParameterizedTest
@@ -1931,6 +2107,10 @@ class DrillThroughTest {
             Object expectedYear;
             switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
             case MARIADB:
+                // mariadb-java-client maps SMALLINT to java.lang.Short
+                // (Connector/J maps it to Integer).
+                expectedYear = Short.valueOf((short) 1997);
+                break;
             case MYSQL:
                 expectedYear = new Integer(1997);
                 break;
@@ -1996,8 +2176,10 @@ class DrillThroughTest {
                 assertEquals(
                     "Jeanne Derry", rs.getObject(1),
                         "Each Customer full name in results should be Jeanne Derry");
+                // Compare numerically: the raw JDBC object type is driver-specific
+                // (Integer on most drivers, BigDecimal on Oracle NUMBER).
                 assertEquals(
-                    3, rs.getObject(2),
+                    3, ((Number) rs.getObject(2)).intValue(),
                         "Each customer key should be 3");
                 assertNotNull(
                         rs.getObject(3),
@@ -2040,7 +2222,8 @@ class DrillThroughTest {
 
             while (rs.next()) {
                 ++rowCount;
-                assertEquals(3, rs.getObject(1), "Each customer key should be 3");
+                // Numeric compare — driver-specific object type (BigDecimal on Oracle NUMBER).
+                assertEquals(3, ((Number) rs.getObject(1)).intValue(), "Each customer key should be 3");
                 assertNotNull(rs.getObject(2), "Should be a non-null value for product key");
                 assertNotNull(rs.getObject(3), "Should be a non-null value for store sales");
             }

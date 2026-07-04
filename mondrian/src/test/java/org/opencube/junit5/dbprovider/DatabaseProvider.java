@@ -29,5 +29,12 @@ public interface DatabaseProvider extends Closeable {
 
 	public Entry<DataSource,Dialect> activate();
 
+	/**
+	 * Lowercase database id matching the new-testkit convention:
+	 * h2, mysql, mariadb, postgres, mssql, oracle, derby, sqlite, clickhouse,
+	 * duckdb.
+	 * Used to select the provider via DAANSE_TEST_DB / -Ddaanse.test.db.
+	 */
+	String id();
 
 }

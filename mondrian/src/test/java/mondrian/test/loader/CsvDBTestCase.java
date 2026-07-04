@@ -43,10 +43,13 @@ import mondrian.rolap.BatchTestCase;
 public abstract class CsvDBTestCase extends BatchTestCase {
 
     protected void prepareContext(Context<?> context) {
-        try {
+        // try-with-resources: DBLoader.close() releases the JDBC connection
+        // handed in via setConnection; without it every CSV-based test leaks
+        // one server session (fatal on Oracle: dedicated processes are never
+        // reaped)
+        try (CsvDBLoader loader = new CsvDBLoader(context)) {
             File inputFile = new File(Constants.TESTFILES_DIR + "/mondrian/rolap/agg/" +  getFileName());
             context.getCatalogCache().clear();
-            CsvDBLoader loader = new CsvDBLoader(context);
             loader.setConnection(context.getConnectionWithDefaultRole().getDataSource().getConnection());
             loader.initialize();
             loader.setInputFile(inputFile);
@@ -68,7 +71,8 @@ public abstract class CsvDBTestCase extends BatchTestCase {
 
         }
         catch (Exception e) {
-            throw  new RuntimeException("Prepare context for csv tests failed");
+            // keep the cause: without it a dialect-specific load error is undiagnosable
+            throw new RuntimeException("Prepare context for csv tests failed", e);
         }
     }
 

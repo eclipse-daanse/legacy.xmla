@@ -28,8 +28,12 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.opencube.junit5.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FastFoodmardDataLoader implements DataLoader {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(FastFoodmardDataLoader.class);
 
 
     public static List<DataLoaderUtil.Table> foodmardTables = List.of(
@@ -383,6 +387,10 @@ public class FastFoodmardDataLoader implements DataLoader {
 		Dialect dialect = dataBaseInfo.getValue();
 	try (Connection connection = dataSource.getConnection()) {
 
+	    // ddl = drop+create+index bucket; csv-load is logged by DataLoaderUtil.importCSV.
+	    // DBTIMING db=<id> phase=<name> ms=<duration> [detail=...] — stable grep format
+	    // for the harness collector (dbtiming_report.sh).
+	    long tDdl = System.nanoTime();
 
 	    List<String> dropTableSQLs = dropTableSQLs(dialect);
 	    DataLoaderUtil.executeSql(connection, dropTableSQLs,true);
@@ -392,6 +400,9 @@ public class FastFoodmardDataLoader implements DataLoader {
 
 	    List<String> createIndexesSqls = createIndexSQLs(dialect);
 	    DataLoaderUtil.executeSql(connection, createIndexesSqls,true);
+
+	    LOGGER.warn("DBTIMING db={} phase=ddl ms={}", DataLoaderUtil.dbId(dialect),
+		    (System.nanoTime() - tDdl) / 1_000_000);
 
 	   Path dir= Paths.get(Constants.TESTFILES_DIR+"loader/foodmart/data");
 

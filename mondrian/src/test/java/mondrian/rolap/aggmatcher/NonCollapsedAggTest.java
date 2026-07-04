@@ -260,7 +260,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
             super.prepareContext(context);
         }
         catch (Exception e) {
-            throw  new RuntimeException("Prepare context for csv tests failed");
+            // keep the cause: without it a dialect-specific load error is undiagnosable
+            throw new RuntimeException("Prepare context for csv tests failed", e);
         }
 
 

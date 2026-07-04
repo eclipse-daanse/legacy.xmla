@@ -490,27 +490,19 @@ class TestAggregationManager extends BatchTestCase {
             };
         } else {
             accessMysqlSql =
-                "select `store`.`store_state` as `c0`,"
-                + " `time_by_day`.`the_year` as `c1`,"
-                + " sum(`sales_fact_1997`.`unit_sales`) as `m0` from `sales_fact_1997` as `sales_fact_1997`,"
-                + " `store` as `store`,"
-                + " `time_by_day` as `time_by_day` "
-                + "where `sales_fact_1997`.`store_id` = `store`.`store_id`"
-                + " and `store`.`store_state` in ('CA', 'OR')"
-                + " and `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-                + " and `time_by_day`.`the_year` = 1997 "
-                + "group by `store`.`store_state`, `time_by_day`.`the_year`";
+                "select `store`.`store_state` as `c0`, `time_by_day`.`the_year` as `c1`, sum(`sales_fact_1997`.`unit_sales`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where `store`.`store_state` in ('CA', 'OR') and `time_by_day`.`the_year` = 1997 group by `store`.`store_state`, `time_by_day`.`the_year`";
 
             derbySql =
                 "select \"store\".\"store_state\" as \"c0\", \"time_by_day\".\"the_year\" as \"c1\", "
                 + "sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" "
                 + "from "
-                + "\"sales_fact_1997\" as \"sales_fact_1997\", \"store\" as \"store\", "
-                + "\"time_by_day\" as \"time_by_day\" "
+                + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+                + "join \"store\" as \"store\" "
+                + "on \"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" "
+                + "join \"time_by_day\" as \"time_by_day\" "
+                + "on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
                 + "where "
-                + "\"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" and "
                 + "\"store\".\"store_state\" in ('CA', 'OR') and "
-                + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
                 + "\"time_by_day\".\"the_year\" = 1997 "
                 + "group by "
                 + "\"store\".\"store_state\", \"time_by_day\".\"the_year\"";
@@ -669,17 +661,7 @@ class TestAggregationManager extends BatchTestCase {
             + "group by `d0`, `d1`";
 
         String mysqlSql =
-            "select"
-            + " `time_by_day`.`the_year` as `c0`,"
-            + " `time_by_day`.`quarter` as `c1`,"
-            + " count(distinct `sales_fact_1997`.`customer_id`) as `m0` "
-            + "from `sales_fact_1997` as `sales_fact_1997`,"
-            + " `time_by_day` as `time_by_day` "
-            + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-            + " and `time_by_day`.`the_year` = 1997"
-            + " and `time_by_day`.`quarter` = 'Q1' "
-            + "group by `time_by_day`.`the_year`,"
-            + " `time_by_day`.`quarter`";
+            "select `time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where `time_by_day`.`the_year` = 1997 and `time_by_day`.`quarter` = 'Q1' group by `time_by_day`.`the_year`, `time_by_day`.`quarter`";
 
         String derbySql =
             "select "
@@ -687,10 +669,10 @@ class TestAggregationManager extends BatchTestCase {
             + "\"time_by_day\".\"quarter\" as \"c1\", "
             + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" "
             + "from "
-            + "\"sales_fact_1997\" as \"sales_fact_1997\", "
-            + "\"time_by_day\" as \"time_by_day\" "
+            + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+            + "join \"time_by_day\" as \"time_by_day\" "
+            + "on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
             + "where "
-            + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
             + "\"time_by_day\".\"the_year\" = 1997 and "
             + "\"time_by_day\".\"quarter\" = 'Q1' "
             + "group by \"time_by_day\".\"the_year\", \"time_by_day\".\"quarter\"";
@@ -757,24 +739,7 @@ class TestAggregationManager extends BatchTestCase {
         SqlPattern[] patterns = {
             new SqlPattern(
                 DatabaseProduct.MYSQL,
-                "select"
-                + " `time_by_day`.`the_year` as `c0`,"
-                + " `time_by_day`.`quarter` as `c1`,"
-                + " `product_class`.`product_family` as `c2`,"
-                + " count(distinct `sales_fact_1997`.`customer_id`) as `m0` "
-                + "from `sales_fact_1997` as `sales_fact_1997`,"
-                + " `time_by_day` as `time_by_day`,"
-                + " `product_class` as `product_class`,"
-                + " `product` as `product` "
-                + "where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`"
-                + " and `time_by_day`.`the_year` = 1997"
-                + " and `time_by_day`.`quarter` = `Q1`"
-                + " and `sales_fact_1997`.`product_id` = `product`.`product_id`"
-                + " and `product`.`product_class_id` = `product_class`.`product_class_id`"
-                + " and `product_class`.`product_family` = `Food` "
-                + "group by `time_by_day`.`the_year`,"
-                + " `time_by_day`.`quarter`,"
-                + " `product_class`.`product_family`",
+                "select `time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, `product_class`.`product_family` as `c2`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` join `product` as `product` on `sales_fact_1997`.`product_id` = `product`.`product_id` join `product_class` as `product_class` on `product`.`product_class_id` = `product_class`.`product_class_id` where `time_by_day`.`the_year` = 1997 and `time_by_day`.`quarter` = 'Q1' and `product_class`.`product_family` = 'Food' group by `time_by_day`.`the_year`, `time_by_day`.`quarter`, `product_class`.`product_family`",
                 23),
             new SqlPattern(
                 DatabaseProduct.ACCESS,
@@ -807,14 +772,16 @@ class TestAggregationManager extends BatchTestCase {
                  + "\"product_class\".\"product_family\" as \"c2\", "
                  + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" "
                  + "from "
-                 + "\"sales_fact_1997\" as \"sales_fact_1997\", \"time_by_day\" as \"time_by_day\", "
-                 + "\"product_class\" as \"product_class\", \"product\" as \"product\" "
+                 + "\"sales_fact_1997\" as \"sales_fact_1997\" "
+                 + "join \"time_by_day\" as \"time_by_day\" "
+                 + "on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+                 + "join \"product\" as \"product\" "
+                 + "on \"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" "
+                 + "join \"product_class\" as \"product_class\" "
+                 + "on \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" "
                  + "where "
-                 + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
                  + "\"time_by_day\".\"the_year\" = 1997 and "
                  + "\"time_by_day\".\"quarter\" = 'Q1' and "
-                 + "\"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" and "
-                 + "\"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" and "
                  + "\"product_class\".\"product_family\" = 'Food' "
                  + "group by \"time_by_day\".\"the_year\", \"time_by_day\".\"quarter\", "
                  + "\"product_class\".\"product_family\"",
@@ -983,27 +950,20 @@ class TestAggregationManager extends BatchTestCase {
             aggConstraint);
 
         String mysqlSql =
-            "select `product_class`.`product_family` as `c0`, "
-            + "count(distinct `sales_fact_1997`.`customer_id`) as `m0` "
-            + "from `sales_fact_1997` as `sales_fact_1997`, `product_class` as `product_class`, `product` as `product`, "
-            + "`time_by_day` as `time_by_day` "
-            + "where `sales_fact_1997`.`product_id` = `product`.`product_id` and "
-            + "`product`.`product_class_id` = `product_class`.`product_class_id` and "
-            + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
-            + "(((`time_by_day`.`the_year`, `time_by_day`.`quarter`, `time_by_day`.`month_of_year`) "
-            + "in ((1997, 'Q1', 1), (1997, 'Q3', 7)))) "
-            + "group by `product_class`.`product_family`";
+            "select `product_class`.`product_family` as `c0`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `product` as `product` on `sales_fact_1997`.`product_id` = `product`.`product_id` join `product_class` as `product_class` on `product`.`product_class_id` = `product_class`.`product_class_id` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where (((`time_by_day`.`the_year`, `time_by_day`.`quarter`, `time_by_day`.`month_of_year`) in ((1997, 'Q1', 1), (1997, 'Q3', 7)))) group by `product_class`.`product_family`";
 
         String derbySql =
             "select \"product_class\".\"product_family\" as \"c0\", "
             + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" "
-            + "from \"sales_fact_1997\" as \"sales_fact_1997\", \"product_class\" as \"product_class\", \"product\" as \"product\", "
-            + "\"time_by_day\" as \"time_by_day\" "
-            + "where \"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" and "
-            + "\"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" and "
-            + "\"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and "
-            + "((\"time_by_day\".\"the_year\" = 1997 and \"time_by_day\".\"quarter\" = 'Q1' and \"time_by_day\".\"month_of_year\" = 1) or "
-            + "(\"time_by_day\".\"the_year\" = 1997 and \"time_by_day\".\"quarter\" = 'Q3' and \"time_by_day\".\"month_of_year\" = 7)) "
+            + "from \"sales_fact_1997\" as \"sales_fact_1997\" "
+            + "join \"product\" as \"product\" "
+            + "on \"sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" "
+            + "join \"product_class\" as \"product_class\" "
+            + "on \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" "
+            + "join \"time_by_day\" as \"time_by_day\" "
+            + "on \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" "
+            + "where ((((\"time_by_day\".\"the_year\" = 1997 and \"time_by_day\".\"quarter\" = 'Q1' and \"time_by_day\".\"month_of_year\" = 1) or "
+            + "(\"time_by_day\".\"the_year\" = 1997 and \"time_by_day\".\"quarter\" = 'Q3' and \"time_by_day\".\"month_of_year\" = 7)))) "
             + "group by \"product_class\".\"product_family\"";
 
         SqlPattern[] patterns = {
@@ -1285,7 +1245,7 @@ class TestAggregationManager extends BatchTestCase {
             "select {[Measures].[Unit Sales]} ON COLUMNS, {[Store2].members} ON ROWS FROM [Sales2]";
 
         String cardinalitySqlDerby1 =
-            "select count(distinct \"store_country\") from \"store\" as \"store\"";
+            "select count(*) from (select distinct \"store_country\" as \"c0\" from \"store\" as \"store\") as \"init\"";
 
         String cardinalitySqlMySql1 =
             "select count(distinct `store_country`) as `c0` from `store` as `store`";
@@ -2589,7 +2549,7 @@ class TestAggregationManager extends BatchTestCase {
         final String sqlOracle =
             "select \"product_class\".\"product_family\" as \"c0\", sum(\"agg_l_05_sales_fact_1997\".\"unit_sales\") as \"m0\" from \"product_class\" \"product_class\", \"product\" \"product\", \"agg_l_05_sales_fact_1997\" \"agg_l_05_sales_fact_1997\" where \"agg_l_05_sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" and \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" group by \"product_class\".\"product_family\"";
         final String sqlMysql =
-            "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class`, `product` as `product`, `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` where `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` and `product`.`product_class_id` = `product_class`.`product_class_id` group by `product_class`.`product_family`";
+            "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class` join `product` as `product` on `product`.`product_class_id` = `product_class`.`product_class_id` join `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` on `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` group by `product_class`.`product_family`";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
             mdx,
@@ -2682,7 +2642,7 @@ class TestAggregationManager extends BatchTestCase {
             +    "Row #1: 191,940\n"
             +    "Row #2: 50,236\n");
         final String sqlMysql =
-            "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class`, `product` as `product`, `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` where `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` and `product`.`product_class_id` = `product_class`.`product_class_id` group by `product_class`.`product_family`";
+            "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class` join `product` as `product` on `product`.`product_class_id` = `product_class`.`product_class_id` join `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` on `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` group by `product_class`.`product_family`";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
             mdx,
@@ -2787,7 +2747,7 @@ class TestAggregationManager extends BatchTestCase {
             + "Row #12: 2,726\n"
             + "Row #13: 3,607\n");
         final String sqlMysql =
-            "select `promotion`.`media_type` as `c0`, sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0` from `promotion` as `promotion`, `agg_c_special_sales_fact_1997` as `agg_c_special_sales_fact_1997` where `agg_c_special_sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` group by `promotion`.`media_type`";
+            "select `promotion`.`media_type` as `c0`, sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0` from `promotion` as `promotion` join `agg_c_special_sales_fact_1997` as `agg_c_special_sales_fact_1997` on `agg_c_special_sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` group by `promotion`.`media_type`";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
             mdx,
@@ -3088,21 +3048,7 @@ class TestAggregationManager extends BatchTestCase {
             + "    \"product_class\".\"product_family\",\n"
             + "    \"agg_l_05_sales_fact_1997\".\"store_id\"";
         final String sqlMysql =
-            "select\n"
-            + "    `product_class`.`product_family` as `c0`,\n"
-            + "    `agg_l_05_sales_fact_1997`.`store_id` as `c1`,\n"
-            + "    sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0`\n"
-            + "from\n"
-            + "    `product_class` as `product_class`,\n"
-            + "    `product` as `product`,\n"
-            + "    `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997`\n"
-            + "where\n"
-            + "    `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id`\n"
-            + "and\n"
-            + "    `product`.`product_class_id` = `product_class`.`product_class_id`\n"
-            + "group by\n"
-            + "    `product_class`.`product_family`,\n"
-            + "    `agg_l_05_sales_fact_1997`.`store_id`";
+            "select `product_class`.`product_family` as `c0`, `agg_l_05_sales_fact_1997`.`store_id` as `c1`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0`";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
             mdx,
@@ -3239,31 +3185,11 @@ class TestAggregationManager extends BatchTestCase {
 
         if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
             final String sqlMysql =
-                "select\n"
-                + "    `agg_c_14_sales_fact_1997`.`the_year` as `c0`,\n"
-                + "    `agg_c_14_sales_fact_1997`.`quarter` as `c1`,\n"
-                + "    `agg_c_14_sales_fact_1997`.`month_of_year` as `c2`,\n"
-                + "    `store`.`store_country` as `c3`\n"
-                + "from\n"
-                + "    `agg_c_14_sales_fact_1997` as `agg_c_14_sales_fact_1997`,\n"
-                + "    `store` as `store`\n"
-                + "where\n"
-                + "    `agg_c_14_sales_fact_1997`.`store_id` = `store`.`store_id`\n"
-                + "group by\n"
-                + "    `agg_c_14_sales_fact_1997`.`the_year`,\n"
-                + "    `agg_c_14_sales_fact_1997`.`quarter`,\n"
-                + "    `agg_c_14_sales_fact_1997`.`month_of_year`,\n"
-                + "    `store`.`store_country`\n"
-                + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
-                    ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
-                    + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
-                    + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
-                    + "    ISNULL(`c3`) ASC, `c3` ASC"
-                    : "    ISNULL(`agg_c_14_sales_fact_1997`.`the_year`) ASC, `agg_c_14_sales_fact_1997`.`the_year` ASC,\n"
-                    + "    ISNULL(`agg_c_14_sales_fact_1997`.`quarter`) ASC, `agg_c_14_sales_fact_1997`.`quarter` ASC,\n"
-                    + "    ISNULL(`agg_c_14_sales_fact_1997`.`month_of_year`) ASC, `agg_c_14_sales_fact_1997`.`month_of_year` ASC,\n"
-                    + "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC");
+                "select `agg_c_14_sales_fact_1997`.`the_year` as `c0`, `agg_c_14_sales_fact_1997`.`quarter` as `c1`, `agg_c_14_sales_fact_1997`.`month_of_year` as `c2`, `store`.`store_country` as `c3` "
+                + "from `agg_c_14_sales_fact_1997` as `agg_c_14_sales_fact_1997` "
+                + "join `store` as `store` on `agg_c_14_sales_fact_1997`.`store_id` = `store`.`store_id` "
+                + "group by `agg_c_14_sales_fact_1997`.`the_year`, `agg_c_14_sales_fact_1997`.`quarter`, `agg_c_14_sales_fact_1997`.`month_of_year`, `store`.`store_country` "
+                + "order by ISNULL(`c0`) ASC, `c0` ASC, ISNULL(`c1`) ASC, `c1` ASC, ISNULL(`c2`) ASC, `c2` ASC, ISNULL(`c3`) ASC, `c3` ASC";
 
             assertQuerySqlOrNot(
                 context.getConnectionWithDefaultRole(),
@@ -3405,12 +3331,14 @@ class TestAggregationManager extends BatchTestCase {
             + "    `time_by_day`.`the_year` as `c0`,\n"
             + "    `store`.`store_country` as `c1`\n"
             + "from\n"
-            + "    `time_by_day` as `time_by_day`,\n"
-            + "    `agg_c_14_sales_fact_1997` as `agg_c_14_sales_fact_1997`,\n"
-            + "    `store` as `store`\n"
-            + "where\n"
+            + "    `time_by_day` as `time_by_day`\n"
+            + "join\n"
+            + "    `agg_c_14_sales_fact_1997` as `agg_c_14_sales_fact_1997`\n"
+            + "on\n"
             + "    `agg_c_14_sales_fact_1997`.`month_of_year` = `time_by_day`.`month_of_year`\n"
-            + "and\n"
+            + "join\n"
+            + "    `store` as `store`\n"
+            + "on\n"
             + "    `agg_c_14_sales_fact_1997`.`store_id` = `store`.`store_id`\n"
             + "group by\n"
             + "    `time_by_day`.`the_year`,\n"
@@ -3428,73 +3356,26 @@ class TestAggregationManager extends BatchTestCase {
             + "    `time_by_day`.`the_year` as `c1`,\n"
             + "    sum(`agg_c_14_sales_fact_1997`.`unit_sales`) as `m0`\n"
             + "from\n"
-            + "    `store` as `store`,\n"
-            + "    `agg_c_14_sales_fact_1997` as `agg_c_14_sales_fact_1997`,\n"
-            + "    `time_by_day` as `time_by_day`\n"
-            + "where\n"
+            + "    `store` as `store`\n"
+            + "join\n"
+            + "    `agg_c_14_sales_fact_1997` as `agg_c_14_sales_fact_1997`\n"
+            + "on\n"
             + "    `agg_c_14_sales_fact_1997`.`store_id` = `store`.`store_id`\n"
-            + "and\n"
-            + "    `store`.`store_country` = 'USA'\n"
-            + "and\n"
+            + "join\n"
+            + "    `time_by_day` as `time_by_day`\n"
+            + "on\n"
             + "    `agg_c_14_sales_fact_1997`.`month_of_year` = `time_by_day`.`month_of_year`\n"
+            + "where\n"
+            + "    `store`.`store_country` = 'USA'\n"
             + "group by\n"
             + "    `store`.`store_country`,\n"
             + "    `time_by_day`.`the_year`";
 
         final String sqlMysqlTooLowTupleQuery =
-            "select\n"
-            + "    `time_by_day`.`the_year` as `c0`,\n"
-            + "    `time_by_day`.`quarter` as `c1`,\n"
-            + "    `time_by_day`.`month_of_year` as `c2`,\n"
-            + "    `time_by_day`.`day_of_month` as `c3`,\n"
-            + "    `store`.`store_country` as `c4`\n"
-            + "from\n"
-            + "    `time_by_day` as `time_by_day`,\n"
-            + "    `sales_fact_1997` as `sales_fact_1997`,\n"
-            + "    `store` as `store`\n"
-            + "where\n"
-            + "    `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`\n"
-            + "and\n"
-            + "    `sales_fact_1997`.`store_id` = `store`.`store_id`\n"
-            + "group by\n"
-            + "    `time_by_day`.`the_year`,\n"
-            + "    `time_by_day`.`quarter`,\n"
-            + "    `time_by_day`.`month_of_year`,\n"
-            + "    `time_by_day`.`day_of_month`,\n"
-            + "    `store`.`store_country`\n"
-            + "order by\n"
-            + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
-                ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
-                + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
-                + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
-                + "    ISNULL(`c3`) ASC, `c3` ASC,\n"
-                + "    ISNULL(`c4`) ASC, `c4` ASC"
-                : "    ISNULL(`time_by_day`.`the_year`) ASC, `time_by_day`.`the_year` ASC,\n"
-                + "    ISNULL(`time_by_day`.`quarter`) ASC, `time_by_day`.`quarter` ASC,\n"
-                + "    ISNULL(`time_by_day`.`month_of_year`) ASC, `time_by_day`.`month_of_year` ASC,\n"
-                + "    ISNULL(`time_by_day`.`day_of_month`) ASC, `time_by_day`.`day_of_month` ASC,\n"
-                + "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC");
+            "select `time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, `time_by_day`.`month_of_year` as `c2`, `time_by_day`.`day_of_month` as `c3`, `store`.`store_country` as `c4` from `time_by_day` as `time_by_day` join `sales_fact_1997` as `sales_fact_1997` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` group by `time_by_day`.`the_year`, `time_by_day`.`quarter`, `time_by_day`.`month_of_year`, `time_by_day`.`day_of_month`, `store`.`store_country` order by ISNULL(`c0`) ASC, `c0` ASC, ISNULL(`c1`) ASC, `c1` ASC, ISNULL(`c2`) ASC, `c2` ASC, ISNULL(`c3`) ASC, `c3` ASC, ISNULL(`c4`) ASC, `c4` ASC";
 
         final String sqlMysqlTooLowSegmentQuery =
-            "select\n"
-            + "    `store`.`store_country` as `c0`,\n"
-            + "    `time_by_day`.`month_of_year` as `c1`,\n"
-            + "    `time_by_day`.`day_of_month` as `c2`,\n"
-            + "    sum(`sales_fact_1997`.`unit_sales`) as `m0`\n"
-            + "from\n"
-            + "    `sales_fact_1997` as `sales_fact_1997`,\n"
-            + "    `store` as `store`,\n"
-            + "    `time_by_day` as `time_by_day`\n"
-            + "where\n"
-            + "    `sales_fact_1997`.`store_id` = `store`.`store_id`\n"
-            + "and\n"
-            + "    `store`.`store_country` = 'USA'\n"
-            + "and\n"
-            + "    `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`\n"
-            + "group by\n"
-            + "    `store`.`store_country`,\n"
-            + "    `time_by_day`.`month_of_year`,\n"
-            + "    `time_by_day`.`day_of_month`";
+            "select `store`.`store_country` as `c0`, `time_by_day`.`month_of_year` as `c1`, `time_by_day`.`day_of_month` as `c2`, sum(`sales_fact_1997`.`unit_sales`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where `store`.`store_country` = 'USA' group by `store`.`store_country`, `time_by_day`.`month_of_year`, `time_by_day`.`day_of_month`";
 
         withSchemaEmf(context, SchemaModifiersEmf.TestAggregationManagerModifier6::new);
 
@@ -3720,16 +3601,7 @@ class TestAggregationManager extends BatchTestCase {
             + "group by\n"
             + "    \"customer\".\"gender\"";
         String sqlMysql =
-            "select\n"
-            + "    `customer`.`gender` as `c0`,\n"
-            + "    sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0`\n"
-            + "from\n"
-            + "    `customer` as `customer`,\n"
-            + "    `agg_c_special_sales_fact_1997` as `agg_c_special_sales_fact_1997`\n"
-            + "where\n"
-            + "    `agg_c_special_sales_fact_1997`.`customer_id` = `customer`.`customer_id`\n"
-            + "group by\n"
-            + "    `customer`.`gender`";
+            "select `customer`.`gender` as `c0`, sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0`";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
             "select gender.gender.members on 0 from sales",
@@ -3816,24 +3688,13 @@ class TestAggregationManager extends BatchTestCase {
             + "    \"sales_fact_1997\" \"sales_fact_1997\",\n"
             + "    \"time_by_day\" \"time_by_day\"\n"
             + "where\n"
-            + "    \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\"\n"
-            + "and\n"
             + "    \"time_by_day\".\"the_year\" = 1997\n"
+            + "and\n"
+            + "    \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\"\n"
             + "group by\n"
             + "    \"time_by_day\".\"the_year\"";
         String sqlMysql =
-            "select\n"
-            + "    `time_by_day`.`the_year` as `c0`,\n"
-            + "    count(distinct `sales_fact_1997`.`customer_id`) as `m0`\n"
-            + "from\n"
-            + "    `sales_fact_1997` as `sales_fact_1997`,\n"
-            + "    `time_by_day` as `time_by_day`\n"
-            + "where\n"
-            + "    `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`\n"
-            + "and\n"
-            + "    `time_by_day`.`the_year` = 1997\n"
-            + "group by\n"
-            + "    `time_by_day`.`the_year`";
+            "select `time_by_day`.`the_year` as `c0`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where `time_by_day`.`the_year` = 1997 group by `time_by_day`.`the_year`";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
             "select Time.[1997] on 0 from sales where "

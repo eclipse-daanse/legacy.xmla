@@ -35,7 +35,7 @@ import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.sql.SortingDirection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.sql.SqlQuery;
+import org.eclipse.daanse.rolap.common.sql.QueryRecorder;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
@@ -86,7 +86,7 @@ import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.SchemaModifiersEmf;
 import mondrian.test.SqlPattern;
 /**
- * Test for <code>SqlQuery</code>.
+ * Test for <code>QueryRecorder</code>.
  *
  * @author Thiyagu
  * @since 06-Jun-2007
@@ -134,7 +134,7 @@ class SqlQueryTest  extends BatchTestCase {
         }
         for (boolean b : new boolean[]{false, true}) {
             Dialect dialect = getDialect(connection);
-            SqlQuery sqlQuery = new SqlQuery(dialect, b);
+            QueryRecorder sqlQuery = new QueryRecorder(b);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
             sqlQuery.addGroupingFunction("gf0");
@@ -168,8 +168,8 @@ class SqlQueryTest  extends BatchTestCase {
             assertEquals(
                 dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
-                    getDatabaseProduct(sqlQuery.getDialect().name()),
-                    sqlQuery.toString()));
+                    getDatabaseProduct(dialect.name()),
+                    sqlQuery.toSqlAndTypes(dialect).sql()));
         }
     }
 
@@ -178,11 +178,13 @@ class SqlQueryTest  extends BatchTestCase {
     void testOrderBy(Context<?> context) throws SQLException {
         Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
-        // Test with requireAlias = true
+        // Test with requireAlias = true. The query has no SELECT, so the alias
+        // does not resolve to a projection and the renderer falls back to the
+        // raw expression for all cases.
         assertEquals(
             queryUnixString("expr", "alias", SortingDirection.ASC, true, true, true),
             "\norder by\n"
-            + "    CASE WHEN \"alias\" IS NULL THEN 1 ELSE 0 END, \"alias\" ASC");
+            + "    CASE WHEN expr IS NULL THEN 1 ELSE 0 END, expr ASC");
         // requireAlias = false
         assertEquals(
             "\norder by\n"
@@ -196,23 +198,22 @@ class SqlQueryTest  extends BatchTestCase {
         //  ascending=false, collateNullsLast=false
         assertEquals(
             "\norder by\n"
-            + "    CASE WHEN \"alias\" IS NULL THEN 0 ELSE 1 END, \"alias\" DESC",
+            + "    CASE WHEN expr IS NULL THEN 0 ELSE 1 END, expr DESC",
             queryUnixString("expr", "alias", SortingDirection.DESC, true, false, true));
     }
 
     /**
-     * Builds a SqlQuery with flags set according to params.
+     * Builds a QueryRecorder with flags set according to params.
      * Uses a Mockito spy to construct a dialect which will give the desired
      * boolean value for reqOrderByAlias.
      */
 
-    private SqlQuery makeTestSqlQuery(
+    private QueryRecorder makeTestSqlQuery(
+        Dialect dialect,
         String expr, String alias, SortingDirection sortingDirection,
         boolean nullable, boolean collateNullsLast, boolean reqOrderByAlias)
     {
-        AbstractJdbcDialect dialect = spy(new AbstractJdbcDialectForTest());
-        when(dialect.requiresOrderByAlias()).thenReturn(reqOrderByAlias);
-        SqlQuery query = new SqlQuery(dialect, true);
+        QueryRecorder query = new QueryRecorder(true);
         query.addOrderBy(
             expr, alias, sortingDirection, true, nullable, collateNullsLast);
         return query;
@@ -222,10 +223,19 @@ class SqlQueryTest  extends BatchTestCase {
         String expr, String alias, SortingDirection sortingDirection,
         boolean nullable, boolean collateNullsLast, boolean reqOrderByAlias)
     {
+        AbstractJdbcDialect dialect = spy(new AbstractJdbcDialectForTest());
+        when(dialect.requiresOrderByAlias()).thenReturn(reqOrderByAlias);
         String sql = makeTestSqlQuery(
-            expr, alias, sortingDirection, nullable, collateNullsLast,
-            reqOrderByAlias).toString();
-        return sql.replaceAll("\\r", "");
+            dialect, expr, alias, sortingDirection, nullable, collateNullsLast,
+            reqOrderByAlias).toSqlAndTypes(dialect).sql();
+        sql = sql.replaceAll("\\r", "");
+        // The renderer emits a full statement; this test only verifies the
+        // ORDER BY clause rendering, so extract that clause.
+        int idx = sql.indexOf("order by");
+        if (idx >= 0) {
+            sql = "\n" + sql.substring(idx);
+        }
+        return sql;
     }
 
     @ParameterizedTest
@@ -237,14 +247,15 @@ class SqlQueryTest  extends BatchTestCase {
         hints.put("force_index", "myIndex");
 
         String unformattedMysql =
-            "select c1 as `c0`, c2 as `c1` "
+            "select c1 as `c0`, c2 as `c1`, GROUPING(gf0) as `g0` "
             + "from `s`.`t1` as `t1alias`"
             + " FORCE INDEX (myIndex)"
             + " where a=b";
         String formattedMysql =
             "select\n"
             + "    c1 as `c0`,\n"
-            + "    c2 as `c1`\n"
+            + "    c2 as `c1`,\n"
+            + "    GROUPING(gf0) as `g0`\n"
             + "from\n"
             + "    `s`.`t1` as `t1alias` FORCE INDEX (myIndex)\n"
             + "where\n"
@@ -262,7 +273,7 @@ class SqlQueryTest  extends BatchTestCase {
                 null)};
         for (boolean formatted : new boolean[]{false, true}) {
             Dialect dialect = getDialect(connection);
-            SqlQuery sqlQuery = new SqlQuery(dialect, formatted);
+            QueryRecorder sqlQuery = new QueryRecorder(formatted);
             sqlQuery.setAllowHints(true);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
@@ -280,7 +291,7 @@ class SqlQueryTest  extends BatchTestCase {
     }
 
     private void assertSqlQueryToStringMatches(Connection connection,
-        SqlQuery query,
+        QueryRecorder query,
         SqlPattern[] patterns)
     {
         Dialect dialect = getDialect(connection);
@@ -303,8 +314,8 @@ class SqlQueryTest  extends BatchTestCase {
             assertEquals(
                 dialectize(getDatabaseProduct(dialect.name()), trigger),
                 dialectize(
-                    getDatabaseProduct(query.getDialect().name()),
-                    query.toString()));
+                    getDatabaseProduct(dialect.name()),
+                    query.toSqlAndTypes(dialect).sql()));
         }
 
         // Print warning message that no pattern was specified for the current
@@ -354,9 +365,8 @@ class SqlQueryTest  extends BatchTestCase {
             + "`time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, "
             + "sum(`sales_fact_1997`.`unit_sales`) as `m0` "
             + "from "
-            + "`sales_fact_1997` as `sales_fact_1997`, `time_by_day` as `time_by_day` "
+            + "`sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
             + "where "
-            + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
             + "`time_by_day`.`the_year` = 1997 "
             + "group by `time_by_day`.`the_year`, `time_by_day`.`quarter`";
 
@@ -441,9 +451,8 @@ class SqlQueryTest  extends BatchTestCase {
             + "`time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, "
             + "sum(`sales_fact_1997`.`unit_sales`) as `m0` "
             + "from "
-            + "`sales_fact_1997` as `sales_fact_1997`, `time_by_day` as `time_by_day` "
+            + "`sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
             + "where "
-            + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
             + "`time_by_day`.`the_year` = 1997 and "
             + "`time_by_day`.`quarter` in ('Q1', 'Q2', 'Q3') "
             + "group by `time_by_day`.`the_year`, `time_by_day`.`quarter`";
@@ -487,9 +496,8 @@ class SqlQueryTest  extends BatchTestCase {
             + "`time_by_day`.`the_year` as `c0`, `time_by_day`.`quarter` as `c1`, "
             + "sum(`sales_fact_1997`.`unit_sales`) as `m0` "
             + "from "
-            + "`sales_fact_1997` as `sales_fact_1997`, `time_by_day` as `time_by_day` "
+            + "`sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` "
             + "where "
-            + "`sales_fact_1997`.`time_id` = `time_by_day`.`time_id` and "
             + "`time_by_day`.`the_year` = 1997 "
             + "group by `time_by_day`.`the_year`, `time_by_day`.`quarter`";
 
@@ -528,7 +536,7 @@ class SqlQueryTest  extends BatchTestCase {
         }
         final Dialect dialect = getDialect(connection);
         for (boolean b : new boolean[]{false, true}) {
-            SqlQuery sqlQuery = new SqlQuery(dialect, b);
+            QueryRecorder sqlQuery = new QueryRecorder(b);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
             sqlQuery.addFromTable("s", "t1", "t1alias", null, null, true);
@@ -565,8 +573,8 @@ class SqlQueryTest  extends BatchTestCase {
             assertEquals(
                 dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
-                    getDatabaseProduct(sqlQuery.getDialect().name()),
-                    sqlQuery.toString()));
+                    getDatabaseProduct(dialect.name()),
+                    sqlQuery.toSqlAndTypes(dialect).sql()));
         }
     }
 
@@ -580,7 +588,7 @@ class SqlQueryTest  extends BatchTestCase {
         }
         final Dialect dialect = getDialect(connection);
         for (boolean b : new boolean[]{false, true}) {
-            SqlQuery sqlQuery = new SqlQuery(dialect, b);
+            QueryRecorder sqlQuery = new QueryRecorder(b);
             sqlQuery.addSelect("c0", null);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
@@ -627,8 +635,8 @@ class SqlQueryTest  extends BatchTestCase {
             assertEquals(
                 dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
-                    getDatabaseProduct(sqlQuery.getDialect().name()),
-                    sqlQuery.toString()));
+                    getDatabaseProduct(dialect.name()),
+                    sqlQuery.toSqlAndTypes(dialect).sql()));
         }
     }
 
@@ -1325,11 +1333,8 @@ class SqlQueryTest  extends BatchTestCase {
             "select\n"
             + "    avg(`sales_fact_1997`.`unit_sales`) as `m0`\n"
             + "from\n"
-            + "    `sales_fact_1997` as `sales_fact_1997`,\n"
-            + "    `time_by_day` as `time_by_day`\n"
+            + "    `sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`\n"
             + "where\n"
-            + "    `sales_fact_1997`.`time_id` = `time_by_day`.`time_id`\n"
-            + "and\n"
             + "    ((`time_by_day`.`quarter` = 'Q1' and `time_by_day`.`the_year` = 1997) "
             + "or (`time_by_day`.`month_of_year` = 4 and `time_by_day`.`quarter` = 'Q2' "
             + "and `time_by_day`.`the_year` = 1997))";

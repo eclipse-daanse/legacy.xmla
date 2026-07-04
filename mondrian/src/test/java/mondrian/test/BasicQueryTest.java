@@ -3234,27 +3234,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDifferentCalcsForDifferentTimePeriods(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-        // note: "[Product].[Drink Forecast - Standard]"
-        // was "[Drink Forecast - Standard]"
-        "WITH MEMBER [Product].[Drink Forecast - Standard] AS\n" + "  '[Product].[All Products].[Drink] * 2'\n"
-            + "MEMBER [Product].[Drink Forecast - Dynamic] AS \n" + "  '[Product].[All Products].[Drink] * \n"
-            + "   IIF([Time].[Time].CurrentMember.Name = \"1\", 1.2,\n"
-            + "     IIF([Time].[Time].CurrentMember.Name = \"2\", 1.3,\n"
-            + "       IIF([Time].[Time].CurrentMember.Name = \"3\", 1.4,\n"
-            + "         IIF([Time].[Time].CurrentMember.Name = \"4\", 1.6,\n"
-            + "           IIF([Time].[Time].CurrentMember.Name = \"5\", 2.1,\n"
-            + "             IIF([Time].[Time].CurrentMember.Name = \"6\", 2.4,\n"
-            + "               IIF([Time].[Time].CurrentMember.Name = \"7\", 2.6,\n"
-            + "                 IIF([Time].[Time].CurrentMember.Name = \"8\", 2.3,\n"
-            + "                   IIF([Time].[Time].CurrentMember.Name = \"9\", 1.9,\n"
-            + "                     IIF([Time].[Time].CurrentMember.Name = \"10\", 1.5,\n"
-            + "                       IIF([Time].[Time].CurrentMember.Name = \"11\", 1.4,\n"
-            + "                         IIF([Time].[Time].CurrentMember.Name = \"12\", 1.2, 1.0))))))))))))'\n"
-            + "SELECT DESCENDANTS(Time.[1997], [Month], SELF) ON COLUMNS, \n"
-            + "  {[Product].CHILDREN, [Product].[Drink Forecast - Standard], [Product].[Drink Forecast - Dynamic]} ON "
-            + "ROWS\n" + "FROM Warehouse",
-
+    String expected =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Time].[Time].[1997].[Q1].[1]}\n" + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "{[Time].[Time].[1997].[Q1].[3]}\n" + "{[Time].[Time].[1997].[Q2].[4]}\n" + "{[Time].[Time].[1997].[Q2].[5]}\n"
             + "{[Time].[Time].[1997].[Q2].[6]}\n" + "{[Time].[Time].[1997].[Q3].[7]}\n" + "{[Time].[Time].[1997].[Q3].[8]}\n"
@@ -3276,7 +3256,37 @@ public class BasicQueryTest {
             + "Row #3: 1,641.615\n" + "Row #3: 1,584.334\n" + "Row #4: 1,058.216\n" + "Row #4: 752.766\n"
             + "Row #4: 666.809\n" + "Row #4: 989.955\n" + "Row #4: 1,635.661\n" + "Row #4: 1,528.644\n"
             + "Row #4: 2,438.39\n" + "Row #4: 1,764.865\n" + "Row #4: 1,749.343\n" + "Row #4: 1,511.646\n"
-            + "Row #4: 1,149.13\n" + "Row #4: 950.601\n" );
+            + "Row #4: 1,149.13\n" + "Row #4: 950.601\n";
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+        == DatabaseProduct.SQLITE) {
+      // SQLite NUMERIC affinity stores DECIMAL(10,4) as 8-byte REAL, so
+      // warehouse_sales sums drift 1 ulp at half-way display boundaries.
+      expected = expected
+          .replace("820.808", "820.807")
+          .replace("1,578.137", "1,578.136");
+    }
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
+        // note: "[Product].[Drink Forecast - Standard]"
+        // was "[Drink Forecast - Standard]"
+        "WITH MEMBER [Product].[Drink Forecast - Standard] AS\n" + "  '[Product].[All Products].[Drink] * 2'\n"
+            + "MEMBER [Product].[Drink Forecast - Dynamic] AS \n" + "  '[Product].[All Products].[Drink] * \n"
+            + "   IIF([Time].[Time].CurrentMember.Name = \"1\", 1.2,\n"
+            + "     IIF([Time].[Time].CurrentMember.Name = \"2\", 1.3,\n"
+            + "       IIF([Time].[Time].CurrentMember.Name = \"3\", 1.4,\n"
+            + "         IIF([Time].[Time].CurrentMember.Name = \"4\", 1.6,\n"
+            + "           IIF([Time].[Time].CurrentMember.Name = \"5\", 2.1,\n"
+            + "             IIF([Time].[Time].CurrentMember.Name = \"6\", 2.4,\n"
+            + "               IIF([Time].[Time].CurrentMember.Name = \"7\", 2.6,\n"
+            + "                 IIF([Time].[Time].CurrentMember.Name = \"8\", 2.3,\n"
+            + "                   IIF([Time].[Time].CurrentMember.Name = \"9\", 1.9,\n"
+            + "                     IIF([Time].[Time].CurrentMember.Name = \"10\", 1.5,\n"
+            + "                       IIF([Time].[Time].CurrentMember.Name = \"11\", 1.4,\n"
+            + "                         IIF([Time].[Time].CurrentMember.Name = \"12\", 1.2, 1.0))))))))))))'\n"
+            + "SELECT DESCENDANTS(Time.[1997], [Month], SELF) ON COLUMNS, \n"
+            + "  {[Product].CHILDREN, [Product].[Drink Forecast - Standard], [Product].[Drink Forecast - Dynamic]} ON "
+            + "ROWS\n" + "FROM Warehouse",
+
+        expected );
   }
 
   /**
@@ -3292,13 +3302,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void _testDc4dtp2(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH MEMBER [Product].[Product].[Drink Forecast - Standard] AS\n"
-        + "  '[Product].[Product].[All Products].[Drink] * 2'\n" + "MEMBER [Product].[Product].[Drink Forecast - Dynamic] AS \n"
-        + "  '[Product].[Product].[All Products].[Drink] * \n"
-        + "   [Time].[Time].CURRENTMEMBER.PROPERTIES(\"Dynamic Forecast Multiplier\")'\n"
-        + "SELECT DESCENDANTS(Time.[1997], [Month], SELF) ON COLUMNS, \n"
-        + "  {[Product].[Product].CHILDREN, [Product].[Product].[Drink Forecast - Standard], [Product].[Product].[Drink Forecast - Dynamic]} ON ROWS\n"
-        + "FROM Warehouse",
+    String expected =
           "Axis #0:\n"
                   + "{}\n"
                   + "Axis #1:\n"
@@ -3379,7 +3383,23 @@ public class BasicQueryTest {
                   + "Row #4: #ERR: org.eclipse.daanse.olap.fun.DaanseEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[9]'\n"
                   + "Row #4: #ERR: org.eclipse.daanse.olap.fun.DaanseEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[10]'\n"
                   + "Row #4: #ERR: org.eclipse.daanse.olap.fun.DaanseEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[11]'\n"
-                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.DaanseEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[12]'\n");
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.DaanseEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[12]'\n";
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+        == DatabaseProduct.SQLITE) {
+      // SQLite NUMERIC affinity stores DECIMAL(10,4) as 8-byte REAL, so
+      // warehouse_sales sums drift 1 ulp at half-way display boundaries.
+      expected = expected
+          .replace("820.808", "820.807")
+          .replace("1,578.137", "1,578.136");
+    }
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH MEMBER [Product].[Product].[Drink Forecast - Standard] AS\n"
+        + "  '[Product].[Product].[All Products].[Drink] * 2'\n" + "MEMBER [Product].[Product].[Drink Forecast - Dynamic] AS \n"
+        + "  '[Product].[Product].[All Products].[Drink] * \n"
+        + "   [Time].[Time].CURRENTMEMBER.PROPERTIES(\"Dynamic Forecast Multiplier\")'\n"
+        + "SELECT DESCENDANTS(Time.[1997], [Month], SELF) ON COLUMNS, \n"
+        + "  {[Product].[Product].CHILDREN, [Product].[Product].[Drink Forecast - Standard], [Product].[Product].[Drink Forecast - Dynamic]} ON ROWS\n"
+        + "FROM Warehouse",
+          expected);
   }
 
   @ParameterizedTest
@@ -5673,15 +5693,10 @@ public class BasicQueryTest {
       Connection connection = context.getConnectionWithDefaultRole();
     executeQuery(connection, "select " + "Crossjoin([Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [Sales] " + " \n" );
-    // Some DBs return 0 when we ask for null. Like Oracle.
-    final String returnedValue;
-    switch ( getDatabaseProduct(getDialect(connection).name()) ) {
-      case ORACLE:
-        returnedValue = "0";
-        break;
-      default:
-        returnedValue = "";
-    }
+    // sum over a NULL expression yields SQL NULL, rendered as an empty cell, on all
+    // dialects (the historical "Oracle returns 0" special case was a relic of old
+    // Mondrian's primitive accessors; Daanse's accessors keep the NULL).
+    final String returnedValue = "";
 
     assertQueryReturns(context.getConnectionWithDefaultRole(),"select [Measures].[zero] ON COLUMNS,\n" + " {[Gender].[All Gender]} ON ROWS\n"
         + "from [Sales] " + " ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[zero]}\n" + "Axis #2:\n"

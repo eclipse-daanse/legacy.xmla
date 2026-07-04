@@ -11,6 +11,13 @@
 
 -runproperties: logback.configurationFile=${project.basedir}/logback.xml
 
+# Force the test JVM default locale to en_US at startup so currency/number
+# formatting is deterministic ($ not £). Must be a -runvm (JVM launch) arg, not
+# -runproperties: java.util.Locale's default is computed at JVM init from these,
+# and Format.java caches the currency symbol from Locale.getDefault() at first
+# use (never cleared), so MondrianRuntimeExtension's later setDefault is too late.
+-runvm.locale: -Duser.language=en, -Duser.country=US
+
 -runfw: org.apache.felix.framework
 
 -runee: JavaSE-25
@@ -24,8 +31,25 @@
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.impl',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.mysql',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.h2',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.sqlite',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.derby',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.mariadb',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.postgresql',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.oracle',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.mssqlserver',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.clickhouse',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.duckdb',\
+	bnd.identity;id='derby',\
+	bnd.identity;id='org.duckdb.duckdb_jdbc',\
+	bnd.identity;id='mariadb-java-client',\
+	bnd.identity;id='org.postgresql.jdbc',\
+	bnd.identity;id='com.microsoft.sqlserver.mssql-jdbc',\
 	bnd.identity;id='com.github.ben-manes.caffeine',\
-	bnd.identity;id='org.apache.aries.spifly.dynamic.bundle'
+	bnd.identity;id='org.apache.aries.spifly.dynamic.bundle',\
+	bnd.identity;id='org.eclipse.daanse.sql.statement.api',\
+	bnd.identity;id='org.eclipse.daanse.sql.statement.impl',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.datasource.oracle',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.datasource.clickhouse'
 
 
 
@@ -47,11 +71,13 @@
 	com.fasterxml.jackson.core.jackson-databind;version='[2.18.4,2.18.5)',\
 	com.github.ben-manes.caffeine;version='[3.1.2,3.1.3)',\
 	com.h2database;version='[2.2.224,2.2.225)',\
+	com.microsoft.sqlserver.mssql-jdbc;version='[12.8.2,12.8.3)',\
 	com.mysql.cj;version='[8.0.28,8.0.29)',\
 	com.sun.jna;version='[5.18.1,5.18.2)',\
 	com.sun.xml.bind.jaxb-core;version='[4.0.6,4.0.7)',\
 	com.sun.xml.bind.jaxb-impl;version='[4.0.6,4.0.7)',\
 	de.siegmar.fastcsv;version='[3.1.0,3.1.1)',\
+	derby;version='[10.14.2000000,10.14.2000001)',\
 	jakarta.activation-api;version='[2.1.4,2.1.5)',\
 	jakarta.xml.bind-api;version='[4.0.4,4.0.5)',\
 	junit-jupiter-api;version='[5.12.2,5.12.3)',\
@@ -60,12 +86,14 @@
 	junit-platform-commons;version='[1.12.2,1.12.3)',\
 	junit-platform-engine;version='[1.12.2,1.12.3)',\
 	junit-platform-launcher;version='[1.12.2,1.12.3)',\
+	mariadb-java-client;version='[3.5.5,3.5.6)',\
 	net.bytebuddy.byte-buddy;version='[1.17.5,1.17.6)',\
 	net.bytebuddy.byte-buddy-agent;version='[1.17.5,1.17.6)',\
 	org.apache.aries.spifly.dynamic.bundle;version='[1.3.7,1.3.8)',\
 	org.apache.commons.lang3;version='[3.17.0,3.17.1)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
+	org.duckdb.duckdb_jdbc;version='[1.5.4,1.5.5)',\
 	org.eclipse.daanse.cwm.data.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.data.sink.jdbc;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.data.source.csv;version='[0.0.1,0.0.2)',\
@@ -73,11 +101,22 @@
 	org.eclipse.daanse.cwm.resource.relational.ddl;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.testkit;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.util;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.datasource.clickhouse;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.datasource.common;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.datasource.oracle;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.clickhouse;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.db.common;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.derby;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.duckdb;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.mariadb;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.mssqlserver;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.db.mysql;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.oracle;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.postgresql;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.sqlite;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.impl;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.record;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.model.api;version='[0.0.1,0.0.2)',\
@@ -102,6 +141,8 @@
 	org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.model;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.sql.guard.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.sql.statement.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.sql.statement.impl;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.tooling.dockerjava;version='[0.0.1,0.0.2)',\
 	org.eclipse.emf.common;version='[2.44.0,2.44.1)',\
 	org.eclipse.emf.ecore;version='[2.41.0,2.41.1)',\
@@ -118,8 +159,10 @@
 	org.opentest4j;version='[1.3.0,1.3.1)',\
 	org.osgi.service.cm;version='[1.6.1,1.6.2)',\
 	org.osgi.service.component;version='[1.5.1,1.5.2)',\
+	org.osgi.service.jdbc;version='[1.1.0,1.1.1)',\
 	org.osgi.util.converter;version='[1.0.9,1.0.10)',\
 	org.osgi.util.function;version='[1.2.0,1.2.1)',\
 	org.osgi.util.promise;version='[1.3.0,1.3.1)',\
+	org.postgresql.jdbc;version='[42.7.4,42.7.5)',\
 	org.xerial.sqlite-jdbc;version='[3.36.0,3.36.1)',\
 	slf4j.api;version='[2.0.12,2.0.13)'

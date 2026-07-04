@@ -68,6 +68,53 @@
       <version>${mysql-connector-java.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <version>3.5.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.7.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>12.8.2.jre11</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- embeds ojdbc11 (no OSGi headers) on its Bundle-ClassPath; the Oracle
+         provider obtains the DataSource service via ConfigurationAdmin -->
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.oracle</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- embeds the shaded clickhouse-jdbc (no OSGi headers) the same way -->
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.clickhouse</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- ConfigurationAdmin API for the oracle/clickhouse providers -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.cm</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- mssql-jdbc mandatorily imports org.osgi.service.jdbc;version=[1.1,2);
+         the parent manages 1.0.0/provided, so pin 1.1.0 for the resolver. -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.jdbc</artifactId>
+      <version>1.1.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.jdbc.db.dialect.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
@@ -161,6 +208,50 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.sqlite</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.derby</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Derby >=10.15 dropped OSGi manifest headers; 10.14.2.0 is the last
+         OSGi-capable driver (Bundle-SymbolicName: derby). -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.14.2.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.duckdb</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- The raw driver stays a direct TEST dependency: the TCK provider
+         instantiates org.duckdb.DuckDBDriver and DataLoaderUtil uses the
+         native DuckDBAppender bulk-load API at compile time. The
+         daanse.jdbc.datasource.duckdb bundle embeds the driver privately
+         (exports only its own api packages), so it cannot stand in here.
+         duckdb_jdbc ships proper OSGi headers - plain bundle, no embedding
+         module needed. -->
+    <dependency>
+      <groupId>org.duckdb</groupId>
+      <artifactId>duckdb_jdbc</artifactId>
+      <version>1.5.4.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.oracle</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
@@ -183,6 +274,13 @@
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.mariadb</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.clickhouse</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>

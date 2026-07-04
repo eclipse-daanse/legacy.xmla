@@ -6588,21 +6588,45 @@ class SchemaTest {
         public TestViewFactTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
+            // The fact view owns FRESH columns (see TestViewFactTable2ModifierEmf
+            // for the same pattern). Never add the shared CatalogSupplier.COLUMN_*
+            // objects to getFeature() — that containment list (opposite
+            // Column.owner) would STEAL them from the shared inventory_fact
+            // table and corrupt the supplier's model for every later test.
+            Column vColTimeId = RelationalFactory.eINSTANCE.createColumn();
+            vColTimeId.setName("time_id");
+            vColTimeId.setType(SqlSimpleTypes.Sql99.integerType());
+            Column vColProductId = RelationalFactory.eINSTANCE.createColumn();
+            vColProductId.setName("product_id");
+            vColProductId.setType(SqlSimpleTypes.Sql99.integerType());
+            Column vColStoreId = RelationalFactory.eINSTANCE.createColumn();
+            vColStoreId.setName("store_id");
+            vColStoreId.setType(SqlSimpleTypes.Sql99.integerType());
+            Column vColWarehouseCost = RelationalFactory.eINSTANCE.createColumn();
+            vColWarehouseCost.setName("warehouse_cost");
+            vColWarehouseCost.setType(SqlSimpleTypes.decimalType(10, 4));
+            Column vColWarehouseSales = RelationalFactory.eINSTANCE.createColumn();
+            vColWarehouseSales.setName("warehouse_sales");
+            vColWarehouseSales.setType(SqlSimpleTypes.decimalType(10, 4));
+            Column vColWarehouseId = RelationalFactory.eINSTANCE.createColumn();
+            vColWarehouseId.setName("warehouse_id");
+            vColWarehouseId.setType(SqlSimpleTypes.Sql99.integerType());
+
             // Create dimension connectors for Time, Product, and Store
             DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d1.setOverrideDimensionName("Time");
             d1.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_TIME));
-            d1.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
+            d1.setForeignKey(vColTimeId);
 
             DimensionConnector d2 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d2.setOverrideDimensionName("Product");
             d2.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_PRODUCT));
-            d2.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
+            d2.setForeignKey(vColProductId);
 
             DimensionConnector d3 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d3.setOverrideDimensionName("Store");
             d3.setDimension((org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension) copier.get(CatalogSupplier.DIMENSION_STORE));
-            d3.setForeignKey(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
+            d3.setForeignKey(vColStoreId);
 
             // Create Warehouse dimension levels
             org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 = LevelFactory.eINSTANCE.createLevel();
@@ -6645,7 +6669,7 @@ class SchemaTest {
 
             DimensionConnector d4 = DimensionFactory.eINSTANCE.createDimensionConnector();
             d4.setOverrideDimensionName("Warehouse");
-            d4.setForeignKey(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
+            d4.setForeignKey(vColWarehouseId);
             d4.setDimension(warehouseDimension);
 
             // Create SQL view for cube fact table
@@ -6653,12 +6677,12 @@ class SchemaTest {
             view.setAlias("FACT");
 
             org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlViewDef = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
-            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_TIME_ID_INVENTORY_FACT);
-            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_PRODUCT_ID_INVENTORY_FACT);
-            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_STORE_ID_INVENTORY_FACT);
-            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
-            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
-            sqlViewDef.getFeature().add(CatalogSupplier.COLUMN_WAREHOUSE_ID_INVENTORY_FACT);
+            sqlViewDef.getFeature().add(vColTimeId);
+            sqlViewDef.getFeature().add(vColProductId);
+            sqlViewDef.getFeature().add(vColStoreId);
+            sqlViewDef.getFeature().add(vColWarehouseCost);
+            sqlViewDef.getFeature().add(vColWarehouseSales);
+            sqlViewDef.getFeature().add(vColWarehouseId);
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1 = SourceFactory.eINSTANCE.createSqlStatement();
             stmt1.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
@@ -6678,11 +6702,11 @@ class SchemaTest {
             // Create measures
             org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure1 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure1.setName("Warehouse Cost");
-            measure1.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_COST_INVENTORY_FACT);
+            measure1.setColumn(vColWarehouseCost);
 
             org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure measure2 = MeasureFactory.eINSTANCE.createSumMeasure();
             measure2.setName("Warehouse Sales");
-            measure2.setColumn(CatalogSupplier.COLUMN_WAREHOUSE_SALES_INVENTORY_FACT);
+            measure2.setColumn(vColWarehouseSales);
 
             MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
             measureGroup.getMeasures().add(measure1);
@@ -16895,7 +16919,13 @@ class SchemaTest {
                     if (timeDimension != null) {
                         barDimensionConnector.setDimension(timeDimension);
                     }
-                    barDimensionConnector.setForeignKey((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME));
+                    // The COLUMN_TIME_ID_TIME static is not the same instance as the time_id column
+                    // in the copied catalog, so copier.get(...) returns null. Take the foreign key from
+                    // the copied Time hierarchy's primary key, which is the valid in-model time_id.
+                    Column barForeignKey = (timeDimension != null && !timeDimension.getHierarchies().isEmpty())
+                        ? timeDimension.getHierarchies().get(0).getPrimaryKey()
+                        : null;
+                    barDimensionConnector.setForeignKey(barForeignKey);
                     barDimensionConnector.setVisible(this.value);
 
                     // Create measure
