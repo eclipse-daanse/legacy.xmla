@@ -55,7 +55,7 @@ import mondrian.olap.type.NullType;
 import mondrian.olap.type.TupleType;
 import mondrian.olap.type.Type;
 import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.rolap.sql.SqlQuery;
+import mondrian.rolap.sql.SqlSelectQuery;
 import mondrian.server.Execution;
 import mondrian.spi.Dialect;
 import mondrian.spi.DialectManager;
@@ -835,16 +835,16 @@ class SqlConstraintUtilsTest extends FoodMartTestCase {
 
         final AggStar aggStar = null;
         final Dialect dialect =  DialectManager.createDialect(connection.getDataSource(), null);
-        final SqlQuery query = new SqlQuery(dialect);
+        final SqlSelectQuery query = new SqlSelectQuery(dialect);
 
         when(level.getBaseStarKeyColumn(baseCube)).thenReturn(column);
         when(column.getNameColumn()).thenReturn(column);
-        when(column.generateExprString(query)).thenReturn("dummyName");
+        when(column.generateExprString(dialect)).thenReturn("dummyName");
 
         String[] columnValue = new String[1];
         columnValue[0] = "dummyValue";
 
-        String levelStr = SqlConstraintUtils.constrainLevel(level, query, baseCube, aggStar, columnValue, false);
+        String levelStr = SqlConstraintUtils.constrainLevel(dialect, level, query, baseCube, aggStar, columnValue, false);
         assertEquals("dummyName = 'dummyValue'",  levelStr);
     }
     

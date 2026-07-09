@@ -14,7 +14,7 @@ import mondrian.olap.Exp;
 import mondrian.olap.Literal;
 import mondrian.olap.fun.MondrianEvaluationException;
 import mondrian.olap.type.NullType;
-import mondrian.rolap.sql.SqlQuery;
+import mondrian.rolap.sql.SqlSelectQuery;
 import mondrian.spi.Dialect;
 
 import junit.framework.TestCase;
@@ -39,7 +39,7 @@ class NumberSqlCompilerTest extends TestCase {
         when(dialect.getDatabaseProduct())
             .thenReturn(Dialect.DatabaseProduct.MYSQL);
 
-        SqlQuery query = mock(SqlQuery.class);
+        SqlSelectQuery query = mock(SqlSelectQuery.class);
         when(query.getDialect()).thenReturn(dialect);
 
         RolapNativeSql sql = new RolapNativeSql(query, null, null, null);

@@ -16,7 +16,7 @@ import mondrian.olap.MondrianDef;
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.aggmatcher.JdbcSchema;
-import mondrian.rolap.sql.SqlQuery;
+import mondrian.rolap.sql.SqlSelectQuery;
 import mondrian.rolap.sql.TupleConstraint;
 import org.mockito.Answers;
 
@@ -41,7 +41,7 @@ class SqlTupleReaderTest extends TestCase {
 
   void testAddLevelMemberSql() throws Exception {
     TupleConstraint constraint = mock( TupleConstraint.class );
-    SqlQuery sqlQuery = mock( SqlQuery.class, Answers.RETURNS_MOCKS.get() );
+    SqlSelectQuery sqlQuery = mock( SqlSelectQuery.class, Answers.RETURNS_MOCKS.get() );
     RolapCube baseCube = mock( RolapCube.class );
     RolapLevel targetLevel = mock( RolapLevel.class );
     RolapCubeLevel levelIter = mock( RolapCubeLevel.class, Answers.RETURNS_MOCKS.get() );

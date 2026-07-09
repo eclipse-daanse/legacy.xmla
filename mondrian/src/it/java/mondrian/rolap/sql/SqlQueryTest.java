@@ -26,7 +26,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for <code>SqlQuery</code>.
+ * Test for <code>SqlSelectQuery</code>.
  *
  * @author Thiyagu
  * @since 06-Jun-2007
@@ -65,7 +65,7 @@ class SqlQueryTest extends BatchTestCase {
         }
         for (boolean b : new boolean[]{false, true}) {
             Dialect dialect = getTestContext().getDialect();
-            SqlQuery sqlQuery = new SqlQuery(dialect, b);
+            SqlSelectQuery sqlQuery = new SqlSelectQuery(dialect, b);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
             sqlQuery.addGroupingFunction("gf0");
@@ -129,17 +129,17 @@ class SqlQueryTest extends BatchTestCase {
     }
 
     /**
-     * Builds a SqlQuery with flags set according to params.
+     * Builds a SqlSelectQuery with flags set according to params.
      * Uses a Mockito spy to construct a dialect which will give the desired
      * boolean value for reqOrderByAlias.
      */
-    private SqlQuery makeTestSqlQuery(
+    private SqlSelectQuery makeTestSqlQuery(
         String expr, String alias, boolean ascending,
         boolean nullable, boolean collateNullsLast, boolean reqOrderByAlias)
     {
         JdbcDialectImpl dialect = spy(new JdbcDialectImpl());
         when(dialect.requiresOrderByAlias()).thenReturn(reqOrderByAlias);
-        SqlQuery query = new SqlQuery(dialect, true);
+        SqlSelectQuery query = new SqlSelectQuery(dialect, true);
         query.addOrderBy(
             expr, alias, ascending, true, nullable, collateNullsLast);
         return query;
@@ -186,7 +186,7 @@ class SqlQueryTest extends BatchTestCase {
 
         for (boolean formatted : new boolean[]{false, true}) {
             Dialect dialect = getTestContext().getDialect();
-            SqlQuery sqlQuery = new SqlQuery(dialect, formatted);
+            SqlSelectQuery sqlQuery = new SqlSelectQuery(dialect, formatted);
             sqlQuery.setAllowHints(true);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
@@ -204,7 +204,7 @@ class SqlQueryTest extends BatchTestCase {
     }
 
     private void assertSqlQueryToStringMatches(
-        SqlQuery query,
+        SqlSelectQuery query,
         SqlPattern[] patterns)
     {
         Dialect dialect = getTestContext().getDialect();
@@ -433,7 +433,7 @@ class SqlQueryTest extends BatchTestCase {
         }
         final Dialect dialect = getTestContext().getDialect();
         for (boolean b : new boolean[]{false, true}) {
-            SqlQuery sqlQuery = new SqlQuery(getTestContext().getDialect(), b);
+            SqlSelectQuery sqlQuery = new SqlSelectQuery(getTestContext().getDialect(), b);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);
             sqlQuery.addFromTable("s", "t1", "t1alias", null, null, true);
@@ -481,7 +481,7 @@ class SqlQueryTest extends BatchTestCase {
         }
         final Dialect dialect = getTestContext().getDialect();
         for (boolean b : new boolean[]{false, true}) {
-            SqlQuery sqlQuery = new SqlQuery(dialect, b);
+            SqlSelectQuery sqlQuery = new SqlSelectQuery(dialect, b);
             sqlQuery.addSelect("c0", null);
             sqlQuery.addSelect("c1", null);
             sqlQuery.addSelect("c2", null);

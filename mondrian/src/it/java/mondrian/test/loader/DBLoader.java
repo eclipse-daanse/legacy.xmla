@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * <ul>
  * <li>
  * JDBC Driver: This is used both for the generation of the SQL (using the
- * SqlQuery.Dialect) and loading the database itself.
+ * SqlSelectQuery.Dialect) and loading the database itself.
  * </li>
  * <li>
  * JDBC URL: How to connect to the database.

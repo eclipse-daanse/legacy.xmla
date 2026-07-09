@@ -12,7 +12,7 @@ package mondrian.rolap.agg;
 
 import org.eclipse.daanse.olap.api.OlapElement;
 import mondrian.rolap.*;
-import mondrian.rolap.sql.SqlQuery;
+import mondrian.rolap.sql.SqlSelectQuery;
 import mondrian.spi.Dialect;
 
 import mondrian.test.TestContext;
@@ -34,7 +34,7 @@ class DrillThroughQuerySpecTest extends TestCase {
 
   private DrillThroughCellRequest requestMock;
   private StarPredicate starPredicateMock;
-  private SqlQuery sqlQueryMock;
+  private SqlSelectQuery sqlQueryMock;
   private DrillThroughQuerySpec drillThroughQuerySpec;
   private RolapStar.Column includedColumn;
   private RolapStar.Column excludedColumn;
@@ -45,7 +45,7 @@ class DrillThroughQuerySpecTest extends TestCase {
 
     requestMock = mock(DrillThroughCellRequest.class);
     starPredicateMock = mock(StarPredicate.class);
-    sqlQueryMock = mock(SqlQuery.class);
+    sqlQueryMock = mock(SqlSelectQuery.class);
     RolapStar.Measure measureMock = mock(RolapStar.Measure.class);
     includedColumn = mock(RolapStar.Column.class);
     excludedColumn = mock(RolapStar.Column.class);

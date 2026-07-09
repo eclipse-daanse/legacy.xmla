@@ -14,7 +14,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapMember;
 import mondrian.rolap.SqlStatement;
-import mondrian.rolap.sql.SqlQuery;
+import mondrian.rolap.sql.SqlSelectQuery;
 import mondrian.spi.Dialect;
 import mondrian.spi.DialectManager;
 import mondrian.spi.impl.GoogleBigQueryDialect;
@@ -1768,7 +1768,7 @@ class DialectTest extends TestCase {
     String expr = "1";
     JdbcDialectImpl dialect = new VectorwiseDialect( getConnection() );
 
-    SqlQuery query = new SqlQuery( dialect, true );
+    SqlSelectQuery query = new SqlSelectQuery( dialect, true );
     query.addOrderBy(
       expr, null, true, false,
       dialect.requiresUnionOrderByOrdinal(), true );
