@@ -138,21 +138,12 @@ public class DataLoaderUtil {
 	}
 
 	/**
-	 * Whether the database product supports (needs) classic secondary-index DDL.
-	 * Index creation is OPTIONAL: products where {@code CREATE INDEX} is not the
-	 * plain b-tree statement simply skip the whole index phase instead of firing
-	 * statements that can only fail. ClickHouse: {@code CREATE INDEX} without a
-	 * skip-index {@code TYPE} is rejected ("CREATE INDEX without TYPE is
-	 * forbidden", INCORRECT_QUERY code 80), and MergeTree tables need no b-tree
-	 * indexes for TCK data volumes. All other products are unchanged.
+	 * Whether the dialect supports (needs) classic secondary-index DDL. Delegates to the
+	 * dialect capability ({@code Dialect.supportsIndexDdl()}, lifted from the former
+	 * per-product switch here — the ClickHouse knowledge now lives in ClickHouseDialect).
 	 */
 	public static boolean supportsIndexDdl(Dialect dialect) {
-		switch (getDatabaseProduct(dialect.name())) {
-		case CLICKHOUSE:
-			return false;
-		default:
-			return true;
-		}
+		return dialect.supportsIndexDdl();
 	}
 
 	/**
