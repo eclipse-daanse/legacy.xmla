@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.sql.SortingDirection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.SqlRender;
 import org.eclipse.daanse.rolap.common.sql.QueryRecorder;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
@@ -169,7 +170,7 @@ class SqlQueryTest  extends BatchTestCase {
                 dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
                     getDatabaseProduct(dialect.name()),
-                    sqlQuery.toSqlAndTypes(dialect).sql()));
+                    SqlRender.render(sqlQuery.buildStatement(), dialect, sqlQuery.renderOptions()).sql()));
         }
     }
 
@@ -225,9 +226,10 @@ class SqlQueryTest  extends BatchTestCase {
     {
         AbstractJdbcDialect dialect = spy(new AbstractJdbcDialectForTest());
         when(dialect.requiresOrderByAlias()).thenReturn(reqOrderByAlias);
-        String sql = makeTestSqlQuery(
+        QueryRecorder testQuery = makeTestSqlQuery(
             dialect, expr, alias, sortingDirection, nullable, collateNullsLast,
-            reqOrderByAlias).toSqlAndTypes(dialect).sql();
+            reqOrderByAlias);
+        String sql = SqlRender.render(testQuery.buildStatement(), dialect, testQuery.renderOptions()).sql();
         sql = sql.replaceAll("\\r", "");
         // The renderer emits a full statement; this test only verifies the
         // ORDER BY clause rendering, so extract that clause.
@@ -315,7 +317,7 @@ class SqlQueryTest  extends BatchTestCase {
                 dialectize(getDatabaseProduct(dialect.name()), trigger),
                 dialectize(
                     getDatabaseProduct(dialect.name()),
-                    query.toSqlAndTypes(dialect).sql()));
+                    SqlRender.render(query.buildStatement(), dialect, query.renderOptions()).sql()));
         }
 
         // Print warning message that no pattern was specified for the current
@@ -574,7 +576,7 @@ class SqlQueryTest  extends BatchTestCase {
                 dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
                     getDatabaseProduct(dialect.name()),
-                    sqlQuery.toSqlAndTypes(dialect).sql()));
+                    SqlRender.render(sqlQuery.buildStatement(), dialect, sqlQuery.renderOptions()).sql()));
         }
     }
 
@@ -636,7 +638,7 @@ class SqlQueryTest  extends BatchTestCase {
                 dialectize(getDatabaseProduct(dialect.name()), expected),
                 dialectize(
                     getDatabaseProduct(dialect.name()),
-                    sqlQuery.toSqlAndTypes(dialect).sql()));
+                    SqlRender.render(sqlQuery.buildStatement(), dialect, sqlQuery.renderOptions()).sql()));
         }
     }
 
