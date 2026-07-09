@@ -45,7 +45,7 @@ import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.api.element.RolapMember;
 import org.eclipse.daanse.rolap.common.catalog.RolapCatalogReader;
 import org.eclipse.daanse.rolap.common.connection.AbstractRolapConnection.NonEmptyResult;
-import org.eclipse.daanse.rolap.common.constraint.SqlConstraintFactory;
+import org.eclipse.daanse.rolap.common.sql.SqlConstraintFactory;
 import org.eclipse.daanse.rolap.common.evaluator.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.member.MemberCacheHelper;
 import org.eclipse.daanse.rolap.common.member.SmartMemberReader;

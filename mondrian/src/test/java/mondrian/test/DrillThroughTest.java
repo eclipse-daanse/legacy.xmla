@@ -469,8 +469,14 @@ class DrillThroughTest {
                 if (exp instanceof org.eclipse.daanse.rolap.element.RolapColumn rc) {
                     nameExpStr = star.getDialect().quoteIdentifier(rc.getTable(), rc.getName());
                 } else {
-                    java.util.Map<String, String> variants =
-                        org.eclipse.daanse.rolap.common.util.SqlExpressionResolver.sqlVariants(exp);
+                    // Variants straight from the olap model (the rolap resolver is bundle-private
+                    // since the common.util un-export): dialect-name -> sql, last write wins.
+                    java.util.Map<String, String> variants = new java.util.HashMap<>();
+                    for (org.eclipse.daanse.olap.api.SqlStatement sqlStmt : exp.getSqls()) {
+                        for (String d : sqlStmt.getDialects()) {
+                            variants.put(d, sqlStmt.getSql());
+                        }
+                    }
                     String best = variants.get(star.getDialect().name());
                     nameExpStr = best != null ? best : variants.get("generic");
                 }
