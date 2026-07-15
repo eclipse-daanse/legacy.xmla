@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
@@ -74,6 +74,16 @@ public class SQLiteDatabaseProvider implements DatabaseProvider {
 		SQLiteConfig cfg = new SQLiteConfig();
 		// writers block instead of failing immediately with SQLITE_BUSY
 		cfg.setBusyTimeout(30000);
+		// A named in-memory database can only be shared through cache=shared, and shared-cache
+		// mode serialises readers on table-level read locks. mondrian sends up to
+		// SEGMENT_CACHE_MANAGER_NUMBER_SQL_THREADS (100) concurrent selects at it. read_uncommitted
+		// drops those read locks; nothing writes once the load is done, so there is nothing
+		// uncommitted left to read.
+		cfg.setReadUncommited(true);
+		// The page cache defaults to 2 MB. FoodMart does not fit, and every miss walks the
+		// in-memory pager again. Negative values are KiB (SQLite: "PRAGMA cache_size = -N").
+		cfg.setCacheSize(-262144);
+		cfg.setTempStore(SQLiteConfig.TempStore.MEMORY);
 		SQLiteDataSource dataSource = new SQLiteDataSource(cfg);
 		dataSource.setUrl(url);
 		try {

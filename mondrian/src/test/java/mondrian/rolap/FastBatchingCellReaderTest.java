@@ -46,7 +46,7 @@ import java.util.concurrent.Future;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.cache.CacheCommand;
@@ -149,7 +149,8 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         if (useGroupingSets != null) {
             dialect = dialectWithGroupingSets(dialect, useGroupingSets);
         }
-        return new BatchLoader(ExecutionContext.current(), aggMgr.getCacheMgr(), dialect, cube);
+        return new BatchLoader(ExecutionContext.current(), aggMgr.getCacheMgr(),
+            org.eclipse.daanse.rolap.common.sql.SqlQueryCapabilities.of(dialect), cube);
     }
 
     private Dialect dialectWithGroupingSets(final Dialect dialect, final boolean supportsGroupingSets) {

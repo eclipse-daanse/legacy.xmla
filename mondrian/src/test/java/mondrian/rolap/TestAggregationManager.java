@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -1248,13 +1248,13 @@ class TestAggregationManager extends BatchTestCase {
             "select count(*) from (select distinct \"store_country\" as \"c0\" from \"store\" as \"store\") as \"init\"";
 
         String cardinalitySqlMySql1 =
-            "select count(distinct `store_country`) as `c0` from `store` as `store`";
+            "select COUNT(distinct `store_country`) as `c0` from `store` as `store`";
 
         String cardinalitySqlDerby2 =
             "select count(*) from (select distinct \"store_country\" as \"c0\" from \"store_ragged\" as \"store_ragged\") as \"init\"";
 
         String cardinalitySqlMySql2 =
-            "select count(*) from (select distinct `store_country` as `c0` from `store_ragged` as `store_ragged`) as `init`";
+            "select COUNT(*) as `c0` from (select distinct `store_country` as `c0` from `store_ragged` as `store_ragged`) as `init`";
 
         SqlPattern[] patterns1 =
             new SqlPattern[] {

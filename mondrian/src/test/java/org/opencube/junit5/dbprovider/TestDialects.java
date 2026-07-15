@@ -16,18 +16,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Locale;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData;
-import org.eclipse.daanse.jdbc.db.dialect.db.clickhouse.ClickHouseDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.derby.DerbyDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.duckdb.DuckDbDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.h2.H2DialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.mariadb.MariaDBDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.mssqlserver.MicrosoftSqlServerDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.mysql.MySqlDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.oracle.OracleDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.postgresql.PostgreSqlDialectFactory;
-import org.eclipse.daanse.jdbc.db.dialect.db.sqlite.SqliteDialectFactory;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.DialectInitData;
+import org.eclipse.daanse.sql.dialect.db.clickhouse.ClickHouseDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.derby.DerbyDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.duckdb.DuckDbDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.h2.H2DialectFactory;
+import org.eclipse.daanse.sql.dialect.db.mariadb.MariaDBDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.mssqlserver.MicrosoftSqlServerDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.mysql.MySqlDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.oracle.OracleDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.postgresql.PostgreSqlDialectFactory;
+import org.eclipse.daanse.sql.dialect.db.sqlite.SqliteDialectFactory;
 
 /**
  * The ONE dialect-decision point for the legacy mondrian TCK.

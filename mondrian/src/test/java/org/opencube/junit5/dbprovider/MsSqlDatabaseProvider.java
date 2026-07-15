@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 
 import com.github.dockerjava.api.model.PortBinding;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
@@ -100,6 +100,12 @@ public class MsSqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 	@Override
 	protected Entry<DataSource, Dialect> createDataSource() {
 		SQLServerDataSource master = dataSource("master");
+		// While the server boots, the port already listens but the login is refused. The driver
+		// then waits out its 30s loginTimeout and retries once after connectRetryInterval, so
+		// what reads as a 100ms poll really ticks about once a minute. Fail fast instead: this
+		// DataSource only probes, the one handed to the tests keeps the defaults.
+		master.setLoginTimeout(2);
+		master.setConnectRetryCount(0);
 
 		for (int i = 0; i < readinessSeconds() * 10; i++) {
 			System.out.print(".");

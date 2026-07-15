@@ -68,7 +68,7 @@
        so always-on TRACE stays cheap. Override with DAANSE_LOG_SQLGEN to measure what the trace costs. -->
   <logger name="daanse.sql.gen" level="${DAANSE_LOG_SQLGEN:-TRACE}"/>
   <logger name="org.eclipse.daanse.olap.core.LoggingEventBus" level="WARN"/>
-  <logger name="org.eclipse.daanse.jdbc.db.dialect.db.common.AbstractJdbcDialect" level="WARN"/>
+  <logger name="org.eclipse.daanse.sql.dialect.db.common.AbstractJdbcDialect" level="WARN"/>
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />

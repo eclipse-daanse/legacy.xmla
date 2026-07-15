@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.datasource.oracle.api.Constants;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;

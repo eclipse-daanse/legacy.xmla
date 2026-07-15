@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 
 public class NoDataLoader implements DataLoader{
 

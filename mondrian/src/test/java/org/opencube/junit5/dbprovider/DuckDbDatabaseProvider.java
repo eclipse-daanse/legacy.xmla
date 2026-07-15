@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 
 import org.duckdb.DuckDBConnection;
 import org.duckdb.DuckDBDriver;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.spi.ServiceProvider;

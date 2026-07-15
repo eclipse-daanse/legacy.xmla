@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;

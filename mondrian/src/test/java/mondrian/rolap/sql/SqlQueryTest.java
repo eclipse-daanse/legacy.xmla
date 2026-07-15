@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.db.common.AbstractJdbcDialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.db.common.AbstractJdbcDialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
@@ -1353,7 +1353,7 @@ class SqlQueryTest  extends BatchTestCase {
     public class AbstractJdbcDialectForTest extends AbstractJdbcDialect{
 
         public AbstractJdbcDialectForTest() {
-            super(org.eclipse.daanse.jdbc.db.dialect.api.DialectInitData.ansiDefaults());
+            super(org.eclipse.daanse.sql.dialect.api.DialectInitData.ansiDefaults());
         }
 
         @Override

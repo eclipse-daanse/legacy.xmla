@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
@@ -235,7 +235,8 @@ public class BatchTestCase{
                     new BatchLoader(
                         ExecutionContext.current(),
                         ((AggregationManager)abc.getAggregationManager()).getCacheMgr(),
-                        cube.getStar().getDialect(),
+                        org.eclipse.daanse.rolap.common.sql.SqlQueryCapabilities.of(
+                            cube.getStar().getDialect()),
                         cube);
                 BatchLoader.Batch batch =
                     createBatch(connection,

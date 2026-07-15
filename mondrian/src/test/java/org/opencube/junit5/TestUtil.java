@@ -22,7 +22,6 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -44,7 +43,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.agg.Segment;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
@@ -76,7 +75,6 @@ import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.query.component.IdImpl;
@@ -1135,22 +1133,8 @@ public class TestUtil {
      */
     public static void assertCellSetValid( CellSet cellSet ) {
         for ( Cell cell : cellIter( cellSet ) ) {
-            final Object value = cell.getValue();
-
-            // Check that the dummy value used to represent null cells never
-            // leaks into the outside world.
-            assertNotSame( value, Util.nullValue );
-            assertFalse(
-                value instanceof Number
-                    && ( (Number) value ).doubleValue() == FunUtil.DOUBLE_NULL);
-
-            // Similarly empty values.
-            assertNotSame( value, Util.EmptyValue );
-            assertFalse(
-                value instanceof Number
-                    && ( (Number) value ).doubleValue() == FunUtil.DOUBLE_EMPTY);
-
-            // Cells should be null if and only if they are null or empty.
+            // A NULL cell surfaces as Java null, and only then:
+            // (value == null) == isNull().
             if ( cell.getValue() == null ) {
                 assertTrue( cell.isNull() );
             } else {

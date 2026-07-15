@@ -50,12 +50,12 @@ class NullValueFunDefTest {
         }
         assertTrue(hasException);
 
-        // I believe that these IsEmpty results are correct.
-        // The NullValue function does not represent a cell.
+        // MDX NULL is represented as Java null in the calc layer; IsEmpty of
+        // a NULL-valued expression is therefore true - which matches MSAS.
         c = TestUtil.executeExprRaw(connection,cubeName," IsEmpty(NullValue()) ");
         s=c.getFormattedValue();
 
-        assertEquals("false", s);
+        assertEquals("true", s);
 
         // NullValue()/NullValue() evaluates to DoubleNull
         // but DoubleNull evaluates to null, so this seems

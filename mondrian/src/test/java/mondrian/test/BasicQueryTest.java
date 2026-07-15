@@ -59,7 +59,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
@@ -5446,7 +5446,7 @@ public class BasicQueryTest {
 
       for ( SqlStatisticsProviderNew statisticsProvider : statisticsProviders ) {
         long rowCount =
-            statisticsProvider.getTableCardinality( context, null, null,
+            statisticsProvider.getTableCardinality( context, null,
                 "customer", new ExecutionImpl( ( (RolapCatalog) connection.getCatalog() )
                     .getInternalConnection().getInternalStatement(), Optional.empty() ) );
         if ( statisticsProvider instanceof SqlStatisticsProviderNew ) {
@@ -5454,7 +5454,7 @@ public class BasicQueryTest {
         }
 
         long valueCount =
-            statisticsProvider.getColumnCardinality(context, null, null,
+            statisticsProvider.getColumnCardinality(context, null,
                 "customer", "gender", new ExecutionImpl( ( (RolapCatalog) connection.getCatalog() )
                     .getInternalConnection().getInternalStatement(), Optional.empty() ) );
         assertTrue(statisticsProvider instanceof SqlStatisticsProviderNew ? valueCount == -1 : valueCount == 2, "Value count estimate: " + valueCount + " (actual 2)");

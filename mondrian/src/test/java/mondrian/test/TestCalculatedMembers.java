@@ -912,9 +912,9 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "{[Store].[Store].[Mexico]}\n"
             + "{[Store].[Store].[USA]}\n"
             + "Row #0: \n"
-            + "Row #0: foo1.2345E-8bar\n"
+            + "Row #0: foonullbar\n"
             + "Row #1: \n"
-            + "Row #1: foo1.2345E-8bar\n"
+            + "Row #1: foonullbar\n"
             + "Row #2: 266,773\n"
             + "Row #2: foo533546.0bar\n");
     }
@@ -1003,9 +1003,9 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "{[Store].[Store].[Mexico]}\n"
             + "{[Store].[Store].[USA]}\n"
             + "Row #0: \n"
-            + "Row #0: foo1.2345E-8bar\n"
+            + "Row #0: foonullbar\n"
             + "Row #1: \n"
-            + "Row #1: foo1.2345E-8bar\n"
+            + "Row #1: foonullbar\n"
             + "Row #2: 266,773\n"
             + "Row #2: foo339610.89639999997bar\n");
     }

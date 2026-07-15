@@ -22,7 +22,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,29 @@ public class DerbyDatabaseProvider implements DatabaseProvider {
 	public void close() throws IOException {
 	}
 
+	/**
+	 * Derby reads these once, when the engine boots on the first connection, so they have to be
+	 * in place before {@link EmbeddedDataSource#getConnection()} is called. The page cache
+	 * defaults to 1000 pages (~4 MB) — FoodMart does not fit, so every aggregate scan walks back
+	 * through the pager. {@code durability=test} skips the log syncs, which buy nothing for a
+	 * database that lives and dies with the JVM.
+	 */
+	private static void bootProperties() {
+		setIfAbsent("derby.storage.pageCacheSize", "20000");
+		setIfAbsent("derby.system.durability", "test");
+		setIfAbsent("derby.language.statementCacheSize", "500");
+	}
+
+	private static void setIfAbsent(String key, String value) {
+		if (System.getProperty(key) == null) {
+			System.setProperty(key, value);
+		}
+	}
+
 	@Override
 	public Entry<DataSource, Dialect> activate() {
 		long tActivate = System.nanoTime();
+		bootProperties();
 		EmbeddedDataSource dataSource = new EmbeddedDataSource();
 		dataSource.setDatabaseName(databaseName);
 		dataSource.setCreateDatabase("create");

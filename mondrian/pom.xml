@@ -116,13 +116,13 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.api</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.common</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
@@ -194,28 +194,28 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.mysql</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.mysql</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.h2</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.h2</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.sqlite</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.sqlite</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.derby</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.derby</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
@@ -231,7 +231,7 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.duckdb</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.duckdb</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
@@ -252,63 +252,14 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.oracle</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.oracle</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.mssqlserver</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.infobright</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.mariadb</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.clickhouse</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.hive</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.postgresql</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.netezza</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.googlebigquery</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.mssqlserver</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
@@ -316,14 +267,14 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.monetdb</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.mariadb</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.vectorwise</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.clickhouse</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
@@ -331,17 +282,18 @@
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.neoview</artifactId>
+      <artifactId>org.eclipse.daanse.sql.dialect.db.postgresql</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.nuodb</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>runtime</scope>
-    </dependency>
+
+
+
+
+
+
+
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.mdx.model.api</artifactId>
@@ -486,13 +438,18 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.api</artifactId>
+      <artifactId>org.eclipse.daanse.sql.jdbc.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.db.impl</artifactId>
+      <artifactId>org.eclipse.daanse.sql.model</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.sql.jdbc.impl</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>

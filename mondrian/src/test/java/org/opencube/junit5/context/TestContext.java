@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
