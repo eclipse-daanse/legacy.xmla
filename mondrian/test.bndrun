@@ -98,10 +98,15 @@
 	org.eclipse.daanse.cwm.data.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.data.sink.jdbc;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.data.source.csv;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.cwm.model.cwm;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.foundation.datatypes;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.foundation.keysindexes;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.objectmodel.behavioral;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.objectmodel.core;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.objectmodel.instance;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.resource.record;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.cwm.model.cwm.resource.relational;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.resource.relational.ddl;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.cwm.testkit;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.cwm.util;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.datasource.clickhouse;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.datasource.common;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.datasource.oracle;version='[0.0.1,0.0.2)',\

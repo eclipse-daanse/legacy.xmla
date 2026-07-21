@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
-import org.eclipse.daanse.cwm.util.resource.relational.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
