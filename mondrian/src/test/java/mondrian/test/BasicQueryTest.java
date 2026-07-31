@@ -3464,11 +3464,11 @@ public class BasicQueryTest {
   }
 
   /**
-   * Disabled; takes a quite long time.
+   * Runs the whole parallel matrix five times over; the slowest test in this class.
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  public void dont_testParallelMutliple(Context<?> context) {
+  public void testParallelMutliple(Context<?> context) {
 	  context.getCatalogCache().clear();
       ((TestContextImpl)context).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     Connection connection = context.getConnectionWithDefaultRole();
@@ -3482,19 +3482,19 @@ public class BasicQueryTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  public void dont_testParallelNot(Context<?> context) {
+  public void testParallelNot(Context<?> context) {
     runParallelQueries(context.getConnectionWithDefaultRole(), 1, 1, false );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  public void dont_testParallelSomewhat(Context<?> context) {
+  public void testParallelSomewhat(Context<?> context) {
     runParallelQueries(context.getConnectionWithDefaultRole(), 3, 2, false );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  public void dont_testParallelFlushCache(Context<?> context) {
+  public void testParallelFlushCache(Context<?> context) {
 	context.getCatalogCache().clear();
     ((TestContextImpl)context).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     runParallelQueries(context.getConnectionWithDefaultRole(), 4, 6, true );
@@ -3502,7 +3502,7 @@ public class BasicQueryTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  public void dont_testParallelVery(Context<?> context) {
+  public void testParallelVery(Context<?> context) {
       ((TestContextImpl)context).setMaxEvalDepth( MAX_EVAL_DEPTH_VALUE);
     runParallelQueries(context.getConnectionWithDefaultRole(), 6, 10, false );
   }

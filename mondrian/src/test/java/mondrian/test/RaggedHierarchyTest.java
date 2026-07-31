@@ -32,7 +32,6 @@ import mondrian.rolap.SchemaModifiersEmf;
 /**
  * <code>RaggedHierarchyTest</code> tests ragged hierarchies.
  * <p>
- * I have disabled some tests by prefixing the tests name with "dont_".
  *
  * @author jhyde
  * @since Apr 19, 2004
@@ -91,12 +90,10 @@ class RaggedHierarchyTest {
             + "[Store].[Store].[Israel].[Israel].[Tel Aviv]");
     }
 
-    // disabled: (1) does not work with SmartMemberReader and
-    // (2) test returns [null] member
     // Vatican's descendants at the province and city level are hidden
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void dont_testChildrenOfVatican(Context<?> context) {
+    public void testChildrenOfVatican(Context<?> context) {
 	    SystemWideProperties.instance().NullMemberRepresentation = "null";
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Vatican].children",
@@ -168,11 +165,9 @@ class RaggedHierarchyTest {
             "[Store].[Mexico].[DF].Lead(-543)", "");
     }
 
-    // disabled: (1) does not work with SmartMemberReader and (2) test returns
-    // [null] member
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void dont_testDescendantsOfVatican(Context<?> context) {
+    public void testDescendantsOfVatican(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Store].[Vatican])",
             "[Store].[Store].[Vatican]\n"
@@ -283,11 +278,9 @@ class RaggedHierarchyTest {
      * because one of the columns is null, so the SQL generator might get
      * confused.
      */
-    // disabled: (1) does not work with SmartMemberReader and (2) test returns
-    // [null] member
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void dont_testMeasuresVatican(Context<?> context) {
+    public void testMeasuresVatican(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {Descendants([Store].[Vatican])} ON ROWS\n"
@@ -305,12 +298,10 @@ class RaggedHierarchyTest {
 
     // Make sure that the numbers are right!
     /**
-     * disabled: (1) does not work with SmartMemberReader and (2) test returns
-     * [null] member?
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void dont_testMeasures(Context<?> context) {
+    public void testMeasures(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " NON EMPTY {Descendants([Store])} ON ROWS\n"
