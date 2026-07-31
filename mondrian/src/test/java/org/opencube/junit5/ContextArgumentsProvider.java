@@ -167,11 +167,12 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 		Class<? extends DatabaseProvider>[] dbHandlerClasses = contextSource.database();
 		if (dbHandlerClasses == null || dbHandlerClasses.length == 0) {
 			// select ONE registered provider by id: env DAANSE_TEST_DB -> sysprop
-			// daanse.test.db -> default "mysql". Docker-unavailable still SKIPS the
-			// suite via the existing evaluateExecutionCondition path.
+			// daanse.test.db -> default "duckdb" (in-process, no docker needed).
+			// Docker-unavailable still SKIPS the suite via the existing
+			// evaluateExecutionCondition path.
 			String dbId = System.getenv("DAANSE_TEST_DB");
 			if (dbId == null || dbId.isBlank()) {
-				dbId = System.getProperty("daanse.test.db", "mysql");
+				dbId = System.getProperty("daanse.test.db", "duckdb");
 			}
 			final String selectedDbId = dbId;
 			providers = ServiceLoader.load(DatabaseProvider.class, this.getClass().getClassLoader()).stream()
