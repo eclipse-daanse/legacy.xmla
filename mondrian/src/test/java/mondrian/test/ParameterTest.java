@@ -47,8 +47,7 @@ import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemProperty;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
@@ -56,6 +55,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -1200,15 +1200,29 @@ class ParameterTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSystemPropsGet(Context<?> context) {
-        final List<SystemProperty> propertyList =
-            SystemWideProperties.instance().getPropertyList();
-        for (SystemProperty property : propertyList) {
-            assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-                "ParamRef("
-                + Util.singleQuoteString(property.getPath())
-                + ")",
-                property.stringValue());
-        }
+        // Configuration values are reachable as parameters by their ConfigConstants
+        // key. This used to enumerate the JVM-wide property registry; the values now
+        // belong to this test's own context, so the test sets what it then reads.
+        ((TestContextImpl) context).setResultLimit(4321);
+        ((TestContextImpl) context).setNullMemberRepresentation("#nix");
+
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(" + Util.singleQuoteString(ConfigConstants.RESULT_LIMIT) + ")",
+            "4321");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(" + Util.singleQuoteString(ConfigConstants.NULL_MEMBER_REPRESENTATION) + ")",
+            "#nix");
+    }
+
+    /**
+     * A configuration key that this context does not set is not a parameter.
+     */
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testUnsetConfigPropNotAvailable(Context<?> context) {
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(" + Util.singleQuoteString(ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY) + ")",
+            "Unknown parameter '" + ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY + "'");
     }
 
     /**
@@ -1229,10 +1243,8 @@ class ParameterTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSystemPropsSet(Context<?> context) {
-        final List<SystemProperty> propertyList =
-            SystemWideProperties.instance().getPropertyList();
-        for (SystemProperty property : propertyList) {
-            final String propName = property.getPath();
+        ((TestContextImpl) context).setResultLimit(4321);
+        for (String propName : List.of(ConfigConstants.RESULT_LIMIT)) {
             assertSetPropertyFails(context.getConnectionWithDefaultRole(), propName, "System");
         }
     }

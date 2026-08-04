@@ -18,13 +18,13 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.opencube.junit5.propupdator.NullMemberRepresentationNull;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
@@ -39,15 +39,9 @@ import mondrian.rolap.SchemaModifiersEmf;
 class RaggedHierarchyTest {
 
 
-	  @BeforeEach
-	  public void beforeEach() {
-	    SystemWideProperties.instance().NullMemberRepresentation = "null";
-	  }
-
-	  @AfterEach
-	  public void afterEach() {
-          SystemWideProperties.instance().populateInitial();
-	  }
+	  // NullMemberRepresentation is set on each test's own context by the
+	  // NullMemberRepresentationNull updater in @ContextSource; @BeforeEach cannot
+	  // do it, the Context only arrives as a parameter of the test method.
 
     private void assertRaggedReturns(Connection connection, String expression, String expected) {
         //getTestContext().withCube("[Sales Ragged]")
@@ -57,7 +51,7 @@ class RaggedHierarchyTest {
     // ~ The tests ------------------------------------------------------------
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testChildrenOfRoot(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Store].children",
@@ -69,7 +63,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testChildrenOfUSA(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Store].[USA].children",
@@ -82,7 +76,7 @@ class RaggedHierarchyTest {
     // Israel has one real child, which is hidden, and which has children
     // Haifa and Tel Aviv
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testChildrenOfIsrael(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Israel].children",
@@ -92,23 +86,22 @@ class RaggedHierarchyTest {
 
     // Vatican's descendants at the province and city level are hidden
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     public void testChildrenOfVatican(Context<?> context) {
-	    SystemWideProperties.instance().NullMemberRepresentation = "null";
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Vatican].children",
             "[Store].[Store].[Vatican].[Vatican].[null].[Store 17]");
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testParentOfHaifa(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Store].[Israel].[Haifa].Parent", "[Store].[Store].[Israel]");
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testParentOfVatican(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Vatican].Parent", "[Store].[Store].[All Stores]");
@@ -116,7 +109,7 @@ class RaggedHierarchyTest {
 
     // PrevMember must return something at the same level -- a city
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testPrevMemberOfHaifa(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Israel].[Haifa].PrevMember",
@@ -125,7 +118,7 @@ class RaggedHierarchyTest {
 
     // PrevMember must return something at the same level -- a city
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testNextMemberOfTelAviv(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "[Store].[Israel].[Tel Aviv].NextMember",
@@ -133,7 +126,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testNextMemberOfBC(Context<?> context) {
         // The next state after BC is Israel, but it's hidden
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
@@ -142,7 +135,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testLead(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertRaggedReturns(connection,
@@ -166,7 +159,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     public void testDescendantsOfVatican(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Store].[Vatican])",
@@ -176,7 +169,7 @@ class RaggedHierarchyTest {
 
     // The only child of Vatican at state level is hidden
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsOfVaticanAtStateLevel(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Store].[Vatican], [Store].[Store State])",
@@ -184,7 +177,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsOfRootAtCity(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Store], [Store City])",
@@ -215,7 +208,7 @@ class RaggedHierarchyTest {
 
     // no ancestor at the State level
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testAncestorOfHaifa(Context<?> context) {
         assertRaggedReturns(context.getConnectionWithDefaultRole(),
             "Ancestor([Store].[Israel].[Haifa], [Store].[Store State])",
@@ -223,7 +216,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testHierarchize(Context<?> context) {
         // Haifa and Tel Aviv should appear directly after Israel
         // Vatican should have no children
@@ -279,7 +272,7 @@ class RaggedHierarchyTest {
      * confused.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     public void testMeasuresVatican(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
@@ -300,7 +293,7 @@ class RaggedHierarchyTest {
     /**
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     public void testMeasures(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
@@ -386,7 +379,7 @@ class RaggedHierarchyTest {
      * but Order required it to be a RolapCubeMember.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testNullMember(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "With \n"
@@ -456,7 +449,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testHideIfBlankHidesWhitespace(Context<?> context) {
         if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
             != DatabaseProduct.ORACLE)
@@ -496,7 +489,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativeFilterWithHideMemberIfBlankOnLeaf(Context<?> context) throws Exception {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -551,7 +544,7 @@ class RaggedHierarchyTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativeCJWithHideMemberIfBlankOnLeaf(Context<?> context) throws Exception {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(

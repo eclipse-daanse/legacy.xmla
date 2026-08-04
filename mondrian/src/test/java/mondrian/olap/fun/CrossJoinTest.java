@@ -47,7 +47,6 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
@@ -115,7 +114,6 @@ public class CrossJoinTest {
 
   @AfterEach
   protected void afterEach() throws Exception {
-	  SystemWideProperties.instance().populateInitial();
   }
 
   ////////////////////////////////////////////////////////////////////////
@@ -200,7 +198,9 @@ void testResultLimitWithinCrossjoin_1(Context<?> foodMartContext) {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimitWithinCrossjoin(Context<?> foodMartContext) {
    Connection connection= foodMartContext.getConnectionWithDefaultRole();
-   SystemWideProperties.instance().ResultLimit = 1000;
+   // After the connection: building the catalog reads members too, and a limit
+   // this low would already trip there.
+   ((TestContextImpl) foodMartContext).setResultLimit(1000);
     TestUtil.assertAxisThrows(connection, "Hierarchize(Crossjoin(Union({[Gender].CurrentMember}, [Gender].Children), "
         + "Union({[Product].CurrentMember}, [Product].[Brand Name].Members)))",
       "result (1,539) exceeded limit (1,000)","Sales" );

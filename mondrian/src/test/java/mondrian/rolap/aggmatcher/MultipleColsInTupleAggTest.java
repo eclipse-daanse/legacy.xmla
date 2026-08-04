@@ -20,7 +20,6 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.result.RolapAxis;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
@@ -45,11 +44,6 @@ import mondrian.test.SqlPattern;
  */
 class MultipleColsInTupleAggTest extends AggTableTestCase {
 
-    @BeforeAll
-    public static void beforeAll() {
-        ContextArgumentsProvider.dockerWasChanged = true;
-    }
-
     @Override
 	@BeforeEach
     public void beforeEach() {
@@ -59,7 +53,6 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     @Override
 	@AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
 

@@ -31,7 +31,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  *
  * @author Richard M. Emberson
  */
-public class BUG_1541077 extends AggTableTestCase {
+public class BUG_1541077Test extends AggTableTestCase {
 
     private static final String BUG_1541077 = "BUG_1541077.csv";
 

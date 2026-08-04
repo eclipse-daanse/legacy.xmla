@@ -21,6 +21,8 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opencube.junit5.Constants;
 import org.opencube.junit5.TestUtil;
 
@@ -40,6 +42,11 @@ import mondrian.rolap.BatchTestCase;
  *
  * @author Richard M. Emberson
  */
+// Methods of one such class must not overlap: every test calls prepareContext,
+// which drops and recreates the CSV tables. Two methods at once means one queries
+// a table the other is in the middle of rebuilding. Different classes still run
+// concurrently - only the methods within a class are serialized.
+@Execution(ExecutionMode.SAME_THREAD)
 public abstract class CsvDBTestCase extends BatchTestCase {
 
     protected void prepareContext(Context<?> context) {

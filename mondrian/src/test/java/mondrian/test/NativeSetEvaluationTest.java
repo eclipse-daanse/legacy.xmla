@@ -29,7 +29,6 @@ import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.exceptions.NativeEvaluationUnsupportedException;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.element.RolapCube;
@@ -57,15 +56,9 @@ class NativeSetEvaluationTest extends BatchTestCase {
 
 
 
-  @BeforeAll
-  public static void beforeAll() {
-      ContextArgumentsProvider.dockerWasChanged = true;
-  }
-
 
   @AfterEach
   public void afterEach() {
-    SystemWideProperties.instance().populateInitial();
   }
   /**
    * Checks that a given MDX query results in a particular SQL statement being generated.
@@ -270,7 +263,7 @@ protected void assertQuerySql(Connection connection,
       NativeTopCountWithAgg.getMysql(connection),
       NativeTopCountWithAgg.getMysql(connection));
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class)
-      && SystemWideProperties.instance().EnableNativeNonEmpty ) {
+      && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
     assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, NativeTopCountWithAgg.result );
@@ -352,7 +345,7 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery,
         mysqlQuery );
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
-      && SystemWideProperties.instance().EnableNativeNonEmpty ) {
+      && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
     assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1248,7 +1241,7 @@ protected void assertQuerySql(Connection connection,
         mysql,
         mysql );
 
-    if ( SystemWideProperties.instance().EnableNativeNonEmpty ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
@@ -1647,7 +1640,7 @@ protected void assertQuerySql(Connection connection,
 	// select topcount([Product].[Product Name].members, 6, Measures.[Unit Sales]) on 0 from sales
 
 
-    SystemWideProperties.instance().MaxConstraints = 4;
+    ((TestContextImpl) context).setMaxConstraints(4);
     String roleDef =
       "  <Role name=\"Test\">\n"
         + "    <SchemaGrant access=\"none\">\n"
@@ -1751,7 +1744,6 @@ protected void assertQuerySql(Connection connection,
       "select filter([Product].[Product Name].members, Measures.[Unit Sales] > 0) on 0 from sales",
       "Native native filter mismatch");
 
-    SystemWideProperties.instance().populateInitial();
   }
 
   private static boolean isUseAgg(Context<?> context) {
@@ -2084,7 +2076,7 @@ protected void assertQuerySql(Connection connection,
       + "SELECT filter(customers.[name].members, measures.[unit sales] > 100) on 0 "
       + "FROM sales where store.agg";
 
-      SystemWideProperties.instance().MaxConstraints = 24;
+      ((TestContextImpl) context).setMaxConstraints(24);
 
     final String message =
       "The results of native and non-native evaluations should be equal";
@@ -2146,7 +2138,9 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testResultLimitInNativeCJ(Context<?> context) {
       Connection connection = context.getConnectionWithDefaultRole();
-      SystemWideProperties.instance().ResultLimit = 400;
+      // After the connection: building the catalog reads members too, and a
+      // limit this low would already trip there.
+      ((TestContextImpl) context).setResultLimit(400);
     assertAxisThrows(connection, "NonEmptyCrossjoin({[Product].[All Products].Children}, "
         + "{ [Customers].[Name].members})",
       "exceeded limit (400)", "Sales");

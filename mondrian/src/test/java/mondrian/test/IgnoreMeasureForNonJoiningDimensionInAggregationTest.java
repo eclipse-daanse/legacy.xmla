@@ -15,7 +15,6 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +22,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.opencube.junit5.propupdator.EnableNonEmptyOnAllAxis;
 
 /**
  * Test ignoring of measure when unrelated Dimension is in
@@ -36,21 +36,16 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
 {
 
 
-    @BeforeEach
-    public void beforeEach() {
-
-
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis =
-                true;
-    }
+    // EnableNonEmptyOnAllAxis is set on each test's own context by the
+    // EnableNonEmptyOnAllAxis updater in @ContextSource; @BeforeEach cannot do it,
+    // the Context only arrives as a parameter of the test method.
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNoTotalsForCompdMeasureWithComponentsHavingNonJoiningDims(Context<?> context)
     {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
@@ -72,7 +67,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimsWhenAggFunctionIsUsedOrNotUsed(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -122,7 +117,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimForAMemberDefinedOnJoiningDim(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -151,7 +146,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimWithNumericIif(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -186,7 +181,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimAtMemberValueCalcMultipleScenarios(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -234,7 +229,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimAtTupleValueCalcMultipleScenarios(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -295,7 +290,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNoTotalsForCompoundMeasureWithNonJoiningDimAtAllLevel(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -317,7 +312,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testNoTotalForMeasureWithCrossJoinOfJoiningAndNonJoiningDims(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -334,7 +329,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testShouldTotalAMeasureWithAllJoiningDimensions(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -356,7 +351,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testShouldNotTotalAMeasureWithANonJoiningDimension(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -375,7 +370,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
 
     // base cube is null for calc measure
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
     void testGetMeasureCubeForCalcMeasureDoesNotThrowCastException(Context<?> context) {
         ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();

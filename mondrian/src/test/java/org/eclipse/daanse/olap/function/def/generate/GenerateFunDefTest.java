@@ -22,7 +22,6 @@ import static org.opencube.junit5.TestUtil.executeAxis;
 import java.util.concurrent.CancellationException;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.exceptions.QueryTimeoutException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -163,7 +162,7 @@ class GenerateFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGenerateWillTimeout(Context<?> context) {
         ((TestContextImpl)context).setQueryTimeout(5);
-        SystemWideProperties.instance().EnableNativeNonEmpty = false;
+        ((TestContextImpl)context).setEnableNativeNonEmpty(false);
         try {
             executeAxis(context.getConnectionWithDefaultRole(), "Sales",
                 "Generate([Product].[Product Name].members,"

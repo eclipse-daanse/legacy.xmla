@@ -54,7 +54,6 @@ import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -105,7 +104,6 @@ class TestAggregationManager extends BatchTestCase {
 
     @AfterEach
     void afterEach() {
-        SystemWideProperties.instance().populateInitial();
         // Note: ExecutionContext.pop() removed.
 
         // allow gc
@@ -1974,17 +1972,6 @@ class TestAggregationManager extends BatchTestCase {
     void testLevelKeyAsSqlExpWithAgg(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
-        final boolean p;
-        switch (getDatabaseProduct(getDialect(connection).name())) {
-        case POSTGRES:
-            // Results are slightly different order on Postgres. It collates
-            // "Sale Winners" before "Sales Days", because " " < "A".
-            p = true;
-            break;
-        default:
-            p = false;
-            break;
-        }
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         final String mdxQuery =
@@ -2071,10 +2058,9 @@ class TestAggregationManager extends BatchTestCase {
             + "{[Promotions].[Promotions].[Price Slashers]}\n"
             + "{[Promotions].[Promotions].[Price Smashers]}\n"
             + "{[Promotions].[Promotions].[Price Winners]}\n"
-            + (p ? "" : "{[Promotions].[Promotions].[Sale Winners]}\n")
+            + "{[Promotions].[Promotions].[Sale Winners]}\n"
             + "{[Promotions].[Promotions].[Sales Days]}\n"
             + "{[Promotions].[Promotions].[Sales Galore]}\n"
-            + (!p ? "" : "{[Promotions].[Promotions].[Sale Winners]}\n")
             + "{[Promotions].[Promotions].[Save-It Sale]}\n"
             + "{[Promotions].[Promotions].[Saving Days]}\n"
             + "{[Promotions].[Promotions].[Savings Galore]}\n"
@@ -2120,13 +2106,9 @@ class TestAggregationManager extends BatchTestCase {
             + "Row #26: 1,148\n"
             + "Row #27: 504\n"
             + "Row #28: 1,294\n"
-            + (p
-                ? ("Row #29: 2,055\n"
-                   + "Row #30: 2,572\n"
-                   + "Row #31: 444\n")
-                : ("Row #29: 444\n"
-                   + "Row #30: 2,055\n"
-                   + "Row #31: 2,572\n"))
+            + "Row #29: 444\n"
+            + "Row #30: 2,055\n"
+            + "Row #31: 2,572\n"
             + "Row #32: 2,203\n"
             + "Row #33: 1,446\n"
             + "Row #34: 1,382\n"

@@ -64,7 +64,6 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
@@ -84,7 +83,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.opencube.junit5.propupdator.DisableRolapCubeMemberCache;
 import org.slf4j.Logger;
 
 import mondrian.test.DiffRepository;
@@ -110,17 +111,12 @@ class MemberCacheControlTest {
     // TODO: edit a different member not known to be in cache -- will it be
     //       fetched?
 
-    @BeforeEach
-    public void beforeEach() {
-
-
-        SystemWideProperties.instance().EnableRolapCubeMemberCache = false;
-//        RolapCatalogCache.instance().clear();
-    }
+    // The cube member cache is switched off on each test's own context by the
+    // DisableRolapCubeMemberCache updater in @ContextSource; @BeforeEach cannot do
+    // it, the Context only arrives as a parameter of the test method.
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
 //        RolapCatalogCache.instance().clear();
         // Note: ExecutionContext.pop() removed.
         executionContext = null;
@@ -327,7 +323,7 @@ class MemberCacheControlTest {
      * {@link CacheControl#filter} method.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testFilter(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -347,10 +343,10 @@ class MemberCacheControlTest {
      * Tests that member operations fail if cache is enabled.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testMemberOpsFailIfCacheEnabled(Context<?> context) {
     	context.getCatalogCache().clear();
-        SystemWideProperties.instance().EnableRolapCubeMemberCache = true;
+        ((TestContextImpl) context).setEnableRolapCubeMemberCache(true);
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -372,7 +368,7 @@ class MemberCacheControlTest {
      * Test that edits the properties of a single leaf Member.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testSetPropertyCommandOnLeafMember(Context<?> context) {
     	context.getCatalogCache().clear();
     	prepareTestContext(context);
@@ -430,7 +426,7 @@ class MemberCacheControlTest {
      * Dimension), but leaves grouping unchanged, so results not changed.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testSetPropertyCommandOnNonLeafMember(Context<?> context) {
     	context.getCatalogCache().clear();
     	prepareTestContext(context);
@@ -501,7 +497,7 @@ class MemberCacheControlTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testAddCommand(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -722,7 +718,7 @@ class MemberCacheControlTest {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testDeleteCommand(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -801,7 +797,7 @@ class MemberCacheControlTest {
 
     @Disabled //TODO need investigate
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testMoveCommand(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -889,7 +885,7 @@ class MemberCacheControlTest {
 
     @Disabled //TODO need investigate
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testMoveFailBadLevel(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -972,7 +968,7 @@ class MemberCacheControlTest {
      * add/delete/move members in parent-child hierarchies.
      */
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testAddCommandNegative(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -1085,7 +1081,7 @@ class MemberCacheControlTest {
      */
     @Disabled //disabled for CI build
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
     void testFlushHierarchy(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);

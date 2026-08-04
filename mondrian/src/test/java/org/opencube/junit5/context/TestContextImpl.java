@@ -23,6 +23,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
+import org.eclipse.daanse.jdbc.datasource.pools.api.ConnectionPool;
 
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
@@ -335,7 +336,6 @@ import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 public class TestContextImpl extends BasicContext implements TestContext {
 
     private Dialect dialect;
-    private DataSource dataSource;
 
     private ExpressionCompilerFactory expressionCompilerFactory = new BaseExpressionCompilerFactory();
     private CatalogMappingSupplier catalogMappingSupplier;
@@ -350,12 +350,12 @@ public class TestContextImpl extends BasicContext implements TestContext {
 
     public TestContextImpl() {
         this.eventBus = new LoggingEventBus();
-        shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
-                getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_UNIT, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_UNIT_DEFAULT_VALUE, TimeUnit.class),
-                getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS_DEFAULT_VALUE, Integer.class));
+        shepherd = new RolapResultShepherd(getConfig().rolapConnectionShepherdThreadPollingInterval(),
+                getConfig().rolapConnectionShepherdThreadPollingIntervalUnit(),
+                getConfig().rolapConnectionShepherdNbThreads());
         aggMgr = new AggregationManager(this);
         schemaCache = new RolapCatalogCache(this);
-        queryLimimitSemaphore = new Semaphore(getConfigValue(ConfigConstants.QUERY_LIMIT, ConfigConstants.QUERY_LIMIT_DEFAULT_VALUE ,Integer.class));
+        queryLimimitSemaphore = new Semaphore(getConfig().queryLimit());
         functionService.addResolver(new NullReservedWordsResolver());
         functionService.addResolver(new AsAliasResolver());
         functionService.addResolver(new AncestorResolver());
@@ -687,15 +687,15 @@ public class TestContextImpl extends BasicContext implements TestContext {
         this.dialect = dialect;
     }
 
+    /**
+     * Widened from BasicContext's protected setter so the test harness can wire the
+     * pool from outside. getDataSource() is deliberately not overridden any more -
+     * BasicContext derives it from the pool, which is what makes every statement in
+     * the suite go through it.
+     */
     @Override
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-
-    }
-
-    @Override
-    public DataSource getDataSource() {
-        return dataSource;
+    public void setConnectionPool(ConnectionPool connectionPool) {
+        super.setConnectionPool(connectionPool);
     }
 
     @Override
@@ -788,12 +788,12 @@ public class TestContextImpl extends BasicContext implements TestContext {
         // but Oracle's dedicated server processes are never reaped, so the
         // instance hit its PROCESSES ceiling mid-run (ORA-12516) and poisoned
         // every subsequent catalog load. Always close the connection.
-        try (java.sql.Connection jdbcConnection = dataSource.getConnection()) {
+        try (java.sql.Connection jdbcConnection = getDataSource().getConnection()) {
             return jdbcConnection.getMetaData().getURL();
         } catch (SQLException e) {
             e.printStackTrace();
 
-            return dataSource.getClass().getPackageName();
+            return getDataSource().getClass().getPackageName();
         }
     }
 
@@ -885,6 +885,81 @@ public class TestContextImpl extends BasicContext implements TestContext {
 
     public void setLevelPreCacheThreshold(int levelPreCacheThreshold) {
         setConfigValue(ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, levelPreCacheThreshold);
+    }
+
+    public void setResultLimit(int resultLimit) {
+        setConfigValue(ConfigConstants.RESULT_LIMIT, resultLimit);
+    }
+
+    public void setEnableNonEmptyOnAllAxis(boolean enableNonEmptyOnAllAxis) {
+        setConfigValue(ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, enableNonEmptyOnAllAxis);
+    }
+
+    public void setEnableNativeNonEmpty(boolean enableNativeNonEmpty) {
+        setConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, enableNativeNonEmpty);
+    }
+
+    public void setMaxConstraints(int maxConstraints) {
+        setConfigValue(ConfigConstants.MAX_CONSTRAINTS, maxConstraints);
+    }
+
+    public int getMaxConstraints() {
+        return getConfigValue(ConfigConstants.MAX_CONSTRAINTS,
+            ConfigConstants.MAX_CONSTRAINTS_DEFAULT_VALUE, Integer.class);
+    }
+
+    public void setFilterChildlessSnowflakeMembers(boolean filterChildlessSnowflakeMembers) {
+        setConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, filterChildlessSnowflakeMembers);
+    }
+
+    public boolean isFilterChildlessSnowflakeMembers() {
+        return getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS,
+            ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class);
+    }
+
+    public void setCompareSiblingsByOrderKey(boolean compareSiblingsByOrderKey) {
+        setConfigValue(ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY, compareSiblingsByOrderKey);
+    }
+
+    public void setCaseSensitive(boolean caseSensitive) {
+        setConfigValue(ConfigConstants.CASE_SENSITIVE, caseSensitive);
+    }
+
+    public boolean isCaseSensitive() {
+        return getConfigValue(ConfigConstants.CASE_SENSITIVE,
+            ConfigConstants.CASE_SENSITIVE_DEFAULT_VALUE, Boolean.class);
+    }
+
+    public void setEnableExpCache(boolean enableExpCache) {
+        setConfigValue(ConfigConstants.ENABLE_EXP_CACHE, enableExpCache);
+    }
+
+    public boolean isEnableExpCache() {
+        return getConfigValue(ConfigConstants.ENABLE_EXP_CACHE,
+            ConfigConstants.ENABLE_EXP_CACHE_DEFAULT_VALUE, Boolean.class);
+    }
+
+    public void setCaseSensitiveMdxInstr(boolean caseSensitiveMdxInstr) {
+        setConfigValue(ConfigConstants.CASE_SENSITIVE_MDX_INSTR, caseSensitiveMdxInstr);
+    }
+
+    public void setNullMemberRepresentation(String nullMemberRepresentation) {
+        setConfigValue(ConfigConstants.NULL_MEMBER_REPRESENTATION, nullMemberRepresentation);
+    }
+
+    public boolean isDefaultNullMemberRepresentation() {
+        return getConfigValue(ConfigConstants.NULL_MEMBER_REPRESENTATION,
+            ConfigConstants.NULL_MEMBER_REPRESENTATION_DEFAULT_VALUE, String.class)
+            .equals(ConfigConstants.NULL_MEMBER_REPRESENTATION_DEFAULT_VALUE);
+    }
+
+    public void setEnableRolapCubeMemberCache(boolean enableRolapCubeMemberCache) {
+        setConfigValue(ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE, enableRolapCubeMemberCache);
+    }
+
+    public boolean isEnableRolapCubeMemberCache() {
+        return getConfigValue(ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE,
+            ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE_DEFAULT_VALUE, Boolean.class);
     }
 
     public void setReadAggregates(boolean readAggregates) {

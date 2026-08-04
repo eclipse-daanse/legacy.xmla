@@ -77,7 +77,6 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.StandardProperty;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.exceptions.QueryCanceledException;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -119,9 +118,6 @@ public class BasicQueryTest {
 
   private static final String timeWeekly = TestUtil.hierarchyName( "Time", "Weekly" );
   public static final int MAX_EVAL_DEPTH_VALUE = 5000;
-
-  private SystemWideProperties props = SystemWideProperties.instance();
-
   private static final QueryAndResult[] sampleQueries = {
     // 0
     new QueryAndResult( "select {[Measures].[Unit Sales]} on columns\n" + " from Sales",
@@ -279,7 +275,6 @@ public class BasicQueryTest {
 
   @AfterEach
   public void afterEach() {
-    SystemWideProperties.instance().populateInitial();
   }
 
   @ParameterizedTest
@@ -321,7 +316,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample5Snowflake(Context<?> context) {
-    SystemWideProperties.instance().FilterChildlessSnowflakeMembers = false;
+    ((TestContextImpl) context).setFilterChildlessSnowflakeMembers(false);
     //final TestContext<?> context = getTestContext().withFreshConnection();
     Connection connection = context.getConnectionWithDefaultRole();
     try {
@@ -715,7 +710,7 @@ public class BasicQueryTest {
         executeQuery( context.getConnectionWithDefaultRole(), "SELECT {[Measures].[Unit Sales]} on columns,\n" + " {[Product].members} on rows\n"
             + "from Sales" );
     final int rowCount = result.getAxes()[1].getPositions().size();
-    assertEquals( SystemWideProperties.instance().FilterChildlessSnowflakeMembers ? 2256 : 2266, rowCount );
+    assertEquals( ((TestContextImpl) context).isFilterChildlessSnowflakeMembers() ? 2256 : 2266, rowCount );
     assertEquals( "152", result.getCell( new int[] { 0, rowCount - 1 } ).getFormattedValue() );
   }
 
@@ -2279,7 +2274,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMemberWithNullKey(Context<?> context) {
-    if ( !isDefaultNullMemberRepresentation() ) {
+    if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
     Connection connection = context.getConnectionWithDefaultRole();
@@ -4061,7 +4056,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNullMember(Context<?> context) {
     context.getCatalogCache().clear();
-    if ( isDefaultNullMemberRepresentation() ) {
+    if ( isDefaultNullMemberRepresentation(context) ) {
       assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
           + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null]} ON rows \n" + "FROM [Sales] \n"
           + "WHERE [Time].[1997]", "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
@@ -4072,7 +4067,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNullMemberWithOneNonNull(Context<?> context) {
-    if ( isDefaultNullMemberRepresentation() ) {
+    if ( isDefaultNullMemberRepresentation(context) ) {
       assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
           + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null],"
           + "[Store Size in SQFT].[ALL Store Size in SQFTs].[39696]} ON rows \n" + "FROM [Sales] \n"
@@ -4244,11 +4239,9 @@ public class BasicQueryTest {
   void testMONDRIAN2608(Context<?> context) {
     // this issue takes place only for the case when ordinalColumn is defined
     // and CompareSiblingsByOrderKey=false and ExpandNonNative=true
-    SystemWideProperties.instance().CompareSiblingsByOrderKey = false;
+    ((TestContextImpl) context).setCompareSiblingsByOrderKey(false);
     ((TestContextImpl)context).setExpandNonNative(true);
-    if ( !props.EnableRolapCubeMemberCache ) {
-      SystemWideProperties.instance().EnableRolapCubeMemberCache = true;
-    }
+    ((TestContextImpl) context).setEnableRolapCubeMemberCache(true);
 
     String MDX1 =
         "WITH MEMBER [Measures].[0] as 0\n" + "SELECT { [Measures].[0] } ON COLUMNS,\n"
@@ -4339,7 +4332,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMemberOrdinalCaching(Context<?> context) {
-    SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+    ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
     // Use a fresh connection to make sure bad member ordinals haven't
     // been assigned by previous tests.
     //final TestContext<?> context = getTestContext().withFreshConnection();
@@ -4849,7 +4842,7 @@ public class BasicQueryTest {
     String queryWithDefaultMeasureFilter =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Supply Time]";
       Connection connection = context.getConnectionWithDefaultRole();
-    if ( SystemWideProperties.instance().CaseSensitive ) {
+    if ( ((TestContextImpl) context).isCaseSensitive() ) {
       assertQueriesReturnSimilarResults(connection, queryWithoutFilter, queryWithFirstMeasure);
     } else {
       assertQueriesReturnSimilarResults(connection, queryWithoutFilter, queryWithDefaultMeasureFilter);
@@ -5468,7 +5461,9 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimit(Context<?> context) throws Exception {
         Connection connection = context.getConnectionWithDefaultRole();
-        SystemWideProperties.instance().ResultLimit = 1000;
+        // After the connection: building the catalog reads members too, and a
+        // limit this low would already trip there.
+        ((TestContextImpl) context).setResultLimit(1000);
         assertAxisThrows(connection, "CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members)",
                 "result (1,001) exceeded limit (1,000)", "Sales" );
   }
@@ -5476,7 +5471,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimitWithinLimit(Context<?> context) {
-    SystemWideProperties.instance().ResultLimit = 5000;
+    ((TestContextImpl) context).setResultLimit(5000);
     executeQuery(context.getConnectionWithDefaultRole(),
         "select CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members) on columns from [Sales]" );
   }
@@ -5487,7 +5482,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCaseInsensitiveResolution(Context<?> context) {
-    SystemWideProperties.instance().CaseSensitive = false;
+    ((TestContextImpl) context).setCaseSensitive(false);
     String[] equivalentMemberNames =
         { "gender.gender.F", "gender.gender.f", "gender.[All gender].F", "gender.[All gender].f" };
     for ( String memberName : equivalentMemberNames ) {
@@ -5495,12 +5490,12 @@ public class BasicQueryTest {
           + "{[Gender].[Gender].[F]}\n" + "Row #0: 131,558\n" );
     }
     // also verify case.sensitive=true is honored
-    SystemWideProperties.instance().CaseSensitive = true;
+    ((TestContextImpl) context).setCaseSensitive(true);
     String[] wrongCase = { "gender.gender.f", "gender.[All gender].f" };
     for ( String memberName : wrongCase ) {
       assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "select " + memberName + " on 0 from sales", "Failed to parse query" );
     }
-    SystemWideProperties.instance().CaseSensitive = false;
+    ((TestContextImpl) context).setCaseSensitive(false);
   }
 
   /**
@@ -5920,7 +5915,6 @@ public class BasicQueryTest {
     } catch ( OlapRuntimeException e ) {
       fail( "MondrianException is not expected" );
     } finally {
-      SystemWideProperties.instance().populateInitial();
     }
   }
 
@@ -5966,7 +5960,6 @@ public class BasicQueryTest {
     } catch ( OlapRuntimeException e ) {
       fail( "MondrianException is not expected" );
     } finally {
-      SystemWideProperties.instance().populateInitial();
     }
   }
 

@@ -190,7 +190,7 @@ class ParallelPeriodFunDefTest {
             "ParallelPeriod([Time].[Year], 1, [Time].[1997])", "" );
 
         // one parameter, level 2 above member
-        if ( isDefaultNullMemberRepresentation() ) {
+        if ( isDefaultNullMemberRepresentation(context) ) {
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH MEMBER [Measures].[Foo] AS \n"
                     + " ' ParallelPeriod([Time].[Year]).UniqueName '\n"
@@ -231,7 +231,7 @@ class ParallelPeriodFunDefTest {
                 + "Row #0: [Time].[Time].[1997].[Q3].[7]\n" );
 
         //  one parameter, level below member
-        if ( isDefaultNullMemberRepresentation() ) {
+        if ( isDefaultNullMemberRepresentation(context) ) {
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH MEMBER [Measures].[Foo] AS \n"
                     + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"

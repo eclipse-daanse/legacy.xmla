@@ -30,10 +30,10 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -62,7 +62,7 @@ class PropertiesTest {
                 IdImpl.toList("Customers", "All Customers", "USA", "CA"),
                 true);
         final boolean caseSensitive =
-            SystemWideProperties.instance().CaseSensitive;
+            ((TestContextImpl) context).isCaseSensitive();
 
         String stringPropValue;
         Integer intPropValue;
@@ -319,7 +319,7 @@ class PropertiesTest {
             0.1);
 
         // Case sensitivity.
-        if (SystemWideProperties.instance().CaseSensitive) {
+        if (((TestContextImpl) context).isCaseSensitive()) {
             assertNull(cell.getPropertyValue("cell_ordinal"));
             assertNull(cell.getPropertyValue("font_flags"));
             assertNull(cell.getPropertyValue("format_string"));

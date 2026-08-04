@@ -607,7 +607,7 @@ class DescendantsByLevelFunDefTest {
             "[Time].[Time].[1997].[Q1].[2]" );
 
         // Access beyond the list yields the Null member.
-        if ( isDefaultNullMemberRepresentation() ) {
+        if ( isDefaultNullMemberRepresentation(context) ) {
             assertExprReturns(context.getConnectionWithDefaultRole(),
                 "[Time].[1997].Children.Item(6).UniqueName", "[Time].[Time].[#null]" );
             assertExprReturns(context.getConnectionWithDefaultRole(),

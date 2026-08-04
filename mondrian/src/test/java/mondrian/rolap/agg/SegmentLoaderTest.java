@@ -54,7 +54,6 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.Statement;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -120,7 +119,6 @@ class SegmentLoaderTest extends BatchTestCase {
 
     @AfterEach
     protected void AfterEach() throws Exception {
-        SystemWideProperties.instance().populateInitial();
         // Note: LocusImpl.pop() removed
         try {
             statement.cancel();
@@ -171,7 +169,6 @@ class SegmentLoaderTest extends BatchTestCase {
                 rollup,
                 false,
                 false);
-            SystemWideProperties.instance().populateInitial();
         }
     }
 

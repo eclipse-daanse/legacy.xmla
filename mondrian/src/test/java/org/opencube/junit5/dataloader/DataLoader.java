@@ -22,11 +22,12 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
+import org.eclipse.daanse.jdbc.datasource.testkit.api.ActiveDatabase;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 
 public interface DataLoader {
 
-    boolean loadData(Entry<DataSource, Dialect> dataBaseInfo) throws Exception;
+    boolean loadData(ActiveDatabase dataBaseInfo) throws Exception;
 
 
 }

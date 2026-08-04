@@ -43,7 +43,6 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.Subcube;
 import org.eclipse.daanse.olap.api.result.SubtotalVisibility;
 import org.eclipse.daanse.olap.common.IdBatchResolver;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
@@ -85,7 +84,6 @@ class IdBatchResolverTest  {
     }
     @AfterEach
     public void  afterEach(){
-    	SystemWideProperties.instance().populateInitial();
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )

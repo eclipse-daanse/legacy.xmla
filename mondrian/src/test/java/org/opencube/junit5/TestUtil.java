@@ -72,7 +72,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
@@ -1280,9 +1279,18 @@ public class TestUtil {
 		return executeExprRaw(connection, cubeName, expression).getFormattedValue();
 	}
 
-	public static boolean isDefaultNullMemberRepresentation() {
-		return SystemWideProperties.instance().NullMemberRepresentation
-				.equals("#null");
+	/**
+	 * Whether null members render as the default {@code #null} in this context.
+	 *
+	 * <p>
+	 * The value lives on the Context now, so the answer is per test rather than
+	 * per JVM. Callers that have no Context at hand get the default, which is what
+	 * they saw before any test could change it underneath them.
+	 * </p>
+	 */
+	public static boolean isDefaultNullMemberRepresentation(Context<?> context) {
+		return !(context instanceof TestContextImpl testContext)
+				|| testContext.isDefaultNullMemberRepresentation();
 	}
 
 	public static String compileExpression(Connection connection, String expression, final boolean scalar, String cubeName ) {
@@ -1543,7 +1551,7 @@ public class TestUtil {
 			// asked to execute a particular SQL statement, but will otherwise
 			// behave exactly the same as the current DataSource.
 			final TriggerHook hook = new TriggerHook(trigger);
-			RolapUtil.setHook(hook);
+			RolapUtil.setHook(connection.getContext(), hook);
 			Bomb bomb = null;
 			try {
 				if (bypassSchemaCache) {
@@ -1567,7 +1575,7 @@ public class TestUtil {
 					throw e;
 				}
 			} finally {
-				RolapUtil.setHook(null);
+				RolapUtil.setHook(connection.getContext(), null);
 			}
 			if (negative) {
 				if (bomb != null || hook.foundMatch()) {
@@ -1575,7 +1583,11 @@ public class TestUtil {
 				}
 			} else {
 				if (bomb == null && !hook.foundMatch()) {
-					fail("expected query [" + sql + "] did not occur");
+					StringBuilder actual = new StringBuilder();
+					for (String s : hook.seen()) {
+						actual.append("\n--- PIN-ACTUAL ---\n").append(s);
+					}
+					fail("expected query [" + sql + "] did not occur; statements seen:" + actual);
 				}
 				if (bomb != null) {
 					assertEquals(
@@ -1811,17 +1823,16 @@ public class TestUtil {
 	public static void verifySameNativeAndNot(Connection connection,
 			String query, String message)
 	{
-	    SystemWideProperties properties = SystemWideProperties.instance();
         ((TestContextImpl)(connection.getContext())).setEnableNativeCrossJoin(true);
         ((TestContextImpl)(connection.getContext())).setEnableNativeFilter(true);
-        properties.EnableNativeNonEmpty= true;
+        ((TestContextImpl)(connection.getContext())).setEnableNativeNonEmpty(true);
         ((TestContextImpl)(connection.getContext())).setEnableNativeTopCount(true);
 
 		Result resultNative = executeQuery(connection, query);
 
         ((TestContextImpl)(connection.getContext())).setEnableNativeCrossJoin(false);
         ((TestContextImpl)(connection.getContext())).setEnableNativeFilter(false);
-        properties.EnableNativeNonEmpty = false;
+        ((TestContextImpl)(connection.getContext())).setEnableNativeNonEmpty(false);
         ((TestContextImpl)(connection.getContext())).setEnableNativeTopCount(false);
 
 		Result resultNonNative = executeQuery(connection, query);
@@ -1851,6 +1862,7 @@ public class TestUtil {
 	private static class TriggerHook implements RolapUtil.ExecuteQueryHook {
 		private final String trigger;
 		private boolean foundMatch = false;
+		private final java.util.List<String> seen = new java.util.ArrayList<>();
 
 		public TriggerHook(String trigger) {
 			this.trigger =
@@ -1882,6 +1894,7 @@ public class TestUtil {
 
 		@Override
 		public void onExecuteQuery(String sql) {
+			seen.add(sql);
 			if (matchTrigger(sql)) {
 				throw new Bomb(sql);
 			}
@@ -1889,6 +1902,11 @@ public class TestUtil {
 
 		public boolean foundMatch() {
 			return foundMatch;
+		}
+
+		/** Diagnostic for a pin that no longer matches: what the engine did emit. */
+		public java.util.List<String> seen() {
+			return seen;
 		}
 	}
 

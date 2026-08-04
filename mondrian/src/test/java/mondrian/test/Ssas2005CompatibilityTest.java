@@ -32,7 +32,6 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,11 +86,6 @@ class Ssas2005CompatibilityTest {
      */
     private static final boolean IMPLEMENTED = false;
 
-    @BeforeAll
-    public static void beforeAll() {
-        ContextArgumentsProvider.dockerWasChanged = true;
-    }
-
     @BeforeEach
     public void beforeEach() {
 
@@ -99,7 +93,6 @@ class Ssas2005CompatibilityTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     private void runQ(Context<?> context, String s) {

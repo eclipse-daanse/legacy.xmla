@@ -24,10 +24,10 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -307,7 +307,7 @@ class RankFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRankHuge(Context<?> context) {
         // If caching is disabled, don't even try -- it will take too long.
-        if ( !SystemWideProperties.instance().EnableExpCache ) {
+        if ( !((TestContextImpl) context).isEnableExpCache() ) {
             return;
         }
 
@@ -340,7 +340,7 @@ class RankFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void _testRank3Huge(Context<?> context) {
         // If caching is disabled, don't even try -- it will take too long.
-        if ( !SystemWideProperties.instance().EnableExpCache ) {
+        if ( !((TestContextImpl) context).isEnableExpCache() ) {
             return;
         }
 

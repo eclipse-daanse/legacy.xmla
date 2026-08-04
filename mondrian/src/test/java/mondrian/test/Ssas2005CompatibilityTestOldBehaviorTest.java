@@ -1,6 +1,5 @@
 package mondrian.test;
 
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 
 public class Ssas2005CompatibilityTestOldBehaviorTest  extends Ssas2005CompatibilityTest
@@ -8,7 +7,6 @@ public class Ssas2005CompatibilityTestOldBehaviorTest  extends Ssas2005Compatibi
     @Override
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
 }

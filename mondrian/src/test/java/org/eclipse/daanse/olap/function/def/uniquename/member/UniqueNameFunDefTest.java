@@ -37,7 +37,7 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberUniqueNameOfNull(Context<?> context) {
-        if ( isDefaultNullMemberRepresentation() ) {
+        if ( isDefaultNullMemberRepresentation(context) ) {
             assertExprReturns(context.getConnectionWithDefaultRole(),
                 "[Measures].[Unit Sales].FirstChild.UniqueName",
                 "[Measures].[#null]" ); // MSOLAP gives "" here

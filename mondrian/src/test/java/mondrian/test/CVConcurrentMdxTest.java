@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +66,6 @@ class CVConcurrentMdxTest {
 
     @AfterEach
     protected void afterEach() throws Exception {
-        SystemWideProperties.instance().populateInitial();
     }
 
 

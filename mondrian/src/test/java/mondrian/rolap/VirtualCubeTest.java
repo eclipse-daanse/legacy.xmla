@@ -29,7 +29,6 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.StandardProperty;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -59,7 +58,6 @@ class VirtualCubeTest extends BatchTestCase {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
     /**
      * Test case for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-163">
@@ -357,7 +355,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "where measures.[Profit]";
 
         Connection connection = context.getConnectionWithDefaultRole();
-        if (SystemWideProperties.instance().CaseSensitive) {
+        if (((TestContextImpl)context).isCaseSensitive()) {
             assertQueriesReturnSimilarResults(connection,
                 queryWithoutFilter, queryWithFirstMeasure);
         } else {
@@ -1487,7 +1485,7 @@ class VirtualCubeTest extends BatchTestCase {
         }
 
         if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)
-            && !SystemWideProperties.instance().EnableNativeNonEmpty)
+            && !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class))
         {
             // Only run the tests if either native CrossJoin or native NonEmpty
             // is enabled.
@@ -2104,7 +2102,7 @@ class VirtualCubeTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyConstraintOnVirtualCubeWithCalcMeasure(Context<?> context) {
-        if (!SystemWideProperties.instance().EnableNativeNonEmpty) {
+        if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class)) {
             // Generated SQL is different if NON EMPTY is evaluated in memory.
             return;
         }

@@ -28,7 +28,6 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.exceptions.QueryTimeoutException;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -91,7 +90,7 @@ class FilterFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilterWillTimeout(Context<?> context) {
         ((TestContextImpl)context).setQueryTimeout(3);
-        SystemWideProperties.instance().EnableNativeNonEmpty = false;
+        ((TestContextImpl)context).setEnableNativeNonEmpty(false);
         try {
             /*
             class TestFilterWillTimeoutModifier extends PojoMappingModifier {
