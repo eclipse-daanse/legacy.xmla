@@ -24,7 +24,6 @@ import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -45,9 +44,6 @@ import mondrian.test.SqlPattern;
  * @since 08-Jun-2007
  */
 class GroupingSetQueryTest extends BatchTestCase{
-
-    private SystemWideProperties prop = SystemWideProperties.instance();
-
     private static final String cubeNameSales2 = "Sales 2";
     private static final String measureStoreSales = "[Measures].[Store Sales]";
     private static final String fieldNameMaritalStatus = "marital_status";
@@ -61,7 +57,6 @@ class GroupingSetQueryTest extends BatchTestCase{
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     private void pripareContext(Context<?> context) {
@@ -134,7 +129,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\", "
                 + "grouping(\"customer\".\"gender\") as \"g0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by grouping sets ((\"customer\".\"gender\"), ())",
                 26)
@@ -168,7 +163,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             new SqlPattern(
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by \"customer\".\"gender\"",
                 26)
@@ -266,7 +261,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             new SqlPattern(
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by \"customer\".\"gender\"", 72)
             };
@@ -286,7 +281,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             new SqlPattern(
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by \"customer\".\"gender\"", 72)
         };
@@ -328,7 +323,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\", "
                 + "sum(\"sales_fact_1997\".\"store_sales\") as \"m1\", grouping(\"customer\".\"gender\") as \"g0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by grouping sets ((\"customer\".\"gender\"), ())",
                 26)
@@ -352,7 +347,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\", "
                 + "sum(\"sales_fact_1997\".\"store_sales\") as \"m1\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by \"customer\".\"gender\"", 26)
         };
@@ -396,7 +391,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 ORACLE_TERADATA,
                 "select \"customer\".\"gender\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\", "
                 + "grouping(\"customer\".\"gender\") as \"g0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by grouping sets ((\"customer\".\"gender\"), ())",
                 26),
@@ -404,7 +399,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             new SqlPattern(
                 ORACLE_TERADATA,
                 "select \"customer\".\"marital_status\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" "
-                + "from \"customer\" =as= \"customer\", \"sales_fact_1997\" =as= \"sales_fact_1997\" "
+                + "from \"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\" "
                 + "where \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" "
                 + "group by \"customer\".\"marital_status\"",
                 26),

@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -83,7 +82,6 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @ParameterizedTest
@@ -618,7 +616,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "select measures.avgQtrs * gender.gender.members on 0 from sales where head( product.product.[product name].members, 3)";
 
         if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
-            && SystemWideProperties.instance().EnableNativeNonEmpty)
+            && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class))
         {
             boolean requiresOrderByAlias =
                     getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias();
@@ -710,7 +708,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] > 80))' "
             + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)";
         if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
-            && SystemWideProperties.instance().EnableNativeNonEmpty)
+            && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class))
         {
             final String sqlMysql =
                 "select\n"
@@ -773,7 +771,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             "with member [measures].[avgQtrs] as 'count(filter([Customers].[Name].Members, [Measures].[Unit Sales] > 0))' "
             + "select [measures].[avgQtrs] on 0 from sales where ( {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Food].[Baked Goods].[Bread].[Muffins]} )";
         if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
-            && SystemWideProperties.instance().EnableNativeNonEmpty)
+            && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class))
         {
             boolean requiresOrderByAlias =
                     getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias();

@@ -42,7 +42,6 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -78,6 +77,7 @@ import org.eclipse.daanse.rolap.element.RolapLevel;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.opencube.junit5.TestUtil;
+import org.opencube.junit5.context.TestContextImpl;
 import org.slf4j.LoggerFactory;
 
 import mondrian.enums.DatabaseProduct;
@@ -335,7 +335,7 @@ public class BatchTestCase{
             // Create a dummy DataSource which will throw a 'bomb' if it is
             // asked to execute a particular SQL statement, but will otherwise
             // behave exactly the same as the current DataSource.
-            RolapUtil.setHook(new TriggerHook(trigger));
+            RolapUtil.setHook(connection.getContext(), new TriggerHook(trigger));
             Bomb bomb;
             final ExecutionImpl execution =
                 new ExecutionImpl(
@@ -372,7 +372,7 @@ public class BatchTestCase{
                     throw e;
                 }
             } finally {
-                RolapUtil.setHook(null);
+                RolapUtil.setHook(connection.getContext(), null);
             }
             if (!negative && bomb == null) {
                 fail("expected query [" + sql + "] did not occur");
@@ -512,7 +512,7 @@ public class BatchTestCase{
             // asked to execute a particular SQL statement, but will otherwise
             // behave exactly the same as the current DataSource.
             final TriggerHook hook = new TriggerHook(trigger);
-            RolapUtil.setHook(hook);
+            RolapUtil.setHook(connection.getContext(), hook);
             Bomb bomb = null;
             try {
                 if (bypassSchemaCache) {
@@ -536,7 +536,7 @@ public class BatchTestCase{
                     throw e;
                 }
             } finally {
-                RolapUtil.setHook(null);
+                RolapUtil.setHook(connection.getContext(), null);
             }
             if (negative) {
                 if (bomb != null || hook.foundMatch()) {
@@ -970,7 +970,7 @@ public class BatchTestCase{
             if (!listener.isExecuteSql()) {
                 fail("cache is empty: expected SQL query to be executed");
             }
-            if (SystemWideProperties.instance().EnableRolapCubeMemberCache)
+            if (((TestContextImpl) context).isEnableRolapCubeMemberCache())
             {
                 // run once more to make sure that the result comes from cache
                 // now
@@ -1109,11 +1109,14 @@ public class BatchTestCase{
 
         protected Result run() {
             con.getCacheControl(null).flushSchemaCache();
-            Integer monLimit =
-                SystemWideProperties.instance().ResultLimit;
-            int oldLimit = monLimit;
+            // The limit lives on this connection's own context, so restoring it
+            // afterwards is a courtesy to later queries on the same context
+            // rather than a guard against other tests.
+            TestContextImpl testContext = (TestContextImpl) con.getContext();
+            int oldLimit = testContext.getConfigValue(
+                ConfigConstants.RESULT_LIMIT, ConfigConstants.RESULT_LIMIT_DEFAULT_VALUE, Integer.class);
             try {
-                SystemWideProperties.instance().ResultLimit = this.resultLimit;
+                testContext.setResultLimit(this.resultLimit);
                 Result result = executeQuery(query, con);
 
                 // Check the number of positions on the last axis, which is
@@ -1124,7 +1127,7 @@ public class BatchTestCase{
                 assertEquals(rowCount, positionCount);
                 return result;
             } finally {
-                SystemWideProperties.instance().ResultLimit = oldLimit;
+                testContext.setResultLimit(oldLimit);
             }
         }
     }

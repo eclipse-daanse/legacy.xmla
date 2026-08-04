@@ -45,7 +45,6 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -61,7 +60,6 @@ class RolapNativeTopCountTest extends BatchTestCase {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @ParameterizedTest

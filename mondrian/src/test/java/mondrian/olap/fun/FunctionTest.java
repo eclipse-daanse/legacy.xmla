@@ -39,7 +39,6 @@ import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,7 +143,6 @@ public class FunctionTest {//extends FoodMartTestCase {
 
   @AfterEach
   public void afterEach() {
-    SystemWideProperties.instance().populateInitial();
   }
 
 
@@ -232,7 +230,7 @@ public class FunctionTest {//extends FoodMartTestCase {
     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Children.Count", "0" );
 
-    if ( isDefaultNullMemberRepresentation() ) {
+    if ( isDefaultNullMemberRepresentation(context) ) {
       // MSAS returns "" here.
       TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
         "[Gender].[All Gender].Parent.UniqueName", "[Gender].[Gender].[#null]" );
@@ -676,7 +674,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Filter([Store].members, 0 = 0).Item(0).Item(0))",
       "266,773" );
 
-    if ( isDefaultNullMemberRepresentation() ) {
+    if ( isDefaultNullMemberRepresentation(context) ) {
       // MSAS returns error here.
       assertExprReturns(context.getConnectionWithDefaultRole(),
         "Filter([Gender].members, 1 = 0).Item(0).Name",
@@ -711,7 +709,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + " ([Gender].[M], [Marital Status])", // not null
       "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status]}" );
 
-    if ( isDefaultNullMemberRepresentation() ) {
+    if ( isDefaultNullMemberRepresentation(context) ) {
       // The tuple constructor returns a null tuple if one of its
       // arguments is null -- and the Item function returns null if the
       // tuple is null.

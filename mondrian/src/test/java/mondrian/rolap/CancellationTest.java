@@ -29,7 +29,6 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.rolap.common.result.RolapResult;
@@ -53,7 +52,6 @@ class CancellationTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     /**

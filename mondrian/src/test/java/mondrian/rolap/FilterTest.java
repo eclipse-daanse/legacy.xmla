@@ -18,7 +18,6 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +48,6 @@ class FilterTest extends BatchTestCase {
 
   @AfterEach
   public void afterEach() {
-    SystemWideProperties.instance().populateInitial();
   }
 
 
@@ -545,10 +543,10 @@ class FilterTest extends BatchTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   public void  testNotInMultiLevelMemberConstraintMixedNullNonNullParent(Context<?> context) {
-    if ( !isDefaultNullMemberRepresentation() ) {
+    if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
+    if ( ((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
       return;
     }
 
@@ -760,10 +758,10 @@ class FilterTest extends BatchTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   public void  testNotInMultiLevelMemberConstraintSingleNullParent(Context<?> context) {
-    if ( !isDefaultNullMemberRepresentation() ) {
+    if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
+    if ( ((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
       return;
     }
 
@@ -1249,9 +1247,9 @@ class FilterTest extends BatchTestCase {
       ((TestContextImpl)context).setUseAggregates(false);
       ((TestContextImpl)context).setReadAggregates(false);
     ((TestContextImpl)context).setDisableCaching(false);
-    SystemWideProperties.instance().EnableNativeNonEmpty = true;
+    ((TestContextImpl)context).setEnableNativeNonEmpty(true);
 
-    SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+    ((TestContextImpl)context).setCompareSiblingsByOrderKey(true);
     ((TestContextImpl)context).setNullDenominatorProducesNull( true );
     ((TestContextImpl)context).setExpandNonNative(true);
     ((TestContextImpl)context).setEnableNativeFilter(true);

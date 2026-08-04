@@ -25,7 +25,6 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
@@ -39,6 +38,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 /**
@@ -52,7 +52,6 @@ class NamedSetTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     /**
@@ -201,7 +200,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIntrinsic(Context<?> context) {
-    	SystemWideProperties.instance().CaseSensitiveMdxInstr = true;
+    	((TestContextImpl) context).setCaseSensitiveMdxInstr(true);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
             + "   'Filter([Product].Members, (InStr(1, [Product].CurrentMember.Name, \"chardonnay\") <> 0) OR (InStr(1, [Product].CurrentMember.Name, \"chablis\") <> 0))'\n"

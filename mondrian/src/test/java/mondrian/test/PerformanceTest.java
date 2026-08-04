@@ -31,7 +31,6 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.fun.sort.Sorter;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.api.AfterEach;
@@ -67,7 +66,6 @@ public class PerformanceTest {
 
   @AfterEach
   public void afterEach() {
-      SystemWideProperties.instance().populateInitial();
   }
   /**
    * Test case for

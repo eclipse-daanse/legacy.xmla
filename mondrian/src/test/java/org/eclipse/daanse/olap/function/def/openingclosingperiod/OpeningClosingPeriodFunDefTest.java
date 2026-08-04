@@ -177,7 +177,7 @@ class OpeningClosingPeriodFunDefTest {
             member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "ClosingPeriod([Time].[1997].[Q3].[8])", "Sales" );
             assertNull( member );
-        } else if ( isDefaultNullMemberRepresentation() ) {
+        } else if ( isDefaultNullMemberRepresentation(context) ) {
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "with member [Measures].[Foo] as ClosingPeriod().uniquename\n"
                     + "select {[Measures].[Foo]} on columns,\n"

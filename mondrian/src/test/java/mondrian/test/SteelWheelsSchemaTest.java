@@ -45,7 +45,6 @@ import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +69,6 @@ class SteelWheelsSchemaTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     /**
@@ -1253,7 +1251,6 @@ class SteelWheelsSchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[*ZERO]}\n"
             + "Axis #2:\n");
-        SystemWideProperties.instance().populateInitial();
     }
 
     /**

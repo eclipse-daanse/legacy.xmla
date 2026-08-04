@@ -53,11 +53,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
   */
 class AggSchemaScanTest {
 
-  @BeforeAll
-  public static void beforeAll() {
-      ContextArgumentsProvider.dockerWasChanged = true;
-  }
-
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
@@ -161,8 +156,8 @@ class AggSchemaScanTest {
       List<? extends Schema> schemas = catalogMapping.getDbschemas();
       Schema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
-      //The foodmart schema has 26 tables in module; 23 distinct tables/views are loaded.
-      assertEquals( 23, jdbcSchema.getTablesMap().size() );
+      //The foodmart schema has 37 tables.
+      assertEquals( 37, jdbcSchema.getTablesMap().size() );
     } finally {
       if (sqlConnection != null) {
         try {

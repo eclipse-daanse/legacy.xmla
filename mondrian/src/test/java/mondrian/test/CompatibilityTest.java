@@ -25,12 +25,12 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -51,9 +51,6 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @since March 30, 2005
  */
 class CompatibilityTest {
-
-    private final SystemWideProperties props = SystemWideProperties.instance();
-
     @BeforeAll
     public static void beforeAll() {
     }
@@ -65,7 +62,6 @@ class CompatibilityTest {
 
 	@AfterEach
 	public void afterEach() {
-		props.populateInitial();
 	}
 
     /**
@@ -203,7 +199,7 @@ class CompatibilityTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testCalculatedMemberCase(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        SystemWideProperties.instance().CaseSensitive = false;
+        ((TestContextImpl) foodMartContext).setCaseSensitive(false);
         TestUtil.assertQueryReturns(
     		connection,
             "with member [Measures].[CaLc] as '1'\n"
@@ -330,9 +326,8 @@ class CompatibilityTest {
             result, TestUtil.executeSingletonAxis(connection, expression, "Sales").toString());
     }
 
-    protected boolean isDefaultNullMemberRepresentation() {
-        return SystemWideProperties.instance().NullMemberRepresentation
-                .equals("#null");
+    protected boolean isDefaultNullMemberRepresentation(Context<?> context) {
+        return TestUtil.isDefaultNullMemberRepresentation(context);
     }
 
     /**
@@ -352,7 +347,7 @@ class CompatibilityTest {
             // types to apply a CAST.
             return;
         }
-        if (!isDefaultNullMemberRepresentation()) {
+        if (!isDefaultNullMemberRepresentation(foodMartContext)) {
             return;
         }
         /*
@@ -450,7 +445,7 @@ class CompatibilityTest {
             //   "alt_promotion"."promo_id" ASC
             return;
         }
-        if (!isDefaultNullMemberRepresentation()) {
+        if (!isDefaultNullMemberRepresentation(foodMartContext)) {
             return;
         }
         final String cubeName = "Sales_inline";
@@ -563,7 +558,7 @@ class CompatibilityTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testPropertyCaseSensitivity(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        boolean caseSensitive = props.CaseSensitive;
+        boolean caseSensitive = ((TestContextImpl) foodMartContext).isCaseSensitive();
 
         // A user-defined property of a member.
         TestUtil.assertExprReturns(

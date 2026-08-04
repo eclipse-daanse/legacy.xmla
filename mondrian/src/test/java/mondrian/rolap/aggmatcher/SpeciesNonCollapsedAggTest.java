@@ -12,7 +12,6 @@ package mondrian.rolap.aggmatcher;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -79,7 +78,6 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
     @Override
 	@AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @Override

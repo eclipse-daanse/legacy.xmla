@@ -61,7 +61,6 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.StandardProperty;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
@@ -151,7 +150,6 @@ class SchemaTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     private static final String CUBES_AB =
@@ -10153,9 +10151,6 @@ class SchemaTest {
                 + "Axis #2:\n"
                 + "{[Time].[1997].[Q3]}\n"
                 + "Row #0: 16,266\n");
-
-            SystemWideProperties props = SystemWideProperties.instance();
-
             // turn off caching
             ((TestContextImpl)context).setDisableCaching(true);
 
@@ -14973,7 +14968,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian463(Context<?> context) {
-        if (!SystemWideProperties.instance().FilterChildlessSnowflakeMembers)
+        if (!((TestContextImpl) context).isFilterChildlessSnowflakeMembers())
         {
             // Similar to aggregates. If we turn off filtering,
             // we get wild stuff because of referential integrity.

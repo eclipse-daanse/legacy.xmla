@@ -46,6 +46,7 @@ public enum DatabaseProduct {
     DB2,
     FIREBIRD,
     GREENPLUM,
+    H2,
     HIVE,
     HSQLDB,
     IMPALA,

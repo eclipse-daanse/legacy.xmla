@@ -34,7 +34,6 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.execution.QueryTiming;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.result.CellSet;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,6 @@ class ExplainPlanTest {
 
   @AfterEach
   public void afterEach() {
-    SystemWideProperties.instance().populateInitial();
   }
 
   @Disabled //TODO need investigate

@@ -19,7 +19,6 @@ import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -108,11 +107,6 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         expAggTestDistinctCount.getFeature().add(unitSExpAggTestDistinctCount);
         expAggTestDistinctCount.getFeature().add(custCntExpAggTestDistinctCount);
     }
-	@BeforeAll
-	public static void beforeAll() {
-	      ContextArgumentsProvider.dockerWasChanged = true;
-	}
-
     @Override
 	@BeforeEach
     public void beforeEach() {
@@ -122,7 +116,6 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     @Override
 	@AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @Override

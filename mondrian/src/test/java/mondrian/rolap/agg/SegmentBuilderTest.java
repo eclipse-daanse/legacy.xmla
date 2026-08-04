@@ -36,7 +36,6 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.cache.OlapSegmentCacheManager;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.spi.SegmentBody;
@@ -73,8 +72,8 @@ class SegmentBuilderTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
-        RolapUtil.setHook(null);
+        // No hook to clear: it is installed on the test's own context and dies
+        // with it.
     }
 
     @ParameterizedTest
@@ -229,6 +228,7 @@ class SegmentBuilderTest {
             + "on 0 from sales");
 
         RolapUtil.setHook(
+            context,
             new RolapUtil.ExecuteQueryHook()
         {
             @Override
@@ -281,6 +281,7 @@ class SegmentBuilderTest {
             + "{[customers].[name].members} on 0 from sales where gender.m");
 
         RolapUtil.setHook(
+            context,
             new RolapUtil.ExecuteQueryHook()
         {
             @Override
@@ -326,6 +327,7 @@ class SegmentBuilderTest {
                     + "from sales where store.%s", state));
         }
         RolapUtil.setHook(
+            context,
             new RolapUtil.ExecuteQueryHook()
         {
             @Override
@@ -603,7 +605,6 @@ class SegmentBuilderTest {
         assertEquals(
             rolledForward.getValue().getValueMap().size(),
             rolledReverse.getValue().getValueMap().size());
-        SystemWideProperties.instance().populateInitial();
         return rolledForward;
     }
 

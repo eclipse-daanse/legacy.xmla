@@ -24,7 +24,6 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.result.RolapCell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +45,6 @@ class DrillThroughFieldListTest {
 
   @AfterEach
   public void afterEach() {
-    SystemWideProperties.instance().populateInitial();
   }
 
   @ParameterizedTest

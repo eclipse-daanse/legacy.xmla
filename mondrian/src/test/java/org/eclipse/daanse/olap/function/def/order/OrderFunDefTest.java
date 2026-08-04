@@ -22,7 +22,6 @@ import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -35,13 +34,13 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 class OrderFunDefTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @ParameterizedTest
@@ -702,7 +701,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderMemberMemberValueExpNew(Context<?> context) {
 
-        SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+        ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
         //final Context<?> context = getTestContext().withFreshConnection();
@@ -734,7 +733,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     void testOrderMemberMemberValueExpNew1(Context<?> context) {
         // sort by default measure
 
-        SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+        ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
         Connection connection = context.getConnectionWithDefaultRole();
@@ -850,7 +849,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderMemberMultiKeysMemberValueExp2(Context<?> context) {
 
-        SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+        ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
         Connection connection = context.getConnectionWithDefaultRole();
@@ -904,7 +903,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderTupleSingleKeysNew(Context<?> context) {
 
-        SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+        ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
         final Connection connection = context.getConnectionWithDefaultRole();
@@ -940,7 +939,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderTupleSingleKeysNew1(Context<?> context) {
 
-        SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+        ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
         Connection connection = context.getConnectionWithDefaultRole();
@@ -1106,7 +1105,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     void testOrderTupleMultiKeyswithVCube(Context<?> context) {
         // WA unit sales is greater than CA unit sales
 
-        SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+        ((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
 
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
@@ -1201,7 +1200,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderConstant1(Context<?> context) {
         // sort by customerId (Abel = 7851, Adeline = 6442, Abe = 570)
-    	SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
+    	((TestContextImpl) context).setCompareSiblingsByOrderKey(true);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("

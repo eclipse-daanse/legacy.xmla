@@ -13,7 +13,6 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -44,8 +43,6 @@ class UsagePrefixTest extends AggTableTestCase {
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
-        SystemWideProperties props = SystemWideProperties.instance();
-
         // get value without aggregates
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);

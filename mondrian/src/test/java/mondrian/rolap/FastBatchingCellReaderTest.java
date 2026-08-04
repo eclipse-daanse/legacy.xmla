@@ -54,7 +54,6 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.util.Bug;
@@ -120,7 +119,6 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
         // Note: ExecutionContext.pop() removed
         // cleanup
         connection.close();
@@ -1568,7 +1566,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
     void testAggregateDistinctCount5(Context<?> context) {
         prepareContext(context);
         // make sure tuple optimization will be used
-        SystemWideProperties.instance().MaxConstraints = 2;
+        ((TestContextImpl)context).setMaxConstraints(2);
 
         String query = "With " + "Set [Products] as " + " '{[Product].[Drink], " + "   [Product].[Food], "
                 + "   [Product].[Non-Consumable]}' " + "Member [Product].[Selected Products] as "

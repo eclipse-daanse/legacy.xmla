@@ -13,7 +13,11 @@ package mondrian.test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +30,6 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -1269,7 +1272,6 @@ class ConcurrentMdxTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
 
@@ -1309,7 +1311,8 @@ class ConcurrentMdxTest {
         LOGGER.debug("Test seed: " + seed);
         final Random random = new Random(seed);
 
-        final List<Statement> statements = new ArrayList<>();
+        // written by every pool thread and read by randomlyFlush
+        final List<Statement> statements = Collections.synchronizedList(new ArrayList<>());
         ExecutorService executorService =
             Executors.newFixedThreadPool(
                 context.getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS_DEFAULT_VALUE, Integer.class) - 2);
@@ -1342,9 +1345,32 @@ class ConcurrentMdxTest {
 
         executorService.shutdown();
 
-        boolean finished = executorService.awaitTermination(
-            45, TimeUnit.SECONDS);
-        assertTrue(finished);
+        // 700 x 30 queries against a pool of a handful of threads: whether they
+        // all finish inside a fixed budget is a throughput question and depends
+        // on the database under test. What this test is about is whether the
+        // concurrent flushing deadlocks, so ask the JVM that question directly
+        // instead of reading it out of a stopwatch.
+        boolean finished = executorService.awaitTermination(45, TimeUnit.SECONDS);
+        if (!finished) {
+            assertNoDeadlock();
+            LOGGER.info("queries still running after 45s but no deadlock; cancelling the rest");
+            executorService.shutdownNow();
+            executorService.awaitTermination(30, TimeUnit.SECONDS);
+        }
+    }
+
+    /** Fails with the offending stacks if the JVM reports deadlocked threads. */
+    private void assertNoDeadlock() {
+        ThreadMXBean threads = ManagementFactory.getThreadMXBean();
+        long[] deadlocked = threads.findDeadlockedThreads();
+        if (deadlocked == null || deadlocked.length == 0) {
+            return;
+        }
+        StringBuilder message = new StringBuilder("deadlocked threads while flushing:");
+        for (ThreadInfo info : threads.getThreadInfo(deadlocked, true, true)) {
+            message.append('\n').append(info);
+        }
+        assertTrue(false, message.toString());
     }
     private synchronized void logStatus() {
         if (count % 100 == 0) {

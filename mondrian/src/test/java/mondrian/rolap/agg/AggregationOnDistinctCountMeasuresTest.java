@@ -48,7 +48,6 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.ResultBase;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
@@ -85,7 +84,6 @@ class AggregationOnDistinctCountMeasuresTest {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     private void prepareContext(Context<?> context) {
@@ -170,7 +168,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testCrossJoinMembersWithASingleMember(Context<?> context) {
       prepareContext(context);
         // make sure tuple optimization will be used
-      SystemWideProperties.instance().MaxConstraints = 1;
+      ((TestContextImpl) context).setMaxConstraints(1);
 
         String query =
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].[GENDER].members} * "
@@ -224,7 +222,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testCrossJoinMembersWithSetOfMembers(Context<?> context) {
       prepareContext(context);
         // make sure tuple optimization will be used
-      SystemWideProperties.instance().MaxConstraints = 2;
+      ((TestContextImpl) context).setMaxConstraints(2);
 
         String query =
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].[GENDER].members} * "
@@ -505,7 +503,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testAggregationOverLargeListGeneratesError(Context<?> context) {
       prepareContext(context);
 
-      SystemWideProperties.instance().MaxConstraints = 7;
+      ((TestContextImpl) context).setMaxConstraints(7);
 
         // LucidDB has no limit on the size of IN list
         final boolean isLuciddb =
@@ -602,7 +600,7 @@ class AggregationOnDistinctCountMeasuresTest {
         //    return;
         //}
 
-        SystemWideProperties.instance().MaxConstraints = 5;
+        ((TestContextImpl) context).setMaxConstraints(5);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT\n"
             + "  Measures.[Unit Sales] on columns,\n"
@@ -637,7 +635,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMultiLevelMembersNullParents(Context<?> context) {
       prepareContext(context);
-        if (!isDefaultNullMemberRepresentation()) {
+        if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
         /*
@@ -786,7 +784,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMultiLevelMembersMixedNullNonNullParent(Context<?> context) {
       prepareContext(context);
-        if (!isDefaultNullMemberRepresentation()) {
+        if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
         /*
@@ -913,7 +911,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMultiLevelsMixedNullNonNullChild(Context<?> context) {
       prepareContext(context);
-        if (!isDefaultNullMemberRepresentation()) {
+        if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
         /*

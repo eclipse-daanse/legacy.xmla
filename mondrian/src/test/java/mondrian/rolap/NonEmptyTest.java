@@ -37,7 +37,6 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.exceptions.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import  org.eclipse.daanse.olap.util.Bug;
@@ -101,14 +100,10 @@ class NonEmptyTest extends BatchTestCase {
     levelName(
       "Education Level", "Education Level", "Education Level" );
 
-  @BeforeEach
-  public void beforeEach() {
-    SystemWideProperties.instance().EnableNativeNonEmpty = true;
-  }
-
+  // No setup or teardown for EnableNativeNonEmpty: true is already the default in
+  // ConfigConstants, and the tests that want it off set it on their own context.
   @AfterEach
   public void afterEach() {
-      SystemWideProperties.instance().populateInitial();
   }
 
   @ParameterizedTest
@@ -158,14 +153,12 @@ class NonEmptyTest extends BatchTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAnalyzerPerformanceIssue(Context<?> context) {
-    final SystemWideProperties mondrianProperties =
-      SystemWideProperties.instance();
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     ((TestContextImpl)context).setEnableNativeCrossJoin(true);
     ((TestContextImpl)context).setEnableNativeTopCount(false);
     ((TestContextImpl)context).setEnableNativeFilter(true);
-    mondrianProperties.EnableNativeNonEmpty = false;
-    mondrianProperties.ResultLimit = 5000000;
+    ((TestContextImpl)context).setEnableNativeNonEmpty(false);
+    ((TestContextImpl)context).setResultLimit(5000000);
 
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Education Level], NonEmptyCrossJoin"
@@ -1132,7 +1125,9 @@ class NonEmptyTest extends BatchTestCase {
 
     try {
       Connection connection = context.getConnectionWithDefaultRole();
-      SystemWideProperties.instance().ResultLimit = 2;
+      // After the connection: building the catalog reads members too, and a
+      // limit this low would already trip there.
+      ((TestContextImpl)context).setResultLimit(2);
       executeQuery(
         "select "
           + "NonEmptyCrossJoin({[Gender].Children, [Gender].[F]}, {[Store].Children, [Store].[Mexico]}) on columns "
@@ -1320,7 +1315,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testExpandLowMaxConstraints(Context<?> context) {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    SystemWideProperties.instance().MaxConstraints = 2;
+    ((TestContextImpl)context).setMaxConstraints(2);
     ((TestContextImpl)context).setExpandNonNative(true);
     checkNotNative(context,
       12,
@@ -1493,7 +1488,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testEnumLowMaxConstraints(Context<?> context) {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    SystemWideProperties.instance().MaxConstraints = 2;
+    ((TestContextImpl)context).setMaxConstraints(2);
     checkNotNative(context,
       12,
       "with "
@@ -2094,10 +2089,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 2;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
     checkNative(context,
       4,
@@ -2149,10 +2142,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 2;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
     checkNative(context,
       11,
@@ -2172,10 +2163,8 @@ class NonEmptyTest extends BatchTestCase {
     // Make sure maxConstraint settting is high enough
     // Make sure maxConstraint settting is high enough
     int minConstraints = 2;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
     checkNative(context,
       3,
@@ -2394,7 +2383,7 @@ class NonEmptyTest extends BatchTestCase {
         "sales_fact_1997", "agg_c_14_sales_fact_1997" );
     }
 
-    if ( !SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
+    if ( !((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
       necjSqlMySql = necjSqlMySql.replaceAll(
         "`product` as `product`, `product_class` as `product_class`",
         "`product_class` as `product_class`, `product` as `product`" );
@@ -2433,10 +2422,10 @@ class NonEmptyTest extends BatchTestCase {
   void testMultiLevelMemberConstraintNullParent(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if ( !isDefaultNullMemberRepresentation() ) {
+    if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( !SystemWideProperties.instance().FilterChildlessSnowflakeMembers ){
+    if ( !((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ){
       return;
     }
     String dimension =
@@ -2609,10 +2598,10 @@ class NonEmptyTest extends BatchTestCase {
   void testMultiLevelMemberConstraintMixedNullNonNullParent(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if ( !isDefaultNullMemberRepresentation() ) {
+    if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( !SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
+    if ( !((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
       return;
     }
     String dimension =
@@ -2775,10 +2764,10 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMultiLevelMemberConstraintWithMixedNullNonNullChild(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    if ( !isDefaultNullMemberRepresentation() ) {
+    if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( !SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
+    if ( !((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
       return;
     }
     String dimension =
@@ -3045,16 +3034,12 @@ class NonEmptyTest extends BatchTestCase {
   void testNonEmptyCrossJoinList(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     ((TestContextImpl)context).setEnableNativeCrossJoin(false);
-    boolean oldEnableNativeNonEmpty =
-        SystemWideProperties.instance().EnableNativeNonEmpty;
-    SystemWideProperties.instance().EnableNativeNonEmpty = false;
+    ((TestContextImpl)context).setEnableNativeNonEmpty(false);
 
     executeQuery(
       "select non empty CrossJoin([Customers].[Name].Members, "
         + "{[Promotions].[All Promotions].[Fantastic Discounts]}) "
         + "ON COLUMNS FROM [Sales]", context.getConnectionWithDefaultRole());
-    SystemWideProperties.instance().EnableNativeNonEmpty =
-      oldEnableNativeNonEmpty;
   }
 
   /**
@@ -3139,7 +3124,7 @@ class NonEmptyTest extends BatchTestCase {
     lmc = scf.getLevelMembersConstraint( evaluator );
     List<RolapMember> list =
       smrch.mapLevelToMembers.get( (RolapLevel) nameLevel, lmc );
-    if ( SystemWideProperties.instance().EnableRolapCubeMemberCache ) {
+    if ( ((TestContextImpl)context).isEnableRolapCubeMemberCache() ) {
       assertNotNull( list );
       assertEquals( 20, list.size() );
     }
@@ -3205,7 +3190,7 @@ class NonEmptyTest extends BatchTestCase {
     TupleConstraint lmc = scf.getLevelMembersConstraint( null );
     List<RolapMember> list =
       smrch.mapLevelToMembers.get( (RolapLevel) nameLevel, lmc );
-    if ( SystemWideProperties.instance().EnableRolapCubeMemberCache ) {
+    if ( ((TestContextImpl)context).isEnableRolapCubeMemberCache() ) {
       assertNotNull( list );
       assertEquals( 10281, list.size() );
     }
@@ -3830,9 +3815,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 3;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
 
     // enumerated list of calculated members results in some empty cells
@@ -3955,9 +3939,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 3;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
 
     checkNative(context,
@@ -3994,9 +3977,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 6;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
 
     // members in set are a cross product of (1997, 1998) and (Q1, Q2, Q3)
@@ -4016,10 +3998,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 2;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
 
     // members in set have the same parent
@@ -4039,10 +4019,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 2;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
 
     // members in set have different parents but there is a unique level
@@ -4138,9 +4116,8 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // Make sure maxConstraint settting is high enough
     int minConstraints = 2;
-    if ( SystemWideProperties.instance().MaxConstraints
-      < minConstraints ) {
-        SystemWideProperties.instance().MaxConstraints = minConstraints;
+    if ( ((TestContextImpl)context).getMaxConstraints() < minConstraints ) {
+        ((TestContextImpl)context).setMaxConstraints(minConstraints);
     }
 
     // calculated measure contains a calculated member
@@ -4557,13 +4534,9 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmptyLevelMembers(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    boolean currentNativeNonEmpty =
-        SystemWideProperties.instance().EnableNativeNonEmpty;
-    boolean currentNonEmptyOnAllAxis =
-      SystemWideProperties.instance().EnableNonEmptyOnAllAxis;
     try {
-      SystemWideProperties.instance().EnableNativeNonEmpty = false;
-      SystemWideProperties.instance().EnableNonEmptyOnAllAxis = true;
+      ((TestContextImpl)context).setEnableNativeNonEmpty(false);
+      ((TestContextImpl)context).setEnableNonEmptyOnAllAxis(true);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH MEMBER [Measures].[One] AS '1' "
           + "SELECT "
@@ -4608,7 +4581,7 @@ class NonEmptyTest extends BatchTestCase {
           + "Row #1: 263,793.22\n" );
 
       if ( Bug.Bug446Fixed ) {
-        SystemWideProperties.instance().EnableNativeNonEmpty = true;
+        ((TestContextImpl)context).setEnableNativeNonEmpty(true);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
           "WITH MEMBER [Measures].[One] AS '1' "
             + "SELECT "
@@ -4653,10 +4626,8 @@ class NonEmptyTest extends BatchTestCase {
             + "Row #1: 263,793.22\n" );
       }
     } finally {
-      SystemWideProperties.instance().EnableNativeNonEmpty =
-        currentNativeNonEmpty;
-      SystemWideProperties.instance().EnableNonEmptyOnAllAxis =
-        currentNonEmptyOnAllAxis;
+      // Nothing to restore: both switches live on this test's own context and die
+      // with it.
     }
   }
 
@@ -5096,11 +5067,9 @@ class NonEmptyTest extends BatchTestCase {
     executeQuery(preMdx, context.getConnectionWithDefaultRole());
 
 
-    SystemWideProperties.instance().NullMemberRepresentation =
-      "~Missing ";
+    ((TestContextImpl)context).setNullMemberRepresentation("~Missing ");
 
-    SystemWideProperties.instance().EnableNonEmptyOnAllAxis =
-      true;
+    ((TestContextImpl)context).setEnableNonEmptyOnAllAxis(true);
     executeQuery(mdx, context.getConnectionWithDefaultRole());
   }
 
@@ -5585,7 +5554,7 @@ class NonEmptyTest extends BatchTestCase {
   void testMeasureConstraintsInACrossjoinHaveCorrectResults(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     //http://jira.pentaho.com/browse/MONDRIAN-715
-    SystemWideProperties.instance().EnableNativeNonEmpty = true;
+    ((TestContextImpl)context).setEnableNativeNonEmpty(true);
     String mdx =
       "with "
         + "  member [Measures].[aa] as '([Measures].[Store Cost],[Gender].[M])'"
@@ -5721,7 +5690,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCalculatedDefaultMeasureOnVirtualCubeNoThrowException(Context<?> context)  {
       ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-      SystemWideProperties.instance().EnableNativeNonEmpty= true;
+      ((TestContextImpl)context).setEnableNativeNonEmpty(true);
       /*
       class TestCalculatedDefaultMeasureOnVirtualCubeNoThrowExceptionModifier extends PojoMappingModifier {
 
@@ -6059,7 +6028,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testFilterChildlessSnowflakeMembers2(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-    if ( SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
+    if ( ((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
       // If FilterChildlessSnowflakeMembers is true, then
       // [Product].[Drink].[Baking Goods].[Coffee] does not even exist!
       return;
@@ -6077,8 +6046,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testFilterChildlessSnowflakeMembers(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
-      SystemWideProperties.instance().FilterChildlessSnowflakeMembers =
-      false;
+      ((TestContextImpl)context).setFilterChildlessSnowflakeMembers(false);
     SqlPattern[] patterns = {
       new SqlPattern(
         DatabaseProduct.MYSQL,
@@ -7739,7 +7707,7 @@ class NonEmptyTest extends BatchTestCase {
   void testCalcMeasureInVirtualCubeWithoutBaseComponents(Context<?> context)  {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     // http://jira.pentaho.com/browse/ANALYZER-3630
-    SystemWideProperties.instance().EnableNativeNonEmpty= true;
+    ((TestContextImpl)context).setEnableNativeNonEmpty(true);
     /*
     withSchema(context,
         "<Schema name=\"FoodMart\">"

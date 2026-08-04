@@ -60,7 +60,6 @@ import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
@@ -109,7 +108,6 @@ class AccessControlTest {
 
 	@AfterEach
 	public void afterEach() {
-		SystemWideProperties.instance().populateInitial();
 	}
 
     @ParameterizedTest
@@ -2272,14 +2270,13 @@ class AccessControlTest {
     void testBugMondrian436(Context<?> foodMartContext) {
         ((TestContextImpl)foodMartContext).setEnableNativeCrossJoin(true);
         ((TestContextImpl)foodMartContext).setEnableNativeFilter(true);
-        SystemWideProperties.instance().EnableNativeNonEmpty = true;
+        ((TestContextImpl)foodMartContext).setEnableNativeNonEmpty(true);
         ((TestContextImpl)foodMartContext).setEnableNativeTopCount(true);
         ((TestContextImpl)foodMartContext).setExpandNonNative(true);
 
         // Run with native enabled, then with whatever properties are set for
         // this test run.
         checkBugMondrian436(foodMartContext);
-        SystemWideProperties.instance().populateInitial();
         ((TestContext)foodMartContext).setCatalogMappingSupplier(new CatalogSupplier());
         checkBugMondrian436(foodMartContext);
     }
@@ -3300,7 +3297,7 @@ class AccessControlTest {
         // connected with MONDRIAN-1568
         ((TestContextImpl)context).setEnableNativeCrossJoin(true);
         ((TestContextImpl)context).setEnableNativeFilter(true);
-        SystemWideProperties.instance().EnableNativeNonEmpty = true;
+        ((TestContextImpl)context).setEnableNativeNonEmpty(true);
         ((TestContextImpl)context).setEnableNativeTopCount(true);
         ((TestContextImpl)context).setExpandNonNative(true);
 
@@ -3426,7 +3423,6 @@ class AccessControlTest {
             }
         }
 
-        SystemWideProperties.instance().populateInitial();
     }
 
 

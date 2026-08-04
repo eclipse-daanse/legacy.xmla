@@ -26,24 +26,109 @@
 
   <properties>
     <maven-failsafe-plugin.argLine>-Duser.language=en -Duser.country=US</maven-failsafe-plugin.argLine>
-    <osgi.annotation.version>8.1.0</osgi.annotation.version>
-    <osgi.dto.version>1.0.0</osgi.dto.version>
-    <osgi.resource.version>1.0.0</osgi.resource.version>
-    <osgi.framework.version>1.8.0</osgi.framework.version>
-    <osgi.tracker.version>1.5.4</osgi.tracker.version>
-    <osgi.log.version>1.4.0</osgi.log.version>
-    <osgi.cm.version>1.6.1</osgi.cm.version>
-    <osgi.function.compile.version>1.0.0</osgi.function.compile.version>
-    <osgi.promise.compile.version>1.0.0</osgi.promise.compile.version>
-    <osgi.function.version>1.2.0</osgi.function.version>
-    <osgi.promise.version>1.2.0</osgi.promise.version>
-    <org.osgi.test.version>1.3.0</org.osgi.test.version>
     <caffeine.version>3.1.2</caffeine.version>
     <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
     <xmlunit.version>2.9.0</xmlunit.version>
     <editorconfig.skip>true</editorconfig.skip>
+    <!-- Which logback configuration the test JVM uses. Override for timing runs:
+         -Dlogback.config=${project.basedir}/logback-quiet.xml -->
+    <logback.config>${project.basedir}/logback.xml</logback.config>
   </properties>
   <dependencies>
+    <!-- slf4j-api arrives transitively, but the binding used to come from the
+         OSGi runtime as a bundle. Without it every log call in the suite - the
+         SQL trace, the DBTIMING lines, the dataset reuse messages - is a no-op,
+         which makes a failing run far harder to read. -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.25</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.h2</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.postgresql</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.mysql</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.mssqlserver</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.mariadb</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.oracle</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.sqlite</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.duckdb</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.derby</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.clickhouse</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.testkit.empty</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.pools.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.jdbc.datasource.pools.hikari</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
@@ -98,20 +183,6 @@
       <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.jdbc.datasource.clickhouse</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- ConfigurationAdmin API for the oracle/clickhouse providers -->
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.service.cm</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- mssql-jdbc mandatorily imports org.osgi.service.jdbc;version=[1.1,2);
-         the parent manages 1.0.0/provided, so pin 1.1.0 for the resolver. -->
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.service.jdbc</artifactId>
-      <version>1.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -246,7 +317,7 @@
     <dependency>
       <groupId>org.duckdb</groupId>
       <artifactId>duckdb_jdbc</artifactId>
-      <version>1.5.4.0</version>
+      <version>1.5.5.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -301,34 +372,7 @@
       <scope>compile</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.util.converter</artifactId>
-      <scope>compile</scope>
 
-    </dependency>
-
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.service.metatype.annotations</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.namespace.unresolvable</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.resource</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.configadmin.plugin.interpolation</artifactId>
-      <version>1.2.8</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
@@ -360,6 +404,26 @@
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.olap.check.runtime</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!--
+      The testkit that creates the tables and loads the rows: DatabaseLayer over
+      the CWM schema, DataLayer over the CSVs. The ddl module is needed at
+      runtime only - DatabaseLayer finds its DdlGeneratorFactory through the
+      ServiceLoader, so no code here compiles against it.
+    -->
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.cwm.testkit</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.cwm.resource.relational.ddl</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -519,14 +583,18 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
-          <skipTests>true</skipTests>
+          <!-- A launch argument, not a system property set later: the JVM fixes
+               its default locale at init and Format caches the currency symbol
+               on first use. Without it 17 currency assertions read pounds. -->
+          <!-- H2 and DuckDB run in this very JVM, so their data competes with
+               the suite for the same heap; 4g dies with an OutOfMemoryError.
+               The upper bound is the machine's, not the suite's: a database
+               container and a tmpfs log directory want the rest. -->
+          <argLine>-Xmx6g ${maven-failsafe-plugin.argLine} -Dlogback.configurationFile=${logback.config}</argLine>
+          <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>biz.aQute.bnd</groupId>
-        <artifactId>bnd-maven-plugin</artifactId>
-      </plugin>
     </plugins>
     <resources>
       <resource>

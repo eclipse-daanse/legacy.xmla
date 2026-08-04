@@ -22,7 +22,6 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.exceptions.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -34,6 +33,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.opencube.junit5.propupdator.EnableNonEmptyOnAllAxis;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -51,7 +51,9 @@ class NativizeSetFunDefTest extends BatchTestCase {
     public void beforeEach() {
 
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = true;
+        // EnableNonEmptyOnAllAxis is set on each test's own context by the
+        // EnableNonEmptyOnAllAxis updater in @ContextSource; @BeforeEach cannot do
+        // it, the Context only arrives as a parameter of the test method.
         // SSAS-compatible naming causes <dimension>.<level>.members to be
         // interpreted as <dimension>.<hierarchy>.members, and that happens a
         // lot in this test. There is little to be gained by having this test
@@ -61,11 +63,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testIsNoOpWithAggregatesTablesOn(Context<?> context) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setNativizeMinThreshold(0);
@@ -79,7 +80,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLevelHierarchyHighCardinality(Context<?> context) {
         // The cardinality for the hierarchy looks like this:
         //    Year: 2 (level * gender cardinality:2)
@@ -100,7 +101,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLevelHierarchyLowCardinality(Context<?> context) {
         // The cardinality for the hierarchy looks like this:
         //    Year: 2 (level * gender cardinality:2)
@@ -121,7 +122,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetLowCardinality(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         ((TestContextImpl)context).setNativizeMinThreshold(Integer.MAX_VALUE);
@@ -134,7 +135,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinWithNamedSetLowCardinality(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         ((TestContextImpl)context).setNativizeMinThreshold(Integer.MAX_VALUE);
@@ -148,7 +149,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMeasureInCrossJoinWithTwoDimensions(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -163,7 +164,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativeResultLimitAtZero(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         // This query will return exactly 6 rows:
@@ -182,7 +183,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativeResultLimitBeforeMerge(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         // This query will return exactly 6 rows:
@@ -213,7 +214,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativeResultLimitDuringMerge(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         // This query will return exactly 6 rows:
@@ -242,7 +243,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMeasureAndDimensionInCrossJoin(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -259,7 +260,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testDimensionAndMeasureInCrossJoin(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -276,7 +277,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAllByAll(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -293,7 +294,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAllByAllByAll(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -312,7 +313,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativizeTwoAxes(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         String mdx =
@@ -340,7 +341,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberAsFunArg(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -367,7 +368,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testOnlyMeasureIsLiteral(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -386,7 +387,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testTwoLiteralMeasuresAndUnitAndStoreSales(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -412,7 +413,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLiteralMeasuresWithinParentheses(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -440,7 +441,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testIsEmptyOnMeasures(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -465,7 +466,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLagOnMeasures(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -491,7 +492,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLagOnMeasuresWithinParentheses(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -520,7 +521,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRangeOfMeasures(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -542,7 +543,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testOrderOnMeasures(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -568,7 +569,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLiteralMeasureAndUnitSalesUsingSet(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -595,7 +596,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNoSubstitutionsArityOne(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -604,7 +605,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNoSubstitutionsArityTwo(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -615,7 +616,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testExplicitCurrentMonth(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -625,7 +626,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void disabled_testCalculatedCurrentMonth(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -639,7 +640,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
     @Disabled //has not been fixed during creating Daanse project
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void disabled_testCalculatedRelativeMonth(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -655,7 +656,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAcceptsAllDimensionMembersSetAsInput(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -665,7 +666,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAcceptsCrossJoinAsInput(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -674,7 +675,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRedundantEnumMembersFirst(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -694,7 +695,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRedundantEnumMembersMiddle(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -714,7 +715,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRedundantEnumMembersLast(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -734,7 +735,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRedundantLevelMembersFirst(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -754,7 +755,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRedundantLevelMembersMiddle(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -774,7 +775,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testRedundantLevelMembersLast(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -794,7 +795,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyNestedCrossJoins(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -811,7 +812,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLevelMembersAndAll(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -823,7 +824,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCrossJoinArgInNestedBraces(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -835,7 +836,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLevelMembersAndAllWhereOrderMatters(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -847,7 +848,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testEnumMembersAndAll(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -859,7 +860,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativizeWithASetAtTopLevel(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -884,7 +885,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativizeWithASetAtTopLevel3Levels(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -920,7 +921,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNativizeWithASetAtTopLevel2(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -947,7 +948,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testGenderMembersAndAggByMaritalStatus(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -960,7 +961,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testGenderAggAndMembersByMaritalStatus(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -973,7 +974,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testGenderAggAndMembersAndAllByMaritalStatus(Context<?> context) {
     	((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -986,7 +987,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMaritalStatusByGenderMembersAndAgg(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -999,7 +1000,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMaritalStatusByGenderAggAndMembers(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1012,7 +1013,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAggWithEnumMembers(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1025,7 +1026,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinArgWithMultipleElementTypes(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1043,7 +1044,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testProductFamilyMembers(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1055,7 +1056,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNestedCrossJoinWhereAllColsHaveNative(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1072,7 +1073,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNestedCrossJoinWhereFirstColumnNonNative(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1089,7 +1090,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNestedCrossJoinWhereMiddleColumnNonNative(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1106,7 +1107,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testNestedCrossJoinWhereLastColumnNonNative(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1123,7 +1124,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testGenderAggByMaritalStatus(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1137,7 +1138,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testGenderAggTwiceByMaritalStatus(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1153,7 +1154,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testSameGenderAggTwiceByMaritalStatus(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1168,7 +1169,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMaritalStatusByGenderAgg(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1182,7 +1183,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMaritalStatusByTwoGenderAggs(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1198,7 +1199,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMaritalStatusBySameGenderAggTwice(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1213,7 +1214,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMultipleLevelsOfSameDimInConcatenatedJoins(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1231,7 +1232,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMultipleLevelsOfSameDimInSingleArg(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1249,11 +1250,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testDoesNoHarmToPlainEnumeratedMembers(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "SELECT NativizeSet({Gender.Gender.M,Gender.Gender.F}) on 0 from sales",
@@ -1264,11 +1265,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testDoesNoHarmToPlainDotMembers(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select NativizeSet({[Marital Status].[Marital Status].members}) "
@@ -1279,11 +1280,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testTransformsCallToRemoveDotMembersInCrossJoin(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select NativizeSet(CrossJoin({Gender.Gender.M,Gender.Gender.F},{[Marital Status].[Marital Status].[Marital Status].members})) "
@@ -1299,11 +1300,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void DISABLED_testTransformsWithSeveralDimensionsNestedOnRows(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "WITH SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Education Level].[Education Level].[Graduate Degree]},"
@@ -1333,11 +1334,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testTransformsComplexQueryWithGenerateAndAggregate(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Product].[Product].[COG_OQP_INT_umg1] AS "
@@ -1379,7 +1380,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
     @Disabled //has not been fixed during creating Daanse project
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void DISABLED_testParallelCrossjoins(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1391,11 +1392,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMultipleHierarchySsasTrue(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         // Ssas compatible: time.[weekly].[week]
         // Use fresh connection -- unique names are baked in when schema is
@@ -1419,11 +1420,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testMultipleHierarchySsasFalse(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
+        ((TestContextImpl) context).setEnableNonEmptyOnAllAxis(false);
 
         // Ssas compatible: [time.weekly].week
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
@@ -1438,7 +1439,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testComplexCrossjoinAggInMiddle(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1490,7 +1491,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testTopCountDoesNotGetTransformed(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
@@ -1509,7 +1510,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinWithFilter(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1528,7 +1529,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testEvaluationIsNonNativeWhenBelowHighcardThreshoold(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         ((TestContextImpl)context).setNativizeMinThreshold(10000);
@@ -1551,7 +1552,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCalculatedLevelsDoNotCauseException(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         String mdx =
@@ -1567,7 +1568,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAxisWithArityOneIsNotNativelyEvaluated(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         SqlPattern[] patterns = {
@@ -1598,7 +1599,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAxisWithNamedSetArityOneIsNotNativelyEvaluated(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNotNative(context,
@@ -1611,7 +1612,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testOneAxisHighAndOneLowGetsNativeEvaluation(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         ((TestContextImpl)context).setNativizeMinThreshold(19);
@@ -1626,7 +1627,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
     @Disabled //has not been fixed during creating Daanse project
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void disabled_testAggregatesInSparseResultsGetSortedCorrectly(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         ((TestContextImpl)context).setNativizeMinThreshold(0);
@@ -1638,7 +1639,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testLeafMembersOfParentChildDimensionAreNativelyEvaluated(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         checkNative(context,
@@ -1657,7 +1658,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testAggregatedCrossjoinWithZeroMembersInNativeList(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         ((TestContextImpl)context).setNativizeMinThreshold(0);
@@ -1679,7 +1680,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testCardinalityQueriesOnlyExecuteOnce(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         SqlPattern[] patterns = {
@@ -1711,7 +1712,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     }
 
     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
     void testSingleLevelDotMembersIsNativelyEvaluated(Context<?> context) {
         ((TestContextImpl)context).setNativizeMinThreshold(0);
         String mdx1 =

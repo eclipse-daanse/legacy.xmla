@@ -49,8 +49,8 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.DataLoader;
-import org.opencube.junit5.dbprovider.AbstractDockerBasesDatabaseProvider;
-import org.opencube.junit5.dbprovider.DatabaseProvider;
+import org.eclipse.daanse.jdbc.datasource.testkit.api.DatabaseProvider;
+import org.eclipse.daanse.jdbc.datasource.testkit.api.ActiveDatabase;
 import org.opencube.junit5.xmltests.ResourceTestCase;
 import org.opencube.junit5.xmltests.XmlResourceRoot;
 import org.opencube.junit5.xmltests.XmlResourceTestCase;
@@ -68,47 +68,92 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextArgumentsProvider.class);
 	private ContextSource contextSource;
 
-	private static Map<Class<? extends DatabaseProvider>, Map<Class<? extends DataLoader>,  Entry<DataSource, Dialect>>> store = new HashMap<>();
+	/** Loaded databases per provider, keyed by isolation key (dataset, plus the test class when it wants its own). */
+	/**
+	 * Concurrent, and the inner maps too: with parallel test execution several
+	 * classes ask for a dataset at the same moment, and the load must happen once.
+	 */
+	private static final Map<Class<? extends DatabaseProvider>, Map<String, ActiveDatabase>> store =
+			new ConcurrentHashMap<>();
+
 	/**
 	 * Data loaders that already failed once per provider in this JVM. Retrying a
 	 * deterministic load failure once per test method just repeats it (and churns
 	 * one container per test on the docker providers); the markers are wiped when
-	 * {@link #dockerWasChanged} announces a deliberately re-provisioned environment.
+	 * markers are per isolation key, so one dataset's failure leaves the others alone.
 	 */
-	private static final Map<Class<? extends DatabaseProvider>, Set<Class<? extends DataLoader>>> failedLoaders =
+	private static final Map<Class<? extends DatabaseProvider>, Set<String>> failedLoaders =
 			new ConcurrentHashMap<>();
-	public static boolean dockerWasChanged = true;
+
+	/** Carries a checked load failure out of computeIfAbsent's mapping function. */
+	private static final class LoadFailed extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+
+		LoadFailed(Exception cause) {
+			super(cause);
+		}
+	}
+
+	/**
+	 * How often every test method is invoked, from {@code DAANSE_TEST_REPEAT} or
+	 * {@code -Ddaanse.test.repeat}; 1 by default, so an ordinary run is unchanged.
+	 *
+	 * <p>
+	 * For hunting failures that only appear under load. Each repetition gets its
+	 * own Context - a fresh {@link org.opencube.junit5.context.TestContextImpl}
+	 * over the same, already loaded database - so the repetitions are as
+	 * independent of each other as two separate tests are, and configuration one
+	 * of them sets cannot leak into the others. With parallel execution on they
+	 * run concurrently, which is the point: it multiplies the pressure on the
+	 * shared database without needing the whole suite.
+	 * </p>
+	 */
+	private static int repeatCount() {
+		String value = System.getenv("DAANSE_TEST_REPEAT");
+		if (value == null || value.isBlank()) {
+			value = System.getProperty("daanse.test.repeat");
+		}
+		if (value == null || value.isBlank()) {
+			return 1;
+		}
+		int n = Integer.parseInt(value.trim());
+		return n < 1 ? 1 : n;
+	}
 
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 
-		// TODO: parallel
-		List<TestContext> contexts = prepareContexts(extensionContext);
 		List<XmlResourceTestCase> xmlTestCases = readTestcases(extensionContext);
 
 		List<Arguments> argumentss = new ArrayList<>();
 
-		if (contexts == null || contexts.isEmpty()) {
+		for (int repetition = 0; repetition < repeatCount(); repetition++) {
+			// Inside the loop: prepareContexts builds a new TestContextImpl per call,
+			// so every repetition is its own context.
+			List<TestContext> contexts = prepareContexts(extensionContext);
 
-			if (xmlTestCases != null && !xmlTestCases.isEmpty()) {
+			if (contexts == null || contexts.isEmpty()) {
 
-				for (XmlResourceTestCase xmlTestCase : xmlTestCases) {
-					argumentss.add(Arguments.of(xmlTestCase));
-				}
-			}
-		} else {
-			for (Context<?> context : contexts) {
+				if (xmlTestCases != null && !xmlTestCases.isEmpty()) {
 
-				if (xmlTestCases == null || xmlTestCases.isEmpty()) {
-					argumentss.add(Arguments.of(context));
-
-				} else {
 					for (XmlResourceTestCase xmlTestCase : xmlTestCases) {
-						argumentss.add(Arguments.of(context, xmlTestCase));
+						argumentss.add(Arguments.of(xmlTestCase));
+					}
+				}
+			} else {
+				for (Context<?> context : contexts) {
+
+					if (xmlTestCases == null || xmlTestCases.isEmpty()) {
+						argumentss.add(Arguments.of(context));
+
+					} else {
+						for (XmlResourceTestCase xmlTestCase : xmlTestCases) {
+							argumentss.add(Arguments.of(context, xmlTestCase));
+						}
+
 					}
 
 				}
-
 			}
 		}
 		return argumentss.stream();
@@ -192,14 +237,9 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 		}
 		List<TestContext> args = providers.stream().parallel().map(dbp -> {
 
-			Entry<DataSource, Dialect> dataBaseInfo = null;
+			ActiveDatabase dataBaseInfo = null;
 			Class<? extends DatabaseProvider> clazzProvider = dbp.getClass();
 
-			if (!store.containsKey(clazzProvider)) {
-				store.put(clazzProvider, new HashMap<>());
-			} else {
-
-			}
 
 			List<TestContext> testingContexts = new ArrayList<>();
 
@@ -215,54 +255,60 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 
 								Class<? extends DataLoader> dataLoaderClass = contextSource.dataloader();
 
-								Map<Class<? extends DataLoader>, Entry<DataSource, Dialect>> storedLoaders = store
-										.get(clazzProvider);
-								if (storedLoaders.containsKey(dataLoaderClass) && !dockerWasChanged) {
-									dataBaseInfo = storedLoaders.get(dataLoaderClass);
-//									dataSource.getKey().put(RolapConnectionProperties.Jdbc.name(), dbp.getJdbcUrl());
-								} else {
-									// A dataset load that already failed for this provider stays failed:
-									// re-running activate()+loadData() once per test method only repeats
-									// the identical failure (and, for docker providers, churns one
-									// container per test). dockerWasChanged=true wipes the markers, since
-									// it announces a deliberately re-provisioned environment.
-									Set<Class<? extends DataLoader>> failed = failedLoaders
-											.computeIfAbsent(clazzProvider, k -> new HashSet<>());
-									if (dockerWasChanged) {
-										failed.clear();
-									}
-									if (failed.contains(dataLoaderClass)) {
-										throw new IllegalStateException("data loader " + dataLoaderClass.getName()
-												+ " already failed for provider " + clazzProvider.getName()
-												+ " in this run; not retrying");
-									}
-									try {
-										dataBaseInfo = dbp.activate();
-										DataLoader dataLoader = dataLoaderClass.getConstructor().newInstance();
-										dataLoader.loadData(dataBaseInfo);
-										storedLoaders.clear();
-										storedLoaders.put(dataLoaderClass, dataBaseInfo);
-										dockerWasChanged = false;
-									} catch (Exception activateOrLoadFailed) {
-										failed.add(dataLoaderClass);
-										// The docker providers remove the previously running container
-										// (remove-before-create) inside activate(). If activate() or the
-										// dataset load fails there, every cached Entry in storedLoaders
-										// still points at that removed container's port: reusing it would
-										// turn one failed dataset switch into a "connection refused"
-										// cascade over the whole remaining run, so drop the stale cache and
-										// force re-activation for the next test class. Embedded providers
-										// (h2, sqlite, ...) create an independent database per activation
-										// and leave the previously cached one fully usable — keep it, a
-										// re-load of the large default dataset would be pure waste.
-										// (Clearing alone already forces re-activation for the next class;
-										// dockerWasChanged stays untouched so it keeps meaning "a test
-										// deliberately re-provisioned the environment".)
-										if (dbp instanceof AbstractDockerBasesDatabaseProvider) {
-											storedLoaders.clear();
+								// One database per dataset. A test class that mutates its database
+								// asks for a private one, so it neither disturbs the shared dataset
+								// nor forces anybody else to reload.
+								String isolationKey = dataLoaderClass.getSimpleName();
+								IsolationKey ownKey = extensionContext.getTestClass()
+										.map(c -> c.getAnnotation(IsolationKey.class)).orElse(null);
+								if (ownKey != null) {
+									isolationKey = isolationKey + "-" + ownKey.value();
+								}
+
+								Map<String, ActiveDatabase> storedLoaders =
+										store.computeIfAbsent(clazzProvider, k -> new ConcurrentHashMap<>());
+
+								// A load that already failed for this key stays failed: repeating
+								// activate()+loadData() once per test method only repeats the
+								// identical failure.
+								Set<String> failed = failedLoaders.computeIfAbsent(clazzProvider,
+										k -> ConcurrentHashMap.newKeySet());
+								if (failed.contains(isolationKey)) {
+									throw new IllegalStateException("dataset " + isolationKey
+											+ " already failed for provider " + clazzProvider.getName()
+											+ " in this run; not retrying");
+								}
+
+								// computeIfAbsent, not containsKey-then-put: under parallel execution
+								// the check-then-act version let two classes miss at the same moment and
+								// each build its own database, which is exactly the duplicate loading
+								// this cache exists to prevent. Here the first caller loads while the
+								// others block on the same key and are handed the finished database.
+								final String key = isolationKey;
+								final String datasetName = dataLoaderClass.getSimpleName();
+								try {
+									boolean[] loadedHere = { false };
+									dataBaseInfo = storedLoaders.computeIfAbsent(key, k -> {
+										loadedHere[0] = true;
+										LOGGER.info("dataset {} on {}: creating and loading (key={})",
+												datasetName, dbp.id(), k);
+										try {
+											ActiveDatabase db = dbp.activate(k);
+											dataLoaderClass.getConstructor().newInstance().loadData(db);
+											return db;
+										} catch (Exception e) {
+											throw new LoadFailed(e);
 										}
-										throw activateOrLoadFailed;
+									});
+									if (!loadedHere[0]) {
+										LOGGER.info("dataset {} on {}: reusing the loaded database (key={})",
+												datasetName, dbp.id(), key);
 									}
+								} catch (LoadFailed wrapped) {
+									failed.add(key);
+									// Only this key is marked. Every other dataset lives in its own
+									// database and is untouched by this failure.
+									throw (Exception) wrapped.getCause();
 								}
 
 							} catch (Exception e) {
@@ -272,8 +318,8 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 							}
 
 							TestContextImpl testContextImpl = new TestContextImpl();
-							testContextImpl.setDataSource(dataBaseInfo.getKey());
-							testContextImpl.setDialect(dataBaseInfo.getValue());
+							testContextImpl.setConnectionPool(dataBaseInfo.connectionPool());
+							testContextImpl.setDialect(dataBaseInfo.dialect());
 							testContextImpl.setAggragationFactory(new AggregationFactoryImpl(testContextImpl.getCustomAggregators()));
 							testContextImpl.setName("TestContext");
 

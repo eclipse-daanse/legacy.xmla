@@ -9,7 +9,6 @@
 
 package mondrian.rolap.aggmatcher;
 
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -34,11 +33,9 @@ public abstract class AggTableTestCase extends CsvDBTestCase {
         //getConnection().getCacheControl(null).flushSchemaCache();
 
         // store current property values
-        SystemWideProperties props = SystemWideProperties.instance();
     }
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 }

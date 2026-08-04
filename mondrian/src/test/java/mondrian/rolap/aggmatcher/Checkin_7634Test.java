@@ -15,7 +15,6 @@ import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
@@ -48,7 +47,7 @@ import mondrian.test.loader.CsvDBTestCase;
  *
  * @author Richard M. Emberson
   */
-public class Checkin_7634 extends CsvDBTestCase {
+public class Checkin_7634Test extends CsvDBTestCase {
 
     private static final String CHECKIN_7634 = "Checkin_7634.csv";
 
@@ -58,7 +57,6 @@ public class Checkin_7634 extends CsvDBTestCase {
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @ParameterizedTest

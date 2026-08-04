@@ -837,6 +837,12 @@ public abstract class DBLoader implements AutoCloseable {
         }
         buf.append(nl);
         buf.append(")");
+        // Whatever this dialect requires after the closing parenthesis. Empty
+        // everywhere except ClickHouse, which refuses a table without a storage
+        // engine and a sort order -- Code 42, "ORDER BY or PRIMARY KEY clause is
+        // missing". These tables have no key, so the dialect answers with
+        // ORDER BY tuple().
+        buf.append(this.dialect.ddlGenerator().createTableSuffix(java.util.List.of()));
 
         String ddl = buf.toString();
         table.setCreateTableStmt(ddl);
@@ -845,6 +851,13 @@ public abstract class DBLoader implements AutoCloseable {
     protected void generateAfterActions(Table table) {
         List<String> createIndexList = table.getAfterActions();
         if (createIndexList.isEmpty()) {
+            return;
+        }
+        // A dialect that has no CREATE INDEX gets none. ClickHouse says so, and
+        // sorts by the engine's ORDER BY instead; issuing the statement anyway
+        // only turns a table that works into a test that fails.
+        if (!this.dialect.supportsIndexDdl()) {
+            createIndexList.clear();
             return;
         }
         String tableName = table.getName();

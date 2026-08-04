@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Quiet configuration for full-suite timing runs.
+
+  The default logback.xml traces every generated statement through RolapUtil at
+  DEBUG. That is what you want when chasing a single failure, but over a whole
+  suite it produced 161245 SQL lines and a 412 MB log per database - written to
+  a tmpfs scratch directory, so it competed for RAM with the 4 GB test JVM.
+
+  Everything is WARN here, with one exception: the dataset messages stay at INFO
+  because they are the evidence that each database is created and filled once
+  and then reused.
+-->
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.opencube.junit5.ContextArgumentsProvider" level="INFO"/>
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>

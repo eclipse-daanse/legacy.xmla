@@ -34,7 +34,7 @@ class NameFunDefTest {
         assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Name", "Store" );
         // member name
         assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].DefaultMember.Name", "All Stores" );
-        if ( isDefaultNullMemberRepresentation() ) {
+        if ( isDefaultNullMemberRepresentation(context) ) {
             // name of null member
             assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Parent.Name", "#null" );
         }

@@ -28,12 +28,12 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -59,7 +59,6 @@ import mondrian.rolap.SchemaModifiersEmf;
 
     @AfterEach
     public void afterEach() {
-        SystemWideProperties.instance().populateInitial();
     }
 
     @ParameterizedTest
@@ -1291,7 +1290,7 @@ import mondrian.rolap.SchemaModifiersEmf;
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
      void testCalculatedMemberMSASCompatibility(Context<?> context) {
-        SystemWideProperties.instance().CaseSensitive = false;
+        ((TestContextImpl) context).setCaseSensitive(false);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with "
             + "member gender.calculated as 'gender.m' "

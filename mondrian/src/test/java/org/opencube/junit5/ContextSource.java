@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opencube.junit5.dataloader.DataLoader;
-import org.opencube.junit5.dbprovider.DatabaseProvider;
+import org.eclipse.daanse.jdbc.datasource.testkit.api.DatabaseProvider;
 import org.opencube.junit5.propupdator.TestContextUpdater;
 
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD })

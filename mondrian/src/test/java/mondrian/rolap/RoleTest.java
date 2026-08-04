@@ -46,7 +46,7 @@ public class RoleTest {
             DatabaseSchema ds = dsList.get(0);
             List<? extends DatabaseTable> tList = ds.getDbTables();
             assertEquals(
-                    23, //26
+                    37,
                     tList.size());
             Optional<? extends DatabaseTable> oT = tList.stream().filter(t -> "sales_fact_1997".equals(t.getName())).findFirst();
             List<? extends DatabaseColumn> cList = oT.get().getDbColumns();
