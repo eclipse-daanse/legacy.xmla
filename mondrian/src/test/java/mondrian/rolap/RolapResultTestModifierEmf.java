@@ -16,7 +16,7 @@ package mondrian.rolap;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
@@ -159,15 +159,15 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
         d1IdFt1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         d1IdFt1.setName("d1_id");
-        d1IdFt1.setType(SqlSimpleTypes.Sql99.integerType());
+        d1IdFt1.setType(SQLSimpleTypes.Sql99.integerType());
 
         d2IdFt1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         d2IdFt1.setName("d2_id");
-        d2IdFt1.setType(SqlSimpleTypes.Sql99.integerType());
+        d2IdFt1.setType(SQLSimpleTypes.Sql99.integerType());
 
         valueFt1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         valueFt1.setName("value");
-        valueFt1.setType(SqlSimpleTypes.decimalType(18, 4));
+        valueFt1.setType(SQLSimpleTypes.decimalType(18, 4));
         // valueFt1.setColumnSize(10);
         // valueFt1.setDecimalDigits(2);
 
@@ -182,21 +182,21 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2):null
         d1IdFt2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         d1IdFt2.setName("d1_id");
-        d1IdFt2.setType(SqlSimpleTypes.Sql99.integerType());
+        d1IdFt2.setType(SQLSimpleTypes.Sql99.integerType());
 
         d2IdFt2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         d2IdFt2.setName("d2_id");
-        d2IdFt2.setType(SqlSimpleTypes.Sql99.integerType());
+        d2IdFt2.setType(SQLSimpleTypes.Sql99.integerType());
 
         valueFt2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         valueFt2.setName("value");
-        valueFt2.setType(SqlSimpleTypes.decimalType(18, 4));
+        valueFt2.setType(SQLSimpleTypes.decimalType(18, 4));
         // valueFt2.setColumnSize(10);
         // valueFt2.setDecimalDigits(2);
 
         vextraFt2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         vextraFt2.setName("vextra");
-        vextraFt2.setType(SqlSimpleTypes.decimalType(18, 4));
+        vextraFt2.setType(SQLSimpleTypes.decimalType(18, 4));
         // vextraFt2.setColumnSize(10);
         // vextraFt2.setDecimalDigits(2);
 
@@ -212,11 +212,11 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,VARCHAR(20)
         d1IdD1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         d1IdD1.setName("d1_id");
-        d1IdD1.setType(SqlSimpleTypes.Sql99.integerType());
+        d1IdD1.setType(SQLSimpleTypes.Sql99.integerType());
 
         nameD1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         nameD1.setName("name");
-        nameD1.setType(SqlSimpleTypes.varcharType(255));
+        nameD1.setType(SQLSimpleTypes.varcharType(255));
         // nameD1.setCharOctetLength(20);
 
         d1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -229,11 +229,11 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,VARCHAR(20)
         d2IdD2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         d2IdD2.setName("d2_id");
-        d2IdD2.setType(SqlSimpleTypes.Sql99.integerType());
+        d2IdD2.setType(SQLSimpleTypes.Sql99.integerType());
 
         nameD2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         nameD2.setName("name");
-        nameD2.setType(SqlSimpleTypes.varcharType(255));
+        nameD2.setType(SQLSimpleTypes.varcharType(255));
         // nameD2.setCharOctetLength(20);
 
         d2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

@@ -16,7 +16,7 @@ package mondrian.rolap;
 import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -118,11 +118,11 @@ public class TestNotInMultiLevelMemberConstraintSingleNullParentModifier impleme
         // Create columns not available in CatalogSupplier
         COLUMN_WAREHOUSE_FAX = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WAREHOUSE_FAX.setName("warehouse_fax");
-        COLUMN_WAREHOUSE_FAX.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_WAREHOUSE_FAX.setType(SQLSimpleTypes.varcharType(255));
 
         COLUMN_WA_ADDRESS1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS1.setName("wa_address1");
-        COLUMN_WA_ADDRESS1.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_WA_ADDRESS1.setType(SQLSimpleTypes.varcharType(255));
 
         // Create first Warehouse2 dimension
         LEVEL_FAX_1 = LevelFactory.eINSTANCE.createLevel();

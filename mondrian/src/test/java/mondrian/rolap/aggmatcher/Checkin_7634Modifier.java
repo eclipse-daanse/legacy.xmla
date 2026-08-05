@@ -15,7 +15,7 @@ package mondrian.rolap.aggmatcher;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
@@ -249,21 +249,21 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         // Create columns for geography7631 table using RolapMappingFactory
         Column cust_loc_id_geography7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         cust_loc_id_geography7631.setName("cust_loc_id");
-        cust_loc_id_geography7631.setType(SqlSimpleTypes.Sql99.integerType());
+        cust_loc_id_geography7631.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column state_cd = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         state_cd.setName("state_cd");
-        state_cd.setType(SqlSimpleTypes.varcharType(255));
+        state_cd.setType(SQLSimpleTypes.varcharType(255));
         // state_cd.setCharOctetLength(20);
 
         Column city_nm = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         city_nm.setName("city_nm");
-        city_nm.setType(SqlSimpleTypes.varcharType(255));
+        city_nm.setType(SQLSimpleTypes.varcharType(255));
         // city_nm.setCharOctetLength(20);
 
         Column zip_cd = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         zip_cd.setName("zip_cd");
-        zip_cd.setType(SqlSimpleTypes.varcharType(255));
+        zip_cd.setType(SQLSimpleTypes.varcharType(255));
         // zip_cd.setCharOctetLength(20);
 
         // Create geography7631 table using RolapMappingFactory
@@ -277,27 +277,27 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         // Create columns for table7634 using RolapMappingFactory
         Column cust_loc_id_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         cust_loc_id_table7634.setName("cust_loc_id");
-        cust_loc_id_table7634.setType(SqlSimpleTypes.Sql99.integerType());
+        cust_loc_id_table7634.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column prod_id_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_table7634.setName("prod_id");
-        prod_id_table7634.setType(SqlSimpleTypes.Sql99.integerType());
+        prod_id_table7634.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column first_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         first_table7634.setName("first");
-        first_table7634.setType(SqlSimpleTypes.decimalType(18, 4));
+        first_table7634.setType(SQLSimpleTypes.decimalType(18, 4));
         // first_table7634.setColumnSize(10);
         // first_table7634.setDecimalDigits(2);
 
         Column request_value_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         request_value_table7634.setName("request_value");
-        request_value_table7634.setType(SqlSimpleTypes.decimalType(18, 4));
+        request_value_table7634.setType(SQLSimpleTypes.decimalType(18, 4));
         // request_value_table7634.setColumnSize(10);
         // request_value_table7634.setDecimalDigits(2);
 
         Column shipped_value_table7634 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         shipped_value_table7634.setName("shipped_value");
-        shipped_value_table7634.setType(SqlSimpleTypes.decimalType(18, 4));
+        shipped_value_table7634.setType(SQLSimpleTypes.decimalType(18, 4));
         // shipped_value_table7634.setColumnSize(10);
         // shipped_value_table7634.setDecimalDigits(2);
 
@@ -313,22 +313,22 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         // Create columns for prod7631 table using RolapMappingFactory
         Column prod_id_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_prod7631.setName("prod_id");
-        prod_id_prod7631.setType(SqlSimpleTypes.Sql99.integerType());
+        prod_id_prod7631.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column class_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         class_prod7631.setName("class");
         // Checkin_7634.csv upstream declares these VARCHAR(30) -- the values are Class0/Brand01/
         // Item011. Declared INTEGER here, mondrian quoted the member key by the column type
         // and emitted where "prod7631"."class" = Class1, unquoted, on every dialect.
-        class_prod7631.setType(SqlSimpleTypes.varcharType(30));
+        class_prod7631.setType(SQLSimpleTypes.varcharType(30));
 
         Column brand_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         brand_prod7631.setName("brand");
-        brand_prod7631.setType(SqlSimpleTypes.varcharType(30));
+        brand_prod7631.setType(SQLSimpleTypes.varcharType(30));
 
         Column item_prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         item_prod7631.setName("item");
-        item_prod7631.setType(SqlSimpleTypes.varcharType(30));
+        item_prod7631.setType(SQLSimpleTypes.varcharType(30));
 
         // Create prod7631 table using RolapMappingFactory
         Table prod7631 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

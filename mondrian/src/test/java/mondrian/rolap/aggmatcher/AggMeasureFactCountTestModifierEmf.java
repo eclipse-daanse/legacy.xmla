@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -192,28 +192,28 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         // Create time_csv table columns
         //timeIdColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         timeIdColumnInTimeCsv.setName("time_id");
-        timeIdColumnInTimeCsv.setType(SqlSimpleTypes.Sql99.integerType());
+        timeIdColumnInTimeCsv.setType(SQLSimpleTypes.Sql99.integerType());
 
         //theYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         theYearColumnInTimeCsv.setName("the_year");
-        theYearColumnInTimeCsv.setType(SqlSimpleTypes.Sql99.smallintType());
+        theYearColumnInTimeCsv.setType(SQLSimpleTypes.Sql99.smallintType());
 
         //monthOfYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         monthOfYearColumnInTimeCsv.setName("month_of_year");
-        monthOfYearColumnInTimeCsv.setType(SqlSimpleTypes.Sql99.smallintType());
+        monthOfYearColumnInTimeCsv.setType(SQLSimpleTypes.Sql99.smallintType());
 
         //quarterColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         quarterColumnInTimeCsv.setName("quarter");
-        quarterColumnInTimeCsv.setType(SqlSimpleTypes.varcharType(255));
+        quarterColumnInTimeCsv.setType(SQLSimpleTypes.varcharType(255));
         // quarterColumnInTimeCsv.setCharOctetLength(30);
 
         //dayOfMonthColumnTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         dayOfMonthColumnTimeCsv.setName("day_of_month");
-        dayOfMonthColumnTimeCsv.setType(SqlSimpleTypes.Sql99.smallintType());
+        dayOfMonthColumnTimeCsv.setType(SQLSimpleTypes.Sql99.smallintType());
 
         //weekOfYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         weekOfYearColumnInTimeCsv.setName("week_of_year");
-        weekOfYearColumnInTimeCsv.setType(SqlSimpleTypes.Sql99.integerType());
+        weekOfYearColumnInTimeCsv.setType(SQLSimpleTypes.Sql99.integerType());
 
         //timeCsvTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         timeCsvTable.setName("time_csv");
@@ -227,41 +227,41 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         // Create fact_csv_2016 table columns
         //productIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productIdColumnInFactCsv2016.setName("product_id");
-        productIdColumnInFactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        productIdColumnInFactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //timeIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         timeIdColumnInFactCsv2016.setName("time_id");
-        timeIdColumnInFactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        timeIdColumnInFactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //customerIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerIdColumnInFactCsv2016.setName("customer_id");
-        customerIdColumnInFactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        customerIdColumnInFactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //promotionIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         promotionIdColumnInFactCsv2016.setName("promotion_id");
-        promotionIdColumnInFactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        promotionIdColumnInFactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeIdColumnInFactCsv2016.setName("store_id");
-        storeIdColumnInFactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        storeIdColumnInFactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeSalesColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeSalesColumnInFactCsv2016.setName("store_sales");
-        storeSalesColumnInFactCsv2016.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeSalesColumnInFactCsv2016.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeSalesColumnInFactCsv2016.setColumnSize(10);
         // storeSalesColumnInFactCsv2016.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeSalesColumnInFactCsv2016 true
 
         //storeCostColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeCostColumnInFactCsv2016.setName("store_cost");
-        storeCostColumnInFactCsv2016.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeCostColumnInFactCsv2016.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeCostColumnInFactCsv2016.setColumnSize(10);
         // storeCostColumnInFactCsv2016.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeCostColumnInFactCsv2016 true
 
         //unitSalesColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesColumnInFactCsv2016.setName("unit_sales");
-        unitSalesColumnInFactCsv2016.setType(SqlSimpleTypes.decimalType(18, 4));
+        unitSalesColumnInFactCsv2016.setType(SQLSimpleTypes.decimalType(18, 4));
         // unitSalesColumnInFactCsv2016.setColumnSize(10);
         // unitSalesColumnInFactCsv2016.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): unitSalesColumnInFactCsv2016 true
@@ -280,57 +280,57 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         // Create agg_c_6_fact_csv_2016 table
         //monthOfYearAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         monthOfYearAggC6FactCsv2016.setName("month_of_year");
-        monthOfYearAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        monthOfYearAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //quarterAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         quarterAggC6FactCsv2016.setName("quarter");
-        quarterAggC6FactCsv2016.setType(SqlSimpleTypes.varcharType(255));
+        quarterAggC6FactCsv2016.setType(SQLSimpleTypes.varcharType(255));
         // quarterAggC6FactCsv2016.setCharOctetLength(30);
 
         //theYearAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         theYearAggC6FactCsv2016.setName("the_year");
-        theYearAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        theYearAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeSalesAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeSalesAggC6FactCsv2016.setName("store_sales");
-        storeSalesAggC6FactCsv2016.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeSalesAggC6FactCsv2016.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeSalesAggC6FactCsv2016.setColumnSize(10);
         // storeSalesAggC6FactCsv2016.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeSalesAggC6FactCsv2016 true
 
         //storeCostAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeCostAggC6FactCsv2016.setName("store_cost");
-        storeCostAggC6FactCsv2016.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeCostAggC6FactCsv2016.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeCostAggC6FactCsv2016.setColumnSize(10);
         // storeCostAggC6FactCsv2016.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeCostAggC6FactCsv2016 true
 
         //unitSalesAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggC6FactCsv2016.setName("unit_sales");
-        unitSalesAggC6FactCsv2016.setType(SqlSimpleTypes.decimalType(18, 4));
+        unitSalesAggC6FactCsv2016.setType(SQLSimpleTypes.decimalType(18, 4));
         // unitSalesAggC6FactCsv2016.setColumnSize(10);
         // unitSalesAggC6FactCsv2016.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): unitSalesAggC6FactCsv2016 true
 
         //customerCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerCountAggC6FactCsv2016.setName("customer_count");
-        customerCountAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        customerCountAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //factCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggC6FactCsv2016.setName("fact_count");
-        factCountAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeSalesFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeSalesFactCountAggC6FactCsv2016.setName("store_sales_fact_count");
-        storeSalesFactCountAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        storeSalesFactCountAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeCostFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeCostFactCountAggC6FactCsv2016.setName("store_cost_fact_count");
-        storeCostFactCountAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        storeCostFactCountAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //unitSalesFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesFactCountAggC6FactCsv2016.setName("unit_sales_fact_count");
-        unitSalesFactCountAggC6FactCsv2016.setType(SqlSimpleTypes.Sql99.integerType());
+        unitSalesFactCountAggC6FactCsv2016.setType(SQLSimpleTypes.Sql99.integerType());
 
         //aggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggC6FactCsv2016.setName("agg_c_6_fact_csv_2016");
@@ -349,57 +349,57 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         // Create agg_csv_different_column_names table
         //monthOfYearAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         monthOfYearAggCsvDifferentColumnNames.setName("month_of_year");
-        monthOfYearAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        monthOfYearAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //quarterAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         quarterAggCsvDifferentColumnNames.setName("quarter");
-        quarterAggCsvDifferentColumnNames.setType(SqlSimpleTypes.varcharType(255));
+        quarterAggCsvDifferentColumnNames.setType(SQLSimpleTypes.varcharType(255));
         // quarterAggCsvDifferentColumnNames.setCharOctetLength(30);
 
         //theYearAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         theYearAggCsvDifferentColumnNames.setName("the_year");
-        theYearAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        theYearAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeSalesAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeSalesAggCsvDifferentColumnNames.setName("store_sales");
-        storeSalesAggCsvDifferentColumnNames.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeSalesAggCsvDifferentColumnNames.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeSalesAggCsvDifferentColumnNames.setColumnSize(10);
         // storeSalesAggCsvDifferentColumnNames.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeSalesAggCsvDifferentColumnNames true
 
         //storeCostAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeCostAggCsvDifferentColumnNames.setName("store_cost");
-        storeCostAggCsvDifferentColumnNames.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeCostAggCsvDifferentColumnNames.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeCostAggCsvDifferentColumnNames.setColumnSize(10);
         // storeCostAggCsvDifferentColumnNames.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeCostAggCsvDifferentColumnNames true
 
         //unitSalesAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggCsvDifferentColumnNames.setName("unit_sales");
-        unitSalesAggCsvDifferentColumnNames.setType(SqlSimpleTypes.decimalType(18, 4));
+        unitSalesAggCsvDifferentColumnNames.setType(SQLSimpleTypes.decimalType(18, 4));
         // unitSalesAggCsvDifferentColumnNames.setColumnSize(10);
         // unitSalesAggCsvDifferentColumnNames.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): unitSalesAggCsvDifferentColumnNames true
 
         //customerCountAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerCountAggCsvDifferentColumnNames.setName("customer_count");
-        customerCountAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        customerCountAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //factCountAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggCsvDifferentColumnNames.setName("fact_count");
-        factCountAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //ssFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         ssFcAggCsvDifferentColumnNames.setName("ss_fc");
-        ssFcAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        ssFcAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //scFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         scFcAggCsvDifferentColumnNames.setName("sc_fc");
-        scFcAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        scFcAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //usFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         usFcAggCsvDifferentColumnNames.setName("us_fc");
-        usFcAggCsvDifferentColumnNames.setType(SqlSimpleTypes.Sql99.integerType());
+        usFcAggCsvDifferentColumnNames.setType(SQLSimpleTypes.Sql99.integerType());
 
         //aggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggCsvDifferentColumnNames.setName("agg_csv_different_column_names");
@@ -418,57 +418,57 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         // Create agg_csv_divide_by_zero table
         //monthOfYearAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         monthOfYearAggCsvDivideByZero.setName("month_of_year");
-        monthOfYearAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        monthOfYearAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //quarterAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         quarterAggCsvDivideByZero.setName("quarter");
-        quarterAggCsvDivideByZero.setType(SqlSimpleTypes.varcharType(255));
+        quarterAggCsvDivideByZero.setType(SQLSimpleTypes.varcharType(255));
         // quarterAggCsvDivideByZero.setCharOctetLength(30);
 
         //theYearAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         theYearAggCsvDivideByZero.setName("the_year");
-        theYearAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        theYearAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeSalesAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeSalesAggCsvDivideByZero.setName("store_sales");
-        storeSalesAggCsvDivideByZero.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeSalesAggCsvDivideByZero.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeSalesAggCsvDivideByZero.setColumnSize(10);
         // storeSalesAggCsvDivideByZero.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeSalesAggCsvDivideByZero true
 
         //storeCostAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeCostAggCsvDivideByZero.setName("store_cost");
-        storeCostAggCsvDivideByZero.setType(SqlSimpleTypes.decimalType(18, 4));
+        storeCostAggCsvDivideByZero.setType(SQLSimpleTypes.decimalType(18, 4));
         // storeCostAggCsvDivideByZero.setColumnSize(10);
         // storeCostAggCsvDivideByZero.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): storeCostAggCsvDivideByZero true
 
         //unitSalesAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggCsvDivideByZero.setName("unit_sales");
-        unitSalesAggCsvDivideByZero.setType(SqlSimpleTypes.decimalType(18, 4));
+        unitSalesAggCsvDivideByZero.setType(SQLSimpleTypes.decimalType(18, 4));
         // unitSalesAggCsvDivideByZero.setColumnSize(10);
         // unitSalesAggCsvDivideByZero.setDecimalDigits(4);
         // setNullable removed (CWM Column has isNullable enum): unitSalesAggCsvDivideByZero true
 
         //customerCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerCountAggCsvDivideByZero.setName("customer_count");
-        customerCountAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        customerCountAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //factCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggCsvDivideByZero.setName("fact_count");
-        factCountAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeSalesFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeSalesFactCountAggCsvDivideByZero.setName("store_sales_fact_count");
-        storeSalesFactCountAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        storeSalesFactCountAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //storeCostFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeCostFactCountAggCsvDivideByZero.setName("store_cost_fact_count");
-        storeCostFactCountAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        storeCostFactCountAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //unitSalesFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesFactCountAggCsvDivideByZero.setName("unit_sales_fact_count");
-        unitSalesFactCountAggCsvDivideByZero.setType(SqlSimpleTypes.Sql99.integerType());
+        unitSalesFactCountAggCsvDivideByZero.setType(SQLSimpleTypes.Sql99.integerType());
 
         //aggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggCsvDivideByZero.setName("agg_csv_divide_by_zero");

@@ -15,7 +15,7 @@ package mondrian.rolap.aggmatcher;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
@@ -208,27 +208,27 @@ public class Checkin_7641Modifier implements CatalogMappingSupplier {
         this.originalCatalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) catalog);
         Column custLocIdCheckin7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         custLocIdCheckin7641.setName("cust_loc_id");
-        custLocIdCheckin7641.setType(SqlSimpleTypes.Sql99.integerType());
+        custLocIdCheckin7641.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column prodIdCheckin7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodIdCheckin7641.setName("prod_id");
-        prodIdCheckin7641.setType(SqlSimpleTypes.Sql99.integerType());
+        prodIdCheckin7641.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column firstCheckin7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         firstCheckin7641.setName("first");
-        firstCheckin7641.setType(SqlSimpleTypes.numericType(18, 4));
+        firstCheckin7641.setType(SQLSimpleTypes.numericType(18, 4));
         // firstCheckin7641.setColumnSize(10);
         // firstCheckin7641.setDecimalDigits(2);
 
         Column requestValueCheckin7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         requestValueCheckin7641.setName("request_value");
-        requestValueCheckin7641.setType(SqlSimpleTypes.numericType(18, 4));
+        requestValueCheckin7641.setType(SQLSimpleTypes.numericType(18, 4));
         // requestValueCheckin7641.setColumnSize(10);
         // requestValueCheckin7641.setDecimalDigits(2);
 
         Column shippedValueCheckin7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         shippedValueCheckin7641.setName("shipped_value");
-        shippedValueCheckin7641.setType(SqlSimpleTypes.numericType(18, 4));
+        shippedValueCheckin7641.setType(SQLSimpleTypes.numericType(18, 4));
         // shippedValueCheckin7641.setColumnSize(10);
         // shippedValueCheckin7641.setDecimalDigits(2);
 
@@ -246,21 +246,21 @@ public class Checkin_7641Modifier implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,VARCHAR(20),VARCHAR(20),VARCHAR(20)
         Column custLocIdGeography7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         custLocIdGeography7641.setName("cust_loc_id");
-        custLocIdGeography7641.setType(SqlSimpleTypes.Sql99.integerType());
+        custLocIdGeography7641.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column stateCdGeography7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         stateCdGeography7641.setName("state_cd");
-        stateCdGeography7641.setType(SqlSimpleTypes.varcharType(255));
+        stateCdGeography7641.setType(SQLSimpleTypes.varcharType(255));
         // stateCdGeography7641.setCharOctetLength(20);
 
         Column cityNmGeography7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         cityNmGeography7641.setName("city_nm");
-        cityNmGeography7641.setType(SqlSimpleTypes.varcharType(255));
+        cityNmGeography7641.setType(SQLSimpleTypes.varcharType(255));
         // cityNmGeography7641.setCharOctetLength(20);
 
         Column zipCdGeography7641 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         zipCdGeography7641.setName("zip_cd");
-        zipCdGeography7641.setType(SqlSimpleTypes.varcharType(255));
+        zipCdGeography7641.setType(SQLSimpleTypes.varcharType(255));
         // zipCdGeography7641.setCharOctetLength(20);
 
         // Create geography7641 table using RolapMappingFactory
@@ -276,21 +276,21 @@ public class Checkin_7641Modifier implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30)
         Column prodIdProd7611 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodIdProd7611.setName("prod_id");
-        prodIdProd7611.setType(SqlSimpleTypes.Sql99.integerType());
+        prodIdProd7611.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column classProd7611 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         classProd7611.setName("class");
-        classProd7611.setType(SqlSimpleTypes.varcharType(255));
+        classProd7611.setType(SQLSimpleTypes.varcharType(255));
         // classProd7611.setCharOctetLength(30);
 
         Column brandProd7611 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         brandProd7611.setName("brand");
-        brandProd7611.setType(SqlSimpleTypes.varcharType(255));
+        brandProd7611.setType(SQLSimpleTypes.varcharType(255));
         // brandProd7611.setCharOctetLength(30);
 
         Column itemProd7611 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         itemProd7611.setName("item");
-        itemProd7611.setType(SqlSimpleTypes.varcharType(255));
+        itemProd7611.setType(SQLSimpleTypes.varcharType(255));
         // itemProd7611.setCharOctetLength(30);
 
         // Create prod7611 table using RolapMappingFactory

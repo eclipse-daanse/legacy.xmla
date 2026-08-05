@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.sql.dialect.db.common.AbstractJdbcDialect;
 import org.eclipse.daanse.olap.api.Context;
@@ -808,7 +808,7 @@ class SqlQueryTest  extends BatchTestCase {
                 // Create SQL expression for caption column
                 ExpressionColumn captionExpression =
                     org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-                captionExpression.setType(SqlSimpleTypes.decimalType(18, 4));
+                captionExpression.setType(SQLSimpleTypes.decimalType(18, 4));
 
                 // Create SQL statement for LucidDB
                 SqlStatement sqlStatement =

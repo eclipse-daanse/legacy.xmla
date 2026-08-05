@@ -39,7 +39,7 @@ import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
@@ -1098,11 +1098,11 @@ class SchemaTest {
                     // Create physical columns using RolapMappingFactory
                     Column yearly_income = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     yearly_income.setName("yearly_income");
-                    yearly_income.setType(SqlSimpleTypes.Sql99.integerType());
+                    yearly_income.setType(SQLSimpleTypes.Sql99.integerType());
 
                     Column customer_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     customer_id.setName("customer_id");
-                    customer_id.setType(SqlSimpleTypes.Sql99.integerType());
+                    customer_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                     // Create physical table with non-existent name using RolapMappingFactory
                     Table customer_not_found = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -1230,7 +1230,7 @@ class SchemaTest {
                     // Create physical column using RolapMappingFactory
                     Column customer_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     customer_id.setName("customer_id");
-                    customer_id.setType(SqlSimpleTypes.Sql99.integerType());
+                    customer_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                     // Create physical table with non-existent name using RolapMappingFactory
                     Table customer_not_found = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -1352,7 +1352,7 @@ class SchemaTest {
                     // Create physical column using RolapMappingFactory
                     Column yearly_income = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                     yearly_income.setName("yearly_income");
-                    yearly_income.setType(SqlSimpleTypes.Sql99.integerType());
+                    yearly_income.setType(SQLSimpleTypes.Sql99.integerType());
 
                     // Create physical table with non-existent name using RolapMappingFactory
                     Table customer_not_found = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -2506,16 +2506,16 @@ class SchemaTest {
                 // Create physical columns for region table using RolapMappingFactory
                 Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                sales_region.setType(SQLSimpleTypes.varcharType(255));
                 // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
                 Column sales_district_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_district_id.setName("sales_district_id");
-                sales_district_id.setType(SqlSimpleTypes.Sql99.integerType());
+                sales_district_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(SqlSimpleTypes.Sql99.integerType());
+                region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 // Create region table using RolapMappingFactory
                 Table region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -3000,16 +3000,16 @@ class SchemaTest {
                 // Create physical columns for region table using RolapMappingFactory
                 Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                sales_region.setType(SQLSimpleTypes.varcharType(255));
                 // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
                 Column sales_district_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_district_id.setName("sales_district_id");
-                sales_district_id.setType(SqlSimpleTypes.Sql99.integerType());
+                sales_district_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(SqlSimpleTypes.Sql99.integerType());
+                region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 // Create region table using RolapMappingFactory
                 Table region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -3452,11 +3452,11 @@ class SchemaTest {
                 // Create physical columns for region table using RolapMappingFactory
                 Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(SqlSimpleTypes.Sql99.integerType());
+                region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                sales_region.setType(SQLSimpleTypes.varcharType(255));
                 // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
                 // Create region table using RolapMappingFactory
@@ -3903,11 +3903,11 @@ class SchemaTest {
             // Create physical columns for region table using RolapMappingFactory
             Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             region_id.setName("region_id");
-            region_id.setType(SqlSimpleTypes.Sql99.integerType());
+            region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             sales_region.setName("sales_region");
-            sales_region.setType(SqlSimpleTypes.varcharType(255));
+            sales_region.setType(SQLSimpleTypes.varcharType(255));
             // ((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) sales_region).setCharOctetLength(30);
 
             // Create region table using RolapMappingFactory
@@ -4304,11 +4304,11 @@ class SchemaTest {
 
             Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             region_id.setName("region_id");
-            region_id.setType(SqlSimpleTypes.Sql99.integerType());
+            region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             sales_region.setName("sales_region");
-            sales_region.setType(SqlSimpleTypes.varcharType(255));
+            sales_region.setType(SQLSimpleTypes.varcharType(255));
             // sales_region.setCharOctetLength(30);
 
             //if (region_id instanceof org.eclipse.daanse.cwm.model.cwm.resource.relational.Column pc1) {
@@ -4672,11 +4672,11 @@ class SchemaTest {
 
             Column region_id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             region_id.setName("region_id");
-            region_id.setType(SqlSimpleTypes.Sql99.integerType());
+            region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column sales_region = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             sales_region.setName("sales_region");
-            sales_region.setType(SqlSimpleTypes.varcharType(255));
+            sales_region.setType(SQLSimpleTypes.varcharType(255));
             // sales_region.setCharOctetLength(30);
 
             if (region_id instanceof org.eclipse.daanse.cwm.model.cwm.resource.relational.Column pc1) {
@@ -6270,7 +6270,7 @@ class SchemaTest {
             // Create warehouse_id column for Warehouse dimension
             Column warehouseIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             warehouseIdColumn.setName("warehouse_id");
-            warehouseIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            warehouseIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             // Create SQL view for Warehouse hierarchy
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource sqlView1 = SourceFactory.eINSTANCE.createSqlSelectSource();
@@ -6325,13 +6325,13 @@ class SchemaTest {
             // Create columns for measures
             Column warehouseCostColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             warehouseCostColumn.setName("warehouse_cost");
-            warehouseCostColumn.setType(SqlSimpleTypes.decimalType(18, 4));
+            warehouseCostColumn.setType(SQLSimpleTypes.decimalType(18, 4));
             // warehouseCostColumn.setColumnSize(10);
             // warehouseCostColumn.setDecimalDigits(4);
 
             Column warehouseSalesColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             warehouseSalesColumn.setName("warehouse_sales");
-            warehouseSalesColumn.setType(SqlSimpleTypes.decimalType(18, 4));
+            warehouseSalesColumn.setType(SQLSimpleTypes.decimalType(18, 4));
             // warehouseSalesColumn.setColumnSize(10);
             // warehouseSalesColumn.setDecimalDigits(4);
 
@@ -6595,22 +6595,22 @@ class SchemaTest {
             // table and corrupt the supplier's model for every later test.
             Column vColTimeId = RelationalFactory.eINSTANCE.createColumn();
             vColTimeId.setName("time_id");
-            vColTimeId.setType(SqlSimpleTypes.Sql99.integerType());
+            vColTimeId.setType(SQLSimpleTypes.Sql99.integerType());
             Column vColProductId = RelationalFactory.eINSTANCE.createColumn();
             vColProductId.setName("product_id");
-            vColProductId.setType(SqlSimpleTypes.Sql99.integerType());
+            vColProductId.setType(SQLSimpleTypes.Sql99.integerType());
             Column vColStoreId = RelationalFactory.eINSTANCE.createColumn();
             vColStoreId.setName("store_id");
-            vColStoreId.setType(SqlSimpleTypes.Sql99.integerType());
+            vColStoreId.setType(SQLSimpleTypes.Sql99.integerType());
             Column vColWarehouseCost = RelationalFactory.eINSTANCE.createColumn();
             vColWarehouseCost.setName("warehouse_cost");
-            vColWarehouseCost.setType(SqlSimpleTypes.decimalType(10, 4));
+            vColWarehouseCost.setType(SQLSimpleTypes.decimalType(10, 4));
             Column vColWarehouseSales = RelationalFactory.eINSTANCE.createColumn();
             vColWarehouseSales.setName("warehouse_sales");
-            vColWarehouseSales.setType(SqlSimpleTypes.decimalType(10, 4));
+            vColWarehouseSales.setType(SQLSimpleTypes.decimalType(10, 4));
             Column vColWarehouseId = RelationalFactory.eINSTANCE.createColumn();
             vColWarehouseId.setName("warehouse_id");
-            vColWarehouseId.setType(SqlSimpleTypes.Sql99.integerType());
+            vColWarehouseId.setType(SQLSimpleTypes.Sql99.integerType());
 
             // Create dimension connectors for Time, Product, and Store
             DimensionConnector d1 = DimensionFactory.eINSTANCE.createDimensionConnector();
@@ -6883,16 +6883,16 @@ class SchemaTest {
             // Create columns for the view
             Column storeTypeColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeTypeColumn.setName("store_type");
-            storeTypeColumn.setType(SqlSimpleTypes.varcharType(255));
+            storeTypeColumn.setType(SQLSimpleTypes.varcharType(255));
             // storeTypeColumn.setColumnSize(30);
 
             Column storeSqftColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeSqftColumn.setName("store_sqft");
-            storeSqftColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            storeSqftColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column grocerySqftColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             grocerySqftColumn.setName("grocery_sqft");
-            grocerySqftColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            grocerySqftColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             // Create Store Type dimension
             org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l1 = LevelFactory.eINSTANCE.createLevel();
@@ -10175,13 +10175,13 @@ class SchemaTest {
             org.eclipse.daanse.cwm.model.cwm.resource.relational.Column genderColumn =
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             genderColumn.setName("gender");
-            genderColumn.setType(SqlSimpleTypes.varcharType(255));
+            genderColumn.setType(SQLSimpleTypes.varcharType(255));
 
             // Create Column for customer_id using RolapMappingFactory
             org.eclipse.daanse.cwm.model.cwm.resource.relational.Column customerIdColumn =
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             customerIdColumn.setName("customer_id");
-            customerIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            customerIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             // Create SqlStatement for generic dialect using RolapMappingFactory
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatementGeneric =
@@ -11396,17 +11396,17 @@ class SchemaTest {
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column idColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                idColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column binColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 binColumn.setName("bin");
-                binColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                binColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column nameColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nameColumn.setName("name");
-                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                nameColumn.setType(SQLSimpleTypes.varcharType(255));
                 // nameColumn.setCharOctetLength(20);
 
                 // Create row values
@@ -11715,17 +11715,17 @@ class SchemaTest {
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column idColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                idColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column bigNumColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 bigNumColumn.setName("big_num");
-                bigNumColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                bigNumColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column nameColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nameColumn.setName("name");
-                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                nameColumn.setType(SQLSimpleTypes.varcharType(255));
                 // nameColumn.setCharOctetLength(20);
 
                 // Create row 1
@@ -11972,17 +11972,17 @@ class SchemaTest {
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column idColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                idColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column bigNumColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 bigNumColumn.setName("big_num");
-                bigNumColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                bigNumColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column nameColumn =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nameColumn.setName("name");
-                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                nameColumn.setType(SQLSimpleTypes.varcharType(255));
                 // nameColumn.setCharOctetLength(20);
 
                 // Create row values
@@ -13441,18 +13441,18 @@ class SchemaTest {
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column region_id =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 region_id.setName("region_id");
-                region_id.setType(SqlSimpleTypes.Sql99.integerType());
+                region_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column sales_region =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_region.setName("sales_region");
-                sales_region.setType(SqlSimpleTypes.varcharType(255));
+                sales_region.setType(SQLSimpleTypes.varcharType(255));
                 // sales_region.setCharOctetLength(30);
 
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Column sales_district_id =
                     org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 sales_district_id.setName("sales_district_id");
-                sales_district_id.setType(SqlSimpleTypes.Sql99.integerType());
+                sales_district_id.setType(SQLSimpleTypes.Sql99.integerType());
 
                 // Create physical table "region"
                 org.eclipse.daanse.cwm.model.cwm.resource.relational.Table region =
@@ -14230,7 +14230,7 @@ class SchemaTest {
                     // Create SQL expression column for caption
                     org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn captionColumn =
                         org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-                    captionColumn.setType(SqlSimpleTypes.varcharType(255));
+                    captionColumn.setType(SQLSimpleTypes.varcharType(255));
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
                         SourceFactory.eINSTANCE.createSqlStatement();
@@ -18057,29 +18057,29 @@ class SchemaTest {
             // Create columns for inline table
             lvl1IdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl1IdColumn.setName("lvl_1_id");
-            lvl1IdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            lvl1IdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             lvl1NameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl1NameColumn.setName("lvl_1_name");
-            lvl1NameColumn.setType(SqlSimpleTypes.varcharType(255));
+            lvl1NameColumn.setType(SQLSimpleTypes.varcharType(255));
             // lvl1NameColumn.setCharOctetLength(20);
 
             lvl2IdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl2IdColumn.setName("lvl_2_id");
-            lvl2IdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            lvl2IdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             lvl2NameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl2NameColumn.setName("lvl_2_name");
-            lvl2NameColumn.setType(SqlSimpleTypes.varcharType(255));
+            lvl2NameColumn.setType(SQLSimpleTypes.varcharType(255));
             // lvl2NameColumn.setCharOctetLength(20);
 
             lvl3IdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl3IdColumn.setName("lvl_3_id");
-            lvl3IdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            lvl3IdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             lvl3NameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             lvl3NameColumn.setName("lvl_3_name");
-            lvl3NameColumn.setType(SqlSimpleTypes.varcharType(255));
+            lvl3NameColumn.setType(SQLSimpleTypes.varcharType(255));
             // lvl3NameColumn.setCharOctetLength(20);
 
             // Create inline table
@@ -18473,18 +18473,18 @@ class SchemaTest {
 
             // Region table and columns
             regionIdColumn.setName("region_id");
-            regionIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            regionIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             salesRegionColumn.setName("sales_region");
-            salesRegionColumn.setType(SqlSimpleTypes.varcharType(255));
+            salesRegionColumn.setType(SQLSimpleTypes.varcharType(255));
             // salesRegionColumn.setCharOctetLength(30);
 
             salesCityColumn.setName("sales_city");
-            salesCityColumn.setType(SqlSimpleTypes.varcharType(255));
+            salesCityColumn.setType(SQLSimpleTypes.varcharType(255));
             // salesCityColumn.setCharOctetLength(30);
 
             salesDistrictIdColumn.setName("sales_district_id");
-            salesDistrictIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            salesDistrictIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             regionTable.setName("region");
             regionTable.getFeature().add(regionIdColumn);
@@ -20026,7 +20026,7 @@ class SchemaTest {
 
                 sqlExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 sqlExpressionColumn.getSqls().add(sqlStatement);
-                sqlExpressionColumn.setType(SqlSimpleTypes.varcharType(255));
+                sqlExpressionColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
                 oc1.setColumn(CatalogSupplier.COLUMN_POSITION_ID_EMPLOYEE);

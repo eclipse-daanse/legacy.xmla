@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
@@ -36,12 +36,12 @@ class AggregationOverAggTableTest extends AggTableTestCase {
 	//## TableName:  agg_c_avg_sales_fact_1997
 	//## ColumnNames:  the_year,quarter,month_of_year,gender,unit_sales,fact_count
 	//## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),INTEGER:NULL,INTEGER
-    private static Column theYearAggCAvgSalesFact1997 = createColumn("the_year", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column quarterAggCAvgSalesFact1997 = createColumn("quarter", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column monthOfYearAggCAvgSalesFact1997 = createColumn("month_of_year", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column genderAggCAvgSalesFact1997 = createColumn("gender", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column unitSalesAggCAvgSalesFact1997 = createColumn("unit_sales", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column factCountAggCAvgSalesFact1997 = createColumn("fact_count", SqlSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column theYearAggCAvgSalesFact1997 = createColumn("the_year", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column quarterAggCAvgSalesFact1997 = createColumn("quarter", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column monthOfYearAggCAvgSalesFact1997 = createColumn("month_of_year", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column genderAggCAvgSalesFact1997 = createColumn("gender", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column unitSalesAggCAvgSalesFact1997 = createColumn("unit_sales", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column factCountAggCAvgSalesFact1997 = createColumn("fact_count", SQLSimpleTypes.Sql99.integerType(), null, null, null);
 
     private static Table aggCAvgSalesFact1997 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
     static {

@@ -26,7 +26,7 @@ import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -2646,11 +2646,11 @@ public class SchemaModifiersEmf {
             // Create inline table columns
             Column storeIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeIdColumn.setName("store_id");
-            storeIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            storeIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column employeeIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             employeeIdColumn.setName("employee_id");
-            employeeIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+            employeeIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
             // Create inline table rows
             InlineTable inlineTable = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
@@ -3997,10 +3997,10 @@ public class SchemaModifiersEmf {
                 DimensionConnector gender2Connector = DimensionFactory.eINSTANCE.createDimensionConnector();
 
                 CUSTOMER_ID_COLUMN_IN_CUSTOMER.setName("customer_id");
-                CUSTOMER_ID_COLUMN_IN_CUSTOMER.setType(SqlSimpleTypes.Sql99.integerType());
+                CUSTOMER_ID_COLUMN_IN_CUSTOMER.setType(SQLSimpleTypes.Sql99.integerType());
 
                 GENDER_COLUMN_IN_CUSTOMER.setName("gender");
-                GENDER_COLUMN_IN_CUSTOMER.setType(SqlSimpleTypes.varcharType(255));
+                GENDER_COLUMN_IN_CUSTOMER.setType(SQLSimpleTypes.varcharType(255));
                 // GENDER_COLUMN_IN_CUSTOMER.setColumnSize(30);
 
                 DialectSqlView sqlView = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
@@ -4233,25 +4233,25 @@ public class SchemaModifiersEmf {
                 // supplier's model for every later test.
                 Column colProductId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colProductId.setName("product_id");
-                colProductId.setType(SqlSimpleTypes.Sql99.integerType());
+                colProductId.setType(SQLSimpleTypes.Sql99.integerType());
                 Column colProductFamily = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colProductFamily.setName("product_family");
-                colProductFamily.setType(SqlSimpleTypes.varcharType(255));
+                colProductFamily.setType(SQLSimpleTypes.varcharType(255));
                 Column colProductDepartment = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colProductDepartment.setName("product_department");
-                colProductDepartment.setType(SqlSimpleTypes.varcharType(255));
+                colProductDepartment.setType(SQLSimpleTypes.varcharType(255));
                 Column colProductCategory = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colProductCategory.setName("product_category");
-                colProductCategory.setType(SqlSimpleTypes.varcharType(255));
+                colProductCategory.setType(SQLSimpleTypes.varcharType(255));
                 Column colProductSubcategory = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colProductSubcategory.setName("product_subcategory");
-                colProductSubcategory.setType(SqlSimpleTypes.varcharType(255));
+                colProductSubcategory.setType(SQLSimpleTypes.varcharType(255));
                 Column colBrandName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colBrandName.setName("brand_name");
-                colBrandName.setType(SqlSimpleTypes.varcharType(255));
+                colBrandName.setType(SQLSimpleTypes.varcharType(255));
                 Column colProductName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 colProductName.setName("product_name");
-                colProductName.setType(SqlSimpleTypes.varcharType(255));
+                colProductName.setType(SQLSimpleTypes.varcharType(255));
 
                 ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 hierarchy.setHasAll(true);
@@ -8589,7 +8589,7 @@ public class SchemaModifiersEmf {
                 level.setUniqueMembers(true);
 
                 ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-                sqlColumn.setType(SqlSimpleTypes.varcharType(255));
+                sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("ERROR_TEST_FUNCTION_NAME(" + colName + ")");
@@ -8659,7 +8659,7 @@ public class SchemaModifiersEmf {
                 level.setUniqueMembers(true);
 
                 ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-                sqlColumn.setType(SqlSimpleTypes.varcharType(255));
+                sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("RTRIM(" + colName + ")");
@@ -8962,7 +8962,7 @@ public class SchemaModifiersEmf {
                 level.setHideMemberIf(HideMemberIf.IF_BLANK_NAME);
 
                 ExpressionColumn nameColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-                nameColumn.setType(SqlSimpleTypes.varcharType(255));
+                nameColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.setSql("case \"gender\" when 'F' then ' ' when 'M' then 'M' ");
@@ -9612,7 +9612,7 @@ public class SchemaModifiersEmf {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 Column nuStoreId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nuStoreId.setName("NuStore_id");
-                nuStoreId.setType(SqlSimpleTypes.Sql99.integerType());
+                nuStoreId.setType(SQLSimpleTypes.Sql99.integerType());
                 // Add the extra column to the COPIED store table, never to the
                 // shared CatalogSupplier.TABLE_STORE (Classifier.feature is a
                 // containment list; mutating the shared table leaks into every
@@ -9777,7 +9777,7 @@ public class SchemaModifiersEmf {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 Column nuStoreId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nuStoreId.setName("NuStore_id");
-                nuStoreId.setType(SqlSimpleTypes.Sql99.integerType());
+                nuStoreId.setType(SQLSimpleTypes.Sql99.integerType());
                 // Add the extra column to the COPIED store table, never to the
                 // shared CatalogSupplier.TABLE_STORE (Classifier.feature is a
                 // containment list; mutating the shared table leaks into every
@@ -10065,11 +10065,11 @@ public class SchemaModifiersEmf {
 
             id = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             id.setName("id");
-            id.setType(SqlSimpleTypes.Sql99.doublePrecisionType());
+            id.setType(SQLSimpleTypes.Sql99.doublePrecisionType());
 
             desc = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             desc.setName("desc");
-            desc.setType(SqlSimpleTypes.varcharType(255));
+            desc.setType(SQLSimpleTypes.varcharType(255));
 
             itt = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
 
@@ -10225,11 +10225,11 @@ public class SchemaModifiersEmf {
 
             Column promoId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             promoId.setName("promo_id");
-            promoId.setType(SqlSimpleTypes.numericType(18, 4));
+            promoId.setType(SQLSimpleTypes.numericType(18, 4));
 
             Column promoName = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             promoName.setName("promo_name");
-            promoName.setType(SqlSimpleTypes.varcharType(255));
+            promoName.setType(SQLSimpleTypes.varcharType(255));
 
             InlineTable itt = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
 
@@ -10672,7 +10672,7 @@ public class SchemaModifiersEmf {
 
                 Column foo = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 foo.setName("foo");
-                foo.setType(SqlSimpleTypes.numericType(18, 4));
+                foo.setType(SQLSimpleTypes.numericType(18, 4));
 
                 InlineTable itt = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();
 
@@ -12715,7 +12715,7 @@ public class SchemaModifiersEmf {
             nameExpression.getSqls().add(sqlNeoview);
             nameExpression.getSqls().add(sqlTeradata);
             nameExpression.getSqls().add(sqlGeneric);
-            nameExpression.setType(SqlSimpleTypes.varcharType(255));
+            nameExpression.setType(SQLSimpleTypes.varcharType(255));
 
             nameLevel.setNameColumn(nameExpression);
 
@@ -13552,9 +13552,9 @@ public class SchemaModifiersEmf {
             TimeDimension timeDimension;
 
             foo.setName("foo");
-            foo.setType(SqlSimpleTypes.Sql99.integerType());
+            foo.setType(SQLSimpleTypes.Sql99.integerType());
             bar.setName("bar");
-            bar.setType(SqlSimpleTypes.Sql99.integerType());
+            bar.setType(SQLSimpleTypes.Sql99.integerType());
 
             // Initialize table with aggregations
             t = SourceFactory.eINSTANCE.createTableSource();
@@ -14313,10 +14313,10 @@ public class SchemaModifiersEmf {
 
         static {
             storeIdX.setName("store_id");
-            storeIdX.setType(SqlSimpleTypes.Sql99.integerType());
+            storeIdX.setType(SQLSimpleTypes.Sql99.integerType());
 
             valueX.setName("value");
-            valueX.setType(SqlSimpleTypes.varcharType(255));
+            valueX.setType(SQLSimpleTypes.varcharType(255));
             // valueX.setCharOctetLength(30);
 
             storeX.setName("store_x");
@@ -14338,10 +14338,10 @@ public class SchemaModifiersEmf {
             dimensionStoreX.getHierarchies().add(hierarchyStoreX);
 
             storeIdY.setName("store_id");
-            storeIdY.setType(SqlSimpleTypes.Sql99.integerType());
+            storeIdY.setType(SQLSimpleTypes.Sql99.integerType());
 
             valueY.setName("value");
-            valueY.setType(SqlSimpleTypes.varcharType(255));
+            valueY.setType(SQLSimpleTypes.varcharType(255));
             // valueY.setCharOctetLength(30);
 
             storeY.setName("store_y");
@@ -14367,15 +14367,15 @@ public class SchemaModifiersEmf {
         public UsagePrefixTestModifier1(Catalog catalog2) {
             Column storeIdCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             storeIdCheques.setName("store_id");
-            storeIdCheques.setType(SqlSimpleTypes.Sql99.integerType());
+            storeIdCheques.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column prodIdCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             prodIdCheques.setName("prod_id");
-            prodIdCheques.setType(SqlSimpleTypes.Sql99.integerType());
+            prodIdCheques.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column amountCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             amountCheques.setName("amount");
-            amountCheques.setType(SqlSimpleTypes.decimalType(18, 4));
+            amountCheques.setType(SQLSimpleTypes.decimalType(18, 4));
             // amountCheques.setColumnSize(10);
             // amountCheques.setDecimalDigits(2);
 
@@ -14387,23 +14387,23 @@ public class SchemaModifiersEmf {
 
             Column firstprefixValueAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             firstprefixValueAgg.setName("firstprefix_value");
-            firstprefixValueAgg.setType(SqlSimpleTypes.varcharType(255));
+            firstprefixValueAgg.setType(SQLSimpleTypes.varcharType(255));
             // firstprefixValueAgg.setColumnSize(30);
 
             Column secondprefixValueAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             secondprefixValueAgg.setName("secondprefix_value");
-            secondprefixValueAgg.setType(SqlSimpleTypes.varcharType(255));
+            secondprefixValueAgg.setType(SQLSimpleTypes.varcharType(255));
             // secondprefixValueAgg.setColumnSize(30);
 
             Column amountAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             amountAgg.setName("amount");
-            amountAgg.setType(SqlSimpleTypes.decimalType(18, 4));
+            amountAgg.setType(SQLSimpleTypes.decimalType(18, 4));
             // amountAgg.setColumnSize(10);
             // amountAgg.setDecimalDigits(2);
 
             Column factCountAgg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             factCountAgg.setName("FACT_COUNT");
-            factCountAgg.setType(SqlSimpleTypes.Sql99.integerType());
+            factCountAgg.setType(SQLSimpleTypes.Sql99.integerType());
 
             Table aggLp595Cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             aggLp595Cheques.setName("agg_lp_595_cheques");
@@ -14778,10 +14778,10 @@ public class SchemaModifiersEmf {
 
         static {
             promoId.setName("promo_id");
-            promoId.setType(SqlSimpleTypes.numericType(18, 4));
+            promoId.setType(SQLSimpleTypes.numericType(18, 4));
 
             promoName.setName("promo_name");
-            promoName.setType(SqlSimpleTypes.varcharType(255));
+            promoName.setType(SQLSimpleTypes.varcharType(255));
 
             rowValue1.setFeature(promoId);
             rowValue1.setDataValue("0");
@@ -19265,7 +19265,7 @@ public class SchemaModifiersEmf {
             SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement.setSql("cast(\"the_date\" as DATE)\n");
             sqlColumn.getSqls().add(sqlStatement);
-            sqlColumn.setType(SqlSimpleTypes.varcharType(255));
+            sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
             dayLevel.setColumn(sqlColumn);
 
@@ -19372,7 +19372,7 @@ public class SchemaModifiersEmf {
             sqlColumn.getSqls().add(sqlStatement1);
             sqlColumn.getSqls().add(sqlStatement2);
             sqlColumn.getSqls().add(sqlStatement3);
-            sqlColumn.setType(SqlSimpleTypes.varcharType(255));
+            sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
             storeSqftLevel.setColumn(sqlColumn);
 
@@ -21416,11 +21416,11 @@ public class SchemaModifiersEmf {
             // Create physical columns for orders table
             Column ordernumber = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             ordernumber.setName("ORDERNUMBER");
-            ordernumber.setType(SqlSimpleTypes.Sql99.integerType());
+            ordernumber.setType(SQLSimpleTypes.Sql99.integerType());
 
             Column orderdate = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             orderdate.setName("ORDERDATE");
-            orderdate.setType(SqlSimpleTypes.Sql99.timestampType());
+            orderdate.setType(SQLSimpleTypes.Sql99.timestampType());
 
             Table orders = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
             orders.setName("orders");

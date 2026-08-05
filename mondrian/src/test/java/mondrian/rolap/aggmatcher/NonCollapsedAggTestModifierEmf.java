@@ -16,7 +16,7 @@ package mondrian.rolap.aggmatcher;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
@@ -124,11 +124,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create foo_fact table
         lineIdFooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdFooFact.setName("line_id");
-        lineIdFooFact.setType(SqlSimpleTypes.Sql99.integerType());
+        lineIdFooFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         unitSalesFooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesFooFact.setName("unit_sales");
-        unitSalesFooFact.setType(SqlSimpleTypes.Sql99.integerType());
+        unitSalesFooFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         fooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         fooFact.setName("foo_fact");
@@ -138,11 +138,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create line table
         lineIdLine = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdLine.setName("line_id");
-        lineIdLine.setType(SqlSimpleTypes.Sql99.integerType());
+        lineIdLine.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineNameLine = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineNameLine.setName("line_name");
-        lineNameLine.setType(SqlSimpleTypes.varcharType(255));
+        lineNameLine.setType(SQLSimpleTypes.varcharType(255));
         // lineNameLine.setCharOctetLength(30);
 
         line = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -153,11 +153,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create line_tenant table
         lineIdLineTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdLineTenant.setName("line_id");
-        lineIdLineTenant.setType(SqlSimpleTypes.Sql99.integerType());
+        lineIdLineTenant.setType(SQLSimpleTypes.Sql99.integerType());
 
         tenantIdLineTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantIdLineTenant.setName("tenant_id");
-        tenantIdLineTenant.setType(SqlSimpleTypes.Sql99.integerType());
+        tenantIdLineTenant.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineTenant.setName("line_tenant");
@@ -167,11 +167,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create tenant table
         tenantIdTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantIdTenant.setName("tenant_id");
-        tenantIdTenant.setType(SqlSimpleTypes.Sql99.integerType());
+        tenantIdTenant.setType(SQLSimpleTypes.Sql99.integerType());
 
         tenantNameTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantNameTenant.setName("tenant_name");
-        tenantNameTenant.setType(SqlSimpleTypes.varcharType(255));
+        tenantNameTenant.setType(SQLSimpleTypes.varcharType(255));
         // tenantNameTenant.setCharOctetLength(30);
 
         tenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -182,11 +182,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create line_line_class table
         lineIdLineLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineIdLineLineClass.setName("line_id");
-        lineIdLineLineClass.setType(SqlSimpleTypes.Sql99.integerType());
+        lineIdLineLineClass.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineClassIdLineLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineLineClass.setName("line_class_id");
-        lineClassIdLineLineClass.setType(SqlSimpleTypes.Sql99.integerType());
+        lineClassIdLineLineClass.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineLineClass.setName("line_line_class");
@@ -196,11 +196,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create distributor table
         distributorIdDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         distributorIdDistributor.setName("distributor_id");
-        distributorIdDistributor.setType(SqlSimpleTypes.Sql99.integerType());
+        distributorIdDistributor.setType(SQLSimpleTypes.Sql99.integerType());
 
         distributorNameDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         distributorNameDistributor.setName("distributor_name");
-        distributorNameDistributor.setType(SqlSimpleTypes.varcharType(255));
+        distributorNameDistributor.setType(SQLSimpleTypes.varcharType(255));
         // distributorNameDistributor.setCharOctetLength(30);
 
         distributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -211,11 +211,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create line_class_distributor table
         lineClassIdLineClassDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineClassDistributor.setName("line_class_id");
-        lineClassIdLineClassDistributor.setType(SqlSimpleTypes.Sql99.integerType());
+        lineClassIdLineClassDistributor.setType(SQLSimpleTypes.Sql99.integerType());
 
         distributorIdLineClassDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         distributorIdLineClassDistributor.setName("distributor_id");
-        distributorIdLineClassDistributor.setType(SqlSimpleTypes.Sql99.integerType());
+        distributorIdLineClassDistributor.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineClassDistributor = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineClassDistributor.setName("line_class_distributor");
@@ -225,11 +225,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create line_class table
         lineClassIdLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineClass.setName("line_class_id");
-        lineClassIdLineClass.setType(SqlSimpleTypes.Sql99.integerType());
+        lineClassIdLineClass.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineClassNameLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassNameLineClass.setName("line_class_name");
-        lineClassNameLineClass.setType(SqlSimpleTypes.varcharType(255));
+        lineClassNameLineClass.setType(SQLSimpleTypes.varcharType(255));
         // lineClassNameLineClass.setCharOctetLength(30);
 
         lineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -240,11 +240,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create network table
         networkIdNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         networkIdNetwork.setName("network_id");
-        networkIdNetwork.setType(SqlSimpleTypes.Sql99.integerType());
+        networkIdNetwork.setType(SQLSimpleTypes.Sql99.integerType());
 
         networkNameNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         networkNameNetwork.setName("network_name");
-        networkNameNetwork.setType(SqlSimpleTypes.varcharType(255));
+        networkNameNetwork.setType(SQLSimpleTypes.varcharType(255));
         // networkNameNetwork.setCharOctetLength(30);
 
         network = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -255,11 +255,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create line_class_network table
         lineClassIdLineClassNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdLineClassNetwork.setName("line_class_id");
-        lineClassIdLineClassNetwork.setType(SqlSimpleTypes.Sql99.integerType());
+        lineClassIdLineClassNetwork.setType(SQLSimpleTypes.Sql99.integerType());
 
         networkIdLineClassNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         networkIdLineClassNetwork.setName("network_id");
-        networkIdLineClassNetwork.setType(SqlSimpleTypes.Sql99.integerType());
+        networkIdLineClassNetwork.setType(SQLSimpleTypes.Sql99.integerType());
 
         lineClassNetwork = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         lineClassNetwork.setName("line_class_network");
@@ -269,15 +269,15 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create agg_tenant table
         tenantIdAggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         tenantIdAggTenant.setName("tenant_id");
-        tenantIdAggTenant.setType(SqlSimpleTypes.Sql99.integerType());
+        tenantIdAggTenant.setType(SQLSimpleTypes.Sql99.integerType());
 
         unitSalesAggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggTenant.setName("unit_sales");
-        unitSalesAggTenant.setType(SqlSimpleTypes.Sql99.integerType());
+        unitSalesAggTenant.setType(SQLSimpleTypes.Sql99.integerType());
 
         factCountAggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggTenant.setName("fact_count");
-        factCountAggTenant.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAggTenant.setType(SQLSimpleTypes.Sql99.integerType());
 
         aggTenant = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggTenant.setName("agg_tenant");
@@ -288,15 +288,15 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create agg_line_class table
         lineClassIdAggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdAggLineClass.setName("line_class_id");
-        lineClassIdAggLineClass.setType(SqlSimpleTypes.Sql99.integerType());
+        lineClassIdAggLineClass.setType(SQLSimpleTypes.Sql99.integerType());
 
         unitSalesAggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAggLineClass.setName("unit_sales");
-        unitSalesAggLineClass.setType(SqlSimpleTypes.Sql99.integerType());
+        unitSalesAggLineClass.setType(SQLSimpleTypes.Sql99.integerType());
 
         factCountAggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggLineClass.setName("fact_count");
-        factCountAggLineClass.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAggLineClass.setType(SQLSimpleTypes.Sql99.integerType());
 
         aggLineClass = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         aggLineClass.setName("agg_line_class");
@@ -307,15 +307,15 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         // Create agg_10_foo_fact table
         lineClassIdAgg10FooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         lineClassIdAgg10FooFact.setName("line_class_id");
-        lineClassIdAgg10FooFact.setType(SqlSimpleTypes.Sql99.integerType());
+        lineClassIdAgg10FooFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         unitSalesAgg10FooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         unitSalesAgg10FooFact.setName("unit_sales");
-        unitSalesAgg10FooFact.setType(SqlSimpleTypes.Sql99.integerType());
+        unitSalesAgg10FooFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         factCountAgg10FooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAgg10FooFact.setName("fact_count");
-        factCountAgg10FooFact.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAgg10FooFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         agg10FooFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         agg10FooFact.setName("agg_10_foo_fact");
