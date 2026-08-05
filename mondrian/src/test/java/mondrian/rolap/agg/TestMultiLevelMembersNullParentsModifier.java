@@ -16,7 +16,7 @@ package mondrian.rolap.agg;
 import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -98,15 +98,15 @@ public class TestMultiLevelMembersNullParentsModifier implements CatalogMappingS
         // Create columns not available in CatalogSupplier
         COLUMN_WA_ADDRESS3 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS3.setName("wa_address3");
-        COLUMN_WA_ADDRESS3.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_WA_ADDRESS3.setType(SQLSimpleTypes.varcharType(255));
 
         COLUMN_WA_ADDRESS2 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS2.setName("wa_address2");
-        COLUMN_WA_ADDRESS2.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_WA_ADDRESS2.setType(SQLSimpleTypes.varcharType(255));
 
         COLUMN_WA_ADDRESS1 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_WA_ADDRESS1.setName("wa_address1");
-        COLUMN_WA_ADDRESS1.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_WA_ADDRESS1.setType(SQLSimpleTypes.varcharType(255));
 
         // Create levels for Warehouse2 dimension
         LEVEL_ADDRESS3 = LevelFactory.eINSTANCE.createLevel();

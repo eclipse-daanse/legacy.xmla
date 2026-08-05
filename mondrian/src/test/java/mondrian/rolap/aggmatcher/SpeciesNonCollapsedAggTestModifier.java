@@ -16,7 +16,7 @@ package mondrian.rolap.aggmatcher;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -319,22 +319,22 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         Column familyIdDimSpecies =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         familyIdDimSpecies.setName("FAMILY_ID");
-        familyIdDimSpecies.setType(SqlSimpleTypes.Sql99.integerType());
+        familyIdDimSpecies.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column genusIdDimSpecies =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         genusIdDimSpecies.setName("GENUS_ID");
-        genusIdDimSpecies.setType(SqlSimpleTypes.Sql99.integerType());
+        genusIdDimSpecies.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column speciesIdDimSpecies =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         speciesIdDimSpecies.setName("SPECIES_ID");
-        speciesIdDimSpecies.setType(SqlSimpleTypes.Sql99.integerType());
+        speciesIdDimSpecies.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column speciesNameDimSpecies =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         speciesNameDimSpecies.setName("SPECIES_NAME");
-        speciesNameDimSpecies.setType(SqlSimpleTypes.varcharType(255));
+        speciesNameDimSpecies.setType(SQLSimpleTypes.varcharType(255));
         // speciesNameDimSpecies.setCharOctetLength(30);
 
         Table dimSpecies =
@@ -349,12 +349,12 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         Column familyIdDimFamily =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         familyIdDimFamily.setName("FAMILY_ID");
-        familyIdDimFamily.setType(SqlSimpleTypes.Sql99.integerType());
+        familyIdDimFamily.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column familyNameDimFamily =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         familyNameDimFamily.setName("FAMILY_NAME");
-        familyNameDimFamily.setType(SqlSimpleTypes.varcharType(255));
+        familyNameDimFamily.setType(SQLSimpleTypes.varcharType(255));
         // familyNameDimFamily.setCharOctetLength(30);
 
         Table dimFamily =
@@ -367,17 +367,17 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         Column familyIdDimGenus =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         familyIdDimGenus.setName("FAMILY_ID");
-        familyIdDimGenus.setType(SqlSimpleTypes.Sql99.integerType());
+        familyIdDimGenus.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column genusIdDimGenus =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         genusIdDimGenus.setName("GENUS_ID");
-        genusIdDimGenus.setType(SqlSimpleTypes.Sql99.integerType());
+        genusIdDimGenus.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column genusNameDimGenus =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         genusNameDimGenus.setName("GENUS_NAME");
-        genusNameDimGenus.setType(SqlSimpleTypes.varcharType(255));
+        genusNameDimGenus.setType(SQLSimpleTypes.varcharType(255));
         // genusNameDimGenus.setCharOctetLength(30);
 
         Table dimGenus =
@@ -391,12 +391,12 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         Column speciesIdSpeciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         speciesIdSpeciesMart.setName("SPECIES_ID");
-        speciesIdSpeciesMart.setType(SqlSimpleTypes.Sql99.integerType());
+        speciesIdSpeciesMart.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column populationSpeciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         populationSpeciesMart.setName("POPULATION");
-        populationSpeciesMart.setType(SqlSimpleTypes.Sql99.integerType());
+        populationSpeciesMart.setType(SQLSimpleTypes.Sql99.integerType());
 
         Table speciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -408,17 +408,17 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         Column genIdAggSpeciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         genIdAggSpeciesMart.setName("GEN_ID");
-        genIdAggSpeciesMart.setType(SqlSimpleTypes.Sql99.integerType());
+        genIdAggSpeciesMart.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column populationAggSpeciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         populationAggSpeciesMart.setName("POPULATION");
-        populationAggSpeciesMart.setType(SqlSimpleTypes.Sql99.integerType());
+        populationAggSpeciesMart.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column factCountAggSpeciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountAggSpeciesMart.setName("FACT_COUNT");
-        factCountAggSpeciesMart.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountAggSpeciesMart.setType(SQLSimpleTypes.Sql99.integerType());
 
         Table aggSpeciesMart =
             org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

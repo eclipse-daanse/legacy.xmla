@@ -15,7 +15,7 @@ package mondrian.rolap;
 
 import java.util.List;
 
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -151,7 +151,7 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
             SQL_STMT_STORE1_NEOVIEW,
             SQL_STMT_STORE1_GENERIC
         ));
-        SQL_EXPR_COLUMN_STORE1.setType(SqlSimpleTypes.varcharType(255));
+        SQL_EXPR_COLUMN_STORE1.setType(SQLSimpleTypes.varcharType(255));
 
         // Create SQL statements for Store2 dimension
         SQL_STMT_STORE2_ORACLE = SourceFactory.eINSTANCE.createSqlStatement();
@@ -183,7 +183,7 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
             SQL_STMT_STORE2_MYSQL,
             SQL_STMT_STORE2_GENERIC
         ));
-        SQL_EXPR_COLUMN_STORE2.setType(SqlSimpleTypes.varcharType(255));
+        SQL_EXPR_COLUMN_STORE2.setType(SQLSimpleTypes.varcharType(255));
 
         // Create Store1 dimension
         LEVEL_STORE1_COUNTRY = LevelFactory.eINSTANCE.createLevel();

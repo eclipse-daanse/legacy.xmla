@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -424,7 +424,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
         Column notExist = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         notExist.setName("not_exist");
-        notExist.setType(SqlSimpleTypes.Sql99.integerType());
+        notExist.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create AggregationColumnName for fact count
         var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
@@ -663,7 +663,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
         Column notExist = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         notExist.setName("not_exist");
-        notExist.setType(SqlSimpleTypes.Sql99.integerType());
+        notExist.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create AggregationColumnName for fact count
         var aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();

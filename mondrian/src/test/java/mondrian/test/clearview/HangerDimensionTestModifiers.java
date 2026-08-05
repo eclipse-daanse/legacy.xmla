@@ -22,7 +22,7 @@ import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.InstanceFactory;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -123,7 +123,7 @@ public class HangerDimensionTestModifiers {
             // Create column for inline table using RolapMappingFactory
             Column hangerKey = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             hangerKey.setName("HANGER_KEY");
-            hangerKey.setType(SqlSimpleTypes.numericType(18, 4));
+            hangerKey.setType(SQLSimpleTypes.numericType(18, 4));
 
             // Create row value using RolapMappingFactory
             DataSlot rowValue = InstanceFactory.eINSTANCE.createDataSlot();

@@ -16,7 +16,7 @@ package mondrian.rolap.agg;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -131,11 +131,11 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         // Create mondrian2225_customer table columns
         customerIdMondrian2225Customer = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerIdMondrian2225Customer.setName("customer_id");
-        customerIdMondrian2225Customer.setType(SqlSimpleTypes.Sql99.integerType());
+        customerIdMondrian2225Customer.setType(SQLSimpleTypes.Sql99.integerType());
 
         customerNameMondrian2225Customer = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerNameMondrian2225Customer.setName("customer_name");
-        customerNameMondrian2225Customer.setType(SqlSimpleTypes.varcharType(255));
+        customerNameMondrian2225Customer.setType(SQLSimpleTypes.varcharType(255));
         // customerNameMondrian2225Customer.setCharOctetLength(45);
 
         mondrian2225Customer = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -146,15 +146,15 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         // Create mondrian2225_fact table columns
         productIdMondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productIdMondrian2225Fact.setName("product_ID");
-        productIdMondrian2225Fact.setType(SqlSimpleTypes.Sql99.integerType());
+        productIdMondrian2225Fact.setType(SQLSimpleTypes.Sql99.integerType());
 
         customerIdMondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         customerIdMondrian2225Fact.setName("customer_id");
-        customerIdMondrian2225Fact.setType(SqlSimpleTypes.Sql99.integerType());
+        customerIdMondrian2225Fact.setType(SQLSimpleTypes.Sql99.integerType());
 
         factMondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factMondrian2225Fact.setName("fact");
-        factMondrian2225Fact.setType(SqlSimpleTypes.Sql99.integerType());
+        factMondrian2225Fact.setType(SQLSimpleTypes.Sql99.integerType());
 
         mondrian2225Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         mondrian2225Fact.setName("mondrian2225_fact");
@@ -165,11 +165,11 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         // Create mondrian2225_dim table columns
         productIdMondrian2225Dim = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productIdMondrian2225Dim.setName("product_id");
-        productIdMondrian2225Dim.setType(SqlSimpleTypes.Sql99.integerType());
+        productIdMondrian2225Dim.setType(SQLSimpleTypes.Sql99.integerType());
 
         productCodeMondrian2225Dim = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productCodeMondrian2225Dim.setName("product_code");
-        productCodeMondrian2225Dim.setType(SqlSimpleTypes.varcharType(255));
+        productCodeMondrian2225Dim.setType(SQLSimpleTypes.varcharType(255));
         // productCodeMondrian2225Dim.setCharOctetLength(45);
 
         mondrian2225Dim = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -180,19 +180,19 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         // Create mondrian2225_agg table columns
         dimCodeMondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         dimCodeMondrian2225Agg.setName("dim_code");
-        dimCodeMondrian2225Agg.setType(SqlSimpleTypes.varcharType(255));
+        dimCodeMondrian2225Agg.setType(SQLSimpleTypes.varcharType(255));
         // dimCodeMondrian2225Agg.setCharOctetLength(45);
         // setNullable removed (CWM Column has isNullable enum): dimCodeMondrian2225Agg true
 
         factMeasureMondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factMeasureMondrian2225Agg.setName("fact_measure");
-        factMeasureMondrian2225Agg.setType(SqlSimpleTypes.decimalType(18, 4));
+        factMeasureMondrian2225Agg.setType(SQLSimpleTypes.decimalType(18, 4));
         // factMeasureMondrian2225Agg.setColumnSize(10);
         // factMeasureMondrian2225Agg.setDecimalDigits(2);
 
         factCountMondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountMondrian2225Agg.setName("fact_count");
-        factCountMondrian2225Agg.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountMondrian2225Agg.setType(SQLSimpleTypes.Sql99.integerType());
 
         mondrian2225Agg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
         mondrian2225Agg.setName("mondrian2225_agg");

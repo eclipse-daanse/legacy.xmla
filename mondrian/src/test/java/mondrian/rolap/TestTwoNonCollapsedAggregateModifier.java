@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -131,21 +131,21 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         // Create custom region table columns
         COLUMN_SALES_REGION = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_SALES_REGION.setName("sales_region");
-        COLUMN_SALES_REGION.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_SALES_REGION.setType(SQLSimpleTypes.varcharType(255));
         // COLUMN_SALES_REGION.setCharOctetLength(30);
 
         COLUMN_SALES_CITY = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_SALES_CITY.setName("sales_city");
-        COLUMN_SALES_CITY.setType(SqlSimpleTypes.varcharType(255));
+        COLUMN_SALES_CITY.setType(SQLSimpleTypes.varcharType(255));
         // COLUMN_SALES_CITY.setCharOctetLength(30);
 
         COLUMN_SALES_DISTRICT_ID = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_SALES_DISTRICT_ID.setName("sales_district_id");
-        COLUMN_SALES_DISTRICT_ID.setType(SqlSimpleTypes.Sql99.integerType());
+        COLUMN_SALES_DISTRICT_ID.setType(SQLSimpleTypes.Sql99.integerType());
 
         COLUMN_REGION_ID_REGION = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         COLUMN_REGION_ID_REGION.setName("region_id");
-        COLUMN_REGION_ID_REGION.setType(SqlSimpleTypes.Sql99.integerType());
+        COLUMN_REGION_ID_REGION.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create custom region table
         TABLE_REGION = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

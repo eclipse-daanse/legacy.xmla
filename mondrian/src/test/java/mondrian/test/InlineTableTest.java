@@ -20,7 +20,7 @@ import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -164,11 +164,11 @@ class InlineTableTest {
                 // Create columns for inline table
                 Column promoIdColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 promoIdColumn.setName("promo_id");
-                promoIdColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                promoIdColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 Column promoNameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 promoNameColumn.setName("promo_name");
-                promoNameColumn.setType(SqlSimpleTypes.varcharType(255));
+                promoNameColumn.setType(SQLSimpleTypes.varcharType(255));
                 // promoNameColumn.setCharOctetLength(20);
 
                 // Create inline table
@@ -448,11 +448,11 @@ class InlineTableTest {
                 // Create columns for inline table
                 PROMO_ID_COLUMN = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 PROMO_ID_COLUMN.setName("promo_id");
-                PROMO_ID_COLUMN.setType(SqlSimpleTypes.Sql99.integerType());
+                PROMO_ID_COLUMN.setType(SQLSimpleTypes.Sql99.integerType());
 
                 PROMO_NAME_COLUMN = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 PROMO_NAME_COLUMN.setName("promo_name");
-                PROMO_NAME_COLUMN.setType(SqlSimpleTypes.varcharType(255));
+                PROMO_NAME_COLUMN.setType(SQLSimpleTypes.varcharType(255));
                 // PROMO_NAME_COLUMN.setCharOctetLength(20);
 
                 // Create inline table
@@ -761,12 +761,12 @@ class InlineTableTest {
                 // Create columns for nation inline table
                 Column nationNameColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nationNameColumn.setName("nation_name");
-                nationNameColumn.setType(SqlSimpleTypes.varcharType(255));
+                nationNameColumn.setType(SQLSimpleTypes.varcharType(255));
                 // nationNameColumn.setCharOctetLength(20);
 
                 Column nationShortcodeColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 nationShortcodeColumn.setName("nation_shortcode");
-                nationShortcodeColumn.setType(SqlSimpleTypes.varcharType(255));
+                nationShortcodeColumn.setType(SQLSimpleTypes.varcharType(255));
                 // nationShortcodeColumn.setCharOctetLength(20);
 
                 // Create nation inline table
@@ -1123,11 +1123,11 @@ class InlineTableTest {
                 // Create columns for inline promo table
                 Column idColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 idColumn.setName("id");
-                idColumn.setType(SqlSimpleTypes.Sql99.integerType());
+                idColumn.setType(SQLSimpleTypes.Sql99.integerType());
 
                 Column dateColumn = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
                 dateColumn.setName("date");
-                dateColumn.setType(SqlSimpleTypes.Sql99.dateType());
+                dateColumn.setType(SQLSimpleTypes.Sql99.dateType());
 
                 // Create inline table
                 InlineTable inlinePromoTable = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createInlineTable();

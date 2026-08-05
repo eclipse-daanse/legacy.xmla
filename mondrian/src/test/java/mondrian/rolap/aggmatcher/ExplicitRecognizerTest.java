@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
@@ -51,17 +51,17 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     //## TableName: exp_agg_test
     //## ColumnNames:  testyear,testqtr,testmonthord,testmonthname,testmonthcap,testmonprop1,testmonprop2,gender,test_unit_sales,test_store_cost,fact_count
     //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,DECIMAL(10,4),INTEGER
-    private static Column testyearExpAggTest = createColumn("testyear", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testqtrExpAggTest = createColumn("testqtr", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonthordExpAggTest = createColumn("testmonthord", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testmonthnameExpAggTest = createColumn("testmonthname", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonthcapExpAggTest = createColumn("testmonthcap", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonprop1ExpAggTest = createColumn("testmonprop1", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonprop2ExpAggTest = createColumn("testmonprop2", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column genderExpAggTest = createColumn("gender", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testUnitSalesExpAggTest = createColumn("test_unit_sales", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testStoreCostExpAggTest = createColumn("test_store_cost", SqlSimpleTypes.decimalType(18, 4), null, 10, 4);
-    private static Column factCountExpAggTest = createColumn("fact_count", SqlSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column testyearExpAggTest = createColumn("testyear", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column testqtrExpAggTest = createColumn("testqtr", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column testmonthordExpAggTest = createColumn("testmonthord", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column testmonthnameExpAggTest = createColumn("testmonthname", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column testmonthcapExpAggTest = createColumn("testmonthcap", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column testmonprop1ExpAggTest = createColumn("testmonprop1", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column testmonprop2ExpAggTest = createColumn("testmonprop2", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column genderExpAggTest = createColumn("gender", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column testUnitSalesExpAggTest = createColumn("test_unit_sales", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column testStoreCostExpAggTest = createColumn("test_store_cost", SQLSimpleTypes.decimalType(18, 4), null, 10, 4);
+    private static Column factCountExpAggTest = createColumn("fact_count", SQLSimpleTypes.Sql99.integerType(), null, null, null);
 
     private static Table expAggTest = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
     static {
@@ -82,16 +82,16 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     //## TableName:  exp_agg_test_distinct_count
     //## ColumnNames:  fact_count,testyear,gender,store_name,store_country,store_st,store_cty,store_add,unit_s,cust_cnt
     //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,INTEGER
-    private static Column factCountExpAggTestDistinctCount = createColumn("fact_count", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testyearExpAggTestDistinctCount = createColumn("testyear", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column genderExpAggTestDistinctCount = createColumn("gender", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeNameExpAggTestDistinctCount = createColumn("store_name", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeCountryExpAggTestDistinctCount = createColumn("store_country", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeStExpAggTestDistinctCount = createColumn("store_st", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeCtyExpAggTestDistinctCount = createColumn("store_cty", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeAddExpAggTestDistinctCount = createColumn("store_add", SqlSimpleTypes.varcharType(255), 30, null, null);
-    private static Column unitSExpAggTestDistinctCount = createColumn("unit_s", SqlSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column custCntExpAggTestDistinctCount = createColumn("cust_cnt", SqlSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column factCountExpAggTestDistinctCount = createColumn("fact_count", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column testyearExpAggTestDistinctCount = createColumn("testyear", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column genderExpAggTestDistinctCount = createColumn("gender", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column storeNameExpAggTestDistinctCount = createColumn("store_name", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column storeCountryExpAggTestDistinctCount = createColumn("store_country", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column storeStExpAggTestDistinctCount = createColumn("store_st", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column storeCtyExpAggTestDistinctCount = createColumn("store_cty", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column storeAddExpAggTestDistinctCount = createColumn("store_add", SQLSimpleTypes.varcharType(255), 30, null, null);
+    private static Column unitSExpAggTestDistinctCount = createColumn("unit_s", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+    private static Column custCntExpAggTestDistinctCount = createColumn("cust_cnt", SQLSimpleTypes.Sql99.integerType(), null, null, null);
 
     private static Table expAggTestDistinctCount = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
     static {

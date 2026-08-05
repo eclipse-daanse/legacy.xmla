@@ -15,7 +15,7 @@ package mondrian.rolap.aggmatcher;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
@@ -53,15 +53,15 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create fact table columns
         Column prodIdFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodIdFact.setName("prod_id");
-        prodIdFact.setType(SqlSimpleTypes.Sql99.integerType());
+        prodIdFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column storeIdFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeIdFact.setName("store_id");
-        storeIdFact.setType(SqlSimpleTypes.Sql99.integerType());
+        storeIdFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column amountFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountFact.setName("amount");
-        amountFact.setType(SqlSimpleTypes.Sql99.integerType());
+        amountFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create fact table
         Table fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -73,11 +73,11 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create store_csv table columns
         Column storeIdStoreCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeIdStoreCsv.setName("store_id");
-        storeIdStoreCsv.setType(SqlSimpleTypes.Sql99.integerType());
+        storeIdStoreCsv.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column valueStoreCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         valueStoreCsv.setName("value");
-        valueStoreCsv.setType(SqlSimpleTypes.Sql99.integerType());
+        valueStoreCsv.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create store_csv table
         Table storeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -88,20 +88,20 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create product_csv table columns
         Column prodIdProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodIdProductCsv.setName("prod_id");
-        prodIdProductCsv.setType(SqlSimpleTypes.Sql99.integerType());
+        prodIdProductCsv.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column prodCatProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodCatProductCsv.setName("prod_cat");
-        prodCatProductCsv.setType(SqlSimpleTypes.Sql99.integerType());
+        prodCatProductCsv.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column name1ProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name1ProductCsv.setName("name1");
-        name1ProductCsv.setType(SqlSimpleTypes.varcharType(255));
+        name1ProductCsv.setType(SQLSimpleTypes.varcharType(255));
         // name1ProductCsv.setCharOctetLength(30);
 
         Column colorProductCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         colorProductCsv.setName("color");
-        colorProductCsv.setType(SqlSimpleTypes.varcharType(255));
+        colorProductCsv.setType(SQLSimpleTypes.varcharType(255));
         // colorProductCsv.setCharOctetLength(30);
 
         // Create product_csv table
@@ -115,20 +115,20 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create cat table columns
         Column catCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         catCat.setName("cat");
-        catCat.setType(SqlSimpleTypes.Sql99.integerType());
+        catCat.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column name3Cat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name3Cat.setName("name3");
-        name3Cat.setType(SqlSimpleTypes.varcharType(255));
+        name3Cat.setType(SQLSimpleTypes.varcharType(255));
         // name3Cat.setCharOctetLength(30);
 
         Column ordCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         ordCat.setName("ord");
-        ordCat.setType(SqlSimpleTypes.Sql99.integerType());
+        ordCat.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column capCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         capCat.setName("cap");
-        capCat.setType(SqlSimpleTypes.varcharType(255));
+        capCat.setType(SQLSimpleTypes.varcharType(255));
         // capCat.setCharOctetLength(30);
 
         // Create cat table
@@ -142,24 +142,24 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create product_cat table columns
         Column prodCatProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodCatProductCat.setName("prod_cat");
-        prodCatProductCat.setType(SqlSimpleTypes.Sql99.integerType());
+        prodCatProductCat.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column catProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         catProductCat.setName("cat");
-        catProductCat.setType(SqlSimpleTypes.Sql99.integerType());
+        catProductCat.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column name2ProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name2ProductCat.setName("name2");
-        name2ProductCat.setType(SqlSimpleTypes.varcharType(255));
+        name2ProductCat.setType(SQLSimpleTypes.varcharType(255));
         // name2ProductCat.setCharOctetLength(30);
 
         Column ordProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         ordProductCat.setName("ord");
-        ordProductCat.setType(SqlSimpleTypes.Sql99.integerType());
+        ordProductCat.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column capProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         capProductCat.setName("cap");
-        capProductCat.setType(SqlSimpleTypes.Sql99.integerType());
+        capProductCat.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create product_cat table
         Table productCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -173,20 +173,20 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create test_lp_xxx_fact aggregation table columns
         Column categoryTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         categoryTestLpXxxFact.setName("category");
-        categoryTestLpXxxFact.setType(SqlSimpleTypes.Sql99.integerType());
+        categoryTestLpXxxFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column productCategoryTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         productCategoryTestLpXxxFact.setName("product_category");
-        productCategoryTestLpXxxFact.setType(SqlSimpleTypes.varcharType(255));
+        productCategoryTestLpXxxFact.setType(SQLSimpleTypes.varcharType(255));
         // productCategoryTestLpXxxFact.setCharOctetLength(30);
 
         Column amountTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountTestLpXxxFact.setName("amount");
-        amountTestLpXxxFact.setType(SqlSimpleTypes.Sql99.integerType());
+        amountTestLpXxxFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column factCountTestLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountTestLpXxxFact.setName("fact_count");
-        factCountTestLpXxxFact.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountTestLpXxxFact.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create test_lp_xxx_fact aggregation table
         Table testLpXxxFact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
@@ -199,16 +199,16 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         // Create test_lp_xx2_fact aggregation table columns
         Column prodnameTestLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prodnameTestLpXx2Fact.setName("prodname");
-        prodnameTestLpXx2Fact.setType(SqlSimpleTypes.varcharType(255));
+        prodnameTestLpXx2Fact.setType(SQLSimpleTypes.varcharType(255));
         // prodnameTestLpXx2Fact.setCharOctetLength(30);
 
         Column amountTestLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountTestLpXx2Fact.setName("amount");
-        amountTestLpXx2Fact.setType(SqlSimpleTypes.Sql99.integerType());
+        amountTestLpXx2Fact.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column factCountTestLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCountTestLpXx2Fact.setName("fact_count");
-        factCountTestLpXx2Fact.setType(SqlSimpleTypes.Sql99.integerType());
+        factCountTestLpXx2Fact.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create test_lp_xx2_fact aggregation table
         Table testLpXx2Fact = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

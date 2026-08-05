@@ -15,7 +15,7 @@ package mondrian.rolap.aggmatcher;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
@@ -276,15 +276,15 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
         Column store_id_cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         store_id_cheques.setName("store_id");
-        store_id_cheques.setType(SqlSimpleTypes.Sql99.integerType());
+        store_id_cheques.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column prod_id_cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_cheques.setName("prod_id");
-        prod_id_cheques.setType(SqlSimpleTypes.Sql99.integerType());
+        prod_id_cheques.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column amount_cheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amount_cheques.setName("amount");
-        amount_cheques.setType(SqlSimpleTypes.decimalType(18, 4));
+        amount_cheques.setType(SQLSimpleTypes.decimalType(18, 4));
         // amount_cheques.setColumnSize(10);
         // amount_cheques.setDecimalDigits(2);
 
@@ -300,11 +300,11 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,DECIMAL(10,2)
         Column store_id_store_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         store_id_store_x.setName("store_id");
-        store_id_store_x.setType(SqlSimpleTypes.Sql99.integerType());
+        store_id_store_x.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column value_store_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         value_store_x.setName("value");
-        value_store_x.setType(SqlSimpleTypes.decimalType(18, 4));
+        value_store_x.setType(SQLSimpleTypes.decimalType(18, 4));
         // value_store_x.setColumnSize(10);
         // value_store_x.setDecimalDigits(2);
 
@@ -319,11 +319,11 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,VARCHAR(30)
         Column prod_id_product_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         prod_id_product_x.setName("prod_id");
-        prod_id_product_x.setType(SqlSimpleTypes.Sql99.integerType());
+        prod_id_product_x.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column name_product_x = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         name_product_x.setName("name");
-        name_product_x.setType(SqlSimpleTypes.varcharType(255));
+        name_product_x.setType(SQLSimpleTypes.varcharType(255));
         // name_product_x.setCharOctetLength(30);
 
         // Create product_x table using RolapMappingFactory
@@ -338,17 +338,17 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         // ColumnTypes: INTEGER,DECIMAL(10,2),INTEGER
         Column storeId = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         storeId.setName("store_id");
-        storeId.setType(SqlSimpleTypes.Sql99.integerType());
+        storeId.setType(SQLSimpleTypes.Sql99.integerType());
 
         Column amountAvg = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         amountAvg.setName("amount_AVG");
-        amountAvg.setType(SqlSimpleTypes.decimalType(18, 4));
+        amountAvg.setType(SQLSimpleTypes.decimalType(18, 4));
         // amountAvg.setColumnSize(10);
         // amountAvg.setDecimalDigits(2);
 
         Column factCount = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         factCount.setName("FACT_COUNT");
-        factCount.setType(SqlSimpleTypes.Sql99.integerType());
+        factCount.setType(SQLSimpleTypes.Sql99.integerType());
 
         // Create agg_lp_xxx_cheques table using RolapMappingFactory
         Table aggLpXxxCheques = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SqlSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.CatalogFactory;
@@ -224,7 +224,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         // Year Caption Expression with SQL dialects
         ExpressionColumn yearCaptionExpr = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-        yearCaptionExpr.setType(SqlSimpleTypes.varcharType(255));
+        yearCaptionExpr.setType(SQLSimpleTypes.varcharType(255));
 
         SqlStatement accessSql = SourceFactory.eINSTANCE.createSqlStatement();
         accessSql.getDialects().add("access");
@@ -494,7 +494,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         // Customer Name Key Expression (multi-dialect SQL)
         ExpressionColumn customerNameKeyExpr = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-        customerNameKeyExpr.setType(SqlSimpleTypes.varcharType(255));
+        customerNameKeyExpr.setType(SQLSimpleTypes.varcharType(255));
 
         SqlStatement oracleSql = SourceFactory.eINSTANCE.createSqlStatement();
         oracleSql.getDialects().add("oracle");
