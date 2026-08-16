@@ -13,6 +13,8 @@
  */
 package mondrian.test;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,6 +53,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * EMF-based version of MyFoodmartModifier.
  * This class demonstrates the conversion from POJO builder patterns to EMF factory methods.
@@ -71,7 +74,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
         // Copy the original catalog
         this.catalog = CatalogFactory.eINSTANCE.createCatalog();
         this.catalog.setName("FoodMart");
-        this.catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
+        this.catalog.getImportedElement().addAll(Packages.available(catalogMapping, Schema.class));
         // References to hierarchies and levels for access roles
         ExplicitHierarchy storeHierarchy;
         ExplicitHierarchy customersHierarchy;
@@ -228,7 +231,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         SqlStatement accessSql = SourceFactory.eINSTANCE.createSqlStatement();
         accessSql.getDialects().add("access");
-        accessSql.setSql("cstr(the_year) + '-12-31'");
+        accessSql.setBody("cstr(the_year) + '-12-31'");
 
         SqlStatement mysqlSql = SourceFactory.eINSTANCE.createSqlStatement();
         mysqlSql.getDialects().add("mysql");
@@ -236,15 +239,15 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
         // it fell through to the generic "the_year" || '-12-31', and in MariaDB's default mode
         // || is logical OR, so the caption came out as 1 instead of 1997-12-31.
         mysqlSql.getDialects().add("mariadb");
-        mysqlSql.setSql("concat(cast(`the_year` as char(4)), '-12-31')");
+        mysqlSql.setBody("concat(cast(`the_year` as char(4)), '-12-31')");
 
         SqlStatement derbySql = SourceFactory.eINSTANCE.createSqlStatement();
         derbySql.getDialects().add("derby");
-        derbySql.setSql("'foobar'");
+        derbySql.setBody("'foobar'");
 
         SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
         genericSql.getDialects().add("generic");
-        genericSql.setSql("\"the_year\" || '-12-31'");
+        genericSql.setBody("\"the_year\" || '-12-31'");
 
         yearCaptionExpr.getSqls().addAll(List.of(accessSql, mysqlSql, derbySql, genericSql));
         yearLevel.setCaptionColumn(yearCaptionExpr);
@@ -498,23 +501,23 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         SqlStatement oracleSql = SourceFactory.eINSTANCE.createSqlStatement();
         oracleSql.getDialects().add("oracle");
-        oracleSql.setSql("\"fname\" || ' ' || \"lname\"\n");
+        oracleSql.setBody("\"fname\" || ' ' || \"lname\"\n");
 
         SqlStatement accessSql2 = SourceFactory.eINSTANCE.createSqlStatement();
         accessSql2.getDialects().add("access");
-        accessSql2.setSql("fname, ' ', lname\n");
+        accessSql2.setBody("fname, ' ', lname\n");
 
         SqlStatement postgresSql = SourceFactory.eINSTANCE.createSqlStatement();
         postgresSql.getDialects().add("postgres");
-        postgresSql.setSql("\"fname\" || ' ' || \"lname\"\n");
+        postgresSql.setBody("\"fname\" || ' ' || \"lname\"\n");
 
         SqlStatement mysqlSql2 = SourceFactory.eINSTANCE.createSqlStatement();
         mysqlSql2.getDialects().add("mysql");
-        mysqlSql2.setSql("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n");
+        mysqlSql2.setBody("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n");
 
         SqlStatement mssqlSql = SourceFactory.eINSTANCE.createSqlStatement();
         mssqlSql.getDialects().add("mssql");
-        mssqlSql.setSql("fname, ' ', lname\n");
+        mssqlSql.setBody("fname, ' ', lname\n");
 
         customerNameKeyExpr.getSqls().addAll(List.of(oracleSql, accessSql2, postgresSql, mysqlSql2, mssqlSql));
         customerNameLevel.setColumn(customerNameKeyExpr);
@@ -696,7 +699,7 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
         // Sales Cube Calculated Members
         CalculatedMember profitCalcMember = LevelFactory.eINSTANCE.createCalculatedMember();
         profitCalcMember.setName("Profit");
-        profitCalcMember.setFormula("[Measures].[Store Sales] - [Measures].[Store Cost]");
+        profitCalcMember.setFormula(mdx("[Measures].[Store Sales] - [Measures].[Store Cost]"));
 
         CalculatedMemberProperty profitFormatProp = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
         profitFormatProp.setName("FORMAT_STRING");
@@ -705,12 +708,12 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
 
         CalculatedMember profitLastPeriodCalcMember = LevelFactory.eINSTANCE.createCalculatedMember();
         profitLastPeriodCalcMember.setName("Profit last Period");
-        profitLastPeriodCalcMember.setFormula("COALESCEEMPTY((Measures.[Profit], [Time].PREVMEMBER),    Measures.[Profit])");
+        profitLastPeriodCalcMember.setFormula(mdx("COALESCEEMPTY((Measures.[Profit], [Time].PREVMEMBER),    Measures.[Profit])"));
         profitLastPeriodCalcMember.setVisible(false);
 
         CalculatedMember profitGrowthCalcMember = LevelFactory.eINSTANCE.createCalculatedMember();
         profitGrowthCalcMember.setName("Profit Growth");
-        profitGrowthCalcMember.setFormula("([Measures].[Profit] - [Measures].[Profit last Period]) / [Measures].[Profit last Period]");
+        profitGrowthCalcMember.setFormula(mdx("([Measures].[Profit] - [Measures].[Profit last Period]) / [Measures].[Profit last Period]"));
         profitGrowthCalcMember.setVisible(true);
 
         CalculatedMemberProperty profitGrowthFormatProp = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
@@ -1028,17 +1031,17 @@ public class MyFoodmartModifierEmf implements CatalogMappingSupplier {
         CalculatedMember employeeSalaryCalcMember = LevelFactory.eINSTANCE.createCalculatedMember();
         employeeSalaryCalcMember.setName("Employee Salary");
         employeeSalaryCalcMember.setFormatString("Currency");
-        employeeSalaryCalcMember.setFormula("([Employees].currentmember.datamember, [Measures].[Org Salary])");
+        employeeSalaryCalcMember.setFormula(mdx("([Employees].currentmember.datamember, [Measures].[Org Salary])"));
 
         CalculatedMember avgSalaryCalcMember = LevelFactory.eINSTANCE.createCalculatedMember();
         avgSalaryCalcMember.setName("Avg Salary");
         avgSalaryCalcMember.setFormatString("Currency");
-        avgSalaryCalcMember.setFormula("[Measures].[Org Salary]/[Measures].[Number of Employees]");
+        avgSalaryCalcMember.setFormula(mdx("[Measures].[Org Salary]/[Measures].[Number of Employees]"));
 
         hrCube.getCalculatedMembers().addAll(List.of(employeeSalaryCalcMember, avgSalaryCalcMember));
 
         // Add all cubes to catalog
-        catalog.getCubes().addAll(List.of(sales, warehouse, storeCube, hrCube));
+        catalog.getImportedElement().addAll(List.of(sales, warehouse, storeCube, hrCube));
 
         // NOTE: Sales Ragged cube, Virtual cubes, and Access Roles implementation would follow similar patterns
         // Pattern: create with factory, set properties, add to collections.

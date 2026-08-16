@@ -109,35 +109,35 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         // Create SQL statements for Store1 dimension
         SQL_STMT_STORE1_ORACLE = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_ORACLE.getDialects().add("oracle");
-        SQL_STMT_STORE1_ORACLE.setSql("\"store_country\"");
+        SQL_STMT_STORE1_ORACLE.setBody("\"store_country\"");
 
         SQL_STMT_STORE1_HSQLDB = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_HSQLDB.getDialects().add("hsqldb");
-        SQL_STMT_STORE1_HSQLDB.setSql("\"store_country\"");
+        SQL_STMT_STORE1_HSQLDB.setBody("\"store_country\"");
 
         SQL_STMT_STORE1_DERBY = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_DERBY.getDialects().add("derby");
-        SQL_STMT_STORE1_DERBY.setSql("\"store_country\"");
+        SQL_STMT_STORE1_DERBY.setBody("\"store_country\"");
 
         SQL_STMT_STORE1_LUCIDDB = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_LUCIDDB.getDialects().add("luciddb");
-        SQL_STMT_STORE1_LUCIDDB.setSql("\"store_country\"");
+        SQL_STMT_STORE1_LUCIDDB.setBody("\"store_country\"");
 
         SQL_STMT_STORE1_MYSQL = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_MYSQL.getDialects().add("mysql");
-        SQL_STMT_STORE1_MYSQL.setSql("`store_country`");
+        SQL_STMT_STORE1_MYSQL.setBody("`store_country`");
 
         SQL_STMT_STORE1_NETEZZA = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_NETEZZA.getDialects().add("netezza");
-        SQL_STMT_STORE1_NETEZZA.setSql("\"store_country\"");
+        SQL_STMT_STORE1_NETEZZA.setBody("\"store_country\"");
 
         SQL_STMT_STORE1_NEOVIEW = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_NEOVIEW.getDialects().add("neoview");
-        SQL_STMT_STORE1_NEOVIEW.setSql("\"store_country\"");
+        SQL_STMT_STORE1_NEOVIEW.setBody("\"store_country\"");
 
         SQL_STMT_STORE1_GENERIC = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE1_GENERIC.getDialects().add("generic");
-        SQL_STMT_STORE1_GENERIC.setSql("store_country");
+        SQL_STMT_STORE1_GENERIC.setBody("store_country");
 
         // Create SQL expression column for Store1
         SQL_EXPR_COLUMN_STORE1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
@@ -156,23 +156,23 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         // Create SQL statements for Store2 dimension
         SQL_STMT_STORE2_ORACLE = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE2_ORACLE.getDialects().add("oracle");
-        SQL_STMT_STORE2_ORACLE.setSql("\"store_country\"");
+        SQL_STMT_STORE2_ORACLE.setBody("\"store_country\"");
 
         SQL_STMT_STORE2_DERBY = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE2_DERBY.getDialects().add("derby");
-        SQL_STMT_STORE2_DERBY.setSql("\"store_country\"");
+        SQL_STMT_STORE2_DERBY.setBody("\"store_country\"");
 
         SQL_STMT_STORE2_LUCIDDB = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE2_LUCIDDB.getDialects().add("luciddb");
-        SQL_STMT_STORE2_LUCIDDB.setSql("\"store_country\"");
+        SQL_STMT_STORE2_LUCIDDB.setBody("\"store_country\"");
 
         SQL_STMT_STORE2_MYSQL = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE2_MYSQL.getDialects().add("mysql");
-        SQL_STMT_STORE2_MYSQL.setSql("`store_country`");
+        SQL_STMT_STORE2_MYSQL.setBody("`store_country`");
 
         SQL_STMT_STORE2_GENERIC = SourceFactory.eINSTANCE.createSqlStatement();
         SQL_STMT_STORE2_GENERIC.getDialects().add("generic");
-        SQL_STMT_STORE2_GENERIC.setSql("store_country");
+        SQL_STMT_STORE2_GENERIC.setBody("store_country");
 
         // Create SQL expression column for Store2
         SQL_EXPR_COLUMN_STORE2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
@@ -285,8 +285,8 @@ public class TestKeyExpressionCardinalityCacheModifier implements CatalogMapping
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Add the two cubes to the catalog
-        this.catalog.getCubes().add(CUBE_SALES1);
-        this.catalog.getCubes().add(CUBE_SALES2);
+        this.catalog.getImportedElement().add(CUBE_SALES1);
+        this.catalog.getImportedElement().add(CUBE_SALES2);
     }
 
     @Override

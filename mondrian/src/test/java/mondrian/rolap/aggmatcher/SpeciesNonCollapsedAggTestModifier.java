@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
@@ -34,7 +35,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationCo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
@@ -540,9 +541,9 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         aggLevel.setColumn(genIdAggSpeciesMart);
         aggLevel.setCollapsed(false);
 
-        AggregationName aggregation =
-            AggregationFactory.eINSTANCE.createAggregationName();
-        aggregation.setName(aggSpeciesMart);
+        ExplicitAggregationTable aggregation =
+            AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggregation.setTable(aggSpeciesMart);
         aggregation.setAggregationFactCount(aggFactCount);
         aggregation.getAggregationMeasures().add(aggMeasure);
         aggregation.getAggregationLevels().add(aggLevel);
@@ -577,17 +578,17 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
         // Create access member grants
         AccessMemberGrant memberGrant1 =
             OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant1.setMember("[Animal].[Animals].[Family].[Loricariidae]");
+        memberGrant1.setMember(mdx("[Animal].[Animals].[Family].[Loricariidae]"));
         memberGrant1.setMemberAccess(MemberAccess.ALL);
 
         AccessMemberGrant memberGrant2 =
             OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant2.setMember("[Animal].[Animals].[Family].[Cichlidae]");
+        memberGrant2.setMember(mdx("[Animal].[Animals].[Family].[Cichlidae]"));
         memberGrant2.setMemberAccess(MemberAccess.ALL);
 
         AccessMemberGrant memberGrant3 =
             OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant3.setMember("[Animal].[Animals].[Family].[Cyprinidae]");
+        memberGrant3.setMember(mdx("[Animal].[Animals].[Family].[Cyprinidae]"));
         memberGrant3.setMemberAccess(MemberAccess.NONE);
 
         // Create hierarchy grant
@@ -621,9 +622,9 @@ public class SpeciesNonCollapsedAggTestModifier implements CatalogMappingSupplie
 
         // Add everything to schema and catalog
 
-        catalog.getDbschemas().add(dbSchema);
-        catalog.getCubes().add(testCube);
-        catalog.getAccessRoles().add(accessRole);
+        catalog.getImportedElement().add(dbSchema);
+        catalog.getImportedElement().add(testCube);
+        catalog.getImportedElement().add(accessRole);
     }
 
     @Override

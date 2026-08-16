@@ -23,6 +23,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringWriter;
@@ -52,6 +53,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Test if lookup columns are there after loading them in
  * AggGen#addCollapsedColumn(...).
@@ -96,7 +98,7 @@ class AggGenTest {
             sqlConnection = dataSource.getConnection();
             DatabaseMetaData dbmeta = sqlConnection.getMetaData();
             Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-            List<? extends Schema> schemas = catalogMapping.getDbschemas();
+            List<? extends Schema> schemas = Packages.available(catalogMapping, Schema.class);
             Schema databaseSchema = schemas.getFirst();
 
 

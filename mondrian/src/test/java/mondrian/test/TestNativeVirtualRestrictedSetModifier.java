@@ -13,6 +13,7 @@
  */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -84,12 +85,12 @@ public class TestNativeVirtualRestrictedSetModifier implements CatalogMappingSup
 
         // Create member grant for [Store].[All Stores] with NONE access
         MEMBER_GRANT_ALL_STORES = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_ALL_STORES.setMember("[Store].[All Stores]");
+        MEMBER_GRANT_ALL_STORES.setMember(mdx("[Store].[All Stores]"));
         MEMBER_GRANT_ALL_STORES.setMemberAccess(MemberAccess.NONE);
 
         // Create member grant for [Store].[USA] with ALL access
         MEMBER_GRANT_USA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_USA.setMember("[Store].[USA]");
+        MEMBER_GRANT_USA.setMember(mdx("[Store].[USA]"));
         MEMBER_GRANT_USA.setMemberAccess(MemberAccess.ALL);
 
         // Create hierarchy grant for Store with CUSTOM access and PARTIAL rollup
@@ -119,7 +120,7 @@ public class TestNativeVirtualRestrictedSetModifier implements CatalogMappingSup
         ACCESS_ROLE_F_MIS_BE_CLIENT.getAccessCatalogGrants().add(CATALOG_GRANT);
 
         // Add the access role to the catalog
-        this.catalog.getAccessRoles().add(ACCESS_ROLE_F_MIS_BE_CLIENT);
+        this.catalog.getImportedElement().add(ACCESS_ROLE_F_MIS_BE_CLIENT);
     }
 
     @Override

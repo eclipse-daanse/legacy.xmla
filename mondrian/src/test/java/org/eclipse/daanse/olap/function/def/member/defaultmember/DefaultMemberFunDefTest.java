@@ -13,6 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.member.defaultmember;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.executeSingletonAxis;
@@ -44,6 +45,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 class DefaultMemberFunDefTest {
 
     /**
@@ -61,7 +63,7 @@ class DefaultMemberFunDefTest {
 
             // Find Sales cube
             PhysicalCube salesCube = null;
-            for (Cube cube : catalog.getCubes()) {
+            for (Cube cube : Packages.available(catalog, Cube.class)) {
                 if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
                     salesCube = (PhysicalCube) cube;
                     break;

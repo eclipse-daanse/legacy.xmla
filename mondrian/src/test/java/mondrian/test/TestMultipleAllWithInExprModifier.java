@@ -253,7 +253,7 @@ public class TestMultipleAllWithInExprModifier implements CatalogMappingSupplier
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Add the cube to the catalog
-        this.catalog.getCubes().add(CUBE_3STORE_H_CUBE);
+        this.catalog.getImportedElement().add(CUBE_3STORE_H_CUBE);
     }
 
     @Override

@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
@@ -23,7 +24,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationCo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
@@ -41,6 +42,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
 
     protected final Catalog catalog;
@@ -324,8 +326,8 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         agg10FooFact.getFeature().add(factCountAgg10FooFact);
 
         // Add tables to database schema
-        if (catalog.getDbschemas().size() > 0) {
-            Schema dbSchema = catalog.getDbschemas().get(0);
+        if (Packages.available(catalog, Schema.class).size() > 0) {
+            Schema dbSchema = Packages.available(catalog, Schema.class).get(0);
             dbSchema.getOwnedElement().add(fooFact);
             dbSchema.getOwnedElement().add(line);
             dbSchema.getOwnedElement().add(lineTenant);
@@ -345,11 +347,11 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
     protected void createCubes() {
         // Create foo cube
         PhysicalCube fooCube = createFooCube();
-        catalog.getCubes().add(fooCube);
+        catalog.getImportedElement().add(fooCube);
 
         // Create foo2 cube
         PhysicalCube foo2Cube = createFoo2Cube();
-        catalog.getCubes().add(foo2Cube);
+        catalog.getImportedElement().add(foo2Cube);
     }
 
     protected PhysicalCube createFooCube() {
@@ -425,9 +427,9 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         return cube;
     }
 
-    protected AggregationName createAggTenantAggregation() {
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(aggTenant);
+    protected ExplicitAggregationTable createAggTenantAggregation() {
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(aggTenant);
         //aggName.setIgnorecase(false);
 
         // Aggregation fact count
@@ -451,9 +453,9 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         return aggName;
     }
 
-    protected AggregationName createAggLineClassDistributorAggregation() {
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(aggLineClass);
+    protected ExplicitAggregationTable createAggLineClassDistributorAggregation() {
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(aggLineClass);
         //aggName.setIgnorecase(false);
 
         // Aggregation fact count
@@ -477,9 +479,9 @@ public class NonCollapsedAggTestModifierEmf implements CatalogMappingSupplier {
         return aggName;
     }
 
-    protected AggregationName createAggLineClassNetworkAggregation() {
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(aggLineClass);
+    protected ExplicitAggregationTable createAggLineClassNetworkAggregation() {
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(aggLineClass);
         //aggName.setIgnorecase(false);
 
         // Aggregation fact count

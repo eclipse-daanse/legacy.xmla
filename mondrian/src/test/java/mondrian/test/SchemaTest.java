@@ -8,6 +8,8 @@
 */
 package mondrian.test;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,7 +68,8 @@ import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggTableManager;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Annotation;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.CoreFactory;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue;
 import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
@@ -86,7 +89,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationEx
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.InlineTable;
@@ -139,6 +142,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Unit tests for various schema features.
  *
@@ -269,7 +273,7 @@ class SchemaTest {
             public TestSolveOrderInCalculatedMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     CubeImpl cube = (CubeImpl) oCube.get();
@@ -280,7 +284,7 @@ class SchemaTest {
                     // Create first calculated member using RolapMappingFactory
                     CalculatedMember calculatedMember1 = LevelFactory.eINSTANCE.createCalculatedMember();
                     calculatedMember1.setName("QuantumProfit");
-                    calculatedMember1.setFormula("[Measures].[Store Sales] / [Measures].[Store Cost]");
+                    calculatedMember1.setFormula(mdx("[Measures].[Store Sales] / [Measures].[Store Cost]"));
                     calculatedMember1.getCalculatedMemberProperties().add(cmProperty1);
 
                     // Create second calculated member properties using RolapMappingFactory
@@ -296,7 +300,7 @@ class SchemaTest {
                     CalculatedMember calculatedMember2 = LevelFactory.eINSTANCE.createCalculatedMember();
                     calculatedMember2.setName("foo");
                     calculatedMember2.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
-                    calculatedMember2.setFormula("Sum(Gender.Members)");
+                    calculatedMember2.setFormula(mdx("Sum(Gender.Members)"));
                     calculatedMember2.getCalculatedMemberProperties().add(cmProperty21);
                     calculatedMember2.getCalculatedMemberProperties().add(cmProperty22);
                     cube.getCalculatedMembers().add(calculatedMember1);
@@ -371,7 +375,7 @@ class SchemaTest {
             public TestHierarchyDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -511,7 +515,7 @@ class SchemaTest {
             public TestDefaultMemberNameModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -662,7 +666,7 @@ class SchemaTest {
             public TestHierarchyAbbreviatedDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -772,7 +776,7 @@ class SchemaTest {
             public TestHierarchyNoLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -880,7 +884,7 @@ class SchemaTest {
             public TestHierarchyNonUniqueLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -982,7 +986,7 @@ class SchemaTest {
             public TestCountMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1091,7 +1095,7 @@ class SchemaTest {
             public TestHierarchyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1223,7 +1227,7 @@ class SchemaTest {
             public TestPrimaryKeyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1345,7 +1349,7 @@ class SchemaTest {
             public TestLevelTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1463,7 +1467,7 @@ class SchemaTest {
             public TestHierarchyBadDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1582,7 +1586,7 @@ class SchemaTest {
             public TestDuplicateTableAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1699,7 +1703,7 @@ class SchemaTest {
             public TestDuplicateTableAliasSameForeignKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1822,7 +1826,7 @@ class SchemaTest {
             public TestDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -2080,7 +2084,7 @@ class SchemaTest {
             public TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -2201,7 +2205,7 @@ class SchemaTest {
             public TestDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -2725,7 +2729,7 @@ class SchemaTest {
                 cube.getDimensionConnectors().add(dimension2);
                 cube.getMeasureGroups().add(measureGroup);
 
-                this.catalog.getCubes().add(cube);
+                this.catalog.getImportedElement().add(cube);
 
             }
 
@@ -3215,7 +3219,7 @@ class SchemaTest {
                 cube.getDimensionConnectors().add(dimension2);
                 cube.getMeasureGroups().add(measureGroup);
 
-                this.catalog.getCubes().add(cube);
+                this.catalog.getImportedElement().add(cube);
 
             }
 
@@ -3617,7 +3621,7 @@ class SchemaTest {
                 cube.getDimensionConnectors().add(d2);
                 cube.getMeasureGroups().add(measureGroup);
 
-                this.catalog.getCubes().add(cube);
+                this.catalog.getImportedElement().add(cube);
             }
 
             @Override
@@ -4073,7 +4077,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
 
         }
         @Override
@@ -4474,7 +4478,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
 
         }
 
@@ -4786,7 +4790,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -5059,7 +5063,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -5231,7 +5235,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d3);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
 
         }
 
@@ -5416,7 +5420,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d3);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -5556,7 +5560,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
 
         }
 
@@ -5709,7 +5713,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d1);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -5912,7 +5916,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -6053,7 +6057,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d2);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -6280,20 +6284,20 @@ class SchemaTest {
             sqlViewDef1.getFeature().add(warehouseIdColumn);
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1a = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt1a.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
+            stmt1a.setBody("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt1a.getDialects().add("generic");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1b = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt1b.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
+            stmt1b.setBody("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt1b.getDialects().add("oracle");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1c = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt1c.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
+            stmt1c.setBody("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt1c.getDialects().add("mysql");
                 stmt1c.getDialects().add("mariadb");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1d = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt1d.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
+            stmt1d.setBody("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt1d.getDialects().add("infobright");
 
             sqlViewDef1.getDialectStatements().add(stmt1a);
@@ -6344,20 +6348,20 @@ class SchemaTest {
             sqlViewDef2.getFeature().add(warehouseSalesColumn);
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2a = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt2a.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
+            stmt2a.setBody("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt2a.getDialects().add("generic");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2b = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt2b.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
+            stmt2b.setBody("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt2b.getDialects().add("oracle");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2c = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt2c.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
+            stmt2c.setBody("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt2c.getDialects().add("mysql");
                 stmt2c.getDialects().add("mariadb");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2d = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt2d.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
+            stmt2d.setBody("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt2d.getDialects().add("infobright");
 
             sqlViewDef2.getDialectStatements().add(stmt2a);
@@ -6390,7 +6394,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d4);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
 
         }
 
@@ -6685,12 +6689,12 @@ class SchemaTest {
             sqlViewDef.getFeature().add(vColWarehouseId);
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1 = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt1.setSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
+            stmt1.setBody("select * from \"inventory_fact_1997\" as \"FOOBAR\"");
             stmt1.getDialects().add("generic");
             stmt1.getDialects().add("oracle");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2 = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt2.setSql("select * from `inventory_fact_1997` as `FOOBAR`");
+            stmt2.setBody("select * from `inventory_fact_1997` as `FOOBAR`");
             stmt2.getDialects().add("mysql");
                 stmt2.getDialects().add("mariadb");
             stmt2.getDialects().add("infobright");
@@ -6723,7 +6727,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d4);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
         }
 
         @Override
@@ -6922,12 +6926,12 @@ class SchemaTest {
             sqlViewDef.getFeature().add(grocerySqftColumn);
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt1 = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt1.setSql("select * from \"store\" as \"FOOBAR\"");
+            stmt1.setBody("select * from \"store\" as \"FOOBAR\"");
             stmt1.getDialects().add("generic");
             stmt1.getDialects().add("oracle");
 
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement stmt2 = SourceFactory.eINSTANCE.createSqlStatement();
-            stmt2.setSql("select * from `store` as `FOOBAR`");
+            stmt2.setBody("select * from `store` as `FOOBAR`");
             stmt2.getDialects().add("mysql");
                 stmt2.getDialects().add("mariadb");
             stmt2.getDialects().add("infobright");
@@ -6959,7 +6963,7 @@ class SchemaTest {
             cube.getDimensionConnectors().add(d1);
             cube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(cube);
+            this.catalog.getImportedElement().add(cube);
 
 
         }
@@ -7061,7 +7065,7 @@ class SchemaTest {
         public TestDeprecatedDistinctCountAggregatorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
-            Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+            Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -7080,7 +7084,7 @@ class SchemaTest {
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Half Customer Count");
                 calculatedMember.setVisible(false);
-                calculatedMember.setFormula("[Measures].[Customer Count2] / 2");
+                calculatedMember.setFormula(mdx("[Measures].[Customer Count2] / 2"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
 
@@ -7283,8 +7287,8 @@ class SchemaTest {
                 aggMeasure2.setName("[Measures].[Store Sales]");
                 aggMeasure2.setColumn(CatalogSupplier.COLUMN_STORE_SALES_AGG_C_10_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName aggTable = AggregationFactory.eINSTANCE.createAggregationName();
-                aggTable.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable aggTable = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+                aggTable.setTable(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
                 aggTable.setAggregationFactCount(factCount);
                 aggTable.getAggregationMeasures().add(aggMeasure1);
                 aggTable.getAggregationMeasures().add(aggMeasure2);
@@ -7396,8 +7400,8 @@ class SchemaTest {
                 // Create catalog
                 this.catalog = CatalogFactory.eINSTANCE.createCatalog();
                 this.catalog.setName("FoodMart");
-                this.catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog.getDbschemas());
-                this.catalog.getCubes().add(c);
+                this.catalog.getImportedElement().addAll(Packages.available(catalog, Schema.class));
+                this.catalog.getImportedElement().add(c);
 
             }
 
@@ -7696,8 +7700,8 @@ class SchemaTest {
                 aggForeignKey.setFactColumn(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
                 aggForeignKey.setAggregationColumn(CatalogSupplier.COLUMN_TIME_ID_AGG_L_03_SALES_FACT_1997);
 
-                org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName aggTable = AggregationFactory.eINSTANCE.createAggregationName();
-                aggTable.setName(CatalogSupplier.TABLE_AGG_L_03_SALES_FACT);
+                org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable aggTable = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+                aggTable.setTable(CatalogSupplier.TABLE_AGG_L_03_SALES_FACT);
                 aggTable.setAggregationFactCount(factCount);
                 aggTable.getAggregationMeasures().add(aggMeasure1);
                 aggTable.getAggregationMeasures().add(aggMeasure2);
@@ -7829,8 +7833,8 @@ class SchemaTest {
                 // Create catalog
                 this.catalog = CatalogFactory.eINSTANCE.createCatalog();
                 this.catalog.setName("FoodMart");
-                this.catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog.getDbschemas());
-                this.catalog.getCubes().add(c);
+                this.catalog.getImportedElement().addAll(Packages.available(catalog, Schema.class));
+                this.catalog.getImportedElement().add(c);
             }
 
             @Override
@@ -7988,7 +7992,7 @@ class SchemaTest {
             public TestPropertyFormatterModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
                 this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = this.catalog.getCubes().stream()
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName())).findAny();
                 if (oCube.isPresent()) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -8228,7 +8232,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d2);
             c.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(c);
+            this.catalog.getImportedElement().add(c);
 
         }
 
@@ -8380,7 +8384,7 @@ class SchemaTest {
         public TestBugMondrian303ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
-            Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+            Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
             if (oCube.isPresent()) {
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) oCube.get();
@@ -8595,7 +8599,7 @@ class SchemaTest {
                 c.setSource(factTableQuery);
                 c.getDimensionConnectors().add(d1);
                 c.getMeasureGroups().add(measureGroup);
-                catalog.getCubes().add(c);
+                catalog.getImportedElement().add(c);
         }
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
             return catalog;
@@ -8715,7 +8719,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d1);
             c.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -8777,7 +8781,7 @@ class SchemaTest {
                 CubeFactory.eINSTANCE.createPhysicalCube();
             c.setName("Cube with caption");
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -8882,12 +8886,12 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc =
                 CubeFactory.eINSTANCE.createVirtualCube();
             vc.setName("Warehouse and Sales with caption");
-            vc.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(
+            vc.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.MEASURE_STORE_SALES));
             vc.getDimensionConnectors().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.CONNECTOR_CUSTOMER);
 
-            catalog.getCubes().add(c);
-            catalog.getCubes().add(vc);
+            catalog.getImportedElement().add(c);
+            catalog.getImportedElement().add(vc);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -8970,7 +8974,7 @@ class SchemaTest {
             c.setSource(tableQuery);
             c.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -9126,7 +9130,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d1);
             c.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -9270,7 +9274,7 @@ class SchemaTest {
             org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calculatedMember =
                 LevelFactory.eINSTANCE.createCalculatedMember();
             calculatedMember.setName("One");
-            calculatedMember.setFormula("1");
+            calculatedMember.setFormula(mdx("1"));
 
             // Create TableSource for fact table using RolapMappingFactory
             org.eclipse.daanse.rolap.mapping.model.database.source.TableSource factTableQuery =
@@ -9284,7 +9288,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d1);
             c.getCalculatedMembers().add(calculatedMember);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -9730,7 +9734,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9745,7 +9749,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
-                calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
+                calculatedMember.setFormula(mdx("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -9766,7 +9770,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9784,7 +9788,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE);
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
-                calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
+                calculatedMember.setFormula(mdx("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -9804,7 +9808,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9822,7 +9826,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE_TYPE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
-                calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
+                calculatedMember.setFormula(mdx("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -9842,7 +9846,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9860,7 +9864,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy) copier.get(
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
-                calculatedMember.setFormula("Baconating!");
+                calculatedMember.setFormula(mdx("Baconating!"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -9880,7 +9884,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9898,7 +9902,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                         copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[USA].[CA].[Baconville]");
-                calculatedMember.setFormula("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]");
+                calculatedMember.setFormula(mdx("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -9918,7 +9922,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9936,7 +9940,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                         copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE_TYPE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
-                calculatedMember.setFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]");
+                calculatedMember.setFormula(mdx("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]"));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -9956,7 +9960,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -9974,7 +9978,7 @@ class SchemaTest {
                 calculatedMember.setHierarchy((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy)
                         copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.HIERARCHY_STORE));
                 calculatedMember.setParent("[Store].[Store].[USA].[CA]");
-                calculatedMember.setFormula("");
+                calculatedMember.setFormula(mdx(""));
 
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -10050,7 +10054,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d3);
             c.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -10186,13 +10190,13 @@ class SchemaTest {
             // Create SqlStatement for generic dialect using RolapMappingFactory
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatementGeneric =
                 SourceFactory.eINSTANCE.createSqlStatement();
-            sqlStatementGeneric.setSql("SELECT * FROM customer");
+            sqlStatementGeneric.setBody("SELECT * FROM customer");
             sqlStatementGeneric.getDialects().add("generic");
 
             // Create SqlStatement for other dialects using RolapMappingFactory
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatementOther =
                 SourceFactory.eINSTANCE.createSqlStatement();
-            sqlStatementOther.setSql("SELECT * FROM \"customer\"");
+            sqlStatementOther.setBody("SELECT * FROM \"customer\"");
             sqlStatementOther.getDialects().add("oracle");
             sqlStatementOther.getDialects().add("derby");
             sqlStatementOther.getDialects().add("hsqldb");
@@ -10281,7 +10285,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d1);
             c.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -10484,7 +10488,7 @@ class SchemaTest {
                 role.getAccessCatalogGrants().add(catalogGrant);
 
                 // Add role to catalog
-                catalog.getAccessRoles().add(role);
+                catalog.getImportedElement().add(role);
             }
 
             @Override
@@ -10608,7 +10612,7 @@ class SchemaTest {
             c.getDimensionConnectors().add(d2);
             c.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(c);
+            catalog.getImportedElement().add(c);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -10739,10 +10743,10 @@ class SchemaTest {
             role1Plus2Plus1.getReferencedAccessRoles().add(role1);
 
             // Add roles to catalog
-            catalog.getAccessRoles().add(role1);
-            catalog.getAccessRoles().add(role2);
-            catalog.getAccessRoles().add(role1Plus2);
-            catalog.getAccessRoles().add(role1Plus2Plus1);
+            catalog.getImportedElement().add(role1);
+            catalog.getImportedElement().add(role2);
+            catalog.getImportedElement().add(role1Plus2);
+            catalog.getImportedElement().add(role1Plus2Plus1);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -10853,8 +10857,8 @@ class SchemaTest {
             role1Plus2.getReferencedAccessRoles().add(role1);
 
             // Add roles to catalog
-            catalog.getAccessRoles().add(role1);
-            catalog.getAccessRoles().add(role1Plus2);
+            catalog.getImportedElement().add(role1);
+            catalog.getImportedElement().add(role1Plus2);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -10952,9 +10956,9 @@ class SchemaTest {
             role1Plus2.getReferencedAccessRoles().add(role2);
 
             // Add roles to catalog
-            catalog.getAccessRoles().add(role1);
-            catalog.getAccessRoles().add(role2);
-            catalog.getAccessRoles().add(role1Plus2);
+            catalog.getImportedElement().add(role1);
+            catalog.getImportedElement().add(role2);
+            catalog.getImportedElement().add(role1Plus2);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -11025,7 +11029,7 @@ class SchemaTest {
 
             // Find Warehouse and Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName()))
                     .findAny();
 
@@ -11036,7 +11040,7 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.NamedSet namedSet =
                     DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Non CA State Stores");
-                namedSet.setFormula("EXCEPT({[Store].[Store Country].[USA].children},{[Store].[Store Country].[USA].[CA]})");
+                namedSet.setFormula(mdx("EXCEPT({[Store].[Store Country].[USA].children},{[Store].[Store Country].[USA].[CA]})"));
 
                 // Add named set to cube
                 cube.getNamedSets().add(namedSet);
@@ -11122,7 +11126,7 @@ class SchemaTest {
 
             // Find Warehouse and Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName()))
                     .findAny();
 
@@ -11134,7 +11138,7 @@ class SchemaTest {
                     DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Non CA State Stores");
                 // Invalid formula: uses [Store State] instead of [Store Country]
-                namedSet.setFormula("EXCEPT({[Store].[Store State].[USA].children},{[Store].[Store Country].[USA].[CA]})");
+                namedSet.setFormula(mdx("EXCEPT({[Store].[Store State].[USA].children},{[Store].[Store Country].[USA].[CA]})"));
 
                 // Add named set to cube
                 cube.getNamedSets().add(namedSet);
@@ -11210,7 +11214,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -11385,7 +11389,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -11704,7 +11708,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -11961,7 +11965,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -12214,7 +12218,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -12378,7 +12382,7 @@ class SchemaTest {
 
             // Find Sales cube
             java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                catalog.getCubes().stream()
+                Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName()))
                     .findAny();
 
@@ -12553,7 +12557,7 @@ class SchemaTest {
             // Create SqlStatement for table filter
             org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
                 SourceFactory.eINSTANCE.createSqlStatement();
-            sqlStatement.setSql("`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")");
+            sqlStatement.setBody("`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")");
             sqlStatement.getDialects().add("generic");
 
             // Create TableSource with SQL filter
@@ -12607,7 +12611,7 @@ class SchemaTest {
             sales2Cube.getMeasureGroups().add(measureGroup);
 
             // Add cube to catalog
-            catalog.getCubes().add(sales2Cube);
+            catalog.getImportedElement().add(sales2Cube);
         }
 
         public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -12829,7 +12833,7 @@ class SchemaTest {
 
                 // Find Sales cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream()
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName()))
                         .findAny();
 
@@ -12919,7 +12923,7 @@ class SchemaTest {
                 this.catalog = (CatalogImpl) copier.get(cat);
                 // Find Sales cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream()
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
                         .filter(c -> "Sales".equals(c.getName()))
                         .findAny();
 
@@ -13466,20 +13470,17 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension sd1 =
                     DimensionFactory.eINSTANCE.createTimeDimension();
                 sd1.setName("Time");
-                sd1.setDescription("Time shared description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation timeAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                timeAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue timeAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                timeAnnotation.setTag("a");
                 timeAnnotation.setValue("Time shared");
-                sd1.getAnnotations().add(timeAnnotation);
+                sd1.getTaggedValue().add(timeAnnotation);
 
                 // Create Time hierarchy
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy timeHierarchy =
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 timeHierarchy.setHasAll(false);
                 timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME);
-                timeHierarchy.setDescription("Time shared hierarchy description");
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.TableSource timeTableQuery =
                     SourceFactory.eINSTANCE.createTableSource();
@@ -13606,13 +13607,11 @@ class SchemaTest {
                     HierarchyFactory.eINSTANCE.createExplicitHierarchy();
                 h11.setHasAll(true);
                 h11.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
-                h11.setDescription("Hierarchy description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation hierarchyAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                hierarchyAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue hierarchyAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                hierarchyAnnotation.setTag("a");
                 hierarchyAnnotation.setValue("Hierarchy");
-                h11.getAnnotations().add(hierarchyAnnotation);
+                h11.getTaggedValue().add(hierarchyAnnotation);
                 h11.setSource(j11);
 
                 // Create Store Country level with annotations
@@ -13620,13 +13619,11 @@ class SchemaTest {
                     LevelFactory.eINSTANCE.createLevel();
                 storeCountryLevel.setName("Store Country");
                 storeCountryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
-                storeCountryLevel.setDescription("Level description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation levelAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                levelAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue levelAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                levelAnnotation.setTag("a");
                 levelAnnotation.setValue("Level");
-                storeCountryLevel.getAnnotations().add(levelAnnotation);
+                storeCountryLevel.getTaggedValue().add(levelAnnotation);
 
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeRegionLevel =
                     LevelFactory.eINSTANCE.createLevel();
@@ -13646,13 +13643,11 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension storeDimension =
                     DimensionFactory.eINSTANCE.createStandardDimension();
                 storeDimension.setName("Store");
-                storeDimension.setDescription("Dimension description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation dimensionAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                dimensionAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue dimensionAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                dimensionAnnotation.setTag("a");
                 dimensionAnnotation.setValue("Dimension");
-                storeDimension.getAnnotations().add(dimensionAnnotation);
+                storeDimension.getTaggedValue().add(dimensionAnnotation);
                 storeDimension.getHierarchies().add(h11);
 
                 // Create dimension connectors
@@ -13680,27 +13675,23 @@ class SchemaTest {
                 unitSalesMeasure.setName("Unit Sales");
                 unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
                 unitSalesMeasure.setFormatString("Standard");
-                unitSalesMeasure.setDescription("Measure description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation measureAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                measureAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue measureAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                measureAnnotation.setTag("a");
                 measureAnnotation.setValue("Measure");
-                unitSalesMeasure.getAnnotations().add(measureAnnotation);
+                unitSalesMeasure.getTaggedValue().add(measureAnnotation);
 
                 // Create calculated member with annotations
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember calcMember =
                     LevelFactory.eINSTANCE.createCalculatedMember();
                 calcMember.setName("Foo");
                 //calcMember.setDimension("Measures");
-                calcMember.setDescription("Calc member description");
-                calcMember.setFormula("[Measures].[Unit Sales] + 1");
+                calcMember.setFormula(mdx("[Measures].[Unit Sales] + 1"));
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation calcMemberAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                calcMemberAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue calcMemberAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                calcMemberAnnotation.setTag("a");
                 calcMemberAnnotation.setValue("Calc member");
-                calcMember.getAnnotations().add(calcMemberAnnotation);
+                calcMember.getTaggedValue().add(calcMemberAnnotation);
 
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty calcMemberProperty =
                         LevelFactory.eINSTANCE.createCalculatedMemberProperty();
@@ -13720,13 +13711,11 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c1 =
                     CubeFactory.eINSTANCE.createPhysicalCube();
                 c1.setName(salesCubeName);
-                c1.setDescription("Cube description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation cubeAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                cubeAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue cubeAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                cubeAnnotation.setTag("a");
                 cubeAnnotation.setValue("Cube");
-                c1.getAnnotations().add(cubeAnnotation);
+                c1.getTaggedValue().add(cubeAnnotation);
 
                 c1.setSource(salesTableQuery);
                 c1.getDimensionConnectors().add(d1);
@@ -13739,14 +13728,12 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.dimension.NamedSet namedSet =
                     DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Top Periods");
-                namedSet.setDescription("Named set description");
-                namedSet.setFormula("TopCount([Time1].MEMBERS, 5, [Measures].[Foo])");
+                namedSet.setFormula(mdx("TopCount([Time1].MEMBERS, 5, [Measures].[Foo])"));
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation namedSetAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                namedSetAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue namedSetAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                namedSetAnnotation.setTag("a");
                 namedSetAnnotation.setValue("Named set");
-                namedSet.getAnnotations().add(namedSetAnnotation);
+                namedSet.getTaggedValue().add(namedSetAnnotation);
                 c1.getNamedSets().add(namedSet);
 
                 // Create Warehouse cube
@@ -13795,13 +13782,11 @@ class SchemaTest {
                 org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc1 =
                     CubeFactory.eINSTANCE.createVirtualCube();
                 vc1.setName(virtualCubeName);
-                vc1.setDescription("Virtual cube description");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation virtualCubeAnnotation =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                virtualCubeAnnotation.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue virtualCubeAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+                virtualCubeAnnotation.setTag("a");
                 virtualCubeAnnotation.setValue("Virtual cube");
-                vc1.getAnnotations().add(virtualCubeAnnotation);
+                vc1.getTaggedValue().add(virtualCubeAnnotation);
 
                 vc1.getCubeUsages().add(cc1);
                 vc1.getCubeUsages().add(cc2);
@@ -13815,29 +13800,38 @@ class SchemaTest {
                     LevelFactory.eINSTANCE.createCalculatedMember();
                 vcCalcMember.setName("Profit Per Unit Shipped");
                 //vcCalcMember.setDimension("Measures");
-                vcCalcMember.setFormula("1 / [Measures].[Units Shipped]");
+                vcCalcMember.setFormula(mdx("1 / [Measures].[Units Shipped]"));
                 vc1.getCalculatedMembers().add(vcCalcMember);
 
                 // Update catalog
                 catalog.setName(schemaName);
-                catalog.setDescription("Schema to test descriptions and captions");
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(cat, Schema.class));
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation schemaAnnotation1 =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                schemaAnnotation1.setName("a");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue schemaAnnotation1 = CoreFactory.eINSTANCE.createTaggedValue();
+                schemaAnnotation1.setTag("a");
                 schemaAnnotation1.setValue("Schema");
 
-                org.eclipse.daanse.rolap.mapping.model.Annotation schemaAnnotation2 =
-                    RolapMappingFactory.eINSTANCE.createAnnotation();
-                schemaAnnotation2.setName("b");
+                org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue schemaAnnotation2 = CoreFactory.eINSTANCE.createTaggedValue();
+                schemaAnnotation2.setTag("b");
                 schemaAnnotation2.setValue("Xyz");
 
-                catalog.getAnnotations().add(schemaAnnotation1);
-                catalog.getAnnotations().add(schemaAnnotation2);
-                catalog.getCubes().add(c1);
-                catalog.getCubes().add(c2);
-                catalog.getCubes().add(vc1);
+                catalog.getTaggedValue().add(schemaAnnotation1);
+                catalog.getTaggedValue().add(schemaAnnotation2);
+                catalog.getImportedElement().add(c1);
+                catalog.getImportedElement().add(c2);
+                catalog.getImportedElement().add(vc1);
+
+                org.opencube.junit5.TestUtil.describe(catalog, sd1, "Time shared description");
+                org.opencube.junit5.TestUtil.describe(catalog, timeHierarchy, "Time shared hierarchy description");
+                org.opencube.junit5.TestUtil.describe(catalog, h11, "Hierarchy description");
+                org.opencube.junit5.TestUtil.describe(catalog, storeCountryLevel, "Level description");
+                org.opencube.junit5.TestUtil.describe(catalog, storeDimension, "Dimension description");
+                org.opencube.junit5.TestUtil.describe(catalog, unitSalesMeasure, "Measure description");
+                org.opencube.junit5.TestUtil.describe(catalog, calcMember, "Calc member description");
+                org.opencube.junit5.TestUtil.describe(catalog, c1, "Cube description");
+                org.opencube.junit5.TestUtil.describe(catalog, namedSet, "Named set description");
+                org.opencube.junit5.TestUtil.describe(catalog, vc1, "Virtual cube description");
+                org.opencube.junit5.TestUtil.describe(catalog, catalog, "Schema to test descriptions and captions");
             }
 
             public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -14221,7 +14215,7 @@ class SchemaTest {
 
                 // Find Sales cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
                 if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
@@ -14234,7 +14228,7 @@ class SchemaTest {
 
                     org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
                         SourceFactory.eINSTANCE.createSqlStatement();
-                    sqlStatement.setSql("'foobar'");
+                    sqlStatement.setBody("'foobar'");
                     sqlStatement.getDialects().add("generic");
                     captionColumn.getSqls().add(sqlStatement);
 
@@ -14678,7 +14672,7 @@ class SchemaTest {
 
                 org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
                     SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.setSql("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
+                sqlStatement.setBody("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
                     "\"store_id\", \"store_sales\", \"store_cost\", \"unit_sales\", (select \"store_state\" " +
                     "from \"store\" where \"store_id\" = \"sales_fact_1997\".\"store_id\") as " +
                     "\"sales_state_province\" from \"sales_fact_1997\"");
@@ -14744,10 +14738,11 @@ class SchemaTest {
 
                 // Update catalog
                 catalog.setName("Test_DimensionUsage");
-                catalog.getCubes().clear();
-                catalog.getCubes().add(c1);
-                catalog.getCubes().add(c2);
-                catalog.getCubes().add(vc);
+                catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+                catalog.getImportedElement().add(c1);
+                catalog.getImportedElement().add(c2);
+                catalog.getImportedElement().add(vc);
             }
 
             public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -15065,7 +15060,7 @@ class SchemaTest {
 
                 // Find Sales cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
                 if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
@@ -15566,7 +15561,7 @@ class SchemaTest {
 
                 // Update catalog
                 catalog.setName("FoodMart");
-                catalog.getCubes().add(salesCube);
+                catalog.getImportedElement().add(salesCube);
             }
 
             public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -15752,7 +15747,7 @@ class SchemaTest {
 
                 // Find Sales cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
                 if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
@@ -15977,7 +15972,7 @@ class SchemaTest {
 
                 // Find HR cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream().filter(c -> "HR".equals(c.getName())).findAny();
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "HR".equals(c.getName())).findAny();
 
                 if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube =
@@ -16144,7 +16139,7 @@ class SchemaTest {
 
                 // Find "Warehouse and Sales" virtual cube
                 java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube =
-                    catalog.getCubes().stream().filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
 
                 if (oCube.isPresent() && oCube.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube) {
                     org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube virtualCube =
@@ -16155,7 +16150,7 @@ class SchemaTest {
                         LevelFactory.eINSTANCE.createCalculatedMember();
                     imageUnitSales.setName("Image Unit Sales");
                     //imageUnitSales.setDimension("Measures");
-                    imageUnitSales.setFormula("[Measures].[Unit Sales]");
+                    imageUnitSales.setFormula(mdx("[Measures].[Unit Sales]"));
 
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty imageProperty =
                         LevelFactory.eINSTANCE.createCalculatedMemberProperty();
@@ -16168,7 +16163,7 @@ class SchemaTest {
                         LevelFactory.eINSTANCE.createCalculatedMember();
                     arrowUnitSales.setName("Arrow Unit Sales");
                     //arrowUnitSales.setDimension("Measures");
-                    arrowUnitSales.setFormula("[Measures].[Unit Sales]");
+                    arrowUnitSales.setFormula(mdx("[Measures].[Unit Sales]"));
 
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty arrowProperty =
                         LevelFactory.eINSTANCE.createCalculatedMemberProperty();
@@ -16181,7 +16176,7 @@ class SchemaTest {
                         LevelFactory.eINSTANCE.createCalculatedMember();
                     styleUnitSales.setName("Style Unit Sales");
                     //styleUnitSales.setDimension("Measures");
-                    styleUnitSales.setFormula("[Measures].[Unit Sales]");
+                    styleUnitSales.setFormula(mdx("[Measures].[Unit Sales]"));
 
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty styleProperty =
                         LevelFactory.eINSTANCE.createCalculatedMemberProperty();
@@ -16307,7 +16302,8 @@ class SchemaTest {
 
 
                     // Remove existing "Foo" cube if present
-                    catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
+                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
                     // Create Store Type level
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
@@ -16360,7 +16356,7 @@ class SchemaTest {
                     fooCube.getMeasureGroups().add(measureGroup);
 
                     // Add Foo cube at the beginning
-                    catalog.getCubes().add(0, fooCube);
+                    catalog.getImportedElement().add(0, fooCube);
                 }
 
                 public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -16439,11 +16435,12 @@ class SchemaTest {
 
 
                     // Remove existing "Foo" cube if present
-                    catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
+                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
                     // Find Sales cube for reference
                     java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
-                        catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                        Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
                     if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                         org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
@@ -16484,7 +16481,7 @@ class SchemaTest {
                             fooVirtualCube.getReferencedMeasures().add(storeSalesMeasure);
 
                             // Add Foo virtual cube to catalog
-                            catalog.getCubes().add(fooVirtualCube);
+                            catalog.getImportedElement().add(fooVirtualCube);
                         }
                     }
                 }
@@ -16580,7 +16577,8 @@ class SchemaTest {
 
 
                     // Remove existing "Foo" cube if present
-                    catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
+                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
                     // Create Store Type level
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
@@ -16632,7 +16630,7 @@ class SchemaTest {
                     fooCube.getMeasureGroups().add(measureGroup);
 
                     // Add Foo cube at the beginning
-                    catalog.getCubes().add(0, fooCube);
+                    catalog.getImportedElement().add(0, fooCube);
                 }
 
                 public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -16716,11 +16714,12 @@ class SchemaTest {
 
 
                     // Remove existing "Foo" cube if present
-                    catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
+                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
                     // Find Sales cube for reference
                     java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
-                        catalog.getCubes().stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                        Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
                     if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                         org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
@@ -16756,7 +16755,7 @@ class SchemaTest {
                             fooVirtualCube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
 
                             // Add Foo virtual cube to catalog
-                            catalog.getCubes().add(fooVirtualCube);
+                            catalog.getImportedElement().add(fooVirtualCube);
                         }
                     }
                 }
@@ -16868,11 +16867,12 @@ class SchemaTest {
                     this.value = value;
 
                     // Remove existing "Foo" cube if present
-                    catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
+                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
                     // Find Time dimension for shared usage
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension timeDimension = null;
-                    for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
+                    for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class)) {
                         if (cube instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
                             org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube physCube =
                                 (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) cube;
@@ -16953,7 +16953,7 @@ class SchemaTest {
                     fooCube.getMeasureGroups().add(measureGroup);
 
                     // Add Foo cube at the beginning
-                    catalog.getCubes().add(fooCube);
+                    catalog.getImportedElement().add(fooCube);
                 }
 
                 public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -17067,7 +17067,8 @@ class SchemaTest {
 
 
                     // Remove existing "Foo" cube if present
-                    catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
+                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
                     // Create Store Type level
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
@@ -17121,7 +17122,7 @@ class SchemaTest {
                     fooCube.getMeasureGroups().add(measureGroup);
 
                     // Add Foo cube at the beginning
-                    catalog.getCubes().add(fooCube);
+                    catalog.getImportedElement().add(fooCube);
                 }
 
                 public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
@@ -17266,7 +17267,7 @@ class SchemaTest {
                     measureGroup.getMeasures().add(measure);
                     fooCube.getMeasureGroups().add(measureGroup);
 
-                    catalog.getCubes().add(fooCube);
+                    catalog.getImportedElement().add(fooCube);
                 }
 
                 @Override
@@ -17476,8 +17477,8 @@ class SchemaTest {
                 aggExclude4.setName("agg_ll_01_sales_fact_1997");
                 tableQuery.getAggregationExcludes().add(aggExclude4);
 
-                AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-                aggName.setName(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
+                ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+                aggName.setTable(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
 
                 AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
                 aggFactCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_L_05_SALES_FACT_1997);
@@ -17605,7 +17606,7 @@ class SchemaTest {
                 measureGroup.getMeasures().add(measure);
                 fooCube.getMeasureGroups().add(measureGroup);
 
-                catalog.getCubes().add(fooCube);
+                catalog.getImportedElement().add(fooCube);
             }
 
             @Override
@@ -17685,11 +17686,11 @@ class SchemaTest {
         public TestMondrian1499ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             // Create SQL WHERE expressions
             SqlStatement sqlWhere1 = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlWhere1.setSql("1 = 1");
+            sqlWhere1.setBody("1 = 1");
             sqlWhere1.getDialects().add("generic");
 
             SqlStatement sqlWhere2 = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlWhere2.setSql("1 = 1");
+            sqlWhere2.setBody("1 = 1");
 
             // Dimension 1: Store
             TableSource employeeTableWithWhere1 = SourceFactory.eINSTANCE.createTableSource();
@@ -17797,7 +17798,7 @@ class SchemaTest {
 
             // Dimension 2: Pay Type
             SqlStatement sqlWhere3 = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlWhere3.setSql("1 = 1");
+            sqlWhere3.setBody("1 = 1");
 
             TableSource employeeTableWithWhere2 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere2.setTable(CatalogSupplier.TABLE_EMPLOYEE);
@@ -17839,7 +17840,7 @@ class SchemaTest {
 
             // Dimension 3: Store Type
             SqlStatement sqlWhere4 = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlWhere4.setSql("1 = 1");
+            sqlWhere4.setBody("1 = 1");
 
             TableSource employeeTableWithWhere3 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere3.setTable(CatalogSupplier.TABLE_EMPLOYEE);
@@ -17880,7 +17881,7 @@ class SchemaTest {
 
             // Dimension 4: Position
             SqlStatement sqlWhere5 = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlWhere5.setSql("1 = 1");
+            sqlWhere5.setBody("1 = 1");
 
             TableSource employeeTableWithWhere4 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere4.setTable(CatalogSupplier.TABLE_EMPLOYEE);
@@ -17919,7 +17920,7 @@ class SchemaTest {
 
             // Dimension 5: Employees (Parent-Child)
             SqlStatement sqlWhere6 = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlWhere6.setSql("1 = 1");
+            sqlWhere6.setBody("1 = 1");
 
             TableSource employeeTableWithWhere5 = SourceFactory.eINSTANCE.createTableSource();
             employeeTableWithWhere5.setTable(CatalogSupplier.TABLE_EMPLOYEE);
@@ -18015,11 +18016,11 @@ class SchemaTest {
 
             // Copy database schemas from original catalog
             CatalogImpl originalCatalog = (CatalogImpl) cat;
-            for (Schema dbSchema : originalCatalog.getDbschemas()) {
-                catalog.getDbschemas().add(dbSchema);
+            for (Schema dbSchema : Packages.available(originalCatalog, Schema.class)) {
+                catalog.getImportedElement().add(dbSchema);
             }
 
-            catalog.getCubes().add(hrCube);
+            catalog.getImportedElement().add(hrCube);
         }
 
         @Override
@@ -18205,7 +18206,7 @@ class SchemaTest {
 
 
             // Find Sales cube and add the dimension connector
-            for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
+            for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class)) {
                 if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
                     PhysicalCube salesCube = (PhysicalCube) cube;
                     salesCube.getDimensionConnectors().add(dimensionConnector);
@@ -18242,7 +18243,7 @@ class SchemaTest {
 
             AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
 
@@ -18294,7 +18295,7 @@ class SchemaTest {
             aggLevel.setCollapsed(true);
 
             // Aggregation name
-            aggName.setName((Table) copier.get(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT));
+            aggName.setTable((Table) copier.get(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT));
             aggName.setAggregationFactCount(aggFactCount);
             aggName.getAggregationIgnoreColumns().add(aggIgnoreCustomerId);
             aggName.getAggregationIgnoreColumns().add(aggIgnoreStoreId);
@@ -18390,8 +18391,9 @@ class SchemaTest {
             fooCube.getDimensionConnectors().add(dimensionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
-            catalog.getCubes().add(fooCube);
+            catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+            catalog.getImportedElement().add(fooCube);
         }
 
         @Override
@@ -18420,7 +18422,7 @@ class SchemaTest {
             AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             AggregationLevel aggLevelProduct = AggregationFactory.eINSTANCE.createAggregationLevel();
             AggregationLevel aggLevelStore = AggregationFactory.eINSTANCE.createAggregationLevel();
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
 
@@ -18519,7 +18521,7 @@ class SchemaTest {
             aggLevelStore.setCollapsed(false);
 
             // Aggregation name
-            aggName.setName(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
+            aggName.setTable(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
             aggName.setAggregationFactCount(aggFactCount);
             aggName.getAggregationIgnoreColumns().add(aggIgnoreCustomerId);
             aggName.getAggregationIgnoreColumns().add(aggIgnorePromotionId);
@@ -18652,8 +18654,9 @@ class SchemaTest {
             fooCube.getDimensionConnectors().add(storeDimensionConnector);
             fooCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
-            catalog.getCubes().add(fooCube);
+            catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+            catalog.getImportedElement().add(fooCube);
         }
 
         @Override
@@ -18683,7 +18686,7 @@ class SchemaTest {
 
             AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
             AggregationLevel aggLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
 
             TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
 
@@ -18734,7 +18737,7 @@ class SchemaTest {
             aggLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PRODUCT_ID_AGG_L_05_SALES_FACT_1997));
 
             // Aggregation name
-            aggName.setName((Table) copier.get(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT));
+            aggName.setTable((Table) copier.get(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT));
             aggName.setAggregationFactCount(aggFactCount);
             aggName.getAggregationIgnoreColumns().add(aggIgnoreCustomerId);
             aggName.getAggregationIgnoreColumns().add(aggIgnoreStoreId);
@@ -18831,8 +18834,9 @@ class SchemaTest {
             fooCube.getMeasureGroups().add(measureGroup);
 
 
-            catalog.getCubes().removeIf(c -> "Foo".equals(c.getName()));
-            catalog.getCubes().add(fooCube);
+            catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+            catalog.getImportedElement().add(fooCube);
         }
 
         @Override
@@ -18850,7 +18854,7 @@ class SchemaTest {
 
 
             // Find and modify the hierarchy with specific conditions
-            for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
+            for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class)) {
                 if (cube instanceof PhysicalCube) {
                     PhysicalCube physicalCube = (PhysicalCube) cube;
                     for (DimensionConnector dc : physicalCube.getDimensionConnectors()) {
@@ -18934,7 +18938,7 @@ class SchemaTest {
             promotionCountMeasureB.setFormatString("Standard");
 
             // SQL WHERE for CubeA
-            sqlWhereA.setSql("tablealias.promotion_id = 108");
+            sqlWhereA.setBody("tablealias.promotion_id = 108");
             sqlWhereA.getDialects().add("generic");
 
             // Table Query A with alias and WHERE
@@ -18943,7 +18947,7 @@ class SchemaTest {
             tableQueryA.setSqlWhereExpression(sqlWhereA);
 
             // SQL WHERE for CubeB
-            sqlWhereB.setSql("tablealias.promotion_id = 112");
+            sqlWhereB.setBody("tablealias.promotion_id = 112");
             sqlWhereB.getDialects().add("generic");
 
             // Table Query B with alias and WHERE
@@ -18984,8 +18988,8 @@ class SchemaTest {
             cubeB.getDimensionConnectors().add(dimensionConnectorB);
             cubeB.getMeasureGroups().add(measureGroupB);
 
-            catalog.getCubes().add(cubeA);
-            catalog.getCubes().add(cubeB);
+            catalog.getImportedElement().add(cubeA);
+            catalog.getImportedElement().add(cubeB);
         }
 
         @Override
@@ -19012,13 +19016,13 @@ class SchemaTest {
             AccessRole roleDev = CommonFactory.eINSTANCE.createAccessRole();
 
             // Member grants
-            memberGrantStoreCost.setMember("[Measures].[Store Cost]");
+            memberGrantStoreCost.setMember(mdx("[Measures].[Store Cost]"));
             memberGrantStoreCost.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantStoreSales.setMember("[Measures].[Store Sales]");
+            memberGrantStoreSales.setMember(mdx("[Measures].[Store Sales]"));
             memberGrantStoreSales.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantSalesCount.setMember("[Measures].[Sales Count]");
+            memberGrantSalesCount.setMember(mdx("[Measures].[Sales Count]"));
             memberGrantSalesCount.setMemberAccess(MemberAccess.ALL);
 
             // Hierarchy grant for [Measures]
@@ -19047,8 +19051,8 @@ class SchemaTest {
             roleDev.setName("dev");
             roleDev.getAccessCatalogGrants().add(catalogGrantDev);
 
-            catalog.getAccessRoles().add(roleAdmin);
-            catalog.getAccessRoles().add(roleDev);
+            catalog.getImportedElement().add(roleAdmin);
+            catalog.getImportedElement().add(roleDev);
         }
 
         @Override
@@ -19062,8 +19066,8 @@ class SchemaTest {
 
         public TestMondrian1275ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             // Create annotation
-            Annotation annotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            annotation.setName("foo");
+            TaggedValue annotation = CoreFactory.eINSTANCE.createTaggedValue();
+            annotation.setTag("foo");
             annotation.setValue("bar");
 
             // Create level
@@ -19084,7 +19088,7 @@ class SchemaTest {
             // Create dimension with annotation
             StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
             dimension.setName("Store Type");
-            dimension.getAnnotations().add(annotation);
+            dimension.getTaggedValue().add(annotation);
             dimension.getHierarchies().add(hierarchy);
 
             // Create dimension connector
@@ -19138,11 +19142,11 @@ class SchemaTest {
 
             // Copy database schemas from original catalog
             CatalogImpl originalCatalog = (CatalogImpl) cat;
-            for (Schema dbSchema : originalCatalog.getDbschemas()) {
-                catalog.getDbschemas().add(dbSchema);
+            for (Schema dbSchema : Packages.available(originalCatalog, Schema.class)) {
+                catalog.getImportedElement().add(dbSchema);
             }
 
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().add(salesCube);
         }
 
         @Override
@@ -20021,7 +20025,7 @@ class SchemaTest {
 
                 // Create objects dynamically based on n
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.setSql("`position_title` + " + n);
+                sqlStatement.setBody("`position_title` + " + n);
                 sqlStatement.getDialects().add("generic");
 
                 sqlExpressionColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
@@ -20058,7 +20062,7 @@ class SchemaTest {
 
 
                 // Find HR cube and add the dimension connector
-                for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : catalog.getCubes()) {
+                for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class)) {
                     if ("HR".equals(cube.getName()) && cube instanceof PhysicalCube) {
                         PhysicalCube hrCube = (PhysicalCube) cube;
                         hrCube.getDimensionConnectors().add(dimensionConnector);

@@ -76,7 +76,7 @@ public class TestVirtualCubeMeasureInvalidCubeNameModifier implements CatalogMap
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
     }
 
     @Override

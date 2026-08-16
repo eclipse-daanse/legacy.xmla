@@ -25,6 +25,7 @@
 
 package mondrian.rolap.aggmatcher;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
@@ -47,6 +48,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
   * Test if AggSchemaScan and AggCatalogScan properties are used in JdbcSchema loadTablesOfType
   *
@@ -64,7 +66,7 @@ class AggSchemaScanTest {
       sqlConnection = dataSource.getConnection();
 
       Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends Schema> schemas = catalogMapping.getDbschemas();
+      List<? extends Schema> schemas = Packages.available(catalogMapping, Schema.class);
       Schema databaseSchema = schemas.getFirst();
 
       //RolapConnectionPropsR rc = new ConnectionProps(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
@@ -153,7 +155,7 @@ class AggSchemaScanTest {
         return;
       }
       Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends Schema> schemas = catalogMapping.getDbschemas();
+      List<? extends Schema> schemas = Packages.available(catalogMapping, Schema.class);
       Schema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //The foodmart schema has 37 tables.

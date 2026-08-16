@@ -8,6 +8,8 @@
 */
 package mondrian.rolap;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
@@ -69,6 +71,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Test case for pushing MDX filter conditions down to SQL.
  */
@@ -479,7 +482,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
                 // Find Product dimension
                 Dimension productDimension = null;
-                for (Cube cube : catalog.getCubes()) {
+                for (Cube cube : Packages.available(catalog, Cube.class)) {
                     if (cube instanceof PhysicalCube) {
                         for (DimensionConnector dc :
                              ((PhysicalCube)cube).getDimensionConnectors()) {
@@ -531,22 +534,22 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 tinySalesCube.getMeasureGroups().add(measureGroup);
 
                 // Add cube to catalog
-                catalog.getCubes().add(tinySalesCube);
+                catalog.getImportedElement().add(tinySalesCube);
 
                 // Create access role "test" using RolapMappingFactory
                 AccessMemberGrant memberGrant1 =
                     OlapFactory.eINSTANCE.createAccessMemberGrant();
-                memberGrant1.setMember("[Store2].[USA].[CA]");
+                memberGrant1.setMember(mdx("[Store2].[USA].[CA]"));
                 memberGrant1.setMemberAccess(MemberAccess.ALL);
 
                 AccessMemberGrant memberGrant2 =
                     OlapFactory.eINSTANCE.createAccessMemberGrant();
-                memberGrant2.setMember("[Store2].[USA].[OR]");
+                memberGrant2.setMember(mdx("[Store2].[USA].[OR]"));
                 memberGrant2.setMemberAccess(MemberAccess.ALL);
 
                 AccessMemberGrant memberGrant3 =
                     OlapFactory.eINSTANCE.createAccessMemberGrant();
-                memberGrant3.setMember("[Store2].[Canada]");
+                memberGrant3.setMember(mdx("[Store2].[Canada]"));
                 memberGrant3.setMemberAccess(MemberAccess.ALL);
 
                 AccessHierarchyGrant hierarchyGrant =
@@ -574,7 +577,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 role.setName("test");
                 role.getAccessCatalogGrants().add(catalogGrant);
 
-                catalog.getAccessRoles().add(role);
+                catalog.getImportedElement().add(role);
             }
 
             @Override

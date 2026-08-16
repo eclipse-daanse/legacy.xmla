@@ -12,6 +12,8 @@
 */
 package mondrian.test;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
@@ -41,6 +43,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Unit-test for named sets, in all their various forms: <code>WITH SET</code>,
  * sets defined against cubes, virtual cubes, and at the schema level.
@@ -872,10 +875,10 @@ class NamedSetTest {
                 NamedSet namedSet =
                     DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet.setName("Bad");
-                namedSet.setFormula("{[Store].[USA].[WA].Children}}");
+                namedSet.setFormula(mdx("{[Store].[USA].[WA].Children}}"));
 
                 // Add named set to catalog
-                catalog.getNamedSets().add(namedSet);
+                catalog.getImportedElement().add(namedSet);
             }
 
             @Override
@@ -1354,17 +1357,17 @@ class NamedSetTest {
             NamedSet namedSet1 =
                 DimensionFactory.eINSTANCE.createNamedSet();
             namedSet1.setName("CA Cities");
-            namedSet1.setFormula("{[Store].[USA].[CA].Children}");
+            namedSet1.setFormula(mdx("{[Store].[USA].[CA].Children}"));
 
             // Create named set "Top CA Cities" using RolapMappingFactory
             NamedSet namedSet2 =
                 DimensionFactory.eINSTANCE.createNamedSet();
             namedSet2.setName("Top CA Cities");
-            namedSet2.setFormula("TopCount([CA Cities], 2, [Measures].[Unit Sales])");
+            namedSet2.setFormula(mdx("TopCount([CA Cities], 2, [Measures].[Unit Sales])"));
 
             // Add named sets to catalog
-            catalog.getNamedSets().add(namedSet1);
-            catalog.getNamedSets().add(namedSet2);
+            catalog.getImportedElement().add(namedSet1);
+            catalog.getImportedElement().add(namedSet2);
         }
 
         @Override
@@ -1415,24 +1418,24 @@ class NamedSetTest {
             NamedSet namedSet1 =
                 DimensionFactory.eINSTANCE.createNamedSet();
             namedSet1.setName("CA Cities");
-            namedSet1.setFormula("{[Store].[USA].[CA].Children}");
+            namedSet1.setFormula(mdx("{[Store].[USA].[CA].Children}"));
 
             // Create named set "Top CA Cities" using RolapMappingFactory
             NamedSet namedSet2 =
                 DimensionFactory.eINSTANCE.createNamedSet();
             namedSet2.setName("Top CA Cities");
-            namedSet2.setFormula("TopCount([CA Cities], 2, [Measures].[Unit Sales])");
+            namedSet2.setFormula(mdx("TopCount([CA Cities], 2, [Measures].[Unit Sales])"));
 
             // Create named set "Top USA Stores" using RolapMappingFactory
             NamedSet namedSet3 =
                 DimensionFactory.eINSTANCE.createNamedSet();
             namedSet3.setName("Top USA Stores");
-            namedSet3.setFormula("TopCount(Descendants([Store].[USA]), 7)");
+            namedSet3.setFormula(mdx("TopCount(Descendants([Store].[USA]), 7)"));
 
             // Add named sets to catalog
-            catalog.getNamedSets().add(namedSet1);
-            catalog.getNamedSets().add(namedSet2);
-            catalog.getNamedSets().add(namedSet3);
+            catalog.getImportedElement().add(namedSet1);
+            catalog.getImportedElement().add(namedSet2);
+            catalog.getImportedElement().add(namedSet3);
         }
 
         @Override
@@ -1487,7 +1490,7 @@ class NamedSetTest {
             // Find Sales cube
             Cube salesCube = null;
 
-            for (Cube cube : catalog.getCubes()) {
+            for (Cube cube : Packages.available(catalog, Cube.class)) {
                 if ("Sales".equals(cube.getName())) {
                     salesCube = cube;
                     break;
@@ -1499,13 +1502,13 @@ class NamedSetTest {
                 NamedSet namedSet1 =
                     DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet1.setName("Top Products In CA");
-                namedSet1.setFormula("TopCount([Product].[Product Department].MEMBERS, 3, ([Time].[1997].[Q3], [Measures].[CA City Sales]))");
+                namedSet1.setFormula(mdx("TopCount([Product].[Product Department].MEMBERS, 3, ([Time].[1997].[Q3], [Measures].[CA City Sales]))"));
 
                 // Create named set "CA Cities" using RolapMappingFactory
                 NamedSet namedSet2 =
                     DimensionFactory.eINSTANCE.createNamedSet();
                 namedSet2.setName("CA Cities");
-                namedSet2.setFormula("{[Store].[USA].[CA].Children}");
+                namedSet2.setFormula(mdx("{[Store].[USA].[CA].Children}"));
 
                 // Add named sets to Sales cube
                 salesCube.getNamedSets().add(namedSet1);
@@ -1516,7 +1519,7 @@ class NamedSetTest {
                     LevelFactory.eINSTANCE.createCalculatedMember();
                 calcMember.setName("CA City Sales");
                 calcMember.setVisible(false);
-                calcMember.setFormula("Aggregate([CA Cities], [Measures].[Unit Sales])");
+                calcMember.setFormula(mdx("Aggregate([CA Cities], [Measures].[Unit Sales])"));
 
                 // Create calculated member property for FORMAT_STRING
                 CalculatedMemberProperty property =

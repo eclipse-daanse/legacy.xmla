@@ -193,7 +193,7 @@ public class TestBug1515302Modifier implements CatalogMappingSupplier {
         CUBE_BUG1515302.getMeasureGroups().add(MEASURE_GROUP);
 
         // Add the cube to the catalog
-        this.catalog.getCubes().add(CUBE_BUG1515302);
+        this.catalog.getImportedElement().add(CUBE_BUG1515302);
     }
 
     @Override

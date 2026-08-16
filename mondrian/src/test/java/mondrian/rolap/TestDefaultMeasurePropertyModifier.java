@@ -53,7 +53,7 @@ public class TestDefaultMeasurePropertyModifier implements CatalogMappingSupplie
         // Create virtual cube
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.setName("Sales vs Warehouse");
-        VIRTUAL_CUBE_SALES_VS_WAREHOUSE.setDefaultMeasure((Member) copier.get(CatalogSupplier.MEASURE_UNIT_SALES));
+        VIRTUAL_CUBE_SALES_VS_WAREHOUSE.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.MEASURE_UNIT_SALES));
 
         // Add dimension connector
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_PRODUCT));
@@ -66,7 +66,7 @@ public class TestDefaultMeasurePropertyModifier implements CatalogMappingSupplie
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.getReferencedCalculatedMembers().add((CalculatedMember) copier.get(CatalogSupplier.CALCULATED_MEMBER_PROFIT));
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
 
     }
 

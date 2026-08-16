@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.agg;
 
+
 import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -25,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationEx
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
@@ -113,7 +114,7 @@ public class TestDistinctCountAggMeasureModifier implements CatalogMappingSuppli
         AggregationLevel AGG_LEVEL_YEAR;
         AggregationLevel AGG_LEVEL_QUARTER;
         AggregationLevel AGG_LEVEL_MONTH;
-        AggregationName AGGREGATION_TABLE;
+        ExplicitAggregationTable AGGREGATION_TABLE;
 
         // Static aggregation excludes
         AggregationExclude AGG_EXCLUDE_1;
@@ -230,8 +231,8 @@ public class TestDistinctCountAggMeasureModifier implements CatalogMappingSuppli
         AGG_LEVEL_MONTH.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MONTH_YEAR_AGG_C_10_SALES_FACT_1997));
 
         // Create aggregation table
-        AGGREGATION_TABLE = AggregationFactory.eINSTANCE.createAggregationName();
-        AGGREGATION_TABLE.setName((Table) copier.get(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997));
+        AGGREGATION_TABLE = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        AGGREGATION_TABLE.setTable((Table) copier.get(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997));
         AGGREGATION_TABLE.setAggregationFactCount(AGG_FACT_COUNT);
         AGGREGATION_TABLE.getAggregationMeasures().addAll(List.of(
             AGG_MEASURE_STORE_SALES,
@@ -309,9 +310,11 @@ public class TestDistinctCountAggMeasureModifier implements CatalogMappingSuppli
         CUBE_SALES.getMeasureGroups().add(MEASURE_GROUP);
 
         // Replace all cubes with just the Sales cube
-        this.catalog.getCubes().clear();
-        this.catalog.getAccessRoles().clear();
-        this.catalog.getCubes().add(CUBE_SALES);
+        this.catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        this.catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        this.catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole.class::isInstance);
+        this.catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole.class::isInstance);
+        this.catalog.getImportedElement().add(CUBE_SALES);
     }
 
     @Override

@@ -13,6 +13,7 @@
  */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -143,18 +144,18 @@ public class TestFormatStringExpressionCubeNoCacheModifier implements CatalogMap
         // Create calculated member: Profit
         CALCULATED_MEMBER_PROFIT = LevelFactory.eINSTANCE.createCalculatedMember();
         CALCULATED_MEMBER_PROFIT.setName("Profit");
-        CALCULATED_MEMBER_PROFIT.setFormula("[Measures].[Store Sales] - [Measures].[Store Cost]");
+        CALCULATED_MEMBER_PROFIT.setFormula(mdx("[Measures].[Store Sales] - [Measures].[Store Cost]"));
 
         // Create calculated member property: FORMAT_STRING
         PROPERTY_FORMAT_STRING = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
         PROPERTY_FORMAT_STRING.setName("FORMAT_STRING");
         PROPERTY_FORMAT_STRING.setExpression(
-                "IIf(([Measures].[Profit Per Unit Shipped] > 2.0), '|0.#|style=green', '|0.#|style=red')");
+                mdx("IIf(([Measures].[Profit Per Unit Shipped] > 2.0), '|0.#|style=green', '|0.#|style=red')"));
 
         // Create calculated member: Profit Per Unit Shipped
         CALCULATED_MEMBER_PROFIT_PER_UNIT_SHIPPED = LevelFactory.eINSTANCE.createCalculatedMember();
         CALCULATED_MEMBER_PROFIT_PER_UNIT_SHIPPED.setName("Profit Per Unit Shipped");
-        CALCULATED_MEMBER_PROFIT_PER_UNIT_SHIPPED.setFormula("[Measures].[Profit] / [Measures].[Units Shipped]");
+        CALCULATED_MEMBER_PROFIT_PER_UNIT_SHIPPED.setFormula(mdx("[Measures].[Profit] / [Measures].[Units Shipped]"));
         CALCULATED_MEMBER_PROFIT_PER_UNIT_SHIPPED.getCalculatedMemberProperties().add(PROPERTY_FORMAT_STRING);
 
         // Create virtual cube
@@ -176,8 +177,8 @@ public class TestFormatStringExpressionCubeNoCacheModifier implements CatalogMap
                 .addAll(List.of(CALCULATED_MEMBER_PROFIT, CALCULATED_MEMBER_PROFIT_PER_UNIT_SHIPPED));
 
         // Add the physical cube and virtual cube to the catalog
-        this.catalog.getCubes().add(CUBE_WAREHOUSE_NO_CACHE);
-        this.catalog.getCubes().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES_FORMAT_EXPRESSION);
+        this.catalog.getImportedElement().add(CUBE_WAREHOUSE_NO_CACHE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES_FORMAT_EXPRESSION);
     }
 
     @Override

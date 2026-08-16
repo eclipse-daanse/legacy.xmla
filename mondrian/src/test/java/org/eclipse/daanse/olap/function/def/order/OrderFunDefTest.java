@@ -1091,7 +1091,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             virtualCube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_ORG_SALARY));
 
             // Add virtual cube to catalog
-            catalog.getCubes().add(virtualCube);
+            catalog.getImportedElement().add(virtualCube);
         }
 
         @Override

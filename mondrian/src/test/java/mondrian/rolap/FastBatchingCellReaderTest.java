@@ -1204,7 +1204,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             private SqlStatement sqlStatement(String sql, String dialect) {
                 SqlStatement statement = SourceFactory.eINSTANCE.createSqlStatement();
                 statement.getDialects().add(dialect);
-                statement.setSql(sql);
+                statement.setBody(sql);
                 return statement;
             }
 
@@ -1316,7 +1316,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 warehouse2Cube.getMeasureGroups().add(measureGroup);
 
                 // Add the new cube to the catalog
-                catalog.getCubes().add(warehouse2Cube);
+                catalog.getImportedElement().add(warehouse2Cube);
             }
 
             @Override
@@ -1885,7 +1885,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 twoCountDistinctsCube.getMeasureGroups().add(measureGroup);
 
                 // Add the new cube to the catalog
-                catalog.getCubes().add(twoCountDistinctsCube);
+                catalog.getImportedElement().add(twoCountDistinctsCube);
             }
 
             @Override

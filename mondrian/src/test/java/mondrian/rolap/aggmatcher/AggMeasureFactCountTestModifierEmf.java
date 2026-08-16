@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+
 import java.util.List;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -45,6 +46,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Mem
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplier {
 
     public final Catalog catalog;
@@ -485,8 +487,8 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         aggCsvDivideByZero.getFeature().add(unitSalesFactCountAggCsvDivideByZero);
 
         // Add tables to database schema
-        if (catalog.getDbschemas().size() > 0) {
-            Schema dbSchema = catalog.getDbschemas().get(0);
+        if (Packages.available(catalog, Schema.class).size() > 0) {
+            Schema dbSchema = Packages.available(catalog, Schema.class).get(0);
             dbSchema.getOwnedElement().add(timeCsvTable);
             dbSchema.getOwnedElement().add(factCsv2016Table);
             dbSchema.getOwnedElement().add(aggC6FactCsv2016);
@@ -716,9 +718,11 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
 
         // Set catalog properties
         catalog.setName("FoodMart");
-        catalog.getCubes().clear();
-        catalog.getAccessRoles().clear();
-        catalog.getCubes().add(cube);
+        catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole.class::isInstance);
+        catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole.class::isInstance);
+        catalog.getImportedElement().add(cube);
     }
 
     protected List<AggregationTable> getAggTables() {

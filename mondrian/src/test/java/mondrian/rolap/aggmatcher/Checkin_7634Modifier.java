@@ -453,7 +453,7 @@ public class Checkin_7634Modifier implements CatalogMappingSupplier {
         cube.getMeasureGroups().add(measureGroup);
 
         // Add the cube to the catalog copy
-        catalogCopy.getCubes().add(cube);
+        catalogCopy.getImportedElement().add(cube);
 
         return catalogCopy;
     }

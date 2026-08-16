@@ -23,7 +23,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationCo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
@@ -257,8 +257,8 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         aggTenantLevel.setColumn(tenantIdAggTenant);
         aggTenantLevel.setCollapsed(false);
 
-        AggregationName aggName1 = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName1.setName(aggTenant);
+        ExplicitAggregationTable aggName1 = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName1.setTable(aggTenant);
         aggName1.setAggregationFactCount(aggTenantFactCount);
         aggName1.getAggregationMeasures().add(aggTenantMeasure);
         aggName1.getAggregationLevels().add(aggTenantLevel);
@@ -276,8 +276,8 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         aggLineClassLevel1.setColumn(lineClassIdAggLineClass);
         aggLineClassLevel1.setCollapsed(false);
 
-        AggregationName aggName2 = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName2.setName(aggLineClass);
+        ExplicitAggregationTable aggName2 = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName2.setTable(aggLineClass);
         aggName2.setAggregationFactCount(aggLineClassFactCount);
         aggName2.getAggregationMeasures().add(aggLineClassMeasure1);
         aggName2.getAggregationLevels().add(aggLineClassLevel1);
@@ -295,8 +295,8 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         aggLineClassLevel2.setColumn(lineClassIdAggLineClass);
         aggLineClassLevel2.setCollapsed(false);
 
-        AggregationName aggName3 = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName3.setName(aggLineClass);
+        ExplicitAggregationTable aggName3 = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName3.setTable(aggLineClass);
         aggName3.setAggregationFactCount(aggLineClassFactCount2);
         aggName3.getAggregationMeasures().add(aggLineClassMeasure2);
         aggName3.getAggregationLevels().add(aggLineClassLevel2);
@@ -580,7 +580,7 @@ public class TestSsasCompatNamingInAggModifier implements CatalogMappingSupplier
         testSsasCube.getMeasureGroups().add(measureGroup);
 
         // Add cube to catalog
-        this.catalog.getCubes().add(testSsasCube);
+        this.catalog.getImportedElement().add(testSsasCube);
     }
 
     @Override

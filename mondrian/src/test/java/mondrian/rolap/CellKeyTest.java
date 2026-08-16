@@ -246,7 +246,7 @@ class CellKeyTest  {
                 salesTestCube.getDimensionConnectors().add(addrConnector);
                 salesTestCube.getMeasureGroups().add(measureGroup);
 
-                catalog.getCubes().add(salesTestCube);
+                catalog.getImportedElement().add(salesTestCube);
             }
 
             @Override

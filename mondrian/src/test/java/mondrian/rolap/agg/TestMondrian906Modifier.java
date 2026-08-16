@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.agg;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -125,7 +126,7 @@ public class TestMondrian906Modifier implements CatalogMappingSupplier {
         // Create Virtual Cube 1: "Warehouse and Sales2"
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2 = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setName("Warehouse and Sales2");
-        VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setDefaultMeasure((Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
+        VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_GENDER));
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_STORE));
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_PRODUCT));
@@ -171,11 +172,11 @@ public class TestMondrian906Modifier implements CatalogMappingSupplier {
 
         // Create Access Role "Role1"
         MEMBER_GRANT_OR = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_OR.setMember("[Customers].[USA].[OR]");
+        MEMBER_GRANT_OR.setMember(mdx("[Customers].[USA].[OR]"));
         MEMBER_GRANT_OR.setMemberAccess(MemberAccess.ALL);
 
         MEMBER_GRANT_WA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_WA.setMember("[Customers].[USA].[WA]");
+        MEMBER_GRANT_WA.setMember(mdx("[Customers].[USA].[WA]"));
         MEMBER_GRANT_WA.setMemberAccess(MemberAccess.ALL);
 
         HIERARCHY_GRANT_CUSTOMERS = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -201,11 +202,11 @@ public class TestMondrian906Modifier implements CatalogMappingSupplier {
         ACCESS_ROLE_ROLE1.getAccessCatalogGrants().add(CATALOG_GRANT);
 
         // Add the virtual cubes to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES2);
-        this.catalog.getCubes().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES3);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES2);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES3);
 
         // Add the access role to the catalog
-        this.catalog.getAccessRoles().add(ACCESS_ROLE_ROLE1);
+        this.catalog.getImportedElement().add(ACCESS_ROLE_ROLE1);
     }
 
     @Override

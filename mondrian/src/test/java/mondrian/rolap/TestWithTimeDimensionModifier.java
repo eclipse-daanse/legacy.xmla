@@ -83,7 +83,7 @@ public class TestWithTimeDimensionModifier implements CatalogMappingSupplier {
         );
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
     }
 
     @Override

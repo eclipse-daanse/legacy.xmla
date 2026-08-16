@@ -199,8 +199,8 @@ public class CreateContextWithNonDefaultAllMemberModifier implements CatalogMapp
         VIRTUAL_CUBE.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_SALES));
 
         // Add the physical cube and virtual cube to the catalog
-        this.catalog.getCubes().add(CUBE_WAREHOUSE_DEFAULT_USA);
-        this.catalog.getCubes().add(VIRTUAL_CUBE);
+        this.catalog.getImportedElement().add(CUBE_WAREHOUSE_DEFAULT_USA);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE);
     }
 
     @Override

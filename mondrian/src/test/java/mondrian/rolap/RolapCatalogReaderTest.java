@@ -268,7 +268,7 @@ class RolapCatalogReaderTest {
                 role.getAccessCatalogGrants().add(catalogGrant);
 
                 // Add role to catalog
-                catalog.getAccessRoles().add(role);
+                catalog.getImportedElement().add(role);
             }
 
             @Override

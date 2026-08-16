@@ -58,7 +58,7 @@ public class TestOrdinalColumnModifier implements CatalogMappingSupplier {
         VIRTUAL_CUBE_SALES_VS_HR.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_ORG_SALARY));
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_SALES_VS_HR);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_SALES_VS_HR);
     }
 
     @Override

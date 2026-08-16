@@ -10,6 +10,7 @@
 */
 package mondrian.rolap.sql;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.POSTGRES;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
@@ -814,7 +815,7 @@ class SqlQueryTest  extends BatchTestCase {
                 SqlStatement sqlStatement =
                     SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("luciddb");
-                sqlStatement.setSql("cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)");
+                sqlStatement.setBody("cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)");
                 captionExpression.getSqls().add(sqlStatement);
 
                 // Create Salary level
@@ -870,7 +871,7 @@ class SqlQueryTest  extends BatchTestCase {
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add cube to catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override
@@ -1091,7 +1092,7 @@ class SqlQueryTest  extends BatchTestCase {
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add cube to catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override
@@ -1210,7 +1211,7 @@ class SqlQueryTest  extends BatchTestCase {
                 // Create member grant
                 AccessMemberGrant memberGrant =
                     OlapFactory.eINSTANCE.createAccessMemberGrant();
-                memberGrant.setMember("[Store].[USA].[CA]");
+                memberGrant.setMember(mdx("[Store].[USA].[CA]"));
                 memberGrant.setMemberAccess(MemberAccess.ALL);
 
                 // Create hierarchy grant
@@ -1241,7 +1242,7 @@ class SqlQueryTest  extends BatchTestCase {
                 role.getAccessCatalogGrants().add(catalogGrant);
 
                 // Add role to catalog
-                catalog.getAccessRoles().add(role);
+                catalog.getImportedElement().add(role);
             }
 
             @Override

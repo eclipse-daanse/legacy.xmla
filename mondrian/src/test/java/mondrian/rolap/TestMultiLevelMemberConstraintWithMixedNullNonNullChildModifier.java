@@ -205,7 +205,7 @@ public class TestMultiLevelMemberConstraintWithMixedNullNonNullChildModifier imp
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Add the cube to the catalog
-        this.catalog.getCubes().add(CUBE_WAREHOUSE2);
+        this.catalog.getImportedElement().add(CUBE_WAREHOUSE2);
     }
 
     @Override

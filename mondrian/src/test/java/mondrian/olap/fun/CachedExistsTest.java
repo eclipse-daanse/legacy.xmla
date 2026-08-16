@@ -559,7 +559,7 @@ class CachedExistsTest{
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add cube to catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override

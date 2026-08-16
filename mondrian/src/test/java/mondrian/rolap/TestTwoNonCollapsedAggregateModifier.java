@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationEx
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinSource;
 import org.eclipse.daanse.rolap.mapping.model.database.source.JoinedQueryElement;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
@@ -85,7 +85,7 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         AggregationLevel AGG_LEVEL_PRODUCT;
         AggregationLevel AGG_LEVEL_STORE;
 
-        AggregationName AGGREGATION_NAME;
+        ExplicitAggregationTable AGGREGATION_NAME;
 
         // Static table query with aggregations
         TableSource TABLE_QUERY_SALES_FACT;
@@ -204,8 +204,8 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         AGG_LEVEL_STORE.setCollapsed(false);
 
         // Create aggregation name
-        AGGREGATION_NAME = AggregationFactory.eINSTANCE.createAggregationName();
-        AGGREGATION_NAME.setName((Table) copier.get(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT));
+        AGGREGATION_NAME = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        AGGREGATION_NAME.setTable((Table) copier.get(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT));
         AGGREGATION_NAME.setAggregationFactCount(AGG_FACT_COUNT);
         AGGREGATION_NAME.getAggregationIgnoreColumns().addAll(List.of(
             AGG_IGNORE_CUSTOMER,
@@ -378,7 +378,7 @@ public class TestTwoNonCollapsedAggregateModifier implements CatalogMappingSuppl
         CUBE_FOO.getMeasureGroups().add(MEASURE_GROUP_FOO);
 
         // Add the physical cube to the catalog
-        this.catalog.getCubes().add(CUBE_FOO);
+        this.catalog.getImportedElement().add(CUBE_FOO);
 
 
     }

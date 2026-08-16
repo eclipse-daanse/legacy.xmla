@@ -14,6 +14,7 @@
 
 package mondrian.test.clearview;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,8 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class HangerDimensionTestModifiers {
 
     /*
@@ -170,7 +173,7 @@ public class HangerDimensionTestModifiers {
             dimensionConnector.setDimension(dimension);
 
             // Find the Sales cube and modify its dimension connectors
-            originalCatalog.getCubes().stream()
+            Packages.available(originalCatalog, Cube.class).stream()
                 .filter(cube -> cube instanceof PhysicalCube)
                 .map(cube -> (PhysicalCube) cube)
                 .filter(cube -> "Sales".equals(cube.getName()))

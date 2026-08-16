@@ -14,6 +14,8 @@
 
 package mondrian.test.clearview;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
@@ -21,6 +23,8 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Cal
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /*
 <CalculatedMember
   name='Sales as % of Cost'
@@ -81,9 +85,9 @@ public class MiscTestModifier implements CatalogMappingSupplier {
         Catalog catalogCopy = org.opencube.junit5.EmfUtil.copy((CatalogImpl) originalCatalog);
 
         // Find the "Sales" cube and add calculated member to it
-        for (int i = 0; i < catalogCopy.getCubes().size(); i++) {
-            if (catalogCopy.getCubes().get(i) instanceof PhysicalCube) {
-                PhysicalCube cube = (PhysicalCube) catalogCopy.getCubes().get(i);
+        for (int i = 0; i < Packages.available(catalogCopy, Cube.class).size(); i++) {
+            if (Packages.available(catalogCopy, Cube.class).get(i) instanceof PhysicalCube) {
+                PhysicalCube cube = (PhysicalCube) Packages.available(catalogCopy, Cube.class).get(i);
 
                 if ("Sales".equals(cube.getName())) {
                     // Create calculated member property using RolapMappingFactory
@@ -94,7 +98,7 @@ public class MiscTestModifier implements CatalogMappingSupplier {
                     // Create calculated member using RolapMappingFactory
                     CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                     calculatedMember.setName("Sales as % of Cost");
-                    calculatedMember.setFormula("([Measures].[Store Sales] - [Measures].[Store Cost])/[Measures].[Store Cost]");
+                    calculatedMember.setFormula(mdx("([Measures].[Store Sales] - [Measures].[Store Cost])/[Measures].[Store Cost]"));
                     calculatedMember.getCalculatedMemberProperties().add(formatStringProperty);
 
                     // Add calculated member to the cube

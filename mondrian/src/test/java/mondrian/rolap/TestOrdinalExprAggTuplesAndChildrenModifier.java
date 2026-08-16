@@ -177,7 +177,7 @@ public class TestOrdinalExprAggTuplesAndChildrenModifier implements CatalogMappi
         salesProdOrdCube.getMeasureGroups().add(measureGroup);
 
         // Add cube to catalog
-        this.catalog.getCubes().add(salesProdOrdCube);
+        this.catalog.getImportedElement().add(salesProdOrdCube);
     }
 
     @Override
