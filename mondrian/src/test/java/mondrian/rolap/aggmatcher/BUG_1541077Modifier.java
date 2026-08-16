@@ -22,7 +22,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationCo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationForeignKey;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
 import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
@@ -372,8 +372,8 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         aggMeasure.setColumn(amountAvg);
 
         // Create aggregation name using RolapMappingFactory
-        AggregationName aggregationName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggregationName.setName(aggLpXxxCheques);
+        ExplicitAggregationTable aggregationName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggregationName.setTable(aggLpXxxCheques);
         aggregationName.setAggregationFactCount(aggFactCount);
         aggregationName.getAggregationForeignKeys().add(aggForeignKey);
         aggregationName.getAggregationMeasures().add(aggMeasure);
@@ -469,7 +469,7 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         cube.getMeasureGroups().add(measureGroup);
 
         // Add the cube to the catalog copy
-        catalogCopy.getCubes().add(cube);
+        catalogCopy.getImportedElement().add(cube);
 
         return catalogCopy;
     }

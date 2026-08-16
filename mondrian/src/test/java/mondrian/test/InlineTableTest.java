@@ -275,7 +275,7 @@ class InlineTableTest {
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add the new cube to the catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override
@@ -558,7 +558,7 @@ class InlineTableTest {
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add the new cube to the catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override
@@ -917,7 +917,7 @@ class InlineTableTest {
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add the new cube to the catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override
@@ -1233,7 +1233,7 @@ class InlineTableTest {
                 cube.getMeasureGroups().add(measureGroup);
 
                 // Add the new cube to the catalog
-                catalog.getCubes().add(cube);
+                catalog.getImportedElement().add(cube);
             }
 
             @Override

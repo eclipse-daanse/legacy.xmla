@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+
 import java.util.Collection;
 import java.util.List;
 
@@ -51,6 +52,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Mem
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier {
 
     protected final Catalog catalog;
@@ -65,7 +67,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
     public ExplicitRecognizerTestModifierEmf(Catalog catalogMapping, EcoreUtil.Copier copier) {
         this.copier = copier;
         this.catalog = CatalogFactory.eINSTANCE.createCatalog();
-        catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
+        catalog.getImportedElement().addAll(Packages.available(catalogMapping, Schema.class));
         createCatalog();
     }
 
@@ -136,8 +138,8 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
     protected void createCatalog() {
         // Add custom tables to database schema if any
-        if (catalog.getDbschemas().size() > 0) {
-            Schema dbSchema = catalog.getDbschemas().get(0);
+        if (Packages.available(catalog, Schema.class).size() > 0) {
+            Schema dbSchema = Packages.available(catalog, Schema.class).get(0);
             List<Table> customTables = getDatabaseSchemaTables();
             dbSchema.getOwnedElement().addAll(customTables);
         }
@@ -153,8 +155,9 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
 
         // Clear existing cubes and add the new one
         catalog.setName("FoodMart");
-        catalog.getCubes().clear();
-        catalog.getCubes().add(extraColCube);
+        catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        catalog.getImportedElement().add(extraColCube);
     }
 
     protected StandardDimension createStoreDimension() {
@@ -276,7 +279,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         // Set default measure if provided
         String defaultMeasureName = getDefaultMeasure();
         if (defaultMeasureName != null) {
-            Member defaultMeasure = resolveMeasure(defaultMeasureName);
+            org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike defaultMeasure = resolveMeasure(defaultMeasureName);
             if (defaultMeasure != null) {
                 cube.setDefaultMeasure(defaultMeasure);
             }
@@ -457,7 +460,7 @@ public class ExplicitRecognizerTestModifierEmf implements CatalogMappingSupplier
         return connector;
     }
 
-    protected Member resolveMeasure(String defaultMeasure) {
+    protected org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike resolveMeasure(String defaultMeasure) {
         switch (defaultMeasure) {
             case "Unit Sales":
                 return unitSales;

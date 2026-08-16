@@ -13,6 +13,8 @@
  */
 package mondrian.rolap;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.Collection;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
@@ -32,6 +34,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMember;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * EMF version of
  * TestCalculatedDefaultMeasureOnVirtualCubeNoThrowExceptionModifier from
@@ -100,7 +103,7 @@ public class TestCalculatedDefaultMeasureOnVirtualCubeNoThrowExceptionModifier i
         // Create calculated member
         CALCULATED_MEMBER_DUMMY = LevelFactory.eINSTANCE.createCalculatedMember();
         CALCULATED_MEMBER_DUMMY.setName("dummyMeasure");
-        CALCULATED_MEMBER_DUMMY.setFormula("1");
+        CALCULATED_MEMBER_DUMMY.setFormula(mdx("1"));
         // Note: dimension is set to Measures by default for calculated members
 
         // Create dimension connector for Store
@@ -134,9 +137,9 @@ public class TestCalculatedDefaultMeasureOnVirtualCubeNoThrowExceptionModifier i
 
         // Add both cubes to the catalog
         this.catalog.setName("FoodMart");
-        this.catalog.getDbschemas().addAll((Collection<? extends Schema>) baseCatalog.getDbschemas());
-        this.catalog.getCubes().add(CUBE_SALES);
-        this.catalog.getCubes().add(VIRTUAL_CUBE);
+        this.catalog.getImportedElement().addAll(Packages.available(baseCatalog, Schema.class));
+        this.catalog.getImportedElement().add(CUBE_SALES);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE);
     }
 
     @Override

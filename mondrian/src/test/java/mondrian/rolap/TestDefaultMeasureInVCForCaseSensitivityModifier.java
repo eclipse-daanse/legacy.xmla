@@ -70,7 +70,7 @@ public class TestDefaultMeasureInVCForCaseSensitivityModifier implements Catalog
 
         // Set Profit as default measure (object reference, not string)
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE
-                .setDefaultMeasure((Member) copier.get(CatalogSupplier.CALCULATED_MEMBER_PROFIT));
+                .setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.CALCULATED_MEMBER_PROFIT));
 
         // Add dimension connector
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.getDimensionConnectors().add(CONNECTOR_PRODUCT);
@@ -84,7 +84,7 @@ public class TestDefaultMeasureInVCForCaseSensitivityModifier implements Catalog
                 .add((CalculatedMember) copier.get(CatalogSupplier.CALCULATED_MEMBER_PROFIT));
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
     }
 
     @Override

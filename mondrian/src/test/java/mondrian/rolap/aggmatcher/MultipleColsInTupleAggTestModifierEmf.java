@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
@@ -22,7 +23,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationCo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.OrderedColumn;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory;
@@ -44,6 +45,8 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupplier {
 
     private final CatalogImpl originalCatalog;
@@ -233,8 +236,8 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         aggLevel2.setColumn(productCategoryTestLpXxxFact);
         aggLevel2.setName("[Product].[Product].[Product Category]");
 
-        AggregationName aggregationName1 = AggregationFactory.eINSTANCE.createAggregationName();
-        aggregationName1.setName(testLpXxxFact);
+        ExplicitAggregationTable aggregationName1 = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggregationName1.setTable(testLpXxxFact);
         aggregationName1.setAggregationFactCount(aggFactCount1);
         aggregationName1.getAggregationMeasures().add(aggMeasure1);
         aggregationName1.getAggregationLevels().add(aggLevel1);
@@ -253,8 +256,8 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         aggLevel3.setName("[Product].[Product].[Product Name]");
         aggLevel3.setCollapsed(false);
 
-        AggregationName aggregationName2 = AggregationFactory.eINSTANCE.createAggregationName();
-        aggregationName2.setName(testLpXx2Fact);
+        ExplicitAggregationTable aggregationName2 = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggregationName2.setTable(testLpXx2Fact);
         aggregationName2.setAggregationFactCount(aggFactCount2);
         aggregationName2.getAggregationMeasures().add(aggMeasure2);
         aggregationName2.getAggregationLevels().add(aggLevel3);
@@ -395,18 +398,18 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
         cube.getMeasureGroups().add(measureGroup);
 
         // Add tables to database schema
-        if (originalCatalog.getDbschemas().size() > 0) {
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(fact);
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(storeCsv);
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(productCsv);
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(cat);
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(productCat);
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(testLpXxxFact);
-            originalCatalog.getDbschemas().get(0).getOwnedElement().add(testLpXx2Fact);
+        if (Packages.available(originalCatalog, Schema.class).size() > 0) {
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(fact);
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(storeCsv);
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(productCsv);
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(cat);
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(productCat);
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(testLpXxxFact);
+            Packages.available(originalCatalog, Schema.class).get(0).getOwnedElement().add(testLpXx2Fact);
         }
 
         // Add the cube to the catalog copy
-        originalCatalog.getCubes().add(cube);
+        originalCatalog.getImportedElement().add(cube);
 
     }
 

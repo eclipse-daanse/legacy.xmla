@@ -13,6 +13,8 @@
  */
 package mondrian.rolap.agg;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
@@ -34,7 +36,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationCo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
@@ -53,6 +55,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSupplier {
 
     protected final Catalog catalog;
@@ -201,8 +204,8 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         mondrian2225Agg.getFeature().add(factCountMondrian2225Agg);
 
         // Add tables to database schema
-        if (catalog.getDbschemas().size() > 0) {
-            Schema dbSchema = catalog.getDbschemas().get(0);
+        if (Packages.available(catalog, Schema.class).size() > 0) {
+            Schema dbSchema = Packages.available(catalog, Schema.class).get(0);
             dbSchema.getOwnedElement().add(mondrian2225Customer);
             dbSchema.getOwnedElement().add(mondrian2225Fact);
             dbSchema.getOwnedElement().add(mondrian2225Dim);
@@ -279,8 +282,8 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         tableQuery.setTable(mondrian2225Fact);
 
         // Create aggregation
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(mondrian2225Agg);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(mondrian2225Agg);
         aggName.setIgnorecase(true);
 
         // Aggregation fact count
@@ -332,7 +335,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         mondrian2225Cube.getMeasureGroups().add(measureGroup);
 
         // Add cube to catalog
-        catalog.getCubes().add(mondrian2225Cube);
+        catalog.getImportedElement().add(mondrian2225Cube);
     }
 
     /*
@@ -351,7 +354,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
     protected void createAccessRoles() {
         // Create member grant
         AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember("[Customer].[Customer].[NonExistingName]");
+        memberGrant.setMember(mdx("[Customer].[Customer].[NonExistingName]"));
         memberGrant.setMemberAccess(MemberAccess.ALL);
 
         // Create hierarchy grant
@@ -378,7 +381,7 @@ public class AggregationOnInvalidRoleTestModifierEmf implements CatalogMappingSu
         role.getAccessCatalogGrants().add(catalogGrant);
 
         // Add role to catalog
-        catalog.getAccessRoles().add(role);
+        catalog.getImportedElement().add(role);
     }
 
     @Override

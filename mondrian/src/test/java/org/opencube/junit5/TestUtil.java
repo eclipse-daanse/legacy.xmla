@@ -92,6 +92,8 @@ import org.opencube.junit5.context.TestContextImpl;
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
 
+import org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper;
+import org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions;
 //import mondrian.spi.DialectManager;
 
 public class TestUtil {
@@ -1924,5 +1926,22 @@ public class TestUtil {
 
     public static Optional<? extends Level> getLevelByNameFromArray(List<? extends Level> hierarchies, String name){
         return hierarchies.stream().filter(l -> name.equals(l.getName())).findFirst();
+    }
+
+    /**
+     * Attaches a 'documentation' Description to the element, adopting its
+     * root into the catalog if needed.
+     */
+    public static void describe(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog,
+            org.eclipse.daanse.cwm.model.cwm.objectmodel.core.ModelElement element, String text) {
+        try {
+            org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions.describe(element,
+                    org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper.TYPE_DOCUMENTATION, null, text);
+        } catch (IllegalStateException detached) {
+            catalog.getOwnedElement().add((org.eclipse.daanse.cwm.model.cwm.objectmodel.core.ModelElement)
+                    org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer(element));
+            org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions.describe(element,
+                    org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper.TYPE_DOCUMENTATION, null, text);
+        }
     }
 }

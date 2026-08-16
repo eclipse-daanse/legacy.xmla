@@ -106,7 +106,7 @@ public class TestStrMeasureModifier implements CatalogMappingSupplier {
         CUBE_STR_MEASURE.getMeasureGroups().add(MEASURE_GROUP);
 
         // Add the cube to the catalog
-        this.catalog.getCubes().add(CUBE_STR_MEASURE);
+        this.catalog.getImportedElement().add(CUBE_STR_MEASURE);
     }
 
     @Override

@@ -10,6 +10,7 @@
 */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import java.util.List;
@@ -185,10 +186,10 @@ class SteelWheelsAggregationTest {
 
         Catalog catalog = CatalogFactory.eINSTANCE.createCatalog();
         catalog.setName("SteelWheels");
-        catalog.setDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
-        catalog.getCubes().add(customersCube);
-        catalog.getAccessRoles().addAll(roles);
-        catalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_STEELWHEELS);
+        org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
+        catalog.getImportedElement().add(customersCube);
+        catalog.getImportedElement().addAll(roles);
+        catalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_STEELWHEELS);
     	return catalog;
     }
 
@@ -204,11 +205,11 @@ class SteelWheelsAggregationTest {
         dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
 
         AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant1.setMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine]");
+        memberGrant1.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine]"));
         memberGrant1.setMemberAccess(MemberAccess.NONE);
 
         AccessMemberGrant memberGrant2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant2.setMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
+        memberGrant2.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
         memberGrant2.setMemberAccess(MemberAccess.ALL);
 
         AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -252,7 +253,7 @@ class SteelWheelsAggregationTest {
         dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
 
         AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine]");
+        memberGrant.setMember(mdx("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine]"));
         memberGrant.setMemberAccess(MemberAccess.ALL);
 
         AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -295,7 +296,7 @@ class SteelWheelsAggregationTest {
         dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
 
         AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
+        memberGrant.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
         memberGrant.setMemberAccess(MemberAccess.NONE);
 
         AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -354,11 +355,11 @@ class SteelWheelsAggregationTest {
         dimensionGrant1.setDimensionAccess(DimensionAccess.ALL);
 
         AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
+        memberGrant.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
         memberGrant.setMemberAccess(MemberAccess.NONE);
 
         AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant1.setMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
+        memberGrant1.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
         memberGrant1.setMemberAccess(MemberAccess.ALL);
 
         AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();

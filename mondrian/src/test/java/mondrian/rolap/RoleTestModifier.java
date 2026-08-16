@@ -12,6 +12,7 @@
  */
 package mondrian.rolap;
 
+
 import java.util.Optional;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -33,6 +34,7 @@ import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /*
 public class RoleTestModifier  extends PojoMappingModifier {
 
@@ -90,7 +92,7 @@ public class RoleTestModifier implements CatalogMappingSupplier {
         columnGrant3.setColumn((Column) copier.get(CatalogSupplier.COLUMN_DEPARTMENT_ID_SALARY));
         columnGrant3.setColumnAccess(ColumnAccess.NONE);
 
-        Optional<Table> oTable = catalog.getDbschemas().get(0).getOwnedElement().stream().filter(Table.class::isInstance).map(Table.class::cast).filter(t -> "sales_fact_1997".equals(t.getName())).findAny();
+        Optional<Table> oTable = Packages.available(catalog, Schema.class).get(0).getOwnedElement().stream().filter(Table.class::isInstance).map(Table.class::cast).filter(t -> "sales_fact_1997".equals(t.getName())).findAny();
         // Create table grants using RolapMappingFactory
         AccessTableGrant tableGrant1 = DatabaseFactory.eINSTANCE.createAccessTableGrant();
         tableGrant1.setTableAccess(TableAccess.ALL);
@@ -127,7 +129,7 @@ public class RoleTestModifier implements CatalogMappingSupplier {
         role.getAccessCatalogGrants().add(catalogGrant);
 
         // Add the role to the catalog copy
-        this.catalog.getAccessRoles().add(role);
+        this.catalog.getImportedElement().add(role);
     }
 
     @Override

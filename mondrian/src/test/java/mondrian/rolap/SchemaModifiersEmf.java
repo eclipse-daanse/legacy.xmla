@@ -13,6 +13,8 @@
  */
 package mondrian.rolap;
 
+
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +33,8 @@ import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.Annotation;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.CoreFactory;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue;
 import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
@@ -55,7 +58,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFa
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationForeignKey;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn;
@@ -113,6 +116,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.opencube.junit5.EmfUtil;
 
 import mondrian.test.FormatterUtil;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class SchemaModifiersEmf {
 
     public static class NonEmptyTestModifier6 implements CatalogMappingSupplier {
@@ -236,7 +240,7 @@ public class SchemaModifiersEmf {
             sales1Cube.getDimensionConnectors().add(dimensionConnectorTime);
             sales1Cube.getMeasureGroups().add(measureGroup);
 
-            memberGrant.setMember("[Time].[Year].[1997]");
+            memberGrant.setMember(mdx("[Time].[Year].[1997]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.setHierarchy(timeHierarchy);
@@ -259,9 +263,9 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier6(Catalog cat) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
-            catalog.getCubes().add(sales1Cube);
-            catalog.getAccessRoles().add(role1);
+            catalog.getImportedElement().addAll(Packages.available(cat, Schema.class));
+            catalog.getImportedElement().add(sales1Cube);
+            catalog.getImportedElement().add(role1);
         }
 
         @Override
@@ -301,19 +305,19 @@ public class SchemaModifiersEmf {
             AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             AccessRole roleNoWAState = CommonFactory.eINSTANCE.createAccessRole();
 
-            memberGrantWA.setMember("[Customers].[USA].[WA]");
+            memberGrantWA.setMember(mdx("[Customers].[USA].[WA]"));
             memberGrantWA.setMemberAccess(MemberAccess.NONE);
 
-            memberGrantOR.setMember("[Customers].[USA].[OR]");
+            memberGrantOR.setMember(mdx("[Customers].[USA].[OR]"));
             memberGrantOR.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantCA.setMember("[Customers].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantCanada.setMember("[Customers].[Canada]");
+            memberGrantCanada.setMember(mdx("[Customers].[Canada]"));
             memberGrantCanada.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantMexico.setMember("[Customers].[Mexico]");
+            memberGrantMexico.setMember(mdx("[Customers].[Mexico]"));
             memberGrantMexico.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
@@ -332,7 +336,7 @@ public class SchemaModifiersEmf {
             roleNoWAState.setName("No_WA_State");
             roleNoWAState.getAccessCatalogGrants().add(accessCatalogGrant);
 
-            catalog.getAccessRoles().add(roleNoWAState);
+            catalog.getImportedElement().add(roleNoWAState);
         }
 
         public Catalog get() {
@@ -370,19 +374,19 @@ public class SchemaModifiersEmf {
             AccessCubeGrant cubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
             AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             AccessRole roleOnlyDFState = CommonFactory.eINSTANCE.createAccessRole();
-            memberGrantWA.setMember("[Customers].[USA].[WA]");
+            memberGrantWA.setMember(mdx("[Customers].[USA].[WA]"));
             memberGrantWA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantOR.setMember("[Customers].[USA].[OR]");
+            memberGrantOR.setMember(mdx("[Customers].[USA].[OR]"));
             memberGrantOR.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantCA.setMember("[Customers].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantCanada.setMember("[Customers].[Canada]");
+            memberGrantCanada.setMember(mdx("[Customers].[Canada]"));
             memberGrantCanada.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantMexicoDF.setMember("[Customers].[Mexico].[DF]");
+            memberGrantMexicoDF.setMember(mdx("[Customers].[Mexico].[DF]"));
             memberGrantMexicoDF.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_CUSTOMER));
@@ -401,7 +405,7 @@ public class SchemaModifiersEmf {
             roleOnlyDFState.setName("Only_DF_State");
             roleOnlyDFState.getAccessCatalogGrants().add(accessCatalogGrant);
 
-            catalog.getAccessRoles().add(roleOnlyDFState);
+            catalog.getImportedElement().add(roleOnlyDFState);
         }
 
         @Override
@@ -515,7 +519,7 @@ public class SchemaModifiersEmf {
             storeWithCountMCube.getDimensionConnectors()
                     .addAll(List.of(storeTypeConnector, storeConnector, hasCoffeeBarConnector));
             storeWithCountMCube.getMeasureGroups().add(measureGroup);
-            catalog.getCubes().add(storeWithCountMCube);
+            catalog.getImportedElement().add(storeWithCountMCube);
 
         }
 
@@ -697,7 +701,7 @@ public class SchemaModifiersEmf {
             virtualCubeAnalysis.getReferencedMeasures()
                     .addAll(List.of(measureEmployeeStoreSalesA, measureEmployeeStoreCostB));
 
-            catalog.getCubes().addAll(List.of(cubeAnalysisA, cubeAnalysisB, virtualCubeAnalysis));
+            catalog.getImportedElement().addAll(List.of(cubeAnalysisA, cubeAnalysisB, virtualCubeAnalysis));
         }
 
         @Override
@@ -800,7 +804,7 @@ public class SchemaModifiersEmf {
                     buyerConnector, buyerTwoConnector, storeSizeConnector, storeTypeConnector2, timeConnector));
             alternateSalesCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(alternateSalesCube);
+            catalog.getImportedElement().add(alternateSalesCube);
         }
 
         @Override
@@ -895,7 +899,7 @@ public class SchemaModifiersEmf {
 
         public SelectNotInGroupByTestModifier2(Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-            catalog.getCubes().add(customSalesCube);
+            catalog.getImportedElement().add(customSalesCube);
         }
 
         @Override
@@ -954,7 +958,7 @@ public class SchemaModifiersEmf {
 
             // Warehouse and Sales2 Virtual Cube
             warehouseAndSales2.setName("Warehouse and Sales2");
-            warehouseAndSales2.setDefaultMeasure( (org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
+            warehouseAndSales2.setDefaultMeasure( (org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_GENDER));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_STORE));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_PRODUCT));
@@ -985,7 +989,7 @@ public class SchemaModifiersEmf {
             warehouseAndSales3.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_WAREHOUSE_WAREHOUSE));
             warehouseAndSales3.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_CUSTOMER_COUNT));
 
-            catalog.getCubes().addAll(List.of(warehouseAndSales2, warehouseAndSales3));
+            catalog.getImportedElement().addAll(List.of(warehouseAndSales2, warehouseAndSales3));
         }
 
         @Override
@@ -1083,7 +1087,7 @@ public class SchemaModifiersEmf {
 
         public SelectNotInGroupByTestModifier1(Catalog catalog) {
             this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) catalog);
-            this.catalog.getCubes().add(customSalesCube);
+            this.catalog.getImportedElement().add(customSalesCube);
         }
 
         @Override
@@ -1183,7 +1187,7 @@ public class SchemaModifiersEmf {
 
         public SelectNotInGroupByTestModifier3(Catalog catalog) {
             this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) catalog);
-            this.catalog.getCubes().add(customSalesCube);
+            this.catalog.getImportedElement().add(customSalesCube);
         }
 
         @Override
@@ -1283,7 +1287,7 @@ public class SchemaModifiersEmf {
 
         public SelectNotInGroupByTestModifier4(Catalog catalog) {
             this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) catalog);
-            this.catalog.getCubes().add(customSalesCube);
+            this.catalog.getImportedElement().add(customSalesCube);
         }
 
         @Override
@@ -1395,7 +1399,7 @@ public class SchemaModifiersEmf {
 
             // Configure virtual cube
             warehouseAndSales2.setName("Warehouse and Sales2");
-            warehouseAndSales2.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
+            warehouseAndSales2.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
             warehouseAndSales2.getCubeUsages().addAll(List.of(salesCubeUsage, warehouseCubeUsage));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER));
             warehouseAndSales2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_EDUCATION_LEVEL));
@@ -1425,7 +1429,7 @@ public class SchemaModifiersEmf {
             warehouseAndSales2.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_PROFIT));
             warehouseAndSales2.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_SALES));
 
-            this.catalog.getCubes().add(warehouseAndSales2);
+            this.catalog.getImportedElement().add(warehouseAndSales2);
 
         }
 
@@ -1565,7 +1569,7 @@ public class SchemaModifiersEmf {
 
             // Configure virtual cube
             warehouseAndSales3.setName("Warehouse and Sales 3");
-            warehouseAndSales3.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_STORE_INVOICE));
+            warehouseAndSales3.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_STORE_INVOICE));
             warehouseAndSales3.getCubeUsages().addAll(List.of(sales3CubeUsage, warehouseCubeUsage));
             warehouseAndSales3.getDimensionConnectors().add(genderConnector);
             warehouseAndSales3.getDimensionConnectors().add(educationLevelConnector);
@@ -1577,8 +1581,8 @@ public class SchemaModifiersEmf {
             warehouseAndSales3.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_STORE_INVOICE));
             warehouseAndSales3.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_WAREHOUSE_SALES));
 
-            this.catalog.getCubes().add(sales3Cube);
-            this.catalog.getCubes().add(warehouseAndSales3);
+            this.catalog.getImportedElement().add(sales3Cube);
+            this.catalog.getImportedElement().add(warehouseAndSales3);
         }
 
         @Override
@@ -1652,7 +1656,7 @@ public class SchemaModifiersEmf {
             employeesClosureConnector.setDimension(employeesClosureDimension);
             employeesClosureConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY));
 
-            Optional<Cube> oCube = this.catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(this.catalog, Cube.class).stream()
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1676,7 +1680,7 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -1934,10 +1938,10 @@ public class SchemaModifiersEmf {
         public ParentChildHierarchyTestModifier3(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(employeeSharedClosureCube);
-            catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(employeeSharedClosureCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, AccessRole.class));
         }
 
         @Override
@@ -1955,7 +1959,7 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -2043,7 +2047,7 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -2245,10 +2249,10 @@ public class SchemaModifiersEmf {
         public ParentChildHierarchyTestModifier6(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(hrFewerDimsCube);
-            catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(hrFewerDimsCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, AccessRole.class));
 
         }
 
@@ -2345,10 +2349,10 @@ public class SchemaModifiersEmf {
         public ParentChildHierarchyTestModifier7(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(hrOrderedCube);
-            catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(hrOrderedCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, AccessRole.class));
         }
 
         @Override
@@ -2455,7 +2459,7 @@ public class SchemaModifiersEmf {
             employeesConnector3.setForeignKey(CatalogSupplier.COLUMN_EMPLOYEE_ID_SALARY);
 
             calculatedMember.setName("HR Cost per Sale");
-            calculatedMember.setFormula("[Measures].[Store Sales] / [Measures].[Org Salary]");
+            calculatedMember.setFormula(mdx("[Measures].[Store Sales] / [Measures].[Org Salary]"));
 
             customSalesAndHRCube.setName("CustomSalesAndHR");
             customSalesAndHRCube.getDimensionConnectors().add(employeesConnector3);
@@ -2466,12 +2470,12 @@ public class SchemaModifiersEmf {
         public ParentChildHierarchyTestModifier8(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(customSalesCube);
-            catalog.getCubes().add(customHRCube);
-            catalog.getCubes().add(customSalesAndHRCube);
-            catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(customSalesCube);
+            catalog.getImportedElement().add(customHRCube);
+            catalog.getImportedElement().add(customSalesAndHRCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, AccessRole.class));
         }
 
         @Override
@@ -2552,10 +2556,10 @@ public class SchemaModifiersEmf {
         public ParentChildHierarchyTestModifier9(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(hr4cCube);
-            catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(hr4cCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, AccessRole.class));
         }
 
         @Override
@@ -2626,10 +2630,10 @@ public class SchemaModifiersEmf {
         public ParentChildHierarchyTestModifier10(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(hr4cCube);
-            catalog.getAccessRoles().addAll((Collection<? extends AccessRole>) catalog2.getAccessRoles());
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(hr4cCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, AccessRole.class));
         }
 
         @Override
@@ -2813,8 +2817,8 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesBug441Cube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesBug441Cube);
         }
 
         @Override
@@ -2961,10 +2965,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
-            catalog.getCubes().add(salesCube);
-            catalog.getCubes().add(sales1Cube);
-            catalog.getCubes().add(virtualCube);
+            catalog.getImportedElement().addAll(Packages.available(cat, Schema.class));
+            catalog.getImportedElement().add(salesCube);
+            catalog.getImportedElement().add(sales1Cube);
+            catalog.getImportedElement().add(virtualCube);
 
         }
 
@@ -2986,13 +2990,13 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 CubeImpl cube = (CubeImpl) oCube.get();
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("H1 1997");
-                calculatedMember.setFormula("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])");
+                calculatedMember.setFormula(mdx("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])"));
                 calculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
                 cube.getCalculatedMembers().add(calculatedMember);
             }
@@ -3018,20 +3022,20 @@ public class SchemaModifiersEmf {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
             catalog = (CatalogImpl) copier.get(cat);
 
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 CubeImpl cube = (CubeImpl) oCube.get();
                 CalculatedMember calculatedMember1 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember1.setName("H1 1997");
-                calculatedMember1.setFormula("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])");
+                calculatedMember1.setFormula(mdx("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])"));
                 calculatedMember1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
                 cube.getCalculatedMembers().add(calculatedMember1);
 
                 CalculatedMember calculatedMember2 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember2.setName("Partial");
-                calculatedMember2.setFormula(
-                        "Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])");
+                calculatedMember2.setFormula(mdx(
+                        "Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])"));
                 calculatedMember2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_EDUCATION_LEVEL));
                 cube.getCalculatedMembers().add(calculatedMember2);
             }
@@ -3173,7 +3177,7 @@ public class SchemaModifiersEmf {
             measureGroup.getMeasures().add(unitSalesMeasure);
             cube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(cube);
+            catalog.getImportedElement().add(cube);
 
         }
 
@@ -3207,7 +3211,7 @@ public class SchemaModifiersEmf {
         public FilterTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Store".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3333,7 +3337,7 @@ public class SchemaModifiersEmf {
         public MemberCacheControlTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3443,7 +3447,7 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3510,7 +3514,7 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier2(Catalog catalogMapping, HideMemberIf hideMemberIf) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3576,7 +3580,7 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3644,7 +3648,7 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier4(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3723,7 +3727,7 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier5(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -3888,10 +3892,10 @@ public class SchemaModifiersEmf {
 
             // Calculated Members
             cmDummyMeasure.setName("dummyMeasure");
-            cmDummyMeasure.setFormula("[Measures].[Unit Sales]");
+            cmDummyMeasure.setFormula(mdx("[Measures].[Unit Sales]"));
 
             dummyMeasure2Cm.setName("dummyMeasure2");
-            dummyMeasure2Cm.setFormula("[Measures].[dummyMeasure]");
+            dummyMeasure2Cm.setFormula(mdx("[Measures].[dummyMeasure]"));
 
             // Sales Cube
             salesCube.setName("Sales");
@@ -3942,9 +3946,9 @@ public class SchemaModifiersEmf {
         public NonEmptyTestModifier7(Catalog cat) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
-            catalog.getCubes().add(salesCube);
-            catalog.getCubes().add(virtualCube);
+            catalog.getImportedElement().addAll(Packages.available(cat, Schema.class));
+            catalog.getImportedElement().add(salesCube);
+            catalog.getImportedElement().add(virtualCube);
         }
 
         @Override
@@ -3986,7 +3990,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -4010,7 +4014,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement1 = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement1.getDialects().add("generic");
-                sqlStatement1.setSql("SELECT * FROM customer");
+                sqlStatement1.setBody("SELECT * FROM customer");
 
                 SqlStatement sqlStatement2 = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement2.getDialects().add("oracle");
@@ -4021,7 +4025,7 @@ public class SchemaModifiersEmf {
                 sqlStatement2.getDialects().add("neoview");
                 sqlStatement2.getDialects().add("netezza");
                 sqlStatement2.getDialects().add("snowflake");
-                sqlStatement2.setSql("SELECT * FROM \"customer\"");
+                sqlStatement2.setBody("SELECT * FROM \"customer\"");
 
                 sqlView.getDialectStatements().add(sqlStatement1);
                 sqlView.getDialectStatements().add(sqlStatement2);
@@ -4084,7 +4088,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -4216,7 +4220,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -4263,13 +4267,13 @@ public class SchemaModifiersEmf {
                 // DB2 SQL
                 SqlStatement db2Sql = SourceFactory.eINSTANCE.createSqlStatement();
                 db2Sql.getDialects().add("db2");
-                db2Sql.setSql(
-                        "SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"");
+                db2Sql.setBody(
+"SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"");
 
                 // MSSQL SQL
                 SqlStatement mssqlSql = SourceFactory.eINSTANCE.createSqlStatement();
                 mssqlSql.getDialects().add("mssql");
-                mssqlSql.setSql("SELECT \"product\".\"product_id\",\n" + "\"product\".\"brand_name\",\n"
+                mssqlSql.setBody("SELECT \"product\".\"product_id\",\n" + "\"product\".\"brand_name\",\n"
                         + "\"product\".\"product_name\",\n" + "\"product\".\"SKU\",\n" + "\"product\".\"SRP\",\n"
                         + "\"product\".\"gross_weight\",\n" + "\"product\".\"net_weight\",\n"
                         + "\"product\".\"recyclable_package\",\n" + "\"product\".\"low_fat\",\n"
@@ -4285,7 +4289,7 @@ public class SchemaModifiersEmf {
                 SqlStatement mysqlSql = SourceFactory.eINSTANCE.createSqlStatement();
                 mysqlSql.getDialects().add("mysql");
                 mysqlSql.getDialects().add("mariadb");
-                mysqlSql.setSql("SELECT `product`.`product_id`,\n" + "`product`.`brand_name`,\n"
+                mysqlSql.setBody("SELECT `product`.`product_id`,\n" + "`product`.`brand_name`,\n"
                         + "`product`.`product_name`,\n" + "`product`.`SKU`,\n" + "`product`.`SRP`,\n"
                         + "`product`.`gross_weight`,\n" + "`product`.`net_weight`,\n"
                         + "`product`.`recyclable_package`,\n" + "`product`.`low_fat`,\n"
@@ -4299,8 +4303,8 @@ public class SchemaModifiersEmf {
                 // Generic SQL (the original XML schema had a generic branch)
                 SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
                 genericSql.getDialects().add("generic");
-                genericSql.setSql(
-                        "SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"");
+                genericSql.setBody(
+"SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"");
 
                 sqlView.getDialectStatements().add(db2Sql);
                 sqlView.getDialectStatements().add(mssqlSql);
@@ -4395,7 +4399,7 @@ public class SchemaModifiersEmf {
             //otherStoreConnector.setForeignKey((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
 
 
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -4433,7 +4437,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier5(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -4494,7 +4498,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier6(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCube cube = (PhysicalCube) oCube.get();
@@ -4561,7 +4565,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier7(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -4577,31 +4581,31 @@ public class SchemaModifiersEmf {
 
                 SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
                 genericSql.getDialects().add("generic");
-                genericSql.setSql(" NULL ");
+                genericSql.setBody(" NULL ");
 
                 SqlStatement verticaSql = SourceFactory.eINSTANCE.createSqlStatement();
                 verticaSql.getDialects().add("vertica");
-                verticaSql.setSql(" NULL::FLOAT ");
+                verticaSql.setBody(" NULL::FLOAT ");
 
                 // H2 rejects SUM over an untyped NULL ("SUM or AVG on wrong data type"); give it a typed NULL.
                 SqlStatement h2Sql = SourceFactory.eINSTANCE.createSqlStatement();
                 h2Sql.getDialects().add("h2");
-                h2Sql.setSql(" CAST(NULL AS DECIMAL) ");
+                h2Sql.setBody(" CAST(NULL AS DECIMAL) ");
 
                 // MSSQL ("Operand data type NULL is invalid for sum operator"), PostgreSQL
                 // ("function sum(unknown) is not unique") and Derby likewise reject SUM over
                 // an untyped NULL; give them typed NULLs too (same treatment as h2/vertica).
                 SqlStatement mssqlSql = SourceFactory.eINSTANCE.createSqlStatement();
                 mssqlSql.getDialects().add("mssql");
-                mssqlSql.setSql(" CAST(NULL AS INT) ");
+                mssqlSql.setBody(" CAST(NULL AS INT) ");
 
                 SqlStatement postgresSql = SourceFactory.eINSTANCE.createSqlStatement();
                 postgresSql.getDialects().add("postgres");
-                postgresSql.setSql(" CAST(NULL AS NUMERIC) ");
+                postgresSql.setBody(" CAST(NULL AS NUMERIC) ");
 
                 SqlStatement derbySql = SourceFactory.eINSTANCE.createSqlStatement();
                 derbySql.getDialects().add("derby");
-                derbySql.setSql(" CAST(NULL AS INT) ");
+                derbySql.setBody(" CAST(NULL AS INT) ");
 
                 expressionColumn.getSqls().add(genericSql);
                 expressionColumn.getSqls().add(verticaSql);
@@ -4665,7 +4669,7 @@ public class SchemaModifiersEmf {
             this.dialect = dialect;
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -4713,7 +4717,7 @@ public class SchemaModifiersEmf {
                 isZeroNameColumn.setName("_isZero_name_expression");
                 SqlStatement isZeroSql = SourceFactory.eINSTANCE.createSqlStatement();
                 isZeroSql.getDialects().add("generic");
-                isZeroSql.setSql("case when " + dialect.quoteIdentifier("product", "product_id")
+                isZeroSql.setBody("case when " + dialect.quoteIdentifier("product", "product_id")
                         + "=0 then 'Zero' else 'Non-Zero' end");
                 isZeroNameColumn.getSqls().add(isZeroSql);
                 isZeroLevel.setNameColumn(isZeroNameColumn);
@@ -4731,7 +4735,7 @@ public class SchemaModifiersEmf {
                 subCatNameColumn.setName("_subCat_name_expression");
                 SqlStatement subCatSql = SourceFactory.eINSTANCE.createSqlStatement();
                 subCatSql.getDialects().add("generic");
-                subCatSql.setSql(dialect.quoteIdentifier("product_class", "product_subcategory"));
+                subCatSql.setBody(dialect.quoteIdentifier("product_class", "product_subcategory"));
                 subCatNameColumn.getSqls().add(subCatSql);
                 subCatLevel.setNameColumn(subCatNameColumn);
 
@@ -4748,7 +4752,7 @@ public class SchemaModifiersEmf {
                 productNameColumn.setName("_productName_name_expression");
                 SqlStatement productNameSql = SourceFactory.eINSTANCE.createSqlStatement();
                 productNameSql.getDialects().add("generic");
-                productNameSql.setSql(dialect.quoteIdentifier("product", "product_name"));
+                productNameSql.setBody(dialect.quoteIdentifier("product", "product_name"));
                 productNameColumn.getSqls().add(productNameSql);
                 productNameLevel.setNameColumn(productNameColumn);
 
@@ -4786,7 +4790,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier9(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -4794,7 +4798,7 @@ public class SchemaModifiersEmf {
                 calculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                 calculatedMember.setVisible(true);
                 calculatedMember.setName("last");
-                calculatedMember.setFormula("([Gender].LastChild)");
+                calculatedMember.setFormula(mdx("([Gender].LastChild)"));
                 cube.getCalculatedMembers().add(calculatedMember);
             }
         }
@@ -4821,7 +4825,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier10(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -4882,7 +4886,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier11(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -4944,7 +4948,7 @@ public class SchemaModifiersEmf {
         public BasicQueryTestModifier12(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -4960,7 +4964,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
                 genericSql.getDialects().add("generic");
-                genericSql.setSql("0");
+                genericSql.setBody("0");
 
                 expressionColumn.getSqls().add(genericSql);
 
@@ -5063,8 +5067,8 @@ public class SchemaModifiersEmf {
             timeConnector.setDimension(timeDimension);
 
             // Create aggregation table
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
 
             AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_SPECIAL_SALES_FACT_1997);
@@ -5107,8 +5111,8 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2442");
-            catalog.getCubes().add(salesCube);
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
+            catalog.getImportedElement().add(salesCube);
+            catalog.getImportedElement().addAll(Packages.available(catalogMapping, Schema.class));
         }
 
         @Override
@@ -5260,9 +5264,9 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2285");
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().add(salesCube);
             if (cat != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) cat.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(cat, Schema.class));
             }
 
         }
@@ -5368,7 +5372,7 @@ public class SchemaModifiersEmf {
             quarterColumn.setName("_quarter_key");
             SqlStatement quarterSql = SourceFactory.eINSTANCE.createSqlStatement();
             quarterSql.getDialects().add("generic");
-            quarterSql.setSql("RTRIM(quarter)");
+            quarterSql.setBody("RTRIM(quarter)");
             quarterColumn.getSqls().add(quarterSql);
             quarterLevel.setColumn(quarterColumn);
 
@@ -5519,7 +5523,7 @@ public class SchemaModifiersEmf {
 
             CalculatedMember warehouseSalesCalc = LevelFactory.eINSTANCE.createCalculatedMember();
             warehouseSalesCalc.setName("Warehouse Sales Calc");
-            warehouseSalesCalc.setFormula("[Measures].[Warehouse Sales]");
+            warehouseSalesCalc.setFormula(mdx("[Measures].[Warehouse Sales]"));
             warehouseCube.getCalculatedMembers().add(warehouseSalesCalc);
 
             // Create Virtual Cube
@@ -5549,11 +5553,11 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("tiny");
-            catalog.getCubes().add(salesCube);
-            catalog.getCubes().add(warehouseCube);
-            catalog.getCubes().add(virtualCube);
+            catalog.getImportedElement().add(salesCube);
+            catalog.getImportedElement().add(warehouseCube);
+            catalog.getImportedElement().add(virtualCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
         }
 
@@ -5666,8 +5670,8 @@ public class SchemaModifiersEmf {
             aggExclude10.setName("agg_c_special_sales_fact_1997");
 
             // Create aggregation table with rollup type
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
 
             AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
@@ -5727,9 +5731,9 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2399 Rollup Type");
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().add(salesCube);
             if (catalogMapping != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalogMapping.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalogMapping, Schema.class));
             }
 
         }
@@ -5844,8 +5848,8 @@ public class SchemaModifiersEmf {
             aggExclude10.setName("agg_c_special_sales_fact_1997");
 
             // Create aggregation table with rollup type SumFromAvg
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
 
             AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
@@ -5905,9 +5909,9 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2399 Rollup Type");
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().add(salesCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
 
         }
@@ -6022,8 +6026,8 @@ public class SchemaModifiersEmf {
             aggExclude10.setName("agg_c_special_sales_fact_1997");
 
             // Create aggregation table WITHOUT rollup type (default)
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
 
             AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_10_SALES_FACT_1997);
@@ -6083,9 +6087,9 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2399 Rollup Type");
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().add(salesCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
         }
 
@@ -6181,7 +6185,7 @@ public class SchemaModifiersEmf {
             CalculatedMember profitMember = LevelFactory.eINSTANCE.createCalculatedMember();
             profitMember.setName("Profit");
             profitMember.setVisible(false);
-            profitMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
+            profitMember.setFormula(mdx("[Measures].[Store Sales]-[Measures].[Store Cost]"));
 
             CalculatedMemberProperty formatProperty = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
             formatProperty.setName("FORMAT_STRING");
@@ -6190,7 +6194,7 @@ public class SchemaModifiersEmf {
 
             salesMemberVisCube.getCalculatedMembers().add(profitMember);
 
-            catalog.getCubes().add(salesMemberVisCube);
+            catalog.getImportedElement().add(salesMemberVisCube);
         }
 
         @Override
@@ -6375,7 +6379,7 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesDimWithoutAllCube);
             salesDimWithoutAllCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(salesDimWithoutAllCube);
+            catalog.getImportedElement().add(salesDimWithoutAllCube);
 
         }
 
@@ -6587,7 +6591,7 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesWithCitiesCube);
             salesWithCitiesCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(salesWithCitiesCube);
+            catalog.getImportedElement().add(salesWithCitiesCube);
 
         }
 
@@ -6641,7 +6645,7 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(salesWithBadMeasureCube);
             salesWithBadMeasureCube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(salesWithBadMeasureCube);
+            this.catalog.getImportedElement().add(salesWithBadMeasureCube);
 
         }
 
@@ -6692,7 +6696,7 @@ public class SchemaModifiersEmf {
 
             SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
             genericSql.getDialects().add("generic");
-            genericSql.setSql("unit_sales");
+            genericSql.setBody("unit_sales");
 
             expressionColumn.getSqls().add(genericSql);
 
@@ -6716,7 +6720,7 @@ public class SchemaModifiersEmf {
 
             measureGroup.setPhysicalCube(salesWithBadMeasure2Cube);
             salesWithBadMeasure2Cube.getMeasureGroups().add(measureGroup);
-            catalog.getCubes().add(salesWithBadMeasure2Cube);
+            catalog.getImportedElement().add(salesWithBadMeasure2Cube);
 
         }
 
@@ -6834,7 +6838,7 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(defaultMeasureTestingCube);
             defaultMeasureTestingCube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(defaultMeasureTestingCube);
+            this.catalog.getImportedElement().add(defaultMeasureTestingCube);
 
         }
 
@@ -6932,7 +6936,7 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(defaultMeasureTestingCube);
             defaultMeasureTestingCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(defaultMeasureTestingCube);
+            catalog.getImportedElement().add(defaultMeasureTestingCube);
 
         }
 
@@ -6996,7 +7000,7 @@ public class SchemaModifiersEmf {
 
             SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
             genericSql.getDialects().add("generic");
-            genericSql.setSql("0");
+            genericSql.setBody("0");
 
             expressionColumn.getSqls().add(genericSql);
             zeroMeasure.setColumn(expressionColumn);
@@ -7019,7 +7023,7 @@ public class SchemaModifiersEmf {
             measureGroup.setPhysicalCube(fooBarZerOneAnythingCube);
             fooBarZerOneAnythingCube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(fooBarZerOneAnythingCube);
+            this.catalog.getImportedElement().add(fooBarZerOneAnythingCube);
 
         }
 
@@ -7105,7 +7109,7 @@ public class SchemaModifiersEmf {
 
             SqlStatement genericSql = SourceFactory.eINSTANCE.createSqlStatement();
             genericSql.getDialects().add("generic");
-            genericSql.setSql("1");
+            genericSql.setBody("1");
 
             expressionColumn.getSqls().add(genericSql);
             measure.setColumn(expressionColumn);
@@ -7125,7 +7129,7 @@ public class SchemaModifiersEmf {
             // Add SQL WHERE expression
             SqlStatement whereClause = SourceFactory.eINSTANCE.createSqlStatement();
             whereClause.getDialects().add("generic");
-            whereClause.setSql("sleep(0.1) = 0");
+            whereClause.setBody("sleep(0.1) = 0");
             warehouseTableQuery.setSqlWhereExpression(whereClause);
 
             barCube.setSource(warehouseTableQuery);
@@ -7137,9 +7141,9 @@ public class SchemaModifiersEmf {
             // Create new catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("Foo");
-            catalog.getCubes().add(barCube);
+            catalog.getImportedElement().add(barCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
 
         }
@@ -7325,10 +7329,10 @@ public class SchemaModifiersEmf {
             // Create new catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("snowflake bug");
-            catalog.getCubes().add(bugCube);
-            catalog.getCubes().add(noBugCube);
+            catalog.getImportedElement().add(bugCube);
+            catalog.getImportedElement().add(noBugCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
 
         }
@@ -7421,9 +7425,9 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getCubes().add(cube);
+            catalog.getImportedElement().add(cube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
 
         }
@@ -7450,19 +7454,19 @@ public class SchemaModifiersEmf {
         public RolapCubeTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 CalculatedMember calculatedMember1 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember1.setName("~Missing");
-                calculatedMember1.setFormula("100");
+                calculatedMember1.setFormula(mdx("100"));
                 calculatedMember1.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                 cube.getCalculatedMembers().add(calculatedMember1);
 
                 CalculatedMember calculatedMember2 = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember2.setName("~Missing");
-                calculatedMember2.setFormula("100");
+                calculatedMember2.setFormula(mdx("100"));
                 calculatedMember2.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_PRODUCT));
                 cube.getCalculatedMembers().add(calculatedMember2);
 
@@ -7491,7 +7495,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier1KE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -7513,7 +7517,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
 
                 keyExpressionColumn.getSqls().add(sqlStatement);
 
@@ -7572,7 +7576,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier1OE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -7597,7 +7601,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
 
                 ordinalExpressionColumn.getSqls().add(sqlStatement);
 
@@ -7660,7 +7664,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier1ME(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -7731,7 +7735,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier1CE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -7753,7 +7757,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
 
                 captionExpressionColumn.getSqls().add(sqlStatement);
 
@@ -7813,7 +7817,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier1NE(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -7835,7 +7839,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
 
                 nameExpressionColumn.getSqls().add(sqlStatement);
 
@@ -7904,7 +7908,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier2(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "HR".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -7929,7 +7933,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
 
                 parentExpressionColumn.getSqls().add(sqlStatement);
 
@@ -8027,7 +8031,7 @@ public class SchemaModifiersEmf {
         public OrderByAliasTestModifier3(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8049,7 +8053,7 @@ public class SchemaModifiersEmf {
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
 
                 propertyExpressionColumn.getSqls().add(sqlStatement);
 
@@ -8151,7 +8155,7 @@ public class SchemaModifiersEmf {
             quarterKeyExpression.setName("quarter_key");
             SqlStatement quarterSql = SourceFactory.eINSTANCE.createSqlStatement();
             quarterSql.getDialects().add("generic");
-            quarterSql.setSql("RTRIM(quarter)");
+            quarterSql.setBody("RTRIM(quarter)");
             quarterKeyExpression.getSqls().add(quarterSql);
 
             Level yearLevel = LevelFactory.eINSTANCE.createLevel();
@@ -8289,11 +8293,11 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getCubes().add(salesCube);
-            catalog.getCubes().add(warehouseCube);
-            catalog.getCubes().add(virtualCube);
+            catalog.getImportedElement().add(salesCube);
+            catalog.getImportedElement().add(warehouseCube);
+            catalog.getImportedElement().add(virtualCube);
             if (catalog2 != null) {
-                catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
+                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             }
 
         }
@@ -8316,13 +8320,13 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembersModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 VirtualCubeImpl cube = (VirtualCubeImpl) oCube.get();
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Profit With Spaces");
-                calculatedMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
+                calculatedMember.setFormula(mdx("[Measures].[Store Sales]-[Measures].[Store Cost]"));
                 cube.getCalculatedMembers().add(calculatedMember);
             }
         }
@@ -8350,14 +8354,14 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembersModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Profit Formatted");
                 calculatedMember.setVisible(false);
-                calculatedMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
+                calculatedMember.setFormula(mdx("[Measures].[Store Sales]-[Measures].[Store Cost]"));
 
                 CalculatedMemberProperty prop1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop1.setName("FORMAT_STRING");
@@ -8392,7 +8396,7 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembersModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8400,7 +8404,7 @@ public class SchemaModifiersEmf {
                 calculatedMember.setName("My Tuple");
                 calculatedMember.setVisible(false);
                 calculatedMember
-                        .setFormula("StrToTuple('([Gender].[M], [Marital Status].[S])', [Gender], [Marital Status])");
+                        .setFormula(mdx("StrToTuple('([Gender].[M], [Marital Status].[S])', [Gender], [Marital Status])"));
                 cube.getCalculatedMembers().add(calculatedMember);
 
             }
@@ -8430,14 +8434,14 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembersModifier4(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Profit Formatted");
                 calculatedMember.setVisible(false);
-                calculatedMember.setFormula("[Measures].[Store Sales]-[Measures].[Store Cost]");
+                calculatedMember.setFormula(mdx("[Measures].[Store Sales]-[Measures].[Store Cost]"));
 
                 CalculatedMemberProperty prop1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop1.setName("FORMAT_STRING");
@@ -8484,7 +8488,7 @@ public class SchemaModifiersEmf {
         public TestAggregationManagerModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8566,7 +8570,7 @@ public class SchemaModifiersEmf {
         public TestAggregationManagerModifier2(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8592,7 +8596,7 @@ public class SchemaModifiersEmf {
                 sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.setSql("ERROR_TEST_FUNCTION_NAME(" + colName + ")");
+                sqlStatement.setBody("ERROR_TEST_FUNCTION_NAME(" + colName + ")");
                 sqlStatement.getDialects().add("generic");
                 sqlColumn.getSqls().add(sqlStatement);
 
@@ -8636,7 +8640,7 @@ public class SchemaModifiersEmf {
         public TestAggregationManagerModifier10(Catalog catalogMapping, final String colName) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8662,7 +8666,7 @@ public class SchemaModifiersEmf {
                 sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.setSql("RTRIM(" + colName + ")");
+                sqlStatement.setBody("RTRIM(" + colName + ")");
                 sqlStatement.getDialects().add("generic");
                 sqlColumn.getSqls().add(sqlStatement);
 
@@ -8712,7 +8716,7 @@ public class SchemaModifiersEmf {
         public DrillThroughTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8812,7 +8816,7 @@ public class SchemaModifiersEmf {
         public DrillThroughTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8879,7 +8883,7 @@ public class SchemaModifiersEmf {
         public DrillThroughTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8939,7 +8943,7 @@ public class SchemaModifiersEmf {
         public RaggedHierarchyTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -8965,7 +8969,7 @@ public class SchemaModifiersEmf {
                 nameColumn.setType(SQLSimpleTypes.varcharType(255));
 
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.setSql("case \"gender\" when 'F' then ' ' when 'M' then 'M' ");
+                sqlStatement.setBody("case \"gender\" when 'F' then ' ' when 'M' then 'M' ");
                 sqlStatement.getDialects().add("generic");
                 nameColumn.getSqls().add(sqlStatement);
 
@@ -9011,7 +9015,7 @@ public class SchemaModifiersEmf {
         public RaggedHierarchyTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (Catalog) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales Ragged".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9082,7 +9086,7 @@ public class SchemaModifiersEmf {
         public RolapResultTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9136,13 +9140,13 @@ public class SchemaModifiersEmf {
         public VirtualCubeTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 VirtualCubeImpl cube = (VirtualCubeImpl) oCube.get();
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Shipped per Ordered");
-                calculatedMember.setFormula("[Measures].[Units Shipped] / [Measures].[Unit Sales]");
+                calculatedMember.setFormula(mdx("[Measures].[Units Shipped] / [Measures].[Unit Sales]"));
 
                 CalculatedMemberProperty prop = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
                 prop.setName("FORMAT_STRING");
@@ -9172,7 +9176,7 @@ public class SchemaModifiersEmf {
         public VirtualCubeTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 VirtualCubeImpl cube = (VirtualCubeImpl) oCube.get();
@@ -9267,8 +9271,8 @@ public class SchemaModifiersEmf {
             TableSource salesTable = SourceFactory.eINSTANCE.createTableSource();
             salesTable.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
 
             AggregationColumnName aggFactCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             aggFactCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_SPECIAL_SALES_FACT_1997);
@@ -9303,11 +9307,11 @@ public class SchemaModifiersEmf {
             CalculatedMember cmRecurse = LevelFactory.eINSTANCE.createCalculatedMember();
             cmRecurse.setName("recurse");
             cmRecurse.setVisible(true);
-            cmRecurse.setFormula(
-                    "(CoalesceEmpty((Measures.[Unit Sales], [Time].CurrentMember ) ,(Measures.[recurse],[Time].CurrentMember.PrevMember)))");
+            cmRecurse.setFormula(mdx(
+                    "(CoalesceEmpty((Measures.[Unit Sales], [Time].CurrentMember ) ,(Measures.[recurse],[Time].CurrentMember.PrevMember)))"));
             cubeSales.getCalculatedMembers().add(cmRecurse);
 
-            catalog.getCubes().add(cubeSales);
+            catalog.getImportedElement().add(cubeSales);
 
             // Create Virtual Cube
             VirtualCube virtualCube = CubeFactory.eINSTANCE.createVirtualCube();
@@ -9319,11 +9323,11 @@ public class SchemaModifiersEmf {
 
             virtualCube.getReferencedCalculatedMembers().add(cmRecurse);
 
-            catalog.getCubes().add(virtualCube);
+            catalog.getImportedElement().add(virtualCube);
 
             // Add database schemas
-            for (Schema dbSchema : catalog2.getDbschemas()) {
-                catalog.getDbschemas().add((Schema) dbSchema);
+            for (Schema dbSchema : Packages.available(catalog2, Schema.class)) {
+                catalog.getImportedElement().add((Schema) dbSchema);
             }
 
         }
@@ -9347,7 +9351,7 @@ public class SchemaModifiersEmf {
         public SqlQueryTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9386,7 +9390,7 @@ public class SchemaModifiersEmf {
         public CompoundSlicerTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9424,7 +9428,7 @@ public class SchemaModifiersEmf {
         public CompoundSlicerTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9477,16 +9481,16 @@ public class SchemaModifiersEmf {
         public CompoundSlicerTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 VirtualCubeImpl cube = (VirtualCubeImpl) oCube.get();
                 cube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_CUSTOMER_COUNT));
-                cube.setDefaultMeasure((Member) copier
+                cube.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier
                         .get(CatalogSupplier.MEASURE_WAREHOUSE_SALES));
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("Unit Sales by Customer");
-                calculatedMember.setFormula("Measures.[Unit Sales]/Measures.[Customer Count]");
+                calculatedMember.setFormula(mdx("Measures.[Unit Sales]/Measures.[Customer Count]"));
                 cube.getCalculatedMembers().add(calculatedMember);
 
             }
@@ -9512,7 +9516,7 @@ public class SchemaModifiersEmf {
         public XmlaHandlerTypeTestModifier(Catalog catalogMapping, String expression, String type) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9522,7 +9526,7 @@ public class SchemaModifiersEmf {
                 ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
                 SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
                 sqlStatement.getDialects().add("generic");
-                sqlStatement.setSql(expression);
+                sqlStatement.setBody(expression);
                 sqlColumn.getSqls().add(sqlStatement);
 
                 if ((type != null) && type.equals("String")) {
@@ -9606,7 +9610,7 @@ public class SchemaModifiersEmf {
         public MultipleHierarchyTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9771,7 +9775,7 @@ public class SchemaModifiersEmf {
         public MultipleHierarchyTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9896,7 +9900,7 @@ public class SchemaModifiersEmf {
         public PerformanceTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -9964,13 +9968,13 @@ public class SchemaModifiersEmf {
 
                 CalculatedMember cm1 = LevelFactory.eINSTANCE.createCalculatedMember();
                 cm1.setName("EXP2_4");
-                cm1.setFormula(
-                        "IIf([ACC].CurrentMember.Level.Ordinal = [ACC].[All].Ordinal, Sum([ACC].[All].Children, [Measures].[Unit Sales]), [Measures].[Unit Sales])");
+                cm1.setFormula(mdx(
+                        "IIf([ACC].CurrentMember.Level.Ordinal = [ACC].[All].Ordinal, Sum([ACC].[All].Children, [Measures].[Unit Sales]), [Measures].[Unit Sales])"));
                 cube.getCalculatedMembers().add(cm1);
 
                 CalculatedMember cm2 = LevelFactory.eINSTANCE.createCalculatedMember();
                 cm2.setName("EXP2");
-                cm2.setFormula("IIf(0 < [Measures].[EXP2_4], [Measures].[EXP2_4], NULL)");
+                cm2.setFormula(mdx("IIf(0 < [Measures].[EXP2_4], [Measures].[EXP2_4], NULL)"));
                 cube.getCalculatedMembers().add(cm2);
 
             }
@@ -9999,7 +10003,7 @@ public class SchemaModifiersEmf {
         public Ssas2005CompatibilityTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10097,7 +10101,7 @@ public class SchemaModifiersEmf {
 
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10149,7 +10153,7 @@ public class SchemaModifiersEmf {
         public Ssas2005CompatibilityTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10319,7 +10323,7 @@ public class SchemaModifiersEmf {
 
             cube.getMeasureGroups().add(mg);
 
-            catalog.getCubes().add(cube);
+            catalog.getImportedElement().add(cube);
 
         }
 
@@ -10344,7 +10348,7 @@ public class SchemaModifiersEmf {
         public PerformanceTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10414,12 +10418,12 @@ public class SchemaModifiersEmf {
             storeTypeGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant storeTypeMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            storeTypeMember1.setMember("[Store Type].[All Store Types]");
+            storeTypeMember1.setMember(mdx("[Store Type].[All Store Types]"));
             storeTypeMember1.setMemberAccess(MemberAccess.ALL);
             storeTypeGrant.getMemberGrants().add(storeTypeMember1);
 
             AccessMemberGrant storeTypeMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            storeTypeMember2.setMember("[Store Type].[Supermarket]");
+            storeTypeMember2.setMember(mdx("[Store Type].[Supermarket]"));
             storeTypeMember2.setMemberAccess(MemberAccess.NONE);
             storeTypeGrant.getMemberGrants().add(storeTypeMember2);
 
@@ -10433,12 +10437,12 @@ public class SchemaModifiersEmf {
             customersGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant customersMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            customersMember1.setMember("[Customers].[All Customers]");
+            customersMember1.setMember(mdx("[Customers].[All Customers]"));
             customersMember1.setMemberAccess(MemberAccess.ALL);
             customersGrant.getMemberGrants().add(customersMember1);
 
             AccessMemberGrant customersMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            customersMember2.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            customersMember2.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             customersMember2.setMemberAccess(MemberAccess.NONE);
             customersGrant.getMemberGrants().add(customersMember2);
 
@@ -10452,12 +10456,12 @@ public class SchemaModifiersEmf {
             productGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant productMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            productMember1.setMember("[Product].[All Products]");
+            productMember1.setMember(mdx("[Product].[All Products]"));
             productMember1.setMemberAccess(MemberAccess.ALL);
             productGrant.getMemberGrants().add(productMember1);
 
             AccessMemberGrant productMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            productMember2.setMember("[Product].[Drink]");
+            productMember2.setMember(mdx("[Product].[Drink]"));
             productMember2.setMemberAccess(MemberAccess.NONE);
             productGrant.getMemberGrants().add(productMember2);
 
@@ -10471,12 +10475,12 @@ public class SchemaModifiersEmf {
             promoMediaGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant promoMediaMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            promoMediaMember1.setMember("[Promotion Media].[All Media]");
+            promoMediaMember1.setMember(mdx("[Promotion Media].[All Media]"));
             promoMediaMember1.setMemberAccess(MemberAccess.ALL);
             promoMediaGrant.getMemberGrants().add(promoMediaMember1);
 
             AccessMemberGrant promoMediaMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            promoMediaMember2.setMember("[Promotion Media].[TV]");
+            promoMediaMember2.setMember(mdx("[Promotion Media].[TV]"));
             promoMediaMember2.setMemberAccess(MemberAccess.NONE);
             promoMediaGrant.getMemberGrants().add(promoMediaMember2);
 
@@ -10490,12 +10494,12 @@ public class SchemaModifiersEmf {
             educationGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant educationMember1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            educationMember1.setMember("[Education Level].[All Education Levels]");
+            educationMember1.setMember(mdx("[Education Level].[All Education Levels]"));
             educationMember1.setMemberAccess(MemberAccess.ALL);
             educationGrant.getMemberGrants().add(educationMember1);
 
             AccessMemberGrant educationMember2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            educationMember2.setMember("[Education Level].[Graduate Degree]");
+            educationMember2.setMember(mdx("[Education Level].[Graduate Degree]"));
             educationMember2.setMemberAccess(MemberAccess.NONE);
             educationGrant.getMemberGrants().add(educationMember2);
 
@@ -10504,7 +10508,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            catalog.getAccessRoles().add(role);
+            catalog.getImportedElement().add(role);
 
         }
 
@@ -10591,7 +10595,7 @@ public class SchemaModifiersEmf {
         public NativeSetEvaluationTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10626,13 +10630,13 @@ public class SchemaModifiersEmf {
         public Olap4jTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
                 CalculatedMember calculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 calculatedMember.setName("H1 1997");
-                calculatedMember.setFormula("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])");
+                calculatedMember.setFormula(mdx("Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])"));
                 calculatedMember.setHierarchy((Hierarchy) copier
                         .get(CatalogSupplier.HIERARCHY_TIME));
                 cube.getCalculatedMembers().add(calculatedMember);
@@ -10665,7 +10669,7 @@ public class SchemaModifiersEmf {
         public ScenarioTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10755,7 +10759,7 @@ public class SchemaModifiersEmf {
         public SolveOrderScopeIsolationTestModifier(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10767,7 +10771,7 @@ public class SchemaModifiersEmf {
                 maleMinusFemaleCalculatedMember.setName("maleMinusFemale");
                 maleMinusFemaleCalculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_GENDER));
                 maleMinusFemaleCalculatedMember.setVisible(false);
-                maleMinusFemaleCalculatedMember.setFormula("gender.m - gender.f");
+                maleMinusFemaleCalculatedMember.setFormula(mdx("gender.m - gender.f"));
                 maleMinusFemaleCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty1);
 
                 CalculatedMemberProperty calculatedMemberProperty2 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
@@ -10781,7 +10785,7 @@ public class SchemaModifiersEmf {
                 CalculatedMember profitSolveOrder3000CalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 profitSolveOrder3000CalculatedMember.setName("ProfitSolveOrder3000");
                 // .dimension("Measures")
-                profitSolveOrder3000CalculatedMember.setFormula("[Measures].[Store Sales] - [Measures].[Store Cost]");
+                profitSolveOrder3000CalculatedMember.setFormula(mdx("[Measures].[Store Sales] - [Measures].[Store Cost]"));
                 profitSolveOrder3000CalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty2);
                 profitSolveOrder3000CalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty3);
 
@@ -10796,7 +10800,7 @@ public class SchemaModifiersEmf {
                 CalculatedMember ratioCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 ratioCalculatedMember.setName("ratio");
                 // .dimension("Measures")
-                ratioCalculatedMember.setFormula("measures.[unit sales] / measures.[sales count]");
+                ratioCalculatedMember.setFormula(mdx("measures.[unit sales] / measures.[sales count]"));
                 ratioCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty4);
                 ratioCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty5);
 
@@ -10807,7 +10811,7 @@ public class SchemaModifiersEmf {
                 CalculatedMember totalCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 totalCalculatedMember.setName("Total");
                 totalCalculatedMember.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_TIME));
-                totalCalculatedMember.setFormula("AGGREGATE({[Time].[1997].[Q1],[Time].[1997].[Q2]})");
+                totalCalculatedMember.setFormula(mdx("AGGREGATE({[Time].[1997].[Q1],[Time].[1997].[Q2]})"));
                 totalCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty6);
 
                 cube.getCalculatedMembers().add(maleMinusFemaleCalculatedMember);
@@ -10837,7 +10841,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier1(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10875,7 +10879,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier2(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10915,7 +10919,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier3(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10926,7 +10930,7 @@ public class SchemaModifiersEmf {
                 CalculatedMember unitSalesFooBarCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 unitSalesFooBarCalculatedMember.setName("Unit Sales Foo Bar");
                 // .dimension("Measures")
-                unitSalesFooBarCalculatedMember.setFormula("[Measures].[Unit Sales]");
+                unitSalesFooBarCalculatedMember.setFormula(mdx("[Measures].[Unit Sales]"));
                 unitSalesFooBarCalculatedMember.getCalculatedMemberProperties().add(calculatedMemberProperty1);
 
                 cube.getCalculatedMembers().add(unitSalesFooBarCalculatedMember);
@@ -10956,7 +10960,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier4(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -10966,7 +10970,7 @@ public class SchemaModifiersEmf {
                 CalculatedMember unitSalesFooBarCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 unitSalesFooBarCalculatedMember.setName("Unit Sales Foo Bar");
                 // .dimension("Measures")
-                unitSalesFooBarCalculatedMember.setFormula("[Measures].[Unit Sales]");
+                unitSalesFooBarCalculatedMember.setFormula(mdx("[Measures].[Unit Sales]"));
                 unitSalesFooBarCalculatedMember.setCellFormatter(cellFormatter);
 
                 cube.getCalculatedMembers().add(unitSalesFooBarCalculatedMember);
@@ -10996,7 +11000,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier5(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -11006,7 +11010,7 @@ public class SchemaModifiersEmf {
                 CalculatedMember unitSalesFooBarCalculatedMember = LevelFactory.eINSTANCE.createCalculatedMember();
                 unitSalesFooBarCalculatedMember.setName("Unit Sales Foo Bar");
                 // .dimension("Measures")
-                unitSalesFooBarCalculatedMember.setFormula("[Measures].[Unit Sales]");
+                unitSalesFooBarCalculatedMember.setFormula(mdx("[Measures].[Unit Sales]"));
                 unitSalesFooBarCalculatedMember.setCellFormatter(cellFormatter);
                 cube.getCalculatedMembers().add(unitSalesFooBarCalculatedMember);
 
@@ -11266,7 +11270,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier6(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -11337,7 +11341,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier7(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -11406,7 +11410,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier8(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -11484,7 +11488,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier9(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -11566,7 +11570,7 @@ public class SchemaModifiersEmf {
         public UdfTestModifier10(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
-            Optional<Cube> oCube = catalog.getCubes().stream()
+            Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
                     .filter(c -> "Sales".equals(c.getName())).findAny();
             if (oCube.isPresent()) {
                 PhysicalCubeImpl cube = (PhysicalCubeImpl) oCube.get();
@@ -11918,7 +11922,7 @@ public class SchemaModifiersEmf {
         private static final AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
         private static final AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
         private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreCustomer = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreStore = AggregationFactory.eINSTANCE.createAggregationColumnName();
@@ -11974,7 +11978,7 @@ public class SchemaModifiersEmf {
             aggMeasureUnitSales.setName("[Measures].[Unit Sales]");
             aggMeasureUnitSales.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_L_05_SALES_FACT_1997);
 
-            aggName.setName(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
+            aggName.setTable(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
             aggName.setAggregationFactCount(factCount);
             aggName.getAggregationIgnoreColumns().addAll(List.of(ignoreCustomer, ignoreStore, ignorePromotion));
             aggName.getAggregationForeignKeys().add(aggForeignKey);
@@ -12045,8 +12049,8 @@ public class SchemaModifiersEmf {
 
             // AMC Catalog
             amcCatalog.setName("AMC");
-            amcCatalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
-            amcCatalog.getCubes().add(fooCube);
+            amcCatalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
+            amcCatalog.getImportedElement().add(fooCube);
         }
 
         public TestAggregationManagerModifier(Catalog catalog) {
@@ -12133,8 +12137,8 @@ public class SchemaModifiersEmf {
 
             // FoodMart Catalog
             foodMartCatalog.setName("FoodMart");
-            foodMartCatalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
-            foodMartCatalog.getCubes().add(salesCube);
+            foodMartCatalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
+            foodMartCatalog.getImportedElement().add(salesCube);
         }
 
         public TestAggregationManagerModifier3(Catalog catalog) {
@@ -12188,7 +12192,7 @@ public class SchemaModifiersEmf {
         private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
         private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
         private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreQuarter = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreMonthOfYear = AggregationFactory.eINSTANCE.createAggregationColumnName();
@@ -12226,7 +12230,7 @@ public class SchemaModifiersEmf {
             aggLevelYear.setName("[Time].[Year]");
             aggLevelYear.setColumn(CatalogSupplier.COLUMN_THE_YEAR_AGG_G_MS_PCAT_SALES_FACT_1997);
 
-            aggName.setName(CatalogSupplier.TABLE_AGG_G_MS_PCAT_SALES_FACT);
+            aggName.setTable(CatalogSupplier.TABLE_AGG_G_MS_PCAT_SALES_FACT);
             aggName.setAggregationFactCount(factCount);
             aggName.getAggregationIgnoreColumns().addAll(List.of(ignoreQuarter, ignoreMonthOfYear));
             aggName.getAggregationMeasures().add(aggMeasureCustomerCount);
@@ -12284,8 +12288,8 @@ public class SchemaModifiersEmf {
 
             // FoodMart Catalog
             foodMartCatalog.setName("FoodMart");
-            foodMartCatalog.getCubes().add(salesCube);
-            foodMartCatalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
+            foodMartCatalog.getImportedElement().add(salesCube);
+            foodMartCatalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
         }
 
         public TestAggregationManagerModifier4(Catalog catalog) {
@@ -12499,8 +12503,8 @@ public class SchemaModifiersEmf {
             aggMeasure3.setColumn(CatalogSupplier.COLUMN_STORE_SALES_SUM_AGG_PL_01_SALES_FACT_1997);
 
             // Create aggregation name
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_PL_01_SALES_FACT);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_PL_01_SALES_FACT);
             aggName.setApproxRowCount("86000");
             aggName.setAggregationFactCount(aggFactCount);
             aggName.getAggregationForeignKeys().add(aggFk1);
@@ -12652,55 +12656,55 @@ public class SchemaModifiersEmf {
 
             SqlStatement sqlOracle = SourceFactory.eINSTANCE.createSqlStatement();
             sqlOracle.getDialects().add("oracle");
-            sqlOracle.setSql("\"fname\" || ' ' || \"lname\"\n");
+            sqlOracle.setBody("\"fname\" || ' ' || \"lname\"\n");
 
             SqlStatement sqlHive = SourceFactory.eINSTANCE.createSqlStatement();
             sqlHive.getDialects().add("hive");
-            sqlHive.setSql("`customer`.`fullname`\n");
+            sqlHive.setBody("`customer`.`fullname`\n");
 
             SqlStatement sqlHsqldb = SourceFactory.eINSTANCE.createSqlStatement();
             sqlHsqldb.getDialects().add("hsqldb");
-            sqlHsqldb.setSql("\"fname\" || ' ' || \"lname\"\n");
+            sqlHsqldb.setBody("\"fname\" || ' ' || \"lname\"\n");
 
             SqlStatement sqlAccess = SourceFactory.eINSTANCE.createSqlStatement();
             sqlAccess.getDialects().add("access");
-            sqlAccess.setSql("fname + ' ' + lname\n");
+            sqlAccess.setBody("fname + ' ' + lname\n");
 
             SqlStatement sqlPostgres = SourceFactory.eINSTANCE.createSqlStatement();
             sqlPostgres.getDialects().add("postgres");
-            sqlPostgres.setSql("\"fname\" || ' ' || \"lname\"\n");
+            sqlPostgres.setBody("\"fname\" || ' ' || \"lname\"\n");
 
             SqlStatement sqlMysql = SourceFactory.eINSTANCE.createSqlStatement();
             sqlMysql.getDialects().add("mysql");
-            sqlMysql.setSql("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n");
+            sqlMysql.setBody("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n");
 
             SqlStatement sqlMssql = SourceFactory.eINSTANCE.createSqlStatement();
             sqlMssql.getDialects().add("mssql");
-            sqlMssql.setSql("fname + ' ' + lname\n");
+            sqlMssql.setBody("fname + ' ' + lname\n");
 
             SqlStatement sqlDerby = SourceFactory.eINSTANCE.createSqlStatement();
             sqlDerby.getDialects().add("derby");
-            sqlDerby.setSql("\"customer\".\"fullname\"\n");
+            sqlDerby.setBody("\"customer\".\"fullname\"\n");
 
             SqlStatement sqlDb2 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlDb2.getDialects().add("db2");
-            sqlDb2.setSql("CONCAT(CONCAT(\"customer\".\"fname\", ' '), \"customer\".\"lname\")\n");
+            sqlDb2.setBody("CONCAT(CONCAT(\"customer\".\"fname\", ' '), \"customer\".\"lname\")\n");
 
             SqlStatement sqlLuciddb = SourceFactory.eINSTANCE.createSqlStatement();
             sqlLuciddb.getDialects().add("luciddb");
-            sqlLuciddb.setSql("\"fname\" || ' ' || \"lname\"\n");
+            sqlLuciddb.setBody("\"fname\" || ' ' || \"lname\"\n");
 
             SqlStatement sqlNeoview = SourceFactory.eINSTANCE.createSqlStatement();
             sqlNeoview.getDialects().add("neoview");
-            sqlNeoview.setSql("\"customer\".\"fullname\"\n");
+            sqlNeoview.setBody("\"customer\".\"fullname\"\n");
 
             SqlStatement sqlTeradata = SourceFactory.eINSTANCE.createSqlStatement();
             sqlTeradata.getDialects().add("teradata");
-            sqlTeradata.setSql("\"fname\" || ' ' || \"lname\"\n");
+            sqlTeradata.setBody("\"fname\" || ' ' || \"lname\"\n");
 
             SqlStatement sqlGeneric = SourceFactory.eINSTANCE.createSqlStatement();
             sqlGeneric.getDialects().add("generic");
-            sqlGeneric.setSql("fullname");
+            sqlGeneric.setBody("fullname");
 
             nameExpression.getSqls().add(sqlOracle);
             nameExpression.getSqls().add(sqlHive);
@@ -12819,8 +12823,8 @@ public class SchemaModifiersEmf {
             // Create catalog
             this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             this.catalog.setName("FooSchema");
-            this.catalog.getDbschemas().addAll((Collection<? extends Schema>) ((CatalogImpl) catalogMapping).getDbschemas());
-            this.catalog.getCubes().add(salesFooCube);
+            this.catalog.getImportedElement().addAll(Packages.available((org.eclipse.daanse.rolap.mapping.model.catalog.Catalog) catalogMapping, Schema.class));
+            this.catalog.getImportedElement().add(salesFooCube);
         }
 
         @Override
@@ -12913,7 +12917,7 @@ public class SchemaModifiersEmf {
         private static final AggregationExclude aggExclude9 = AggregationFactory.eINSTANCE.createAggregationExclude();
         private static final AggregationExclude aggExclude10 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
         private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreProductId = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreCustomerId = AggregationFactory.eINSTANCE.createAggregationColumnName();
@@ -12987,7 +12991,7 @@ public class SchemaModifiersEmf {
             aggLevelMonth.setColumn(CatalogSupplier.COLUMN_MONTH_YEAR_AGG_C_14_SALES_FACT_1997);
             aggLevelMonth.setCollapsed(false);
 
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_14_SALES_FACT);
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_14_SALES_FACT);
             aggName.setAggregationFactCount(factCount);
             aggName.getAggregationIgnoreColumns().addAll(
                     List.of(ignoreProductId, ignoreCustomerId, ignorePromotionId, ignoreTheYear, ignoreQuarter));
@@ -13096,8 +13100,8 @@ public class SchemaModifiersEmf {
 
             // Custom Catalog
             customCatalog.setName("custom");
-            customCatalog.getCubes().add(sales1Cube);
-            customCatalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
+            customCatalog.getImportedElement().add(sales1Cube);
+            customCatalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
         }
 
         public TestAggregationManagerModifier6(Catalog catalog) {
@@ -13148,7 +13152,7 @@ public class SchemaModifiersEmf {
         private static final AggregationExclude aggExclude3 = AggregationFactory.eINSTANCE.createAggregationExclude();
         private static final AggregationExclude aggExclude4 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
         private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreQuarter = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreMonthOfYear = AggregationFactory.eINSTANCE.createAggregationColumnName();
@@ -13186,7 +13190,7 @@ public class SchemaModifiersEmf {
             aggLevelYear.setName("[Time].[Time].[Year]");
             aggLevelYear.setColumn(CatalogSupplier.COLUMN_THE_YEAR_AGG_C_10_SALES_FACT_1997);
 
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_10_SALES_FACT_1997);
             aggName.setAggregationFactCount(factCount);
             aggName.getAggregationIgnoreColumns().addAll(List.of(ignoreQuarter, ignoreMonthOfYear));
             aggName.getAggregationMeasures().add(aggMeasureUnitSales);
@@ -13239,8 +13243,8 @@ public class SchemaModifiersEmf {
 
             // FoodMart Catalog
             foodMartCatalog.setName("FoodMart");
-            foodMartCatalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
-            foodMartCatalog.getCubes().add(salesCube);
+            foodMartCatalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
+            foodMartCatalog.getImportedElement().add(salesCube);
         }
 
         public TestAggregationManagerModifier7(Catalog catalog) {
@@ -13308,7 +13312,7 @@ public class SchemaModifiersEmf {
         private static final AggregationExclude aggExclude7 = AggregationFactory.eINSTANCE.createAggregationExclude();
         private static final AggregationExclude aggExclude8 = AggregationFactory.eINSTANCE.createAggregationExclude();
 
-        private static final AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
+        private static final ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
         private static final AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreCustomer = AggregationFactory.eINSTANCE.createAggregationColumnName();
         private static final AggregationColumnName ignoreStore = AggregationFactory.eINSTANCE.createAggregationColumnName();
@@ -13359,7 +13363,7 @@ public class SchemaModifiersEmf {
             aggMeasureUnitSales.setName("[Measures].[Unit Sales]");
             aggMeasureUnitSales.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_L_05_SALES_FACT_1997);
 
-            aggName.setName(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
+            aggName.setTable(CatalogSupplier.TABLE_AGG_L_05_SALES_FACT);
             aggName.setAggregationFactCount(factCount);
             aggName.getAggregationIgnoreColumns().addAll(List.of(ignoreCustomer, ignoreStore, ignorePromotion));
             aggName.getAggregationForeignKeys().add(aggForeignKey);
@@ -13422,8 +13426,8 @@ public class SchemaModifiersEmf {
 
             // AMC Catalog
             amcCatalog.setName("AMC");
-            amcCatalog.getDbschemas().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
-            amcCatalog.getCubes().add(fooCube);
+            amcCatalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_FOODMART);
+            amcCatalog.getImportedElement().add(fooCube);
         }
 
         public TestAggregationManagerModifier8(Catalog catalog) {
@@ -13560,8 +13564,8 @@ public class SchemaModifiersEmf {
             t = SourceFactory.eINSTANCE.createTableSource();
             t.setTable(CatalogSupplier.TABLE_SALES_FACT);
 
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(CatalogSupplier.TABLE_AGG_C_SPECIAL_SALES_FACT_1997);
 
             AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
             factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_SPECIAL_SALES_FACT_1997);
@@ -13850,10 +13854,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(cubeSales1);
-            catalog.getCubes().add(cubeSales2);
-            catalog.getCubes().add(vcSuperSales);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(cubeSales1);
+            catalog.getImportedElement().add(cubeSales2);
+            catalog.getImportedElement().add(vcSuperSales);
         }
 
         @Override
@@ -13948,27 +13952,27 @@ public class SchemaModifiersEmf {
 
             calcMemberAposInDq.setName("Apos in dq");
             calcMemberAposInDq.setVisible(false);
-            calcMemberAposInDq.setFormula(" \"an 'apos' in dq\" ");
+            calcMemberAposInDq.setFormula(mdx(" \"an 'apos' in dq\" "));
 
             calcMemberDqInDq.setName("Dq in dq");
             calcMemberDqInDq.setVisible(false);
-            calcMemberDqInDq.setFormula(" \"a \"\"dq\"\" in dq\" ");
+            calcMemberDqInDq.setFormula(mdx(" \"a \"\"dq\"\" in dq\" "));
 
             calcMemberAposInApos.setName("Apos in apos");
             calcMemberAposInApos.setVisible(false);
-            calcMemberAposInApos.setFormula(" 'an ''apos'' in apos' ");
+            calcMemberAposInApos.setFormula(mdx(" 'an ''apos'' in apos' "));
 
             calcMemberDqInApos.setName("Dq in apos");
             calcMemberDqInApos.setVisible(false);
-            calcMemberDqInApos.setFormula(" 'a \"dq\" in apos' ");
+            calcMemberDqInApos.setFormula(mdx(" 'a \"dq\" in apos' "));
 
             propFormatString.setName("FORMAT_STRING");
             propFormatString.setExpression(
-                    "Iif([Measures].[Colored Profit] < 0, '|($#,##0.00)|style=red', '|$#,##0.00|style=green')");
+                    mdx("Iif([Measures].[Colored Profit] < 0, '|($#,##0.00)|style=red', '|$#,##0.00|style=green')"));
 
             calcMemberColoredProfit.setName("Colored Profit");
             calcMemberColoredProfit.setVisible(false);
-            calcMemberColoredProfit.setFormula(" [Measures].[Store Sales] - [Measures].[Store Cost] ");
+            calcMemberColoredProfit.setFormula(mdx(" [Measures].[Store Sales] - [Measures].[Store Cost] "));
             calcMemberColoredProfit.getCalculatedMemberProperties().add(propFormatString);
 
             querySalesCube.setTable(CatalogSupplier.TABLE_SALES_FACT);
@@ -13991,8 +13995,8 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembers1(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesBugCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesBugCube);
 
         }
 
@@ -14046,10 +14050,10 @@ public class SchemaModifiersEmf {
 
         private static final SumMeasure measureStoreSqft = MeasureFactory.eINSTANCE.createSumMeasure();
         private static final SumMeasure measureGrocerySqft = MeasureFactory.eINSTANCE.createSumMeasure();
-        private static final Annotation annotationGrocery = RolapMappingFactory.eINSTANCE.createAnnotation();
+        private static final TaggedValue annotationGrocery = CoreFactory.eINSTANCE.createTaggedValue();
 
         private static final CalculatedMember calcMemberConstant1 = LevelFactory.eINSTANCE.createCalculatedMember();
-        private static final Annotation annotationCalcMember = RolapMappingFactory.eINSTANCE.createAnnotation();
+        private static final TaggedValue annotationCalcMember = CoreFactory.eINSTANCE.createTaggedValue();
 
         private static final TableSource queryStore = SourceFactory.eINSTANCE.createTableSource();
         private static final PhysicalCube store5Cube = CubeFactory.eINSTANCE.createPhysicalCube();
@@ -14085,25 +14089,23 @@ public class SchemaModifiersEmf {
             measureStoreSqft.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
             measureStoreSqft.setFormatString("#,###");
 
-            annotationGrocery.setName("AnalyzerBusinessGroup");
+            annotationGrocery.setTag("AnalyzerBusinessGroup");
             annotationGrocery.setValue("Numbers");
 
             measureGrocerySqft.setName("Grocery Sqft");
             measureGrocerySqft.setColumn(CatalogSupplier.COLUMN_GROCERY_SQFT_STORE);
             measureGrocerySqft.setFormatString("#,###");
-            measureGrocerySqft.setDescription("Grocery Sqft Description...");
-            measureGrocerySqft.getAnnotations().add(annotationGrocery);
+            measureGrocerySqft.getTaggedValue().add(annotationGrocery);
 
             measureGroup.getMeasures().add(measureStoreSqft);
             measureGroup.getMeasures().add(measureGrocerySqft);
 
-            annotationCalcMember.setName("AnalyzerBusinessGroup");
+            annotationCalcMember.setTag("AnalyzerBusinessGroup");
             annotationCalcMember.setValue("Numbers");
 
             calcMemberConstant1.setName("Constant 1");
-            calcMemberConstant1.setDescription("Constant 1 Description...");
-            calcMemberConstant1.setFormula("1");
-            calcMemberConstant1.getAnnotations().add(annotationCalcMember);
+            calcMemberConstant1.setFormula(mdx("1"));
+            calcMemberConstant1.getTaggedValue().add(annotationCalcMember);
 
             queryStore.setTable(CatalogSupplier.TABLE_STORE);
 
@@ -14124,8 +14126,10 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembers2(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(store5Cube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(store5Cube);
+            org.opencube.junit5.TestUtil.describe(catalog, measureGrocerySqft, "Grocery Sqft Description...");
+            org.opencube.junit5.TestUtil.describe(catalog, calcMemberConstant1, "Constant 1 Description...");
         }
 
         @Override
@@ -14199,7 +14203,7 @@ public class SchemaModifiersEmf {
 
             calcMemberBracket.setName("With a [bracket] inside it");
             calcMemberBracket.setVisible(false);
-            calcMemberBracket.setFormula("[Measures].[Unit Sales] * 10");
+            calcMemberBracket.setFormula(mdx("[Measures].[Unit Sales] * 10"));
             calcMemberBracket.getCalculatedMemberProperties().add(propFormatString);
 
             querySalesCube.setTable(CatalogSupplier.TABLE_SALES_FACT);
@@ -14218,8 +14222,8 @@ public class SchemaModifiersEmf {
         public TestCalculatedMembers3(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesBracketCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesBracketCube);
         }
 
         @Override
@@ -14423,8 +14427,8 @@ public class SchemaModifiersEmf {
             aggLevel.setName("[StoreX].[Store Value]");
             aggLevel.setColumn(firstprefixValueAgg);
 
-            AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-            aggName.setName(aggLp595Cheques);
+            ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+            aggName.setTable(aggLp595Cheques);
             aggName.setAggregationFactCount(aggFactCount);
             aggName.getAggregationMeasures().add(aggMeasure);
             aggName.getAggregationLevels().add(aggLevel);
@@ -14462,8 +14466,8 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("usagePrefixTest");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(chequesCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(chequesCube);
 
         }
 
@@ -14712,10 +14716,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("MYFoodmart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(cubeSales);
-            catalog.getCubes().add(cubeWarehouse);
-            catalog.getCubes().add(vcWarehouseAndSales);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(cubeSales);
+            catalog.getImportedElement().add(cubeWarehouse);
+            catalog.getImportedElement().add(vcWarehouseAndSales);
         }
 
         @Override
@@ -14852,9 +14856,9 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(salesInlineCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(salesInlineCube);
         }
 
         @Override
@@ -14916,25 +14920,25 @@ public class SchemaModifiersEmf {
         private static final MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
 
         static {
-            sqlAccess.setSql("Iif(store_name = 'HQ', null, store_name)");
+            sqlAccess.setBody("Iif(store_name = 'HQ', null, store_name)");
             sqlAccess.getDialects().add("access");
 
-            sqlOracle.setSql("case \"store_name\" when 'HQ' then null else \"store_name\" end");
+            sqlOracle.setBody("case \"store_name\" when 'HQ' then null else \"store_name\" end");
             sqlOracle.getDialects().add("oracle");
 
-            sqlHsqldb.setSql("case \"store_name\" when 'HQ' then null else \"store_name\" end");
+            sqlHsqldb.setBody("case \"store_name\" when 'HQ' then null else \"store_name\" end");
             sqlHsqldb.getDialects().add("hsqldb");
 
-            sqlDb2.setSql("case \"store\".\"store_name\" when 'HQ' then null else \"store\".\"store_name\" end");
+            sqlDb2.setBody("case \"store\".\"store_name\" when 'HQ' then null else \"store\".\"store_name\" end");
             sqlDb2.getDialects().add("db2");
 
-            sqlLuciddb.setSql("case \"store_name\" when 'HQ' then null else \"store_name\" end");
+            sqlLuciddb.setBody("case \"store_name\" when 'HQ' then null else \"store_name\" end");
             sqlLuciddb.getDialects().add("luciddb");
 
-            sqlNetezza.setSql("case \"store_name\" when 'HQ' then null else \"store_name\" end");
+            sqlNetezza.setBody("case \"store_name\" when 'HQ' then null else \"store_name\" end");
             sqlNetezza.getDialects().add("netezza");
 
-            sqlGeneric.setSql("case store_name when 'HQ' then null else store_name end");
+            sqlGeneric.setBody("case store_name when 'HQ' then null else store_name end");
             sqlGeneric.getDialects().add("generic");
 
             ordinalExpression.getSqls().add(sqlAccess);
@@ -14986,9 +14990,9 @@ public class SchemaModifiersEmf {
         public CompatibilityTestModifier2(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getCubes().add(storeNullsCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(storeNullsCube);
 
         }
 
@@ -15020,10 +15024,10 @@ public class SchemaModifiersEmf {
         private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
-            memberGrantUSA.setMember("[Customers].[USA]");
+            memberGrantUSA.setMember(mdx("[Customers].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantLA.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            memberGrantLA.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             memberGrantLA.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15051,9 +15055,9 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(role1);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(role1);
 
         }
 
@@ -15123,10 +15127,10 @@ public class SchemaModifiersEmf {
 
         static {
             // Role1 configuration
-            memberGrantCA.setMember("[Customers].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantGladys.setMember("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]");
+            memberGrantGladys.setMember(mdx("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]"));
             memberGrantGladys.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantCustomersRole1.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15160,16 +15164,16 @@ public class SchemaModifiersEmf {
             role1.getAccessCatalogGrants().add(catalogGrantRole1);
 
             // Role2 configuration
-            memberGrantUSA.setMember("[Customers].[USA]");
+            memberGrantUSA.setMember(mdx("[Customers].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantCARole2.setMember("[Customers].[USA].[CA]");
+            memberGrantCARole2.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCARole2.setMemberAccess(MemberAccess.NONE);
 
-            memberGrantOR.setMember("[Customers].[USA].[OR]");
+            memberGrantOR.setMember(mdx("[Customers].[USA].[OR]"));
             memberGrantOR.setMemberAccess(MemberAccess.NONE);
 
-            memberGrantPortland.setMember("[Customers].[USA].[OR].[Portland]");
+            memberGrantPortland.setMember(mdx("[Customers].[USA].[OR].[Portland]"));
             memberGrantPortland.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantCustomersRole2.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15220,10 +15224,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(role1);
-            catalog.getAccessRoles().add(role2);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(role1);
+            catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -15261,7 +15265,7 @@ public class SchemaModifiersEmf {
         private static final AccessRole roleGrandparentUSAmanager = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
-            memberGrantUSA.setMember("[Customers].[USA]");
+            memberGrantUSA.setMember(mdx("[Customers].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15296,11 +15300,11 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(roleUSAmanager);
-            catalog.getAccessRoles().add(roleParentUSAmanager);
-            catalog.getAccessRoles().add(roleGrandparentUSAmanager);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(roleUSAmanager);
+            catalog.getImportedElement().add(roleParentUSAmanager);
+            catalog.getImportedElement().add(roleGrandparentUSAmanager);
         }
 
         @Override
@@ -15340,7 +15344,7 @@ public class SchemaModifiersEmf {
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrantRole1);
 
-            memberGrantOR.setMember("[Customers].[USA].[OR]");
+            memberGrantOR.setMember(mdx("[Customers].[USA].[OR]"));
             memberGrantOR.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15365,10 +15369,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(role1);
-            catalog.getAccessRoles().add(role2);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(role1);
+            catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -15402,7 +15406,7 @@ public class SchemaModifiersEmf {
         private static final AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
-            memberGrantCA.setMember("[Customers].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15436,10 +15440,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(role1);
-            catalog.getAccessRoles().add(role2);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(role1);
+            catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -15468,7 +15472,7 @@ public class SchemaModifiersEmf {
         private static final AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
-            memberGrantDrink.setMember("[Product].[Drink]");
+            memberGrantDrink.setMember(mdx("[Product].[Drink]"));
             memberGrantDrink.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantProduct.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15492,9 +15496,9 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(role1);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(role1);
         }
 
         @Override
@@ -15557,14 +15561,15 @@ public class SchemaModifiersEmf {
             // Filter out existing "California manager" role and add new one
 
             // Add all existing roles except "California manager"
-            Optional<AccessRole> oRole = catalog.getAccessRoles().stream()
+            Optional<AccessRole> oRole = Packages.available(catalog, AccessRole.class).stream()
                             .filter(r -> "California manager".equals(r.getName())).findFirst();
             if (oRole.isPresent()) {
-                catalog.getAccessRoles().remove(oRole.get());
+                catalog.getOwnedElement().remove(oRole.get());
+                catalog.getImportedElement().remove(oRole.get());
             }
 
             // Add new "California manager" role
-            catalog.getAccessRoles().add(roleCaliforniaManager);
+            catalog.getImportedElement().add(roleCaliforniaManager);
 
         }
 
@@ -15608,7 +15613,7 @@ public class SchemaModifiersEmf {
             AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             AccessRole roleBuggy = CommonFactory.eINSTANCE.createAccessRole();
 
-            memberGrantEmployee.setMember("[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz]");
+            memberGrantEmployee.setMember(mdx("[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz]"));
             memberGrantEmployee.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantEmployees.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15616,7 +15621,7 @@ public class SchemaModifiersEmf {
             hierarchyGrantEmployees.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_EMPLOYEE));
             hierarchyGrantEmployees.getMemberGrants().add(memberGrantEmployee);
 
-            memberGrantStore.setMember("[Store].[All Stores].[USA].[CA]");
+            memberGrantStore.setMember(mdx("[Store].[All Stores].[USA].[CA]"));
             memberGrantStore.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantStore.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15635,7 +15640,7 @@ public class SchemaModifiersEmf {
             roleBuggy.setName("Buggy Role");
             roleBuggy.getAccessCatalogGrants().add(catalogGrant);
 
-            catalog.getAccessRoles().add(roleBuggy);
+            catalog.getImportedElement().add(roleBuggy);
         }
 
         @Override
@@ -15682,10 +15687,10 @@ public class SchemaModifiersEmf {
             AccessCatalogGrant catalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             AccessRole role1 = CommonFactory.eINSTANCE.createAccessRole();
 
-            memberGrant20319.setMember("[Store Size in SQFT].[20319]");
+            memberGrant20319.setMember(mdx("[Store Size in SQFT].[20319]"));
             memberGrant20319.setMemberAccess(MemberAccess.ALL);
 
-            memberGrant21215.setMember("[Store Size in SQFT].[21215]");
+            memberGrant21215.setMember(mdx("[Store Size in SQFT].[21215]"));
             memberGrant21215.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantStoreSize.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15693,7 +15698,7 @@ public class SchemaModifiersEmf {
             hierarchyGrantStoreSize.getMemberGrants().add(memberGrant20319);
             hierarchyGrantStoreSize.getMemberGrants().add(memberGrant21215);
 
-            memberGrantSupermarket.setMember("[Store Type].[Supermarket]");
+            memberGrantSupermarket.setMember(mdx("[Store Type].[Supermarket]"));
             memberGrantSupermarket.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrantStoreType.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15717,7 +15722,7 @@ public class SchemaModifiersEmf {
 
             cubeGrantWarehouse.setCube((Cube) copier.get(CatalogSupplier.CUBE_WAREHOUSE));
 
-            catalog.getAccessRoles().add(role1);
+            catalog.getImportedElement().add(role1);
         }
 
         @Override
@@ -15762,20 +15767,20 @@ public class SchemaModifiersEmf {
         private static final AccessRole vcRole = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
-            memberGrantStoreCA.setMember("[Store].[USA].[CA]");
+            memberGrantStoreCA.setMember(mdx("[Store].[USA].[CA]"));
             memberGrantStoreCA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantStoreLA.setMember("[Store].[USA].[CA].[Los Angeles]");
+            memberGrantStoreLA.setMember(mdx("[Store].[USA].[CA].[Los Angeles]"));
             memberGrantStoreLA.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantStore.setHierarchyAccess(HierarchyAccess.CUSTOM);
             hierarchyGrantStore.getMemberGrants().add(memberGrantStoreCA);
             hierarchyGrantStore.getMemberGrants().add(memberGrantStoreLA);
 
-            memberGrantCustomersCA.setMember("[Customers].[USA].[CA]");
+            memberGrantCustomersCA.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCustomersCA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantCustomersLA.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            memberGrantCustomersLA.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             memberGrantCustomersLA.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15808,14 +15813,14 @@ public class SchemaModifiersEmf {
 
             hierarchyGrantGender.setHierarchy(CatalogSupplier.HIERARCHY_GENDER);
 
-            cubeGrantWarehouseAndSales.setCube((Cube) catalog2.getCubes().stream()
+            cubeGrantWarehouseAndSales.setCube((Cube) Packages.available(catalog2, Cube.class).stream()
                     .filter(c -> "Warehouse and Sales".equals(c.getName())).findFirst().orElse(null));
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(vcRole);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(vcRole);
 
         }
 
@@ -15846,10 +15851,10 @@ public class SchemaModifiersEmf {
         private static final AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
 
         static {
-            memberGrantCA.setMember("[Store].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Store].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
-            memberGrantLA.setMember("[Store].[USA].[CA].[Los Angeles]");
+            memberGrantLA.setMember(mdx("[Store].[USA].[CA].[Los Angeles]"));
             memberGrantLA.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantStore.setHierarchyAccess(HierarchyAccess.CUSTOM);
@@ -15875,9 +15880,9 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName(catalog2.getName());
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().addAll((Collection<? extends Cube>) catalog2.getCubes());
-            catalog.getAccessRoles().add(role2);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll((Collection<? extends Cube>) Packages.available(catalog2, Cube.class));
+            catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -16063,7 +16068,7 @@ public class SchemaModifiersEmf {
             mg.getMeasures().add(measure);
 
             cube.getMeasureGroups().add(mg);
-            catalog.getCubes().add(cube);
+            catalog.getImportedElement().add(cube);
             List<AccessRole> res = new ArrayList<>();
             List<AccessRole> roleUsages = new ArrayList<>();
             for (Position position : result.getAxes()[0].getPositions()) {
@@ -16093,7 +16098,7 @@ public class SchemaModifiersEmf {
 
                 AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
                 mg1.setMemberAccess(MemberAccess.ALL);
-                mg1.setMember(uniqueName);
+                mg1.setMember(mdx(uniqueName));
                 hg1.getMemberGrants().add(mg1);
 
                 AccessHierarchyGrant hg2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -16103,7 +16108,7 @@ public class SchemaModifiersEmf {
 
                 AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
                 mg2.setMemberAccess(MemberAccess.ALL);
-                mg2.setMember(uniqueName2);
+                mg2.setMember(mdx(uniqueName2));
                 hg2.getMemberGrants().add(mg2);
 
                 AccessHierarchyGrant hg3 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -16113,7 +16118,7 @@ public class SchemaModifiersEmf {
 
                 AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
                 mg3.setMemberAccess(MemberAccess.ALL);
-                mg3.setMember(uniqueName3);
+                mg3.setMember(mdx(uniqueName3));
                 hg3.getMemberGrants().add(mg3);
 
                 cubeGrant.getHierarchyGrants().add(hg1);
@@ -16131,7 +16136,7 @@ public class SchemaModifiersEmf {
             testRole.setName("Test");
             testRole.getReferencedAccessRoles().addAll(roleUsages);
             res.add(testRole);
-            catalog.getAccessRoles().addAll(res);
+            catalog.getImportedElement().addAll(res);
         }
 
         /*
@@ -16210,22 +16215,22 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Employees].[All Employees]");
+            mg1.setMember(mdx("[Employees].[All Employees]"));
             mg1.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember(
-                    "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Steven Betsekas]");
+            mg2.setMember(mdx(
+                    "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Steven Betsekas]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg3.setMember(
-                    "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Arvid Ziegler]");
+            mg3.setMember(mdx(
+                    "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Arvid Ziegler]"));
             mg3.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg4.setMember(
-                    "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Ann Weyerhaeuser]");
+            mg4.setMember(mdx(
+                    "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Ann Weyerhaeuser]"));
             mg4.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(mg1);
@@ -16237,7 +16242,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            catalog.getAccessRoles().add(role);
+            catalog.getImportedElement().add(role);
 
         }
 
@@ -16291,31 +16296,31 @@ public class SchemaModifiersEmf {
             hg1.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Customers].[USA].[XX]");
+            mg1.setMember(mdx("[Customers].[USA].[XX]"));
             mg1.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember("[Customers].[USA].[XX].[Yyy Yyyyyyy]");
+            mg2.setMember(mdx("[Customers].[USA].[XX].[Yyy Yyyyyyy]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg3.setMember("[Customers].[USA]");
+            mg3.setMember(mdx("[Customers].[USA]"));
             mg3.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg4.setMember("[Customers].[USA].[CA]");
+            mg4.setMember(mdx("[Customers].[USA].[CA]"));
             mg4.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg5 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg5.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            mg5.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             mg5.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg6 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg6.setMember("[Customers].[USA].[CA].[Zzz Zzzz]");
+            mg6.setMember(mdx("[Customers].[USA].[CA].[Zzz Zzzz]"));
             mg6.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg7 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg7.setMember("[Customers].[USA].[CA].[San Francisco]");
+            mg7.setMember(mdx("[Customers].[USA].[CA].[San Francisco]"));
             mg7.setMemberAccess(MemberAccess.ALL);
 
             hg1.getMemberGrants().add(mg1);
@@ -16336,7 +16341,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
 
         }
 
@@ -16381,7 +16386,7 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
 
         }
 
@@ -16425,7 +16430,7 @@ public class SchemaModifiersEmf {
             hierarchyGrant1.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Measures].[Unit Sales]");
+            mg1.setMember(mdx("[Measures].[Unit Sales]"));
             mg1.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant1.getMemberGrants().add(mg1);
@@ -16447,8 +16452,8 @@ public class SchemaModifiersEmf {
             catalogGrant2.getCubeGrants().add(cubeGrant2);
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(role1);
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role1);
+            this.catalog.getImportedElement().add(role2);
 
         }
 
@@ -16501,11 +16506,11 @@ public class SchemaModifiersEmf {
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Store Type].[All Store Types]");
+            mg1.setMember(mdx("[Store Type].[All Store Types]"));
             mg1.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember("[Store Type].[Supermarket]");
+            mg2.setMember(mdx("[Store Type].[Supermarket]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             hg1.getMemberGrants().add(mg1);
@@ -16518,19 +16523,19 @@ public class SchemaModifiersEmf {
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg3.setMember("[Customers].[All Customers]");
+            mg3.setMember(mdx("[Customers].[All Customers]"));
             mg3.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg4.setMember("[Customers].[USA].[WA]");
+            mg4.setMember(mdx("[Customers].[USA].[WA]"));
             mg4.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg5 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg5.setMember("[Customers].[USA].[CA]");
+            mg5.setMember(mdx("[Customers].[USA].[CA]"));
             mg5.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg6 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg6.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            mg6.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             mg6.setMemberAccess(MemberAccess.ALL);
 
             hg2.getMemberGrants().add(mg3);
@@ -16543,7 +16548,7 @@ public class SchemaModifiersEmf {
 
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -16665,9 +16670,9 @@ public class SchemaModifiersEmf {
             catalogGrant3.getCubeGrants().add(cubeGrant3);
             role3.getAccessCatalogGrants().add(catalogGrant3);
 
-            this.catalog.getAccessRoles().add(role1);
-            this.catalog.getAccessRoles().add(role2);
-            this.catalog.getAccessRoles().add(role3);
+            this.catalog.getImportedElement().add(role1);
+            this.catalog.getImportedElement().add(role2);
+            this.catalog.getImportedElement().add(role3);
         }
 
 
@@ -16719,7 +16724,7 @@ public class SchemaModifiersEmf {
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[City].[Coronado]");
+            mg1.setMember(mdx("[City].[Coronado]"));
             mg1.setMemberAccess(MemberAccess.ALL);
 
             hg1.getMemberGrants().add(mg1);
@@ -16746,7 +16751,7 @@ public class SchemaModifiersEmf {
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember("[City].[Burbank]");
+            mg2.setMember(mdx("[City].[Burbank]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             hg2.getMemberGrants().add(mg2);
@@ -16754,8 +16759,8 @@ public class SchemaModifiersEmf {
             catalogGrant2.getCubeGrants().add(cubeGrant2);
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(role1);
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role1);
+            this.catalog.getImportedElement().add(role2);
 
         }
 
@@ -16799,14 +16804,14 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            memberGrant.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrant);
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -16847,14 +16852,14 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Store].[USA].[CA]");
+            memberGrant.setMember(mdx("[Store].[USA].[CA]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrant);
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
 
@@ -16902,7 +16907,7 @@ public class SchemaModifiersEmf {
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Store].[USA].[CA]");
+            mg1.setMember(mdx("[Store].[USA].[CA]"));
             mg1.setMemberAccess(MemberAccess.ALL);
 
             hg1.getMemberGrants().add(mg1);
@@ -16927,7 +16932,7 @@ public class SchemaModifiersEmf {
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember("[Store].[USA].[OR]");
+            mg2.setMember(mdx("[Store].[USA].[OR]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             hg2.getMemberGrants().add(mg2);
@@ -16935,8 +16940,8 @@ public class SchemaModifiersEmf {
             catalogGrant2.getCubeGrants().add(cubeGrant2);
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(role1);
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role1);
+            this.catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -16981,7 +16986,7 @@ public class SchemaModifiersEmf {
             hg1.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Store].[Store].[USA].[CA]");
+            mg1.setMember(mdx("[Store].[Store].[USA].[CA]"));
             mg1.setMemberAccess(MemberAccess.ALL);
 
             hg1.getMemberGrants().add(mg1);
@@ -16993,7 +16998,7 @@ public class SchemaModifiersEmf {
             hg2.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember("[Customers].[Customers].[USA].[CA]");
+            mg2.setMember(mdx("[Customers].[Customers].[USA].[CA]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             hg2.getMemberGrants().add(mg2);
@@ -17003,7 +17008,7 @@ public class SchemaModifiersEmf {
 
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17058,35 +17063,35 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
 
             AccessMemberGrant mg1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg1.setMember("[Store].[All Stores]");
+            mg1.setMember(mdx("[Store].[All Stores]"));
             mg1.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant mg2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg2.setMember("[Store].[USA].[CA].[Los Angeles]");
+            mg2.setMember(mdx("[Store].[USA].[CA].[Los Angeles]"));
             mg2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg3.setMember("[Store].[USA].[CA].[Alameda]");
+            mg3.setMember(mdx("[Store].[USA].[CA].[Alameda]"));
             mg3.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg4.setMember("[Store].[USA].[CA].[Beverly Hills]");
+            mg4.setMember(mdx("[Store].[USA].[CA].[Beverly Hills]"));
             mg4.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg5 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg5.setMember("[Store].[USA].[CA].[San Francisco]");
+            mg5.setMember(mdx("[Store].[USA].[CA].[San Francisco]"));
             mg5.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg6 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg6.setMember("[Store].[USA].[CA].[San Diego]");
+            mg6.setMember(mdx("[Store].[USA].[CA].[San Diego]"));
             mg6.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg7 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg7.setMember("[Store].[USA].[OR].[Portland]");
+            mg7.setMember(mdx("[Store].[USA].[OR].[Portland]"));
             mg7.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant mg8 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            mg8.setMember("[Store].[USA].[OR].[Salem]");
+            mg8.setMember(mdx("[Store].[USA].[OR].[Salem]"));
             mg8.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(mg1);
@@ -17101,7 +17106,7 @@ public class SchemaModifiersEmf {
             cubeGrant.getHierarchyGrants().add(hierarchyGrant);
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17153,7 +17158,7 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Measures].[Warehouse Sales]");
+            memberGrant.setMember(mdx("[Measures].[Warehouse Sales]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrant);
@@ -17165,7 +17170,7 @@ public class SchemaModifiersEmf {
 
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17209,7 +17214,7 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Measures].[Unit Sales]");
+            memberGrant.setMember(mdx("[Measures].[Unit Sales]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrant);
@@ -17231,7 +17236,7 @@ public class SchemaModifiersEmf {
 
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
 
         }
 
@@ -17273,7 +17278,7 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Gender].[Gender].[F]");
+            memberGrant.setMember(mdx("[Gender].[Gender].[F]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrant);
@@ -17281,7 +17286,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17327,15 +17332,15 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setBottomLevel(CatalogSupplier.LEVEL_CUSTOMER_CITY);
 
             AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantUSA.setMember("[Customers].[USA]");
+            memberGrantUSA.setMember(mdx("[Customers].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCA.setMember("[Customers].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Customers].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantLA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantLA.setMember("[Customers].[USA].[CA].[Los Angeles]");
+            memberGrantLA.setMember(mdx("[Customers].[USA].[CA].[Los Angeles]"));
             memberGrantLA.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrant.getMemberGrants().add(memberGrantUSA);
@@ -17346,7 +17351,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17390,11 +17395,11 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantUSA.setMember("[Customers].[USA]");
+            memberGrantUSA.setMember(mdx("[Customers].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantGladys = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantGladys.setMember("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]");
+            memberGrantGladys.setMember(mdx("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]"));
             memberGrantGladys.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrant.getMemberGrants().add(memberGrantUSA);
@@ -17404,7 +17409,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
 
         }
 
@@ -17455,11 +17460,11 @@ public class SchemaModifiersEmf {
             hierarchyGrantCustomers.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantUSA.setMember("[Customers].[USA]");
+            memberGrantUSA.setMember(mdx("[Customers].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantGladys = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantGladys.setMember("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]");
+            memberGrantGladys.setMember(mdx("[Customers].[USA].[CA].[San Francisco].[Gladys Evans]"));
             memberGrantGladys.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantCustomers.getMemberGrants().add(memberGrantUSA);
@@ -17472,11 +17477,11 @@ public class SchemaModifiersEmf {
             hierarchyGrantStore.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrantStoreCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantStoreCA.setMember("[Store].[USA].[CA]");
+            memberGrantStoreCA.setMember(mdx("[Store].[USA].[CA]"));
             memberGrantStoreCA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantStore14 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantStore14.setMember("[Store].[USA].[CA].[San Francisco].[Store 14]");
+            memberGrantStore14.setMember(mdx("[Store].[USA].[CA].[San Francisco].[Store 14]"));
             memberGrantStore14.setMemberAccess(MemberAccess.NONE);
 
             hierarchyGrantStore.getMemberGrants().add(memberGrantStoreCA);
@@ -17487,7 +17492,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17531,11 +17536,11 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCA.setMember("[Store].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Store].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantPortland = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantPortland.setMember("[Store].[USA].[OR].[Portland]");
+            memberGrantPortland.setMember(mdx("[Store].[USA].[OR].[Portland]"));
             memberGrantPortland.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrantCA);
@@ -17546,11 +17551,12 @@ public class SchemaModifiersEmf {
             role.getAccessCatalogGrants().add(catalogGrant);
 
             List<AccessRole> result = new ArrayList<>();
-            result.addAll(catalog.getAccessRoles().stream()
+            result.addAll(Packages.available(catalog, AccessRole.class).stream()
                     .filter(r -> !"California manager".equals(r.getName())).toList());
             result.add(role);
-            this.catalog.getAccessRoles().clear();
-            this.catalog.getAccessRoles().addAll(result);
+            this.catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole.class::isInstance);
+        this.catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole.class::isInstance);
+            this.catalog.getImportedElement().addAll(result);
 
         }
 
@@ -17679,7 +17685,7 @@ public class SchemaModifiersEmf {
             measureGroup.getMeasures().add(unitSalesMeasure);
             tinySalesCube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(tinySalesCube);
+            this.catalog.getImportedElement().add(tinySalesCube);
 
             AccessRole role = CommonFactory.eINSTANCE.createAccessRole();
             role.setName("test");
@@ -17697,15 +17703,15 @@ public class SchemaModifiersEmf {
             hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCA.setMember("[Store2].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Store2].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantOR = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantOR.setMember("[Store2].[USA].[OR]");
+            memberGrantOR.setMember(mdx("[Store2].[USA].[OR]"));
             memberGrantOR.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantCanada = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCanada.setMember("[Store2].[Canada]");
+            memberGrantCanada.setMember(mdx("[Store2].[Canada]"));
             memberGrantCanada.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant.getMemberGrants().add(memberGrantCA);
@@ -17716,7 +17722,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
         }
 
         @Override
@@ -17769,7 +17775,7 @@ public class SchemaModifiersEmf {
 
             role.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role);
+            this.catalog.getImportedElement().add(role);
 
         }
 
@@ -17833,7 +17839,7 @@ public class SchemaModifiersEmf {
             hierarchyGrant2.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Measures].[Unit Sales]");
+            memberGrant.setMember(mdx("[Measures].[Unit Sales]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             hierarchyGrant2.getMemberGrants().add(memberGrant);
@@ -17841,8 +17847,8 @@ public class SchemaModifiersEmf {
             catalogGrant2.getCubeGrants().add(cubeGrant2);
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(role1);
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role1);
+            this.catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -17983,10 +17989,10 @@ public class SchemaModifiersEmf {
             genderLevel.setType(LevelDefinition.REGULAR);
             genderLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation genderAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            genderAnnotation.setName("AnalyzerBusinessGroup");
+            TaggedValue genderAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            genderAnnotation.setTag("AnalyzerBusinessGroup");
             genderAnnotation.setValue("Customers");
-            genderLevel.getAnnotations().add(genderAnnotation);
+            genderLevel.getTaggedValue().add(genderAnnotation);
 
             genderHierarchy.getLevels().add(genderLevel);
 
@@ -18007,10 +18013,10 @@ public class SchemaModifiersEmf {
             maritalStatusLevel.setType(LevelDefinition.REGULAR);
             maritalStatusLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation maritalStatusAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            maritalStatusAnnotation.setName("AnalyzerBusinessGroup");
+            TaggedValue maritalStatusAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            maritalStatusAnnotation.setTag("AnalyzerBusinessGroup");
             maritalStatusAnnotation.setValue("Customers");
-            maritalStatusLevel.getAnnotations().add(maritalStatusAnnotation);
+            maritalStatusLevel.getTaggedValue().add(maritalStatusAnnotation);
 
             maritalStatusHierarchy.getLevels().add(maritalStatusLevel);
 
@@ -18158,7 +18164,7 @@ public class SchemaModifiersEmf {
             sales1Cube.getDimensionConnectors().add(storeConnector);
 
             // Add cube to catalog
-            this.catalog.getCubes().add(sales1Cube);
+            this.catalog.getImportedElement().add(sales1Cube);
 
 
             // Create MR role
@@ -18186,7 +18192,7 @@ public class SchemaModifiersEmf {
             mrRole.setName("MR");
             mrRole.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(mrRole);
+            this.catalog.getImportedElement().add(mrRole);
 
             // Create DBPentUsers role
             AccessCatalogGrant catalogGrant2 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
@@ -18196,7 +18202,7 @@ public class SchemaModifiersEmf {
             dbPentUsersRole.setName("DBPentUsers");
             dbPentUsersRole.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(dbPentUsersRole);
+            this.catalog.getImportedElement().add(dbPentUsersRole);
 
 
         }
@@ -18315,7 +18321,7 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Create member grant
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Store].[Store].[USA].[Non Existent]");
+            memberGrant.setMember(mdx("[Store].[Store].[USA].[Non Existent]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
 
             // Create hierarchy grant
@@ -18341,7 +18347,7 @@ public class SchemaModifiersEmf {
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role1);
+            this.catalog.getImportedElement().add(role1);
         }
 
         @Override
@@ -18388,31 +18394,31 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Role1 - with PARTIAL rollup policy
             AccessMemberGrant memberGrantWA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantWA1.setMember("[Store].[USA].[WA]");
+            memberGrantWA1.setMember(mdx("[Store].[USA].[WA]"));
             memberGrantWA1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantOR1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantOR1.setMember("[Store].[USA].[OR]");
+            memberGrantOR1.setMember(mdx("[Store].[USA].[OR]"));
             memberGrantOR1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantSF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantSF1.setMember("[Store].[USA].[CA].[San Francisco]");
+            memberGrantSF1.setMember(mdx("[Store].[USA].[CA].[San Francisco]"));
             memberGrantSF1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantLA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantLA1.setMember("[Store].[USA].[CA].[Los Angeles]");
+            memberGrantLA1.setMember(mdx("[Store].[USA].[CA].[Los Angeles]"));
             memberGrantLA1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantMexico1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantMexico1.setMember("[Store].[Mexico]");
+            memberGrantMexico1.setMember(mdx("[Store].[Mexico]"));
             memberGrantMexico1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantDF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantDF1.setMember("[Store].[Mexico].[DF]");
+            memberGrantDF1.setMember(mdx("[Store].[Mexico].[DF]"));
             memberGrantDF1.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant memberGrantCanada1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCanada1.setMember("[Store].[Canada]");
+            memberGrantCanada1.setMember(mdx("[Store].[Canada]"));
             memberGrantCanada1.setMemberAccess(MemberAccess.NONE);
 
             AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -18440,35 +18446,35 @@ public class SchemaModifiersEmf {
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
-            this.catalog.getAccessRoles().add(role1);
+            this.catalog.getImportedElement().add(role1);
 
             // Role2 - with FULL rollup policy
             AccessMemberGrant memberGrantWA2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantWA2.setMember("[Store].[USA].[WA]");
+            memberGrantWA2.setMember(mdx("[Store].[USA].[WA]"));
             memberGrantWA2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantOR2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantOR2.setMember("[Store].[USA].[OR]");
+            memberGrantOR2.setMember(mdx("[Store].[USA].[OR]"));
             memberGrantOR2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantSF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantSF2.setMember("[Store].[USA].[CA].[San Francisco]");
+            memberGrantSF2.setMember(mdx("[Store].[USA].[CA].[San Francisco]"));
             memberGrantSF2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantLA2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantLA2.setMember("[Store].[USA].[CA].[Los Angeles]");
+            memberGrantLA2.setMember(mdx("[Store].[USA].[CA].[Los Angeles]"));
             memberGrantLA2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantMexico2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantMexico2.setMember("[Store].[Mexico]");
+            memberGrantMexico2.setMember(mdx("[Store].[Mexico]"));
             memberGrantMexico2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantDF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantDF2.setMember("[Store].[Mexico].[DF]");
+            memberGrantDF2.setMember(mdx("[Store].[Mexico].[DF]"));
             memberGrantDF2.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant memberGrantCanada2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCanada2.setMember("[Store].[Canada]");
+            memberGrantCanada2.setMember(mdx("[Store].[Canada]"));
             memberGrantCanada2.setMemberAccess(MemberAccess.NONE);
 
             AccessHierarchyGrant hierarchyGrant2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -18496,7 +18502,7 @@ public class SchemaModifiersEmf {
             role2.setName("Role2");
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role2);
 
         }
 
@@ -18542,31 +18548,31 @@ public class SchemaModifiersEmf {
             this.catalog = (CatalogImpl) copier.get(catalog);
             // Role1 - with 7 member grants
             AccessMemberGrant memberGrantWA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantWA1.setMember("[Store].[USA].[WA]");
+            memberGrantWA1.setMember(mdx("[Store].[USA].[WA]"));
             memberGrantWA1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantOR1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantOR1.setMember("[Store].[USA].[OR]");
+            memberGrantOR1.setMember(mdx("[Store].[USA].[OR]"));
             memberGrantOR1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantSF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantSF1.setMember("[Store].[USA].[CA].[San Francisco]");
+            memberGrantSF1.setMember(mdx("[Store].[USA].[CA].[San Francisco]"));
             memberGrantSF1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantLA1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantLA1.setMember("[Store].[USA].[CA].[Los Angeles]");
+            memberGrantLA1.setMember(mdx("[Store].[USA].[CA].[Los Angeles]"));
             memberGrantLA1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantMexico1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantMexico1.setMember("[Store].[Mexico]");
+            memberGrantMexico1.setMember(mdx("[Store].[Mexico]"));
             memberGrantMexico1.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantDF1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantDF1.setMember("[Store].[Mexico].[DF]");
+            memberGrantDF1.setMember(mdx("[Store].[Mexico].[DF]"));
             memberGrantDF1.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant memberGrantCanada1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCanada1.setMember("[Store].[Canada]");
+            memberGrantCanada1.setMember(mdx("[Store].[Canada]"));
             memberGrantCanada1.setMemberAccess(MemberAccess.NONE);
 
             AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -18594,31 +18600,31 @@ public class SchemaModifiersEmf {
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant1);
 
-            this.catalog.getAccessRoles().add(role1);
+            this.catalog.getImportedElement().add(role1);
 
             // Role2 - with 6 member grants (no Los Angeles)
             AccessMemberGrant memberGrantWA2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantWA2.setMember("[Store].[USA].[WA]");
+            memberGrantWA2.setMember(mdx("[Store].[USA].[WA]"));
             memberGrantWA2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantOR2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantOR2.setMember("[Store].[USA].[OR]");
+            memberGrantOR2.setMember(mdx("[Store].[USA].[OR]"));
             memberGrantOR2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantSF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantSF2.setMember("[Store].[USA].[CA].[San Francisco]");
+            memberGrantSF2.setMember(mdx("[Store].[USA].[CA].[San Francisco]"));
             memberGrantSF2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantMexico2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantMexico2.setMember("[Store].[Mexico]");
+            memberGrantMexico2.setMember(mdx("[Store].[Mexico]"));
             memberGrantMexico2.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantDF2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantDF2.setMember("[Store].[Mexico].[DF]");
+            memberGrantDF2.setMember(mdx("[Store].[Mexico].[DF]"));
             memberGrantDF2.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant memberGrantCanada2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCanada2.setMember("[Store].[Canada]");
+            memberGrantCanada2.setMember(mdx("[Store].[Canada]"));
             memberGrantCanada2.setMemberAccess(MemberAccess.NONE);
 
             AccessHierarchyGrant hierarchyGrant2 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
@@ -18645,7 +18651,7 @@ public class SchemaModifiersEmf {
             role2.setName("Role2");
             role2.getAccessCatalogGrants().add(catalogGrant2);
 
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role2);
         }
 
         @Override
@@ -18685,11 +18691,11 @@ public class SchemaModifiersEmf {
 
             // Create member grants
             AccessMemberGrant memberGrantUSA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantUSA.setMember("[Store].[USA]");
+            memberGrantUSA.setMember(mdx("[Store].[USA]"));
             memberGrantUSA.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant memberGrantCA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrantCA.setMember("[Store].[USA].[CA]");
+            memberGrantCA.setMember(mdx("[Store].[USA].[CA]"));
             memberGrantCA.setMemberAccess(MemberAccess.NONE);
 
             // Create hierarchy grant
@@ -18718,7 +18724,7 @@ public class SchemaModifiersEmf {
             role1.setName("Role1");
             role1.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(role1);
+            this.catalog.getImportedElement().add(role1);
         }
 
         @Override
@@ -18844,7 +18850,7 @@ public class SchemaModifiersEmf {
 
             CalculatedMember cm1 = LevelFactory.eINSTANCE.createCalculatedMember();
             cm1.setName("Calculated Measure1");
-            cm1.setFormula("[Measures].[Measure1_1] / [Measures].[Measure1_0]");
+            cm1.setFormula(mdx("[Measures].[Measure1_1] / [Measures].[Measure1_0]"));
 
             CalculatedMemberProperty cmp1 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
             cmp1.setName("FORMAT_STRING");
@@ -18881,7 +18887,7 @@ public class SchemaModifiersEmf {
 
             CalculatedMember cm2 = LevelFactory.eINSTANCE.createCalculatedMember();
             cm2.setName("Calculated Measure2");
-            cm2.setFormula("[Measures].[Measure2_1] / [Measures].[Measure2_0]");
+            cm2.setFormula(mdx("[Measures].[Measure2_1] / [Measures].[Measure2_0]"));
 
             CalculatedMemberProperty cmp2 = LevelFactory.eINSTANCE.createCalculatedMemberProperty();
             cmp2.setName("FORMAT_STRING");
@@ -18892,9 +18898,9 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart.DimAndMeasure.Role");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(warehouse1Cube);
-            catalog.getCubes().add(warehouse2Cube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(warehouse1Cube);
+            catalog.getImportedElement().add(warehouse2Cube);
 
             AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
             adminRole.setName("Administrator");
@@ -18935,7 +18941,7 @@ public class SchemaModifiersEmf {
 
             adminRole.getAccessCatalogGrants().add(catalogGrant);
 
-            catalog.getAccessRoles().add(adminRole);
+            catalog.getImportedElement().add(adminRole);
 
         }
 
@@ -18971,7 +18977,7 @@ public class SchemaModifiersEmf {
             catalogGrant.getCubeGrants().add(cubeGrant);
             salesRaggedRole.getAccessCatalogGrants().add(catalogGrant);
 
-            this.catalog.getAccessRoles().add(salesRaggedRole);
+            this.catalog.getImportedElement().add(salesRaggedRole);
         }
 
         @Override
@@ -19069,8 +19075,8 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2358");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesCube);
         }
 
         @Override
@@ -19210,8 +19216,8 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesCube);
 
         }
 
@@ -19263,7 +19269,7 @@ public class SchemaModifiersEmf {
 
             ExpressionColumn sqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
             SqlStatement sqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
-            sqlStatement.setSql("cast(\"the_date\" as DATE)\n");
+            sqlStatement.setBody("cast(\"the_date\" as DATE)\n");
             sqlColumn.getSqls().add(sqlStatement);
             sqlColumn.setType(SQLSimpleTypes.varcharType(255));
 
@@ -19297,8 +19303,8 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(dateLiteralTestCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(dateLiteralTestCube);
 
         }
 
@@ -19359,15 +19365,15 @@ public class SchemaModifiersEmf {
 
             SqlStatement sqlStatement1 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement1.getDialects().add("mysql");
-            sqlStatement1.setSql("cast(`store_sqft` as UNSIGNED INTEGER) + " + Integer.MAX_VALUE);
+            sqlStatement1.setBody("cast(`store_sqft` as UNSIGNED INTEGER) + " + Integer.MAX_VALUE);
 
             SqlStatement sqlStatement2 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement2.getDialects().add("vertica");
-            sqlStatement2.setSql("cast(\"store_sqft\" as BIGINT) + " + Integer.MAX_VALUE);
+            sqlStatement2.setBody("cast(\"store_sqft\" as BIGINT) + " + Integer.MAX_VALUE);
 
             SqlStatement sqlStatement3 = SourceFactory.eINSTANCE.createSqlStatement();
             sqlStatement3.getDialects().add("oracle");
-            sqlStatement3.setSql("CAST(\"store_sqft\" + 2147483647 AS NUMBER(22))");
+            sqlStatement3.setBody("CAST(\"store_sqft\" + 2147483647 AS NUMBER(22))");
 
             sqlColumn.getSqls().add(sqlStatement1);
             sqlColumn.getSqls().add(sqlStatement2);
@@ -19401,7 +19407,7 @@ public class SchemaModifiersEmf {
             ExpressionColumn measureSqlColumn = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
             SqlStatement measureSqlStatement = SourceFactory.eINSTANCE.createSqlStatement();
             measureSqlStatement.getDialects().add("vertica");
-            measureSqlStatement.setSql("CAST(\"unit_sales\" + 2147483647 AS NUMBER(22))");
+            measureSqlStatement.setBody("CAST(\"unit_sales\" + 2147483647 AS NUMBER(22))");
             measureSqlColumn.getSqls().add(measureSqlStatement);
 
             bigUnitSalesMeasure.setColumn(measureSqlColumn);
@@ -19417,8 +19423,8 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(bigIntTestCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(bigIntTestCube);
 
         }
 
@@ -19594,8 +19600,8 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(dsadCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(dsadCube);
 
         }
 
@@ -19642,7 +19648,6 @@ public class SchemaModifiersEmf {
 
             Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer Level Name");
-            customerLevel.setDescription("Customer Level Description");
             customerLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             customerLevel.setNameColumn(CatalogSupplier.COLUMN_FULLNAME_CUSTOMER);
             customerLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -19666,7 +19671,6 @@ public class SchemaModifiersEmf {
 
             Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product Level Name");
-            productLevel.setDescription("Product Level Description");
             productLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             productLevel.setNameColumn(CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
             productLevel.setColumnType(ColumnInternalDataType.STRING);
@@ -19707,8 +19711,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMartSalesOnly");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesShortCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesShortCube);
+            org.opencube.junit5.TestUtil.describe(catalog, customerLevel, "Customer Level Description");
+            org.opencube.junit5.TestUtil.describe(catalog, productLevel, "Product Level Description");
         }
 
         @Override
@@ -19754,7 +19760,6 @@ public class SchemaModifiersEmf {
 
             Level customerLevel = LevelFactory.eINSTANCE.createLevel();
             customerLevel.setName("Customer Level Name");
-            customerLevel.setDescription("Customer Level Description");
             customerLevel.setColumn(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
             customerLevel.setColumnType(ColumnInternalDataType.STRING);
             customerLevel.setUniqueMembers(true);
@@ -19777,7 +19782,6 @@ public class SchemaModifiersEmf {
 
             Level productLevel = LevelFactory.eINSTANCE.createLevel();
             productLevel.setName("Product Level Name");
-            productLevel.setDescription("Product Level Description");
             productLevel.setColumn(CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
             productLevel.setColumnType(ColumnInternalDataType.STRING);
             productLevel.setUniqueMembers(true);
@@ -19817,8 +19821,10 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMartSalesOnly");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(salesShortCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(salesShortCube);
+            org.opencube.junit5.TestUtil.describe(catalog, customerLevel, "Customer Level Description");
+            org.opencube.junit5.TestUtil.describe(catalog, productLevel, "Product Level Description");
         }
 
         @Override
@@ -19875,7 +19881,6 @@ public class SchemaModifiersEmf {
             MemberProperty barProp = LevelFactory.eINSTANCE.createMemberProperty();
             barProp.setName("BarProp");
             barProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_PROMOTION_NAME_PROMOTION));
-            barProp.setDescription("BaconDesc");
             promotionNameLevel.getMemberProperties().add(barProp);
 
             promotionsHierarchy.getLevels().add(promotionNameLevel);
@@ -19900,7 +19905,8 @@ public class SchemaModifiersEmf {
             measureGroup.getMeasures().add(unitSalesMeasure);
             fooCube.getMeasureGroups().add(measureGroup);
 
-            this.catalog.getCubes().add(fooCube);
+            this.catalog.getImportedElement().add(fooCube);
+            org.opencube.junit5.TestUtil.describe(this.catalog, barProp, "BaconDesc");
 
         }
 
@@ -20298,8 +20304,8 @@ public class SchemaModifiersEmf {
             // Create the catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(warehouseAndSalesCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(warehouseAndSalesCube);
         }
 
         /*
@@ -20408,7 +20414,7 @@ public class SchemaModifiersEmf {
             this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
 
-            catalog.getDbschemas().addAll(((Catalog) catalogMapping).getDbschemas());
+            catalog.getImportedElement().addAll(Packages.available((Catalog) catalogMapping, Schema.class));
 
             // Create Markets dimension
             StandardDimension marketsDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20437,15 +20443,15 @@ public class SchemaModifiersEmf {
             countryLevel.setType(LevelDefinition.REGULAR);
             countryLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation countryDataRoleAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            countryDataRoleAnnotation.setName("Data.Role");
+            TaggedValue countryDataRoleAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            countryDataRoleAnnotation.setTag("Data.Role");
             countryDataRoleAnnotation.setValue("Geography");
 
-            Annotation countryGeoRoleAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            countryGeoRoleAnnotation.setName("Geo.Role");
+            TaggedValue countryGeoRoleAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            countryGeoRoleAnnotation.setTag("Geo.Role");
             countryGeoRoleAnnotation.setValue("country");
 
-            countryLevel.getAnnotations().addAll(List.of(countryDataRoleAnnotation, countryGeoRoleAnnotation));
+            countryLevel.getTaggedValue().addAll(List.of(countryDataRoleAnnotation, countryGeoRoleAnnotation));
 
             Level stateProvinceLevel = LevelFactory.eINSTANCE.createLevel();
             stateProvinceLevel.setName("State Province");
@@ -20454,19 +20460,19 @@ public class SchemaModifiersEmf {
             stateProvinceLevel.setType(LevelDefinition.REGULAR);
             stateProvinceLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation stateDataRoleAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            stateDataRoleAnnotation.setName("Data.Role");
+            TaggedValue stateDataRoleAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            stateDataRoleAnnotation.setTag("Data.Role");
             stateDataRoleAnnotation.setValue("Geography");
 
-            Annotation stateGeoRoleAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            stateGeoRoleAnnotation.setName("Geo.Role");
+            TaggedValue stateGeoRoleAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            stateGeoRoleAnnotation.setTag("Geo.Role");
             stateGeoRoleAnnotation.setValue("state");
 
-            Annotation stateGeoCountryAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            stateGeoCountryAnnotation.setName("Geo.Role");
+            TaggedValue stateGeoCountryAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            stateGeoCountryAnnotation.setTag("Geo.Role");
             stateGeoCountryAnnotation.setValue("country");
 
-            stateProvinceLevel.getAnnotations().addAll(List.of(stateDataRoleAnnotation, stateGeoRoleAnnotation, stateGeoCountryAnnotation));
+            stateProvinceLevel.getTaggedValue().addAll(List.of(stateDataRoleAnnotation, stateGeoRoleAnnotation, stateGeoCountryAnnotation));
 
             Level cityLevel = LevelFactory.eINSTANCE.createLevel();
             cityLevel.setName("City");
@@ -20475,19 +20481,19 @@ public class SchemaModifiersEmf {
             cityLevel.setType(LevelDefinition.REGULAR);
             cityLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation cityDataRoleAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            cityDataRoleAnnotation.setName("Data.Role");
+            TaggedValue cityDataRoleAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            cityDataRoleAnnotation.setTag("Data.Role");
             cityDataRoleAnnotation.setValue("Geography");
 
-            Annotation cityGeoRoleAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            cityGeoRoleAnnotation.setName("Geo.Role");
+            TaggedValue cityGeoRoleAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            cityGeoRoleAnnotation.setTag("Geo.Role");
             cityGeoRoleAnnotation.setValue("city");
 
-            Annotation cityRequiredParentsAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            cityRequiredParentsAnnotation.setName("Geo.RequiredParents");
+            TaggedValue cityRequiredParentsAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            cityRequiredParentsAnnotation.setTag("Geo.RequiredParents");
             cityRequiredParentsAnnotation.setValue("country,state");
 
-            cityLevel.getAnnotations().addAll(List.of(cityDataRoleAnnotation, cityGeoRoleAnnotation, cityRequiredParentsAnnotation));
+            cityLevel.getTaggedValue().addAll(List.of(cityDataRoleAnnotation, cityGeoRoleAnnotation, cityRequiredParentsAnnotation));
 
             marketsHierarchy.getLevels().addAll(List.of(territoryLevel, countryLevel, stateProvinceLevel, cityLevel));
             marketsDimension.getHierarchies().add(marketsHierarchy);
@@ -20628,10 +20634,10 @@ public class SchemaModifiersEmf {
             yearsLevel.setType(LevelDefinition.TIME_YEARS);
             yearsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation yearsAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            yearsAnnotation.setName("AnalyzerDateFormat");
+            TaggedValue yearsAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            yearsAnnotation.setTag("AnalyzerDateFormat");
             yearsAnnotation.setValue("[yyyy]");
-            yearsLevel.getAnnotations().add(yearsAnnotation);
+            yearsLevel.getTaggedValue().add(yearsAnnotation);
 
             OrderedColumn oc1 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QTR_ID_TIME);
@@ -20645,10 +20651,10 @@ public class SchemaModifiersEmf {
             quartersLevel.setType(LevelDefinition.TIME_QUARTERS);
             quartersLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation quartersAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            quartersAnnotation.setName("AnalyzerDateFormat");
+            TaggedValue quartersAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            quartersAnnotation.setTag("AnalyzerDateFormat");
             quartersAnnotation.setValue("[yyyy].['QTR'q]");
-            quartersLevel.getAnnotations().add(quartersAnnotation);
+            quartersLevel.getTaggedValue().add(quartersAnnotation);
 
             OrderedColumn oc2 = org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createOrderedColumn();
             oc2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_MONTH_ID_TIME);
@@ -20662,10 +20668,10 @@ public class SchemaModifiersEmf {
             monthsLevel.setType(LevelDefinition.TIME_MONTHS);
             monthsLevel.setHideMemberIf(HideMemberIf.NEVER);
 
-            Annotation monthsAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            monthsAnnotation.setName("AnalyzerDateFormat");
+            TaggedValue monthsAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            monthsAnnotation.setTag("AnalyzerDateFormat");
             monthsAnnotation.setValue("[yyyy].['QTR'q].[MMM]");
-            monthsLevel.getAnnotations().add(monthsAnnotation);
+            monthsLevel.getTaggedValue().add(monthsAnnotation);
 
             timeHierarchy.getLevels().addAll(List.of(yearsLevel, quartersLevel, monthsLevel));
             timeDimension.getHierarchies().add(timeHierarchy);
@@ -20735,25 +20741,25 @@ public class SchemaModifiersEmf {
             quantityMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_QUANTITYORDERED_ORDERFACT);
             quantityMeasure.setFormatString("#,###");
 
-            Annotation quantityAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            quantityAnnotation.setName("AnalyzerBusinessGroup");
+            TaggedValue quantityAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            quantityAnnotation.setTag("AnalyzerBusinessGroup");
             quantityAnnotation.setValue("Measures");
-            quantityMeasure.getAnnotations().add(quantityAnnotation);
+            quantityMeasure.getTaggedValue().add(quantityAnnotation);
 
             SumMeasure salesMeasure = MeasureFactory.eINSTANCE.createSumMeasure();
             salesMeasure.setName("Sales");
             salesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.COLUMN_TOTALPRICE_ORDERFACT);
             salesMeasure.setFormatString("#,###");
 
-            Annotation salesAnnotation = RolapMappingFactory.eINSTANCE.createAnnotation();
-            salesAnnotation.setName("AnalyzerBusinessGroup");
+            TaggedValue salesAnnotation = CoreFactory.eINSTANCE.createTaggedValue();
+            salesAnnotation.setTag("AnalyzerBusinessGroup");
             salesAnnotation.setValue("Measures");
-            salesMeasure.getAnnotations().add(salesAnnotation);
+            salesMeasure.getTaggedValue().add(salesAnnotation);
 
             measureGroup.getMeasures().addAll(List.of(quantityMeasure, salesMeasure));
             steelWheelsSalesCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(steelWheelsSalesCube);
+            catalog.getImportedElement().add(steelWheelsSalesCube);
 
             // Create Roles
             // dev role
@@ -20776,11 +20782,11 @@ public class SchemaModifiersEmf {
             devMarketsHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant devApacMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            devApacMemberGrant.setMember("[Markets].[APAC]");
+            devApacMemberGrant.setMember(mdx("[Markets].[APAC]"));
             devApacMemberGrant.setMemberAccess(MemberAccess.ALL);
 
             AccessMemberGrant devAustraliaMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            devAustraliaMemberGrant.setMember("[Markets].[APAC].[Australia]");
+            devAustraliaMemberGrant.setMember(mdx("[Markets].[APAC].[Australia]"));
             devAustraliaMemberGrant.setMemberAccess(MemberAccess.NONE);
 
             devMarketsHierarchyGrant.getMemberGrants().addAll(List.of(devApacMemberGrant, devAustraliaMemberGrant));
@@ -20799,11 +20805,11 @@ public class SchemaModifiersEmf {
             devMeasuresHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant devQuantityMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            devQuantityMemberGrant.setMember("[Measures].[Quantity]");
+            devQuantityMemberGrant.setMember(mdx("[Measures].[Quantity]"));
             devQuantityMemberGrant.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant devSalesMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            devSalesMemberGrant.setMember("[Measures].[Sales]");
+            devSalesMemberGrant.setMember(mdx("[Measures].[Sales]"));
             devSalesMemberGrant.setMemberAccess(MemberAccess.ALL);
 
             devMeasuresHierarchyGrant.getMemberGrants().addAll(List.of(devQuantityMemberGrant, devSalesMemberGrant));
@@ -20827,11 +20833,11 @@ public class SchemaModifiersEmf {
             ctoMeasuresHierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant ctoQuantityMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            ctoQuantityMemberGrant.setMember("[Measures].[Quantity]");
+            ctoQuantityMemberGrant.setMember(mdx("[Measures].[Quantity]"));
             ctoQuantityMemberGrant.setMemberAccess(MemberAccess.NONE);
 
             AccessMemberGrant ctoSalesMemberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            ctoSalesMemberGrant.setMember("[Measures].[Sales]");
+            ctoSalesMemberGrant.setMember(mdx("[Measures].[Sales]"));
             ctoSalesMemberGrant.setMemberAccess(MemberAccess.ALL);
 
             ctoMeasuresHierarchyGrant.getMemberGrants().addAll(List.of(ctoQuantityMemberGrant, ctoSalesMemberGrant));
@@ -20854,7 +20860,7 @@ public class SchemaModifiersEmf {
             adminCatalogGrant.getCubeGrants().add(adminCubeGrant);
             adminRole.getAccessCatalogGrants().add(adminCatalogGrant);
 
-            catalog.getAccessRoles().addAll(List.of(devRole, ctoRole, adminRole));
+            catalog.getImportedElement().addAll(List.of(devRole, ctoRole, adminRole));
         }
 
         @Override
@@ -20870,7 +20876,7 @@ public class SchemaModifiersEmf {
         public SteelWheelsSchemaTestModifier2(Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
-            this.catalog.getCubes().forEach(c -> {if (c instanceof PhysicalCube pc) {pc.getDimensionConnectors().forEach(dc -> dc.getDimension().getHierarchies().forEach(h -> ((Hierarchy)h).setHasAll(false)));}});
+            Packages.available(this.catalog, Cube.class).forEach(c -> {if (c instanceof PhysicalCube pc) {pc.getDimensionConnectors().forEach(dc -> dc.getDimension().getHierarchies().forEach(h -> ((Hierarchy)h).setHasAll(false)));}});
         }
 
         @Override
@@ -20886,7 +20892,7 @@ public class SchemaModifiersEmf {
         public SteelWheelsSchemaTestModifier3(Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
             this.catalog = (CatalogImpl) copier.get(catalog);
-            this.catalog.getCubes().forEach(c -> {if (c instanceof PhysicalCube pc) {pc.getDimensionConnectors().forEach(dc -> dc.getDimension().getHierarchies().forEach(h -> {
+            Packages.available(this.catalog, Cube.class).forEach(c -> {if (c instanceof PhysicalCube pc) {pc.getDimensionConnectors().forEach(dc -> dc.getDimension().getHierarchies().forEach(h -> {
                 if ("All Markets".equals(h.getAllMemberName()) || "All Status Types".equals(h.getAllMemberName())) {
                     ((Hierarchy)h).setHasAll(false);
                 }
@@ -20908,7 +20914,7 @@ public class SchemaModifiersEmf {
             catalog.setName("test_namecolumn");
 
 
-            catalog.getDbschemas().addAll(((Catalog) catalogMapping).getDbschemas());
+            catalog.getImportedElement().addAll(Packages.available((Catalog) catalogMapping, Schema.class));
 
 
             // Create Markets dimension
@@ -21291,7 +21297,7 @@ public class SchemaModifiersEmf {
             cube3.getMeasureGroups().add(measureGroup3);
 
             // Add all cubes to catalog
-            catalog.getCubes().addAll(List.of(cube1, cube2, cube3));
+            catalog.getImportedElement().addAll(List.of(cube1, cube2, cube3));
         }
 
         @Override
@@ -21520,8 +21526,8 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FooBar");
-            catalog.getDbschemas().addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(fooCube);
+            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(fooCube);
 
         }
 
@@ -21853,8 +21859,8 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
-            catalog.getDbschemas().addAll( (Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.getCubes().add(cube);
+            catalog.getImportedElement().addAll( (Collection<? extends Schema>) Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().add(cube);
 
         }
 
@@ -21938,7 +21944,7 @@ public class SchemaModifiersEmf {
             AccessCatalogGrant grant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
             grant1.setCatalogAccess(CatalogAccess.ALL);
             role1.getAccessCatalogGrants().add(grant1);
-            this.catalog.getAccessRoles().add(role1);
+            this.catalog.getImportedElement().add(role1);
 
             // CUBE_SALES_MINIMAL role
             AccessRole role2 = CommonFactory.eINSTANCE.createAccessRole();
@@ -21959,7 +21965,7 @@ public class SchemaModifiersEmf {
             cubeGrant2.getHierarchyGrants().add(hierGrant2);
             grant2.getCubeGrants().add(cubeGrant2);
             role2.getAccessCatalogGrants().add(grant2);
-            this.catalog.getAccessRoles().add(role2);
+            this.catalog.getImportedElement().add(role2);
 
             // DIM_MARKETAREA_MARKET_800 role
             AccessRole role3 = CommonFactory.eINSTANCE.createAccessRole();
@@ -21979,14 +21985,14 @@ public class SchemaModifiersEmf {
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.HIERARCHY_MARKETS));
 
             AccessMemberGrant memberGrant3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant3.setMember("[Markets].[Territory].[APAC]");
+            memberGrant3.setMember(mdx("[Markets].[Territory].[APAC]"));
             memberGrant3.setMemberAccess(MemberAccess.ALL);
 
             hierGrant3.getMemberGrants().add(memberGrant3);
             cubeGrant3.getHierarchyGrants().add(hierGrant3);
             grant3.getCubeGrants().add(cubeGrant3);
             role3.getAccessCatalogGrants().add(grant3);
-            this.catalog.getAccessRoles().add(role3);
+            this.catalog.getImportedElement().add(role3);
 
             // DIM_MARKETAREA_MARKET_850 role
             AccessRole role4 = CommonFactory.eINSTANCE.createAccessRole();
@@ -22008,14 +22014,14 @@ public class SchemaModifiersEmf {
                     org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier.LEVEL_MARKETS_TERRITORY));
 
             AccessMemberGrant memberGrant4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant4.setMember("[Markets].[Territory].[EMEA]");
+            memberGrant4.setMember(mdx("[Markets].[Territory].[EMEA]"));
             memberGrant4.setMemberAccess(MemberAccess.ALL);
 
             hierGrant4.getMemberGrants().add(memberGrant4);
             cubeGrant4.getHierarchyGrants().add(hierGrant4);
             grant4.getCubeGrants().add(cubeGrant4);
             role4.getAccessCatalogGrants().add(grant4);
-            this.catalog.getAccessRoles().add(role4);
+            this.catalog.getImportedElement().add(role4);
         }
 
         /*
@@ -22061,9 +22067,9 @@ public class SchemaModifiersEmf {
             // Create Customers Dimension
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
-            catalog.getDbschemas()
-                    .addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.setDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
+            catalog.getImportedElement()
+                    .addAll(Packages.available(catalog2, Schema.class));
+            org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers Dimension");
@@ -22147,7 +22153,7 @@ public class SchemaModifiersEmf {
             measureGroup.getMeasures().add(totalPrice);
 
             customersCube.getMeasureGroups().add(measureGroup);
-            catalog.getCubes().add(customersCube);
+            catalog.getImportedElement().add(customersCube);
 
             // Administrator Role
             AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22162,7 +22168,7 @@ public class SchemaModifiersEmf {
             adminGrant.getCubeGrants().add(adminCubeGrant);
 
             adminRole.getAccessCatalogGrants().add(adminGrant);
-            catalog.getAccessRoles().add(adminRole);
+            catalog.getImportedElement().add(adminRole);
 
             // Power User Role
             AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22186,14 +22192,14 @@ public class SchemaModifiersEmf {
             hierGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
+            memberGrant.setMember(mdx("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant);
 
             powerUserCubeGrant.getHierarchyGrants().add(hierGrant);
             powerUserGrant.getCubeGrants().add(powerUserCubeGrant);
             powerUserRole.getAccessCatalogGrants().add(powerUserGrant);
-            catalog.getAccessRoles().add(powerUserRole);
+            catalog.getImportedElement().add(powerUserRole);
         }
 
         /*
@@ -22244,9 +22250,9 @@ public class SchemaModifiersEmf {
         public SteelWheelsSchemaTestModifier9(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
-            catalog.getDbschemas()
-                    .addAll((Collection<? extends Schema>) catalog2.getDbschemas());
-            catalog.setDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
+            catalog.getImportedElement()
+                    .addAll(Packages.available(catalog2, Schema.class));
+            org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             // Create Customers Dimension
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -22330,7 +22336,7 @@ public class SchemaModifiersEmf {
 
             customersCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(customersCube);
+            catalog.getImportedElement().add(customersCube);
 
             // Administrator Role
             AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22345,7 +22351,7 @@ public class SchemaModifiersEmf {
             adminGrant.getCubeGrants().add(adminCubeGrant);
 
             adminRole.getAccessCatalogGrants().add(adminGrant);
-            catalog.getAccessRoles().add(adminRole);
+            catalog.getImportedElement().add(adminRole);
 
             // Foo Role
             AccessRole fooRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22355,7 +22361,7 @@ public class SchemaModifiersEmf {
             fooGrant.setCatalogAccess(CatalogAccess.NONE);
 
             fooRole.getAccessCatalogGrants().add(fooGrant);
-            catalog.getAccessRoles().add(fooRole);
+            catalog.getImportedElement().add(fooRole);
 
             // Power User Role
             AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22379,28 +22385,28 @@ public class SchemaModifiersEmf {
             hierGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant.setMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]");
+            memberGrant.setMember(mdx("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
             memberGrant.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant);
 
             powerUserCubeGrant.getHierarchyGrants().add(hierGrant);
             powerUserGrant.getCubeGrants().add(powerUserCubeGrant);
             powerUserRole.getAccessCatalogGrants().add(powerUserGrant);
-            catalog.getAccessRoles().add(powerUserRole);
+            catalog.getImportedElement().add(powerUserRole);
 
             // Administrator Union Role
             AccessRole adminUnionRole = CommonFactory.eINSTANCE.createAccessRole();
             adminUnionRole.setName("Administrator Union");
             adminUnionRole.getReferencedAccessRoles().add(adminRole);
             adminUnionRole.getReferencedAccessRoles().add(fooRole);
-            catalog.getAccessRoles().add(adminUnionRole);
+            catalog.getImportedElement().add(adminUnionRole);
 
             // Power User Union Role
             AccessRole powerUserUnionRole = CommonFactory.eINSTANCE.createAccessRole();
             powerUserUnionRole.setName("Power User Union");
             powerUserUnionRole.getReferencedAccessRoles().add(powerUserRole);
             powerUserUnionRole.getReferencedAccessRoles().add(fooRole);
-            catalog.getAccessRoles().add(powerUserUnionRole);
+            catalog.getImportedElement().add(powerUserUnionRole);
 
         }
 
@@ -22561,7 +22567,7 @@ public class SchemaModifiersEmf {
             measureGroup.getMeasures().add(measure1);
             rolesTest1.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(rolesTest1);
+            catalog.getImportedElement().add(rolesTest1);
 
             // Create rolesTest2 Cube
             PhysicalCube rolesTest2 = CubeFactory.eINSTANCE.createPhysicalCube();
@@ -22594,7 +22600,7 @@ public class SchemaModifiersEmf {
 
             rolesTest2.getMeasureGroups().add(measureGroup1);
 
-            catalog.getCubes().add(rolesTest2);
+            catalog.getImportedElement().add(rolesTest2);
 
             // Create VirtualCube rolesTest
             VirtualCube rolesTest = CubeFactory.eINSTANCE.createVirtualCube();
@@ -22619,11 +22625,11 @@ public class SchemaModifiersEmf {
 
             CalculatedMember calcMember = LevelFactory.eINSTANCE.createCalculatedMember();
             calcMember.setName("Measure2");
-            calcMember.setFormula("ValidMeasure([Measures].[Measure2:Internal])");
+            calcMember.setFormula(mdx("ValidMeasure([Measures].[Measure2:Internal])"));
             // calcMember.setDimension("Measures");
             rolesTest.getCalculatedMembers().add(calcMember);
 
-            catalog.getCubes().add(rolesTest);
+            catalog.getImportedElement().add(rolesTest);
 
             // Administrator Role
             AccessRole adminRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22633,7 +22639,7 @@ public class SchemaModifiersEmf {
             adminGrant.setCatalogAccess(CatalogAccess.ALL);
 
             adminRole.getAccessCatalogGrants().add(adminGrant);
-            catalog.getAccessRoles().add(adminRole);
+            catalog.getImportedElement().add(adminRole);
 
             // Report Author Role
             AccessRole reportAuthorRole = CommonFactory.eINSTANCE.createAccessRole();
@@ -22652,29 +22658,29 @@ public class SchemaModifiersEmf {
             hierGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
 
             AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant1.setMember("[Dimension2].[BG&E Collectables]");
+            memberGrant1.setMember(mdx("[Dimension2].[BG&E Collectables]"));
             memberGrant1.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant1);
 
             AccessMemberGrant memberGrant2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant2.setMember("[Dimension2].[Baane Mini Imports]");
+            memberGrant2.setMember(mdx("[Dimension2].[Baane Mini Imports]"));
             memberGrant2.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant2);
 
             AccessMemberGrant memberGrant3 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant3.setMember("[Dimension2].[Blauer See Auto, Co.]");
+            memberGrant3.setMember(mdx("[Dimension2].[Blauer See Auto, Co.]"));
             memberGrant3.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant3);
 
             AccessMemberGrant memberGrant4 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-            memberGrant4.setMember("[Dimension2].[Boards & Toys Co.]");
+            memberGrant4.setMember(mdx("[Dimension2].[Boards & Toys Co.]"));
             memberGrant4.setMemberAccess(MemberAccess.ALL);
             hierGrant.getMemberGrants().add(memberGrant4);
 
             cubeGrant.getHierarchyGrants().add(hierGrant);
             reportAuthorGrant.getCubeGrants().add(cubeGrant);
             reportAuthorRole.getAccessCatalogGrants().add(reportAuthorGrant);
-            catalog.getAccessRoles().add(reportAuthorRole);
+            catalog.getImportedElement().add(reportAuthorRole);
         }
 
         /*
@@ -22811,7 +22817,7 @@ public class SchemaModifiersEmf {
 
             salesCube.getMeasureGroups().add(measureGroup);
 
-            catalog.getCubes().add(salesCube);
+            catalog.getImportedElement().add(salesCube);
         }
 
         /*

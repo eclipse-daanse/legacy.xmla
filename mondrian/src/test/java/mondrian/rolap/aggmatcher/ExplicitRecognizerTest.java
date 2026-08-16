@@ -29,7 +29,7 @@ import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFo
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevelProperty;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationName;
+import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationTable;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
@@ -136,8 +136,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName((Table) copier.get(CatalogSupplier.TABLE_AGG_G_MS_PCAT_SALES_FACT));
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable((Table) copier.get(CatalogSupplier.TABLE_AGG_G_MS_PCAT_SALES_FACT));
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn((Column) copier.get(CatalogSupplier.COLUMN_FACT_COUNT_AGG_G_MS_PCAT_SALES_FACT_1997));
@@ -251,8 +251,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(CatalogSupplier.TABLE_AGG_C_14_SALES_FACT);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(CatalogSupplier.TABLE_AGG_C_14_SALES_FACT);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_14_SALES_FACT_1997);
@@ -390,8 +390,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(expAggTest);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(expAggTest);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn((Column) factCountExpAggTest);
@@ -481,8 +481,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(expAggTest);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(expAggTest);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn((Column) factCountExpAggTest);
@@ -571,8 +571,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(expAggTest);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(expAggTest);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn((Column) factCountExpAggTest);
@@ -673,8 +673,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(expAggTestDistinctCount);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(expAggTestDistinctCount);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn(factCountExpAggTestDistinctCount);
@@ -823,8 +823,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(expAggTestDistinctCount);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(expAggTestDistinctCount);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn(factCountExpAggTestDistinctCount);
@@ -959,8 +959,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
         Catalog catalog = (Catalog) copier.get(catalogMapping);
 
-        AggregationName aggName = AggregationFactory.eINSTANCE.createAggregationName();
-        aggName.setName(expAggTestDistinctCount);
+        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
+        aggName.setTable(expAggTestDistinctCount);
 
         AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
         factCount.setColumn(factCountExpAggTestDistinctCount);

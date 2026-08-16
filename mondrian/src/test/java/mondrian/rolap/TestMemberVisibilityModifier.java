@@ -13,6 +13,7 @@
  */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -78,7 +79,7 @@ public class TestMemberVisibilityModifier implements CatalogMappingSupplier {
         CALCULATED_MEMBER_PROFIT = LevelFactory.eINSTANCE.createCalculatedMember();
         CALCULATED_MEMBER_PROFIT.setName("Profit");
         CALCULATED_MEMBER_PROFIT.setVisible(false);
-        CALCULATED_MEMBER_PROFIT.setFormula("[Measures].[Store Sales] - [Measures].[Store Cost]");
+        CALCULATED_MEMBER_PROFIT.setFormula(mdx("[Measures].[Store Sales] - [Measures].[Store Cost]"));
 
         // Create virtual cube
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY = CubeFactory.eINSTANCE.createVirtualCube();
@@ -106,7 +107,7 @@ public class TestMemberVisibilityModifier implements CatalogMappingSupplier {
         );
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES_MEMBER_VISIBILITY);
     }
 
     @Override

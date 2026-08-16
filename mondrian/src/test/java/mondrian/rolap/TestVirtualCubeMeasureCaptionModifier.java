@@ -155,8 +155,8 @@ public class TestVirtualCubeMeasureCaptionModifier implements CatalogMappingSupp
         VIRTUAL_CUBE_TEST_STORE.getReferencedMeasures().add(MEASURE_STORE_SQFT_LOCAL);
 
         // Add the physical cube and virtual cube to the catalog
-        this.catalog.getCubes().add(CUBE_TEST_STORE);
-        this.catalog.getCubes().add(VIRTUAL_CUBE_TEST_STORE);
+        this.catalog.getImportedElement().add(CUBE_TEST_STORE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_TEST_STORE);
     }
 
     @Override

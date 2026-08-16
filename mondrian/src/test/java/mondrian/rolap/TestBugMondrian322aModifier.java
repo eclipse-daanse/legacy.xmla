@@ -69,7 +69,7 @@ public class TestBugMondrian322aModifier implements CatalogMappingSupplier {
         // Create virtual cube
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2 = CubeFactory.eINSTANCE.createVirtualCube();
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setName("Warehouse and Sales2");
-        VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setDefaultMeasure((Member) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
+        VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
 
         // Add dimension connectors
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.getDimensionConnectors().add((DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER));
@@ -81,7 +81,7 @@ public class TestBugMondrian322aModifier implements CatalogMappingSupplier {
         VIRTUAL_CUBE_WAREHOUSE_AND_SALES2.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES2);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_WAREHOUSE_AND_SALES2);
 
     }
 

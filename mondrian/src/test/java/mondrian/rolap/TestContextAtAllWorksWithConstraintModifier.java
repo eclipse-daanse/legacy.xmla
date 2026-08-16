@@ -131,7 +131,7 @@ public class TestContextAtAllWorksWithConstraintModifier implements CatalogMappi
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Add the cube to the catalog
-        this.catalog.getCubes().add(CUBE_ONLY_GENDER);
+        this.catalog.getImportedElement().add(CUBE_ONLY_GENDER);
     }
 
     @Override

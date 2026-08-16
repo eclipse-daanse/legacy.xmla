@@ -13,6 +13,7 @@
  */
 package org.eclipse.daanse.olap;
 
+
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -32,6 +33,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * EMF version of VerifyMemberLevelNamesIdentityOlap4jDateDimModifier from HierarchyBugTest.
  * Creates a Date dimension with default hierarchy (hasAll=false) using RolapMappingFactory.
@@ -120,7 +122,7 @@ public class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier implements Cata
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Find and modify the Sales cube
-        for (Cube cube : this.catalog.getCubes()) {
+        for (Cube cube : Packages.available(this.catalog, Cube.class)) {
             if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
                 PhysicalCube physicalCube = (PhysicalCube) cube;
                 // Add the Date dimension connector to the Sales cube

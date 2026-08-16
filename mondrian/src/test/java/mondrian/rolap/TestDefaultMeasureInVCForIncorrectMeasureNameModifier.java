@@ -67,7 +67,7 @@ public class TestDefaultMeasureInVCForIncorrectMeasureNameModifier implements Ca
         VIRTUAL_CUBE_SALES_VS_WAREHOUSE.getReferencedCalculatedMembers().add((CalculatedMember) copier.get(CatalogSupplier.CALCULATED_MEMBER_PROFIT));
 
         // Add the virtual cube to the catalog
-        this.catalog.getCubes().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
+        this.catalog.getImportedElement().add(VIRTUAL_CUBE_SALES_VS_WAREHOUSE);
     }
 
     @Override

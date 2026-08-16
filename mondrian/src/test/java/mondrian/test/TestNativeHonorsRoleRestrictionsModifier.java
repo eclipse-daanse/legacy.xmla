@@ -13,6 +13,7 @@
  */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -79,28 +80,28 @@ public class TestNativeHonorsRoleRestrictionsModifier implements CatalogMappingS
     static {
         // Create member grants for specific battery products
         MEMBER_GRANT_CORMORANT_AA_1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_CORMORANT_AA_1.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AA-Size Batteries]");
+        MEMBER_GRANT_CORMORANT_AA_1.setMember(mdx("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AA-Size Batteries]"));
         MEMBER_GRANT_CORMORANT_AA_1.setMemberAccess(MemberAccess.ALL);
 
         // Note: Original POJO has duplicate entry for Cormorant AA-Size Batteries
         MEMBER_GRANT_CORMORANT_AA_2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_CORMORANT_AA_2.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AA-Size Batteries]");
+        MEMBER_GRANT_CORMORANT_AA_2.setMember(mdx("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AA-Size Batteries]"));
         MEMBER_GRANT_CORMORANT_AA_2.setMemberAccess(MemberAccess.ALL);
 
         MEMBER_GRANT_CORMORANT_AAA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_CORMORANT_AAA.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AAA-Size Batteries]");
+        MEMBER_GRANT_CORMORANT_AAA.setMember(mdx("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant AAA-Size Batteries]"));
         MEMBER_GRANT_CORMORANT_AAA.setMemberAccess(MemberAccess.ALL);
 
         MEMBER_GRANT_CORMORANT_C = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_CORMORANT_C.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant C-Size Batteries]");
+        MEMBER_GRANT_CORMORANT_C.setMember(mdx("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Cormorant].[Cormorant C-Size Batteries]"));
         MEMBER_GRANT_CORMORANT_C.setMemberAccess(MemberAccess.ALL);
 
         MEMBER_GRANT_DENNY_AA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_DENNY_AA.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Denny].[Denny AA-Size Batteries]");
+        MEMBER_GRANT_DENNY_AA.setMember(mdx("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Denny].[Denny AA-Size Batteries]"));
         MEMBER_GRANT_DENNY_AA.setMemberAccess(MemberAccess.ALL);
 
         MEMBER_GRANT_DENNY_AAA = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        MEMBER_GRANT_DENNY_AAA.setMember("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Denny].[Denny AAA-Size Batteries]");
+        MEMBER_GRANT_DENNY_AAA.setMember(mdx("[Product].[Non-Consumable].[Household].[Electrical].[Batteries].[Denny].[Denny AAA-Size Batteries]"));
         MEMBER_GRANT_DENNY_AAA.setMemberAccess(MemberAccess.ALL);
 
         // Create hierarchy grant for Product with CUSTOM access and PARTIAL rollup
@@ -139,7 +140,7 @@ public class TestNativeHonorsRoleRestrictionsModifier implements CatalogMappingS
         this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) baseCatalog);
 
         // Add the access role to the catalog
-        this.catalog.getAccessRoles().add(ACCESS_ROLE_TEST);
+        this.catalog.getImportedElement().add(ACCESS_ROLE_TEST);
     }
 
     @Override

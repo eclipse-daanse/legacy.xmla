@@ -13,6 +13,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
+
 import java.util.Optional;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -28,6 +29,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MaxMeasure;
 import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * EMF version of TestMondrian1325Modifier from NonCollapsedAggTest.
  * Adds a "Bogus Number" measure to the Sales cube.
@@ -58,7 +60,7 @@ public class TestMondrian1325Modifier implements CatalogMappingSupplier {
         MEASURE_GROUP.getMeasures().add(MEASURE_BOGUS_NUMBER);
 
         // Find the Sales cube and add the measure group
-        Optional<Cube> salesCubeOpt = this.catalog.getCubes().stream()
+        Optional<Cube> salesCubeOpt = Packages.available(this.catalog, Cube.class).stream()
             .filter(c -> "Sales".equals(c.getName()))
             .findFirst();
 

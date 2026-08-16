@@ -84,8 +84,12 @@ public class EmfUtil {
                 continue;
             }
 
+            if ("importer".equals(ref.getName())) {
+                // skip back-references to consuming catalogs
+                continue;
+            }
             if (ref.isMany()) {
-                for (Object o : (List<?>) val) {
+                for (Object o : new java.util.ArrayList<>((List<?>) val)) {
                     if (o instanceof EObject) {
                         dfs((EObject) o, visited);
 

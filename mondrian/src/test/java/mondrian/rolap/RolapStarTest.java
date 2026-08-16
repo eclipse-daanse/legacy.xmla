@@ -80,7 +80,7 @@ class RolapStarTest {
       pt.setName("TestTable");
       ds.getOwnedElement().add(pt);
       SqlStatement ss = SourceFactory.eINSTANCE.createSqlStatement();
-      ss.setSql("Alias.clicked = 'true'");
+      ss.setBody("Alias.clicked = 'true'");
       ss.getDialects().add("generic");
       TableSource original = SourceFactory.eINSTANCE.createTableSource();
       original.setTable(pt);
@@ -95,7 +95,7 @@ class RolapStarTest {
       assertEquals("NewAlias", cloned.getAlias());
       assertEquals("TestTable", cloned.getTable().getName());
       assertNotNull(cloned.getSqlWhereExpression());
-      assertEquals("NewAlias.clicked = 'true'", cloned.getSqlWhereExpression().getSql());
+      assertEquals("NewAlias.clicked = 'true'", cloned.getSqlWhereExpression().getBody());
   }
 
 }

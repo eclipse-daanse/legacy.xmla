@@ -13,6 +13,7 @@
  */
 package mondrian.rolap;
 
+
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
@@ -35,6 +36,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
 
     protected final Catalog catalog;
@@ -242,8 +244,8 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
         d2.getFeature().add(nameD2);
 
         // Add tables to database schema
-        if (catalog.getDbschemas().size() > 0) {
-            Schema dbSchema = catalog.getDbschemas().get(0);
+        if (Packages.available(catalog, Schema.class).size() > 0) {
+            Schema dbSchema = Packages.available(catalog, Schema.class).get(0);
             dbSchema.getOwnedElement().add(ft1);
             dbSchema.getOwnedElement().add(ft2);
             dbSchema.getOwnedElement().add(d1);
@@ -253,16 +255,16 @@ public class RolapResultTestModifierEmf implements CatalogMappingSupplier {
 
     protected void createCubes() {
         // Create FTAll cube
-        catalog.getCubes().add(createFTAllCube());
+        catalog.getImportedElement().add(createFTAllCube());
 
         // Create FT1 cube
-        catalog.getCubes().add(createFT1Cube());
+        catalog.getImportedElement().add(createFT1Cube());
 
         // Create FT2 cube
-        catalog.getCubes().add(createFT2Cube());
+        catalog.getImportedElement().add(createFT2Cube());
 
         // Create FT2Extra cube
-        catalog.getCubes().add(createFT2ExtraCube());
+        catalog.getImportedElement().add(createFT2ExtraCube());
     }
 
     protected PhysicalCube createFTAllCube() {
