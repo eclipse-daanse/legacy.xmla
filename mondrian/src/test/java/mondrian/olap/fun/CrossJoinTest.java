@@ -47,14 +47,19 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinIterCalc;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -124,12 +129,11 @@ public class CrossJoinTest {
 
   // The test to verify that cancellation/timeout is checked
   // in CrossJoinFunDef$CrossJoinIterCalc$1$1.forward()
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCrossJoinIterCalc_IterationCancellationOnForward(Context<?> foodMartContext) {
-   ((TestContextImpl)foodMartContext).setCheckCancelOrTimeoutInterval(1);
+	@Test
+	@RolapContextTest(FoodmartTestInstance.class)
+	@RolapConfig(key = ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, value = "1", type = Integer.class)
+  void testCrossJoinIterCalc_IterationCancellationOnForward(Connection con) {
     // Get product members as TupleList
-   Connection con= foodMartContext.getConnectionWithDefaultRole();
     RolapCube salesCube =
       (RolapCube) TestUtil.cubeByName( con, SALES_CUBE );
     CatalogReader salesCubeCatalogReader =

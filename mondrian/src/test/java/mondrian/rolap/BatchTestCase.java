@@ -970,7 +970,8 @@ public class BatchTestCase{
             if (!listener.isExecuteSql()) {
                 fail("cache is empty: expected SQL query to be executed");
             }
-            if (((TestContextImpl) context).isEnableRolapCubeMemberCache())
+            if (context.getConfigValue(ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE,
+                    ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE_DEFAULT_VALUE, Boolean.class))
             {
                 // run once more to make sure that the result comes from cache
                 // now
@@ -1111,24 +1112,35 @@ public class BatchTestCase{
             con.getCacheControl(null).flushSchemaCache();
             // The limit lives on this connection's own context, so restoring it
             // afterwards is a courtesy to later queries on the same context
-            // rather than a guard against other tests.
-            TestContextImpl testContext = (TestContextImpl) con.getContext();
-            int oldLimit = testContext.getConfigValue(
-                ConfigConstants.RESULT_LIMIT, ConfigConstants.RESULT_LIMIT_DEFAULT_VALUE, Integer.class);
-            try {
-                testContext.setResultLimit(this.resultLimit);
-                Result result = executeQuery(query, con);
-
-                // Check the number of positions on the last axis, which is
-                // the ROWS axis in a 2 axis query.
-                int numAxes = result.getAxes().length;
-                Axis a = result.getAxes()[numAxes - 1];
-                final int positionCount = a.getPositions().size();
-                assertEquals(rowCount, positionCount);
-                return result;
-            } finally {
-                testContext.setResultLimit(oldLimit);
+            // rather than a guard against other tests. Contexts provisioned by
+            // @RolapContextTest are immutable per test (no runtime config
+            // mutation) - callers on that mechanism are expected to already
+            // have the right RESULT_LIMIT via @RolapConfig, so skip the
+            // mutate/restore dance for them instead of failing the cast.
+            Context<?> ctx = con.getContext();
+            if (ctx instanceof TestContextImpl testContext) {
+                int oldLimit = testContext.getConfigValue(
+                    ConfigConstants.RESULT_LIMIT, ConfigConstants.RESULT_LIMIT_DEFAULT_VALUE, Integer.class);
+                try {
+                    testContext.setResultLimit(this.resultLimit);
+                    return runAndCheckRowCount();
+                } finally {
+                    testContext.setResultLimit(oldLimit);
+                }
             }
+            return runAndCheckRowCount();
+        }
+
+        private Result runAndCheckRowCount() {
+            Result result = executeQuery(query, con);
+
+            // Check the number of positions on the last axis, which is
+            // the ROWS axis in a 2 axis query.
+            int numAxes = result.getAxes().length;
+            Axis a = result.getAxes()[numAxes - 1];
+            final int positionCount = a.getPositions().size();
+            assertEquals(rowCount, positionCount);
+            return result;
         }
     }
 

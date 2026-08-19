@@ -1020,13 +1020,7 @@ public class TestUtil {
 
 		assertThat(result).isNotNull();
 
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-
-		// TODO: switch so other than printwriter
-		result.print(pw);
-
-		assertThat(sw.getBuffer().toString()).isNotNull().isEqualTo(expectedResult);
+		assertThat(toString(result)).isNotNull().isEqualTo(expectedResult);
 
 	}
 
