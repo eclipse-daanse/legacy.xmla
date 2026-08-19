@@ -8,9 +8,13 @@
 */
 package mondrian.olap.fun;
 
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+import java.net.URL;
+import java.util.Map;
 
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
@@ -30,22 +34,23 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.opencube.junit5.MondrianRuntimeExtension;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 /**
  * Tests the CachedExists function.
  *
  * @author Benny Chow
  */
+@RolapContextTest(FoodmartTestInstance.class)
+@ExtendWith(MondrianRuntimeExtension.class)
 class CachedExistsTest{
 
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testEducationLevelSubtotals(Context<?> context) {
+	@Test
+    void testEducationLevelSubtotals(Connection connection) {
     String query =
         "WITH "
             + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],[*BASE_MEMBERS__Product_])' "
@@ -69,12 +74,11 @@ class CachedExistsTest{
             + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Food]}\n"
             + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Drink]}\n" + "Row #0: 55,788\n" + "Row #1: 12,580\n"
             + "Row #2: 49,365\n" + "Row #3: 6,423\n" + "Row #4: 11,255\n" + "Row #5: 1,325\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testProductFamilySubtotals(Context<?> context) {
+	@Test
+    void testProductFamilySubtotals(Connection connection) {
     String query =
         "WITH\r\n"
             + "SET [*NATIVE_CJ_SET] AS 'FILTER(FILTER([Product].[Product Department].MEMBERS,ANCESTOR([Product].CURRENTMEMBER, [Product].[Product Family]) IN {[Product].[All Products].[Drink],[Product].[All Products].[Non-Consumable]}), NOT ISEMPTY ([Measures].[Unit Sales]))'\r\n"
@@ -98,12 +102,11 @@ class CachedExistsTest{
             + "{[Product].[Product].[Non-Consumable].[Periodicals]}\n" + "Row #0: 24,597\n" + "Row #1: 50,236\n"
             + "Row #2: 6,838\n" + "Row #3: 13,573\n" + "Row #4: 4,186\n" + "Row #5: 841\n" + "Row #6: 1,779\n"
             + "Row #7: 16,284\n" + "Row #8: 27,038\n" + "Row #9: 4,294\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testProductFamilyProductDepartmentSubtotals(Context<?> context) {
+	@Test
+    void testProductFamilyProductDepartmentSubtotals(Connection connection) {
     String query =
         "WITH\r\n"
             + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Gender_])'\r\n"
@@ -133,12 +136,11 @@ class CachedExistsTest{
             + "{[Product].[Product].[Non-Consumable].[Periodicals], [Gender].[Gender].[M]}\n" + "Row #0: 13,573\n" + "Row #1: 4,186\n"
             + "Row #2: 4,294\n" + "Row #3: 17,759\n" + "Row #4: 4,294\n" + "Row #5: 6,776\n" + "Row #6: 6,797\n"
             + "Row #7: 1,987\n" + "Row #8: 2,199\n" + "Row #9: 2,168\n" + "Row #10: 2,126\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testRowColumSubtotals(Context<?> context) {
+	@Test
+    void testRowColumSubtotals(Connection connection) {
     String query =
         "WITH\r\n"
             + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Gender_]))'\r\n"
@@ -171,12 +173,11 @@ class CachedExistsTest{
             + "Row #1: 11,890\n" + "Row #2: 5,806\n" + "Row #2: 2,934\n" + "Row #2: 2,872\n" + "Row #3: 6,065\n"
             + "Row #3: 3,042\n" + "Row #3: 3,023\n" + "Row #4: 11,997\n" + "Row #4: 6,144\n" + "Row #4: 5,853\n"
             + "Row #5: 12,399\n" + "Row #5: 6,362\n" + "Row #5: 6,037\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testProductFamilyDisplayMember(Context<?> context) {
+	@Test
+    void testProductFamilyDisplayMember(Connection connection) {
     String query =
         "WITH\r\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Gender_])'\r\n" +
@@ -213,12 +214,11 @@ class CachedExistsTest{
             + "Row #3: 3,892\n"
             + "Row #4: 2,607\n"
             + "Row #5: 2,502\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTop10Customers(Context<?> context) {
+	@Test
+    void testTop10Customers(Connection connection) {
     String query =
         "WITH\r\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Customers_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Store_]))'\r\n" +
@@ -285,12 +285,11 @@ class CachedExistsTest{
             + "Row #17: 291\n"
             + "Row #18: 47\n"
             + "Row #19: 319\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTop1CustomersWithColumnLevel(Context<?> context) {
+	@Test
+    void testTop1CustomersWithColumnLevel(Connection connection) {
     String query =
         "WITH\n"
             + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],[*BASE_MEMBERS__Customers_])))'\n"
@@ -315,265 +314,15 @@ class CachedExistsTest{
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Time].[Time].[1997], [Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
             + "{[Product].[Product].[Drink], [Education Level].[Education Level].[Bachelors Degree], [Customers].[Customers].[USA].[WA].[Spokane].[Wildon Cameron]}\n"
             + "Row #0: 47\n";
-    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
+    TestUtil.assertQueryReturns( connection, query, expected );
   }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class,dataloader = FastFoodmardDataLoader.class )
-    void testMondrian2704(Context<?> context) {
-    String cube=    "<Cube name=\"Alternate Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "<Dimension name=\"Time\" type=\"TimeDimension\" foreignKey=\"time_id\">\n" +
-            "    <Hierarchy name=\"Time\" hasAll=\"true\" primaryKey=\"time_id\">\n" +
-            "      <Table name=\"time_by_day\"/>\n" +
-            "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n" +
-            "          levelType=\"TimeYears\"/>\n" +
-            "    </Hierarchy>\n" +
-            "    <Hierarchy hasAll=\"true\" name=\"Weekly\" primaryKey=\"time_id\">\n" +
-            "      <Table name=\"time_by_day\"/>\n" +
-            "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n" +
-            "          levelType=\"TimeYears\"/>\n" +
-            "    </Hierarchy>\n" +
-            "    <Hierarchy hasAll=\"true\" name=\"Weekly2\" primaryKey=\"time_id\">\n" +
-            "      <Table name=\"time_by_day\"/>\n" +
-            "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n" +
-            "          levelType=\"TimeYears\"/>\n" +
-            "    </Hierarchy>\n" +
-            "  </Dimension>"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "</Cube>";
-
-    /*
-    PropertyUpdater p=new PropertyUpdater() {
-
-    	@Override
-		public PropertyList update(PropertyList propertyList) {
-
-			String schemaOld = propertyList.get(RolapConnectionProperties.CatalogContent.name());
-			String schema = SchemaUtil.getSchema(schemaOld, null, cube, null, null, null, null);
-			propertyList.put(RolapConnectionProperties.CatalogContent.name(), schema);
-			return propertyList;
-		}
-
-	};
-		((BaseContext) context).update(p);
-    */
-        /*
-        class TestMondrian2704Modifier extends PojoMappingModifier {
-
-            public TestMondrian2704Modifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
-                List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.catalogCubes(schema));
-                result.add(PhysicalCubeMappingImpl.builder()
-                    .withName("Alternate Sales")
-                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
-                    .withDimensionConnectors(List.of(DimensionConnectorMappingImpl.builder()
-                    		.withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-                    		.withOverrideDimensionName("Time")
-                    		.withDimension(TimeDimensionMappingImpl.builder()
-                    				.withName("Time")
-                    				.withHierarchies(List.of(
-                    					ExplicitHierarchyMappingImpl.builder()
-                                            .withName("Time")
-                                            .withHasAll(true)
-                                            .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                                            .withLevels(List.of(
-                                                LevelMappingImpl.builder()
-                                                    .withName("Year")
-                                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                    .withType(InternalDataType.NUMERIC)
-                                                    .withUniqueMembers(true)
-                                                    .withLevelType(LevelType.TIME_YEARS)
-                                                    .build()
-                                            ))
-                                            .build(),
-                    					ExplicitHierarchyMappingImpl.builder()
-                                            .withName("Weekly")
-                                            .withHasAll(true)
-                                            .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                                            .withLevels(List.of(
-                                                LevelMappingImpl.builder()
-                                                    .withName("Year")
-                                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                    .withType(InternalDataType.NUMERIC)
-                                                    .withUniqueMembers(true)
-                                                    .withLevelType(LevelType.TIME_YEARS)
-                                                    .build()
-                                            ))
-                                            .build(),
-                    					ExplicitHierarchyMappingImpl.builder()
-                                            .withName("Weekly2")
-                                            .withHasAll(true)
-                                            .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                                            .withLevels(List.of(
-                                                LevelMappingImpl.builder()
-                                                    .withName("Year")
-                                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                    .withType(InternalDataType.NUMERIC)
-                                                    .withUniqueMembers(true)
-                                                    .withLevelType(LevelType.TIME_YEARS)
-                                                    .build()
-                                            ))
-                                            .build()
-                                            )
-                    						)
-                    				.build())
-                    		.build()))
-                    .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            SumMeasureMappingImpl.builder()
-                            .withName("Unit Sales")
-                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            .withFormatString("Standard")
-                            .build()
-                    		)).build()))
-                    .build());
-                return result;
-            }
-        }
-        */
-        /**
-         * EMF version of TestMondrian2704Modifier
-         * Creates Alternate Sales cube with Time dimension having multiple hierarchies
-         */
-        class TestMondrian2704ModifierEmf implements CatalogMappingSupplier {
-
-            private CatalogImpl catalog;
-
-            public TestMondrian2704ModifierEmf(Catalog cat) {
-                // Copy catalog using EcoreUtil
-                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-
-                // Create cube
-                PhysicalCube cube =
-                    CubeFactory.eINSTANCE.createPhysicalCube();
-                cube.setName("Alternate Sales");
-
-                // Set up query
-                TableSource tableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                cube.setSource(tableQuery);
-
-                // Create Time Dimension with three hierarchies
-                TimeDimension timeDimension =
-                    DimensionFactory.eINSTANCE.createTimeDimension();
-                timeDimension.setName("Time");
-
-                // Create first hierarchy: "Time"
-                ExplicitHierarchy timeHierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                timeHierarchy.setName("Time");
-                timeHierarchy.setHasAll(true);
-                timeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-
-                TableSource timeTableQuery1 =
-                    SourceFactory.eINSTANCE.createTableSource();
-                timeTableQuery1.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                timeHierarchy.setSource(timeTableQuery1);
-
-                Level yearLevel1 =
-                    LevelFactory.eINSTANCE.createLevel();
-                yearLevel1.setName("Year");
-                yearLevel1.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
-                yearLevel1.setColumnType(ColumnInternalDataType.NUMERIC);
-                yearLevel1.setUniqueMembers(true);
-                yearLevel1.setType(LevelDefinition.TIME_YEARS);
-                timeHierarchy.getLevels().add(yearLevel1);
-
-                // Create second hierarchy: "Weekly"
-                ExplicitHierarchy weeklyHierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                weeklyHierarchy.setName("Weekly");
-                weeklyHierarchy.setHasAll(true);
-                weeklyHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-
-                TableSource timeTableQuery2 =
-                    SourceFactory.eINSTANCE.createTableSource();
-                timeTableQuery2.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                weeklyHierarchy.setSource(timeTableQuery2);
-
-                Level yearLevel2 =
-                    LevelFactory.eINSTANCE.createLevel();
-                yearLevel2.setName("Year");
-                yearLevel2.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
-                yearLevel2.setColumnType(ColumnInternalDataType.NUMERIC);
-                yearLevel2.setUniqueMembers(true);
-                yearLevel2.setType(LevelDefinition.TIME_YEARS);
-                weeklyHierarchy.getLevels().add(yearLevel2);
-
-                // Create third hierarchy: "Weekly2"
-                ExplicitHierarchy weekly2Hierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                weekly2Hierarchy.setName("Weekly2");
-                weekly2Hierarchy.setHasAll(true);
-                weekly2Hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
-
-                TableSource timeTableQuery3 =
-                    SourceFactory.eINSTANCE.createTableSource();
-                timeTableQuery3.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_TIME_BY_DAY);
-                weekly2Hierarchy.setSource(timeTableQuery3);
-
-                Level yearLevel3 =
-                    LevelFactory.eINSTANCE.createLevel();
-                yearLevel3.setName("Year");
-                yearLevel3.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
-                yearLevel3.setColumnType(ColumnInternalDataType.NUMERIC);
-                yearLevel3.setUniqueMembers(true);
-                yearLevel3.setType(LevelDefinition.TIME_YEARS);
-                weekly2Hierarchy.getLevels().add(yearLevel3);
-
-                // Add hierarchies to dimension
-                timeDimension.getHierarchies().add(timeHierarchy);
-                timeDimension.getHierarchies().add(weeklyHierarchy);
-                timeDimension.getHierarchies().add(weekly2Hierarchy);
-
-                // Create dimension connector
-                DimensionConnector timeDimConnector =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                timeDimConnector.setOverrideDimensionName("Time");
-                timeDimConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
-                timeDimConnector.setDimension(timeDimension);
-
-                cube.getDimensionConnectors().add(timeDimConnector);
-
-                // Create measure
-                SumMeasure unitSalesMeasure =
-                    MeasureFactory.eINSTANCE.createSumMeasure();
-                unitSalesMeasure.setName("Unit Sales");
-                unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
-                unitSalesMeasure.setFormatString("Standard");
-
-                // Create measure group
-                MeasureGroup measureGroup =
-                    CubeFactory.eINSTANCE.createMeasureGroup();
-                measureGroup.getMeasures().add(unitSalesMeasure);
-
-                cube.getMeasureGroups().add(measureGroup);
-
-                // Add cube to catalog
-                catalog.getImportedElement().add(cube);
-            }
-
-            @Override
-            public Catalog get() {
-                return catalog;
-            }
-        }
-
-        withSchemaEmf(context, TestMondrian2704ModifierEmf::new);
-
-
-
+	@Test
+	@RolapContextTest(catalog = { CatalogSupplier.class, TestMondrian2704ModifierEmf.class },
+	        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testMondrian2704(Connection connection) {
     // Verifies second arg of CachedExists uses a tuple type
-    	TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    	TestUtil.assertQueryReturns(connection,
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly_])'\n" +
         "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
@@ -603,7 +352,7 @@ class CachedExistsTest{
             + "Row #2: 266,773\n");
 
     // Verified second arg of CachedExists uses a member type
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    TestUtil.assertQueryReturns(connection,
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time.Weekly_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly2_]))'\n" +
         "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Weekly2].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
@@ -630,7 +379,145 @@ class CachedExistsTest{
             + "Row #1: 266,773\n");
   }
 
+    /**
+     * Creates the "Alternate Sales" cube with a Time dimension that has
+     * multiple hierarchies (Time / Weekly / Weekly2), layered onto the
+     * FoodMart catalog via composition ({@code catalog = { CatalogSupplier,
+     * TestMondrian2704ModifierEmf }}) instead of the legacy
+     * {@code withSchemaEmf} in-test mutation.
+     */
+    public static class TestMondrian2704ModifierEmf implements CatalogMappingSupplier {
 
+        private final CatalogImpl catalog;
+
+        public TestMondrian2704ModifierEmf(Catalog cat) {
+            // Copy catalog using EcoreUtil
+            catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+            // Create cube
+            PhysicalCube cube =
+                CubeFactory.eINSTANCE.createPhysicalCube();
+            cube.setName("Alternate Sales");
+
+            // Set up query
+            TableSource tableQuery =
+                SourceFactory.eINSTANCE.createTableSource();
+            tableQuery.setTable(CatalogSupplier.TABLE_SALES_FACT);
+            cube.setSource(tableQuery);
+
+            // Create Time Dimension with three hierarchies
+            TimeDimension timeDimension =
+                DimensionFactory.eINSTANCE.createTimeDimension();
+            timeDimension.setName("Time");
+
+            // Create first hierarchy: "Time"
+            ExplicitHierarchy timeHierarchy =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            timeHierarchy.setName("Time");
+            timeHierarchy.setHasAll(true);
+            timeHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
+
+            TableSource timeTableQuery1 =
+                SourceFactory.eINSTANCE.createTableSource();
+            timeTableQuery1.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
+            timeHierarchy.setSource(timeTableQuery1);
+
+            Level yearLevel1 =
+                LevelFactory.eINSTANCE.createLevel();
+            yearLevel1.setName("Year");
+            yearLevel1.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
+            yearLevel1.setColumnType(ColumnInternalDataType.NUMERIC);
+            yearLevel1.setUniqueMembers(true);
+            yearLevel1.setType(LevelDefinition.TIME_YEARS);
+            timeHierarchy.getLevels().add(yearLevel1);
+
+            // Create second hierarchy: "Weekly"
+            ExplicitHierarchy weeklyHierarchy =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            weeklyHierarchy.setName("Weekly");
+            weeklyHierarchy.setHasAll(true);
+            weeklyHierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
+
+            TableSource timeTableQuery2 =
+                SourceFactory.eINSTANCE.createTableSource();
+            timeTableQuery2.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
+            weeklyHierarchy.setSource(timeTableQuery2);
+
+            Level yearLevel2 =
+                LevelFactory.eINSTANCE.createLevel();
+            yearLevel2.setName("Year");
+            yearLevel2.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
+            yearLevel2.setColumnType(ColumnInternalDataType.NUMERIC);
+            yearLevel2.setUniqueMembers(true);
+            yearLevel2.setType(LevelDefinition.TIME_YEARS);
+            weeklyHierarchy.getLevels().add(yearLevel2);
+
+            // Create third hierarchy: "Weekly2"
+            ExplicitHierarchy weekly2Hierarchy =
+                HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+            weekly2Hierarchy.setName("Weekly2");
+            weekly2Hierarchy.setHasAll(true);
+            weekly2Hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_TIME_ID_TIME_BY_DAY);
+
+            TableSource timeTableQuery3 =
+                SourceFactory.eINSTANCE.createTableSource();
+            timeTableQuery3.setTable(CatalogSupplier.TABLE_TIME_BY_DAY);
+            weekly2Hierarchy.setSource(timeTableQuery3);
+
+            Level yearLevel3 =
+                LevelFactory.eINSTANCE.createLevel();
+            yearLevel3.setName("Year");
+            yearLevel3.setColumn(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY);
+            yearLevel3.setColumnType(ColumnInternalDataType.NUMERIC);
+            yearLevel3.setUniqueMembers(true);
+            yearLevel3.setType(LevelDefinition.TIME_YEARS);
+            weekly2Hierarchy.getLevels().add(yearLevel3);
+
+            // Add hierarchies to dimension
+            timeDimension.getHierarchies().add(timeHierarchy);
+            timeDimension.getHierarchies().add(weeklyHierarchy);
+            timeDimension.getHierarchies().add(weekly2Hierarchy);
+
+            // Create dimension connector
+            DimensionConnector timeDimConnector =
+                DimensionFactory.eINSTANCE.createDimensionConnector();
+            timeDimConnector.setOverrideDimensionName("Time");
+            timeDimConnector.setForeignKey(CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
+            timeDimConnector.setDimension(timeDimension);
+
+            cube.getDimensionConnectors().add(timeDimConnector);
+
+            // Create measure
+            SumMeasure unitSalesMeasure =
+                MeasureFactory.eINSTANCE.createSumMeasure();
+            unitSalesMeasure.setName("Unit Sales");
+            unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+            unitSalesMeasure.setFormatString("Standard");
+
+            // Create measure group
+            MeasureGroup measureGroup =
+                CubeFactory.eINSTANCE.createMeasureGroup();
+            measureGroup.getMeasures().add(unitSalesMeasure);
+
+            cube.getMeasureGroups().add(measureGroup);
+
+            // Add cube to catalog
+            catalog.getImportedElement().add(cube);
+        }
+
+        @Override
+        public Catalog get() {
+            return catalog;
+        }
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
 }
 

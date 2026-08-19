@@ -27,10 +27,11 @@ import static org.opencube.junit5.TestUtil.compileExpression;
 import static org.opencube.junit5.TestUtil.executeExpr;
 import static org.opencube.junit5.TestUtil.executeExprRaw;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.daanse.olap.api.Context;
@@ -40,14 +41,17 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import  org.eclipse.daanse.olap.util.Bug;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.opencube.junit5.MondrianRuntimeExtension;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +66,8 @@ import mondrian.rolap.SchemaModifiersEmf;
  *
  * @author gjohnson
  */
+@RolapContextTest(FoodmartTestInstance.class)
+@ExtendWith(MondrianRuntimeExtension.class)
 public class FunctionTest {//extends FoodMartTestCase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
@@ -149,8 +155,7 @@ public class FunctionTest {//extends FoodMartTestCase {
   /**
    * Tests that Integeer.MIN_VALUE(-2147483648) in Lag is handled correctly.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLagMinValue(Context<?> context) {
     // By running the query and getting a result without an exception, we should assert the return value which will
     // have empty rows, because the lag value is too large for the traversal it needs to make, so rows will be empty
@@ -179,8 +184,7 @@ public class FunctionTest {//extends FoodMartTestCase {
   }
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testNumericLiteral(Context<?> context) {
     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "2", "2" );
     if ( false ) {
@@ -192,8 +196,7 @@ public class FunctionTest {//extends FoodMartTestCase {
     TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "1.5", "{}" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testStringLiteral(Context<?> context) {
     // single-quoted string
     if ( false ) {
@@ -210,8 +213,7 @@ public class FunctionTest {//extends FoodMartTestCase {
 
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testNullMember(Context<?> context) {
     // MSAS fails here, but Mondrian doesn't.
     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -244,8 +246,7 @@ public class FunctionTest {//extends FoodMartTestCase {
   /**
    * Tests use of NULL literal to generate a null cell value. Testcase is from bug 1440344.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testNullValue(Context<?> context) {
     TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Measures].[X] as 'IIF([Measures].[Store Sales]>10000,[Measures].[Store Sales],Null)'\n"
@@ -306,8 +307,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Row #22: \n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testNullInMultiplication(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
     TestUtil.assertExprReturns(connection, "Sales", "NULL*1", "" );
@@ -315,16 +315,14 @@ public class FunctionTest {//extends FoodMartTestCase {
     TestUtil.assertExprReturns(connection, "Sales", "NULL*NULL", "" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testNullInAddition(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
     TestUtil.assertExprReturns(connection, "Sales", "1+NULL", "1" );
     TestUtil.assertExprReturns(connection, "Sales", "NULL+1", "1" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testNullInSubtraction(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
     TestUtil.assertExprReturns(connection, "Sales", "1-NULL", "1" );
@@ -332,8 +330,7 @@ public class FunctionTest {//extends FoodMartTestCase {
   }
 
   @Disabled //TODO need investigate
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testIsEmptyQuery(Context<?> context) {
     String desiredResult =
       "Axis #0:\n"
@@ -390,8 +387,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Row #0: 42\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testQueryWithoutValidMeasure(Context<?> context) {
     TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with\n"
@@ -423,8 +419,7 @@ public class FunctionTest {//extends FoodMartTestCase {
    *
    */
   //* @see mondrian.rolap.FastBatchingCellReaderTest#testAggregateDistinctCount()
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMultiselectCalculations(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
@@ -451,8 +446,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Row #0: .00\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testBug715177(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH MEMBER [Product].[Non-Consumable].[Other] AS\n"
@@ -479,8 +473,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Row #3: 242,176\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testBug714707(Context<?> context) {
     // Same issue as bug 715177 -- "children" returns immutable
     // list, which set operator must make mutable.
@@ -494,8 +487,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "[Store].[Store].[USA]" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
 	void testTuple(Context<?> context) {
 		assertExprReturns(context.getConnectionWithDefaultRole(),
 				"([Gender].[M], " + "[Time].[Time].Children.Item(2), " + "[Measures].[Unit Sales])", "33,249");
@@ -518,8 +510,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * Tests whether the tuple operator can be applied to arguments of various types. See bug 1491699 "ClassCastException
    * in mondrian.calc.impl.GenericCalc.evaluat".
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testTupleArgTypes(Context<?> context) {
     // can coerce dimensions (if they have a unique hierarchy) and
     // hierarchies to members
@@ -554,8 +545,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "No function matches signature '(<Member>, <Numeric Expression>)'" , "Sales");
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testTupleItem(Context<?> context) {
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(2)",
@@ -604,8 +594,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testTupleAppliedToUnknownHierarchy(Context<?> context) {
     // manifestation of bug 1735821
     assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -626,8 +615,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 409,035.59\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testTupleDepends(Context<?> context) {
     assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
       "([Store].[USA], [Gender].[F])", "{}" );
@@ -649,8 +637,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       allHiers() );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testItemNull(Context<?> context) {
     // In the following queries, MSAS returns 'Formula error - object type
     // is not valid - in an <object> base class. An error occurred during
@@ -682,8 +669,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     }
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testTupleNull(Context<?> context) {
     // if a tuple contains any null members, it evaluates to null
     assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -752,8 +738,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     }
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLevelMemberExpressions(Context<?> context) {
 	context.getCatalogCache().clear();
     // Should return Beverly Hills in California.
@@ -772,24 +757,21 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "MDX object '[Time].[Month].[Q1]' not found in cube", "Sales");
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseTestMatch(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "CASE WHEN 1=0 THEN \"first\" WHEN 1=1 THEN \"second\" WHEN 1=2 THEN \"third\" ELSE \"fourth\" END",
       "second" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseTestMatchElse(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "CASE WHEN 1=0 THEN \"first\" ELSE \"fourth\" END",
       "fourth" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseTestMatchNoElse(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "CASE WHEN 1=0 THEN \"first\" END",
@@ -799,8 +781,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   /**
    * Testcase for bug 1799391, "Case Test function throws class cast exception"
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseTestReturnsMemberBug1799391(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
@@ -829,32 +810,28 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "[Gender].[Gender].[All Gender]" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseMatch(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "CASE 2 WHEN 1 THEN \"first\" WHEN 2 THEN \"second\" WHEN 3 THEN \"third\" ELSE \"fourth\" END",
       "second" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseMatchElse(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "CASE 7 WHEN 1 THEN \"first\" ELSE \"fourth\" END",
       "fourth" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseMatchNoElse(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "CASE 8 WHEN 0 THEN \"first\" END",
       "" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseTypeMismatch(Context<?> context) {
     // type mismatch between case and else
     assertAxisThrows(context.getConnectionWithDefaultRole(),
@@ -879,8 +856,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * <a href="http://jira.pentaho.com/browse/MONDRIAN-853">
    * bug MONDRIAN-853, "When using CASE WHEN in a CalculatedMember values are not returned the way expected"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCaseTuple(Context<?> context) {
     // The case in the bug, simplified. With the bug, returns a member array
     // "[Lmondrian.olap.Member;@151b0a5". Type deduction should realize
@@ -921,8 +897,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     }
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMod(Context<?> context) {
     // the following tests are consistent with excel xp
 
@@ -949,8 +924,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testString(Context<?> context) {
     // The String(Integer,Char) function requires us to implicitly cast a
     // string to a char.
@@ -1066,8 +1040,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCast(Context<?> context) {
     // NOTE: Some of these tests fail with 'cannot convert ...', and they
     // probably shouldn't. Feel free to fix the conversion.
@@ -1143,8 +1116,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertExprReturns(context.getConnectionWithDefaultRole(), "Cast('tr' || 'ue' AS boolean)", "true" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCastAndNull(Context<?> context) {
 	    // To Boolean : Expect to return NULL, but since FunUtil.BooleanNull
 	    // does not implement three-valued boolean logic yet, this will return
@@ -1152,8 +1124,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 	    assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND Cast(NULL AS Boolean)", "false" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCastNull(Context<?> context) {
 	    // To Boolean : Expect to return NULL, but since FunUtil.BooleanNull
 	    // does not implement three-valued boolean logic yet, this will return
@@ -1164,8 +1135,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * Testcase for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-524"> MONDRIAN-524, "VB functions: expected
    * primitive type, got java.lang.Object"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCastBug524(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(),
       "Cast(Int([Measures].[Store Sales] / 3600) as String)",
@@ -1177,16 +1147,14 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * implemented functions into a file called "functions.html". You can manually include that table in the <a
    * href="{@docRoot}/../mdx.html">MDX specification</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testDumpFunctions(Context<?> context) throws IOException {
     FunctionService functionService = context.getFunctionService();
     assertEquals( NUM_EXPECTED_FUNCTIONS, functionService.getResolvers().size() );
 
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLeftFunctionWithValidArguments(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1198,8 +1166,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLeftFunctionWithLengthValueZero(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1212,8 +1179,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLeftFunctionWithLengthValueEqualToStringLength(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1226,8 +1192,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLeftFunctionWithLengthMoreThanStringLength(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1240,8 +1205,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLeftFunctionWithZeroLengthString(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,Left(\"\", 20)=\"\" "
@@ -1254,8 +1218,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLeftFunctionWithNegativeLength(Context<?> context) {
     assertQueryThrows(context,
       "select filter([Store].MEMBERS,"
@@ -1264,8 +1227,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "StringIndexOutOfBoundsException: Range [0, -20) out of bounds for length 10" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithValidArguments(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1279,8 +1241,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithZeroLengthStringArgument(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1294,8 +1255,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithLengthArgumentLargerThanStringLength(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1309,8 +1269,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithStartIndexGreaterThanStringLength(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1324,8 +1283,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithStartIndexZeroFails(Context<?> context) {
     // Note: SSAS 2005 treats start<=0 as 1, therefore gives different
     // result for this query. We favor the VBA spec over SSAS 2005.
@@ -1351,8 +1309,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     }
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithStartIndexOne(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1366,8 +1323,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithNegativeStartIndex(Context<?> context) {
     assertQueryThrows(context,
       "select filter([Store].MEMBERS,"
@@ -1378,8 +1334,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Start parameter of Mid function must be positive" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithNegativeLength(Context<?> context) {
     assertQueryThrows(context,
       "select filter([Store].MEMBERS,"
@@ -1390,8 +1345,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Length parameter of Mid function must be non-negative" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMidFunctionWithoutLength(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
@@ -1405,8 +1359,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLenFunctionWithNonEmptyString(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS, "
@@ -1418,8 +1371,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 266,773\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testLenFunctionWithAnEmptyString(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,Len(\"\")=0 "
@@ -1432,8 +1384,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testInStrFunctionWithValidArguments(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,InStr(\"Bellingham\", \"ingha\")=5 "
@@ -1447,8 +1398,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testInStrFunctionWithEmptyString1(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,InStr(\"\", \"ingha\")=0 "
@@ -1461,8 +1411,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #0: 2,237\n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testInStrFunctionWithEmptyString2(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,InStr(\"Bellingham\", \"\")=1 "
@@ -1484,8 +1433,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   // because the raw methods are tested in VbaTest, but they test the core
   // functionalities like error handling and operator overloading.
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVbaBasic(Context<?> context) {
     // Exp is a simple function: one arg.
     assertExprReturns(context.getConnectionWithDefaultRole(), "exp(0)", "1" );
@@ -1493,15 +1441,13 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertExprReturns(context.getConnectionWithDefaultRole(), "exp(-2)", 1d / ( Math.E * Math.E ), 0.00000001 );
 
     }
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVbaBasic1(Context<?> context) {
 	  // If any arg is null, result is null.
 	    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(null)", "" );
 
   }
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVbaBasic2(Context<?> context) {
 	  // If any arg is null, result is null.
 	    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(cast(null as numeric))", "" );
@@ -1509,8 +1455,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
   // Test a VBA function with variable number of args.
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVbaOverloading(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(), "replace('xyzxyz', 'xy', 'a')", "azaz" );
     assertExprReturns(context.getConnectionWithDefaultRole(), "replace('xyzxyz', 'xy', 'a', 2)", "xyzaz" );
@@ -1518,16 +1463,14 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
   // Test VBA exception handling
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVbaExceptions(Context<?> context) {
     assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "right(\"abc\", -4)",
       "StringIndexOutOfBoundsException: Range [7, 3) out of bounds for length 3");
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVbaDateTime(Context<?> context) {
     // function which returns date
     assertExprReturns(context.getConnectionWithDefaultRole(),
@@ -1537,15 +1480,13 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertExprReturns(context.getConnectionWithDefaultRole(), "Year(DateSerial(2006, 4, 29))", "2,006" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testExcelPi(Context<?> context) {
     // The PI function is defined in the Excel class.
     assertExprReturns(context.getConnectionWithDefaultRole(), "Pi()", "3" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testExcelPower(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(), "Power(8, 0.333333)", 2.0, 0.01 );
     assertExprReturns(context.getConnectionWithDefaultRole(), "Power(-2, 0.5)", Double.NaN, 0.001 );
@@ -1555,8 +1496,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   // in the compileInteger method we are casting an IntegerCalc into a
   // DoubleCalc and there is no check for IntegerCalc in the NumericType
   // conditional path.
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testBug1881739(Context<?> context) {
     assertExprReturns(context.getConnectionWithDefaultRole(), "LEFT(\"TEST\", LEN(\"TEST\"))", "TEST" );
   }
@@ -1565,8 +1505,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * Testcase for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-296"> MONDRIAN-296, "Cube getTimeDimension use
    * when Cube has no Time dimension"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testCubeTimeDimensionFails(Context<?> context) {
     assertQueryThrows(context.getConnectionWithDefaultRole(),
       "select LastPeriods(1) on columns from [Store]",
@@ -1598,8 +1537,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * Executes a query that has a complex parse tree. Goal is to find algorithmic complexity bugs in the validator which
    * would make the query run extremely slowly.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testComplexQuery(Context<?> context) {
     final String expected =
       "Axis #0:\n"
@@ -1693,8 +1631,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    * Testcase for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-1050"> MONDRIAN-1050, "MDX Order function fails
    * when using DateTime expression for ordering"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testDateParameter(Context<?> context) throws Exception {
     String query = "SELECT"
       + " {[Measures].[Unit Sales]} ON COLUMNS,"
@@ -1715,8 +1652,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testComplexSlicer_BaseBase(Context<?> context) {
     String query =
       "SELECT "
@@ -1746,10 +1682,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_Calc(Context<?> context) {
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       /*
       ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
       "Sales",
@@ -1786,8 +1722,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_CalcBase(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1798,7 +1735,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1828,8 +1764,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_BaseCalc(Context<?> context) {
      /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1840,7 +1777,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
     */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1870,8 +1806,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_Calc_Base(Context<?> context) {
      /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1882,7 +1819,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
       */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0 "
@@ -1897,8 +1833,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier2.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_Calc_Calc(Context<?> context) {
       /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1913,7 +1850,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])' "
         + "dimension='Education Level' />"));
        */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier2::new);
 
       String query =
       "SELECT "
@@ -1930,8 +1866,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_X_Base_Base(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1942,7 +1879,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
       */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1958,8 +1894,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_X_Calc_Base(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1970,7 +1907,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
     */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1986,8 +1922,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier2.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_X_Calc_Calc(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -2002,7 +1939,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])' "
         + "dimension='Education Level' />" ));
       */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier2::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0 "
@@ -2017,8 +1953,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_X_BaseBase_Base(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -2029,7 +1966,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
     */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -2046,8 +1982,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testComplexSlicer_X_BaseBaseBase_BaseBase(Context<?> context) {
     String query =
       "SELECT "
@@ -2069,8 +2004,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_X_CalcBase_Base(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -2081,7 +2017,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -2098,8 +2033,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_X_CalcBase_BaseBase(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -2110,7 +2046,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0 "
@@ -2129,8 +2064,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier2.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testComplexSlicer_Calc_ComplexAxis(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -2145,7 +2081,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])' "
         + "dimension='Education Level' />" ));
       */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier2::new);
 
       String query =
       "SELECT "
@@ -2168,8 +2103,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
   @Disabled //TODO need investigate
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier.class },
+          database = FoodmartDatabaseSupplier.class)
   void testComplexSlicer_Unsupported(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -2180,7 +2116,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='([Time].[1997].[Q1] - [Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0, "
@@ -2227,5 +2162,13 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   public static String allHiers() {
     return allHiersExcept();
+  }
+
+  /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+  public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+      @Override
+      public Map<String, URL> csvResources() {
+          return new FoodmartTestInstance().dataSupplier().csvResources();
+      }
   }
 }
