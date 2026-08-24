@@ -10,24 +10,28 @@
 */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class RolapCubeHierarchyTest {
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMONDRIAN2535(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+      assertThatQuery(context.getConnectionWithDefaultRole(),
         "Select\n"
         + "  [Customers].children on rows,\n"
         + "  [Gender].children on columns\n "
-        + "From [Warehouse and Sales]",
+        + "From [Warehouse and Sales]").returnsGrid(
         "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"

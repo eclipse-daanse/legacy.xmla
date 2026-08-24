@@ -19,10 +19,13 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.database.source.RelationalSource;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
 import org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement;
 import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -32,6 +35,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  *
  * @author pedrovale
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class RolapStarTest {
 
     static class RolapStarForTests extends RolapStar {
@@ -70,8 +74,7 @@ class RolapStarTest {
      * Tests that given a {@link MappingTableQuery}, cloneRelation
      * respects the existing filters.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCloneRelationWithFilteredTable(Context<?> context) {
       RolapStarForTests rs = getStar(context.getConnectionWithDefaultRole(), "sales");
       Schema ds = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createSchema();

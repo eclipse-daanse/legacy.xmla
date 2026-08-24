@@ -9,23 +9,24 @@
  */
 package mondrian.rolap;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -36,6 +37,7 @@ import mondrian.test.SqlPattern;
  * @author Rushan Chen
  * @since April 28, 2009
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class FilterTest extends BatchTestCase {
 
 
@@ -51,12 +53,10 @@ class FilterTest extends BatchTestCase {
   }
 
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   void testInFilterSimple(Context<?> context) throws Exception {
-      ((TestContextImpl)context).setExpandNonNative(false);
-      ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -77,12 +77,10 @@ class FilterTest extends BatchTestCase {
     checkNative(context, 0, 45, query, null, requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   void testNotInFilterSimple(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -103,12 +101,10 @@ class FilterTest extends BatchTestCase {
     checkNative(context, 0, 66, query, null, requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   void testInFilterAND(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -131,12 +127,10 @@ class FilterTest extends BatchTestCase {
     checkNative(context, 0, 88, query, null, requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   void testIsFilterSimple(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -157,12 +151,10 @@ class FilterTest extends BatchTestCase {
     checkNative(context, 120, 45, query, null, requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   void testNotIsFilterSimple(Context<?> context) throws Exception {
-      ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -183,12 +175,10 @@ class FilterTest extends BatchTestCase {
     checkNative(context, 150, 66, query, null, requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testMixedInIsFilters(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -221,12 +211,10 @@ class FilterTest extends BatchTestCase {
    *
    * @throws Exception
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testInFilterNonNative(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     String query =
       "With "
         + "Set [*BASE_CJ_SET] as 'CrossJoin([Customers].[City].Members,[Product].[Product Family].Members)' "
@@ -242,13 +230,11 @@ class FilterTest extends BatchTestCase {
     checkNotNative(context, 45, query );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_TOP_COUNT, value = "true", type = Boolean.class)
   public void  testTopCountOverInFilter(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-    ((TestContextImpl)context).setEnableNativeTopCount(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -273,12 +259,10 @@ class FilterTest extends BatchTestCase {
    *
    * @throws Exception
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testNotInFilterKeepNullMember(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -333,12 +317,10 @@ class FilterTest extends BatchTestCase {
    *
    * @throws Exception
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testNotInFilterExcludeNullMember(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -391,8 +373,7 @@ class FilterTest extends BatchTestCase {
    * Test that null members are included when the filter excludes members that contain multiple levels, but none being
    * null.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   public void  testNotInMultiLevelMemberConstraintNonNullParent(Context<?> context) {
     if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       // If aggregate tables are enabled, generates similar SQL involving
@@ -460,15 +441,14 @@ class FilterTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
   }
 
   /**
    * Test that null members are included when the filter excludes members that contain multiple levels, but none being
    * null.  The members have the same parent.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   public void  testNotInMultiLevelMemberConstraintNonNullSameParent(Context<?> context) {
     if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       // If aggregate tables are enabled, generates similar SQL involving
@@ -533,20 +513,21 @@ class FilterTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
   }
 
   /**
    * Test that null members are included when the filter explicitly excludes certain members that contain nulls.  The
    * members span multiple levels.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, TestNotInMultiLevelMemberConstraintMixedNullNonNullParentModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   public void  testNotInMultiLevelMemberConstraintMixedNullNonNullParent(Context<?> context) {
     if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( ((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
+    if ( context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
 
@@ -747,21 +728,21 @@ class FilterTest extends BatchTestCase {
         null );
     withSchema(context, schema);
     */
-      withSchemaEmf(context, TestNotInMultiLevelMemberConstraintMixedNullNonNullParentModifier::new);
-      assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
   }
 
   /**
    * Test that null members are included when the filter explicitly excludes a single member that has a null.  The
    * members span multiple levels.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, TestNotInMultiLevelMemberConstraintSingleNullParentModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   public void  testNotInMultiLevelMemberConstraintSingleNullParent(Context<?> context) {
     if ( !isDefaultNullMemberRepresentation(context) ) {
       return;
     }
-    if ( ((TestContextImpl)context).isFilterChildlessSnowflakeMembers() ) {
+    if ( context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
 
@@ -954,16 +935,13 @@ class FilterTest extends BatchTestCase {
         null );
     withSchema(context, schema);
     */
-      withSchemaEmf(context, TestNotInMultiLevelMemberConstraintSingleNullParentModifier::new);
-      assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testCachedNativeSetUsingFilters(Context<?> context) throws Exception {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -1001,12 +979,10 @@ class FilterTest extends BatchTestCase {
     checkNative(context,  100, 11, query2, null, requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testNativeFilter(Context<?> context) {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -1025,12 +1001,10 @@ class FilterTest extends BatchTestCase {
   /**
    * Executes a Filter() whose condition contains a calculated member.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testCmNativeFilter(Context<?> context) {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -1097,11 +1071,10 @@ class FilterTest extends BatchTestCase {
       requestFreshConnection );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "false", type = Boolean.class)
   public void  testNonNativeFilterWithNullMeasure(Context<?> context) {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(false);
     checkNotNative(context,
       9,
       "select Filter([Store].[Store Name].members, "
@@ -1143,23 +1116,21 @@ class FilterTest extends BatchTestCase {
         + "Row #8: \n" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testNativeFilterWithNullMeasure(Context<?> context) {
     // Currently this behaves differently from the non-native evaluation.
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-    ((TestContextImpl)context).setExpandNonNative(false);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     //final TestContext<?> context = getTestContext().withFreshConnection();
     Connection connection = context.getConnectionWithDefaultRole();
     try {
-      assertQueryReturns(connection,
+      MdxAssert.assertThatQuery(connection,
         "select Filter([Store].[Store Name].members, "
           + "              Not ([Measures].[Store Sqft] - [Measures].[Grocery Sqft] < 10000)) on rows, "
           + "{[Measures].[Store Sqft], [Measures].[Grocery Sqft]} on columns "
-          + "from [Store]", "Axis #0:\n"
+          + "from [Store]").returnsGrid("Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
           + "{[Measures].[Store Sqft]}\n"
@@ -1182,12 +1153,11 @@ class FilterTest extends BatchTestCase {
     }
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
   public void  testNonNativeFilterWithCalcMember(Context<?> context) {
     // Currently this query cannot run natively
-    ((TestContextImpl)context).setEnableNativeFilter(false);
-    ((TestContextImpl)context).setExpandNonNative(false);
     checkNotNative(context,
       3,
       "with\n"
@@ -1213,12 +1183,10 @@ class FilterTest extends BatchTestCase {
   /**
    * Verify that filter with Not IsEmpty(storedMeasure) can be natively evaluated.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testNativeFilterNonEmpty(Context<?> context) {
-    ((TestContextImpl)context).setExpandNonNative(false);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
-
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     boolean requestFreshConnection = true;
@@ -1241,18 +1209,18 @@ class FilterTest extends BatchTestCase {
    * <a href="http://jira.pentaho.com/browse/MONDRIAN-706">bug MONDRIAN-706,
    * "SQL using hierarchy attribute 'Column Name' instead of 'Column' in the filter"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FilterTestModifier.class },
+          database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "false", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "true", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY, value = "true", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL, value = "true", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "true", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "true", type = Boolean.class)
   public void  testBugMondrian706(Context<?> context) {
-      ((TestContextImpl)context).setUseAggregates(false);
-      ((TestContextImpl)context).setReadAggregates(false);
-    ((TestContextImpl)context).setDisableCaching(false);
-    ((TestContextImpl)context).setEnableNativeNonEmpty(true);
-
-    ((TestContextImpl)context).setCompareSiblingsByOrderKey(true);
-    ((TestContextImpl)context).setNullDenominatorProducesNull( true );
-    ((TestContextImpl)context).setExpandNonNative(true);
-    ((TestContextImpl)context).setEnableNativeFilter(true);
     // With bug MONDRIAN-706, would generate
     //
     // ((`store`.`store_name`, `store`.`store_city`, `store`.`store_state`)
@@ -1348,14 +1316,13 @@ class FilterTest extends BatchTestCase {
           + "    </Hierarchy>\n"
           + "  </Dimension>\n" ));
      */
-    withSchemaEmf(context, SchemaModifiersEmf.FilterTestModifier::new);
     Connection connection = context.getConnectionWithDefaultRole();
-    assertQuerySqlOrNot(connection, mdx, badPatterns, true, true, true );
+    SqlAssert.forQuery(connection, mdx).bypassSchemaCache().clearCacheFirst().expectNoSql(badPatterns).verify();
     TestUtil.flushSchemaCache(connection);
     TestUtil.flushSchemaCache(connection);
-    assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), mdx, goodPatterns, false, true, true );
-    assertQueryReturns(connection,
-      mdx,
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().clearCacheFirst()
+      .expectSql(goodPatterns).verify();
+    MdxAssert.assertThatQuery(connection, mdx).returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1373,8 +1340,7 @@ class FilterTest extends BatchTestCase {
    * hash code. This resulted in two filters being chained within two different named sets to register a cache element
    * with the same key, even though they were the different because of the added "NOT" keyword.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   public void  testBug779(Context<?> context) {
     final String query1 =
       "With Set [*NATIVE_CJ_SET] as 'Filter([*BASE_MEMBERS_Product], Not IsEmpty ([Measures].[Unit Sales]))' Set "
@@ -1439,8 +1405,8 @@ class FilterTest extends BatchTestCase {
         + "Row #15: 6,884\n"
         + "Row #16: 5,262\n";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query1, expectedResult1);
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query2, expectedResult2);
+    MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), query1).returnsGrid(expectedResult1);
+    MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), query2).returnsGrid(expectedResult2);
   }
 
   /**
@@ -1448,8 +1414,7 @@ class FilterTest extends BatchTestCase {
    * a collapsed field on an aggregate table, the dimension table field was referenced as the column expression, causing
    * sql errors.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   public void  testMultiValueInWithNullVals(Context<?> context) {
     // MONDRIAN-1458 - Native exclusion predicate doesn't use agg table
     // when checking for nulls
@@ -1533,12 +1498,17 @@ class FilterTest extends BatchTestCase {
       + "   gender.gender.members\n"
       + ")\n"
       + "on 0 from sales\n";
-    assertQuerySql(context.getConnectionWithDefaultRole(),
-      mdx,
-      new SqlPattern[] {
-        new SqlPattern( DatabaseProduct.MYSQL, sql, null )
-      } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx)
+      .expectSql(new SqlPattern( DatabaseProduct.MYSQL, sql, null ))
+      .verify();
   }
 
+  /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+  public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+      @Override
+      public java.util.Map<String, java.net.URL> csvResources() {
+          return new FoodmartTestInstance().dataSupplier().csvResources();
+      }
+  }
 
 }

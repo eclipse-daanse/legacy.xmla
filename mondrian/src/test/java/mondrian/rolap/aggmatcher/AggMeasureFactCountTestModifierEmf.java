@@ -20,7 +20,6 @@ import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude;
@@ -42,88 +41,94 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.opencube.junit5.EmfUtil;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplier {
 
     public final Catalog catalog;
-    public final EcoreUtil.Copier copier;
+
+    // store table columns -- a minimal, self-contained Store dimension: the
+    // queries in this test never reference Store members, so only the
+    // columns/levels needed to keep the cube's mapping structurally valid
+    // are declared (no member properties).
+    public Column storeIdStore = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCountryStore = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeStateStore = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCityStore = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeNameStore = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Table storeTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
     // Time CSV table columns
-    public static Column timeIdColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column theYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column monthOfYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column quarterColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column dayOfMonthColumnTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column weekOfYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Table timeCsvTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
+    public Column timeIdColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column theYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column monthOfYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column quarterColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column dayOfMonthColumnTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column weekOfYearColumnInTimeCsv = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Table timeCsvTable = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
     // Fact CSV 2016 table columns
-    public static Column productIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column timeIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column customerIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column promotionIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeSalesColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeCostColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column unitSalesColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Table factCsv2016Table = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
+    public Column productIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column timeIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column customerIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column promotionIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeIdColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeSalesColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCostColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column unitSalesColumnInFactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Table factCsv2016Table = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
     // Aggregation table: agg_c_6_fact_csv_2016
-    public static Column monthOfYearAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column quarterAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column theYearAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeSalesAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeCostAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column unitSalesAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column monthOfYearAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column quarterAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column theYearAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeSalesAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCostAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column unitSalesAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
     public Column customerCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column factCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeSalesFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeCostFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column unitSalesFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Table aggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
+    public Column factCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeSalesFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCostFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column unitSalesFactCountAggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Table aggC6FactCsv2016 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
     // Aggregation table: agg_csv_different_column_names
-    public static Column monthOfYearAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column quarterAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column theYearAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeSalesAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeCostAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column unitSalesAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column customerCountAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column factCountAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column ssFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column scFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column usFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Table aggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
+    public Column monthOfYearAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column quarterAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column theYearAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeSalesAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCostAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column unitSalesAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column customerCountAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column factCountAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column ssFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column scFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column usFcAggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Table aggCsvDifferentColumnNames = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
     // Aggregation table: agg_csv_divide_by_zero
-    public static Column monthOfYearAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column quarterAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column theYearAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeSalesAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeCostAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column unitSalesAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column customerCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column factCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeSalesFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column storeCostFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Column unitSalesFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-    public static Table aggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
+    public Column monthOfYearAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column quarterAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column theYearAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeSalesAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCostAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column unitSalesAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column customerCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column factCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeSalesFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column storeCostFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Column unitSalesFactCountAggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+    public Table aggCsvDivideByZero = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
 
     // Dimensions
-    public static StandardDimension storeDimension;
-    public static TimeDimension timeDimension;
+    public StandardDimension storeDimension;
+    public TimeDimension timeDimension;
 
     // Measures
-    public static AvgMeasure unitSalesMeasure;
+    public AvgMeasure unitSalesMeasure;
 
     public AggMeasureFactCountTestModifierEmf(Catalog catalogMapping) {
-        copier = EmfUtil.copier((CatalogImpl) catalogMapping);
-        this.catalog = (CatalogImpl) copier.get(catalogMapping);
+        this.catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) catalogMapping);
         createTables();
         createDimensions();
         createMeasures();
@@ -486,6 +491,29 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
         aggCsvDivideByZero.getFeature().add(storeCostFactCountAggCsvDivideByZero);
         aggCsvDivideByZero.getFeature().add(unitSalesFactCountAggCsvDivideByZero);
 
+        // Create store table columns
+        storeIdStore.setName("store_id");
+        storeIdStore.setType(SQLSimpleTypes.Sql99.integerType());
+
+        storeCountryStore.setName("store_country");
+        storeCountryStore.setType(SQLSimpleTypes.varcharType(255));
+
+        storeStateStore.setName("store_state");
+        storeStateStore.setType(SQLSimpleTypes.varcharType(255));
+
+        storeCityStore.setName("store_city");
+        storeCityStore.setType(SQLSimpleTypes.varcharType(255));
+
+        storeNameStore.setName("store_name");
+        storeNameStore.setType(SQLSimpleTypes.varcharType(255));
+
+        storeTable.setName("store");
+        storeTable.getFeature().add(storeIdStore);
+        storeTable.getFeature().add(storeCountryStore);
+        storeTable.getFeature().add(storeStateStore);
+        storeTable.getFeature().add(storeCityStore);
+        storeTable.getFeature().add(storeNameStore);
+
         // Add tables to database schema
         if (Packages.available(catalog, Schema.class).size() > 0) {
             Schema dbSchema = Packages.available(catalog, Schema.class).get(0);
@@ -494,89 +522,45 @@ public class AggMeasureFactCountTestModifierEmf implements CatalogMappingSupplie
             dbSchema.getOwnedElement().add(aggC6FactCsv2016);
             dbSchema.getOwnedElement().add(aggCsvDifferentColumnNames);
             dbSchema.getOwnedElement().add(aggCsvDivideByZero);
+            dbSchema.getOwnedElement().add(storeTable);
         }
     }
 
     protected void createDimensions() {
 
-        // Create Store dimension
+        // Create Store dimension -- minimal and self-contained (no member
+        // properties): the queries in this test never reference Store
+        // members, so this only needs to be structurally valid.
         storeDimension = DimensionFactory.eINSTANCE.createStandardDimension();
         storeDimension.setName("Store");
 
         // Create Store hierarchy
         TableSource storeQuery = SourceFactory.eINSTANCE.createTableSource();
-        storeQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
-
-        // Create member properties for Store Name level
-        MemberProperty storeTypeProp = LevelFactory.eINSTANCE.createMemberProperty();
-        storeTypeProp.setName("Store Type");
-        storeTypeProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_TYPE_STORE));
-
-        MemberProperty storeManagerProp = LevelFactory.eINSTANCE.createMemberProperty();
-        storeManagerProp.setName("Store Manager");
-        storeManagerProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_MANAGER_STORE));
-
-        MemberProperty storeSqftProp = LevelFactory.eINSTANCE.createMemberProperty();
-        storeSqftProp.setName("Store Sqft");
-        storeSqftProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SQFT_STORE));
-        storeSqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
-
-        MemberProperty grocerySqftProp = LevelFactory.eINSTANCE.createMemberProperty();
-        grocerySqftProp.setName("Grocery Sqft");
-        grocerySqftProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GROCERY_SQFT_STORE));
-        grocerySqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
-
-        MemberProperty frozenSqftProp = LevelFactory.eINSTANCE.createMemberProperty();
-        frozenSqftProp.setName("Frozen Sqft");
-        frozenSqftProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_FROZEN_SQFT_STORE));
-        frozenSqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
-
-        MemberProperty meatSqftProp = LevelFactory.eINSTANCE.createMemberProperty();
-        meatSqftProp.setName("Meat Sqft");
-        meatSqftProp.setColumn(CatalogSupplier.COLUMN_MEAT_SQFT_STORE);
-        meatSqftProp.setPropertyType(ColumnInternalDataType.NUMERIC);
-
-        MemberProperty coffeeBarProp = LevelFactory.eINSTANCE.createMemberProperty();
-        coffeeBarProp.setName("Has coffee bar");
-        coffeeBarProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_COFFEE_BAR_STORE));
-        coffeeBarProp.setPropertyType(ColumnInternalDataType.BOOLEAN);
-
-        MemberProperty streetAddressProp = LevelFactory.eINSTANCE.createMemberProperty();
-        streetAddressProp.setName("Street address");
-        streetAddressProp.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_STREET_ADDRESS_STORE));
-        streetAddressProp.setPropertyType(ColumnInternalDataType.STRING);
+        storeQuery.setTable(storeTable);
 
         Level storeCountryLevel = LevelFactory.eINSTANCE.createLevel();
         storeCountryLevel.setName("Store Country");
-        storeCountryLevel.setColumn(CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
+        storeCountryLevel.setColumn(storeCountryStore);
         storeCountryLevel.setUniqueMembers(true);
 
         Level storeStateLevel = LevelFactory.eINSTANCE.createLevel();
         storeStateLevel.setName("Store State");
-        storeStateLevel.setColumn(CatalogSupplier.COLUMN_STORE_STATE_STORE);
+        storeStateLevel.setColumn(storeStateStore);
         storeStateLevel.setUniqueMembers(true);
 
         Level storeCityLevel = LevelFactory.eINSTANCE.createLevel();
         storeCityLevel.setName("Store City");
-        storeCityLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_CITY_STORE));
+        storeCityLevel.setColumn(storeCityStore);
         storeCityLevel.setUniqueMembers(false);
 
         Level storeNameLevel = LevelFactory.eINSTANCE.createLevel();
         storeNameLevel.setName("Store Name");
-        storeNameLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_NAME_STORE));
+        storeNameLevel.setColumn(storeNameStore);
         storeNameLevel.setUniqueMembers(true);
-        storeNameLevel.getMemberProperties().add(storeTypeProp);
-        storeNameLevel.getMemberProperties().add(storeManagerProp);
-        storeNameLevel.getMemberProperties().add(storeSqftProp);
-        storeNameLevel.getMemberProperties().add(grocerySqftProp);
-        storeNameLevel.getMemberProperties().add(frozenSqftProp);
-        storeNameLevel.getMemberProperties().add(meatSqftProp);
-        storeNameLevel.getMemberProperties().add(coffeeBarProp);
-        storeNameLevel.getMemberProperties().add(streetAddressProp);
 
         ExplicitHierarchy storeHierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
         storeHierarchy.setHasAll(true);
-        storeHierarchy.setPrimaryKey( (Column) copier.get(CatalogSupplier.COLUMN_STORE_ID_STORE));
+        storeHierarchy.setPrimaryKey(storeIdStore);
         storeHierarchy.setSource(storeQuery);
         storeHierarchy.getLevels().add(storeCountryLevel);
         storeHierarchy.getLevels().add(storeStateLevel);

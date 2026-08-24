@@ -18,10 +18,9 @@ import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the set constructor function <code>{ ... }</code>,
@@ -30,10 +29,10 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @author ajogleka
  * @since 19 December, 2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class SetFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetWithMembersFromDifferentHierarchies(Context<?> context) {
         assertQueryFailsInSetValidation(context.getConnectionWithDefaultRole(),
             "with member store.x as "
@@ -41,8 +40,7 @@ class SetFunDefTest {
             + " SELECT store.x on 0, [measures].[customer count] on 1 from sales");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetWith2TuplesWithDifferentHierarchies(Context<?> context) {
         assertQueryFailsInSetValidation(context.getConnectionWithDefaultRole(),
             "with member store.x as '{([Gender].[M],[Store].[All Stores].[USA].[CA]),"

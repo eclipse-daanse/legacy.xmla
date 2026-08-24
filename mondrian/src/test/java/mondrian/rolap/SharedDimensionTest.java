@@ -14,17 +14,25 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
+import mondrian.rolap.CellKeyTest.FoodmartData;
+
 /**
  * Unit test for shared dimensions.
  *
  * @author Rushan Chen
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class SharedDimensionTest  {
 
     private static final String sharedDimension =
@@ -339,32 +347,35 @@ class SharedDimensionTest  {
         + "{[Buyer].[Store].[USA].[OR].[Portland].[Store 11]}\n"
         + "Row #0: 238\n";
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testA(Context<?> context) {
         // Schema has two cubes sharing a dimension.
         // Query from the first cube.
-        getTestContextForSharedDimCubeACubeB(context);
+        //getTestContextForSharedDimCubeACubeB(context);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(), queryCubeA, resultCubeA);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testB(Context<?> context) {
         // Schema has two cubes sharing a dimension.
         // Query from the second cube.
-        getTestContextForSharedDimCubeACubeB(context);
+        //getTestContextForSharedDimCubeACubeB(context);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(), queryCubeB, resultCubeB);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testVirtualCube(Context<?> context) {
@@ -382,27 +393,29 @@ class SharedDimensionTest  {
                 null);
         withSchema(context, schema);
         */
-        withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
+        //withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(), queryVirtualCube, resultVirtualCube);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testNECJMemberList(Context<?> context) {
         // Schema has two cubes sharing a dimension.
         // Query from the second cube.
-        getTestContextForSharedDimCubeACubeB(context);
+        //getTestContextForSharedDimCubeACubeB(context);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryNECJMemberList,
             resultNECJMemberList);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testNECJMultiLevelMemberList(Context<?> context) {
@@ -410,7 +423,7 @@ class SharedDimensionTest  {
         // Query from the first cube.
         // This is a case where not using alias not only affects performance,
         // but also produces incorrect result.
-        getTestContextForSharedDimCubeACubeB(context);
+        //getTestContextForSharedDimCubeACubeB(context);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryNECJMultiLevelMemberList,
@@ -421,16 +434,18 @@ class SharedDimensionTest  {
      * Test case for <a href="http://jira.pentaho.com/browse/MONDRIAN-286">
      * MONDRIAN-286, "NullPointerException for certain mdx using [Sales 2]"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian286(Context<?> context) {
         // Test for sourceforge.net bug 1711865 (MONDRIAN-286).
         // Use the default FoodMart schema
         assertQueryReturns(context.getConnectionWithDefaultRole(), querySF1711865, resultSF1711865);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testStoreCube(Context<?> context) {
         // Use the default FoodMart schema
         assertQueryReturns(context.getConnectionWithDefaultRole(), queryStoreCube, resultStoreCube);
@@ -441,19 +456,21 @@ class SharedDimensionTest  {
      * MONDRIAN-1243, "Wrong table alias in SQL generated to populate member
      * cache"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian1243WrongAlias(Context<?> context) {
-        getTestContextForSharedDimCubeAltSales(context);
+        //getTestContextForSharedDimCubeAltSales(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryIssue1243,
             resultIssue1243);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SharedDimensionTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberUniqueNameForSharedWithChangedName(Context<?> context) {
-        getTestContextForSharedDimCubeAltSales(context);
+        //getTestContextForSharedDimCubeAltSales(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with "
             + " member [BuyerTwo].[Mexico].[calc] as '[BuyerTwo].[Mexico]' "
@@ -463,34 +480,5 @@ class SharedDimensionTest  {
             + "Axis #1:\n"
             + "{[BuyerTwo].[Store].[Mexico].[calc]}\n"
             + "Row #0: 1,389\n");
-    }
-
-    private void getTestContextForSharedDimCubeACubeB(Context<?> context) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            sharedDimension,
-            cubeA + "\n" + cubeB,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);*/
-        withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
-    }
-
-    private void getTestContextForSharedDimCubeAltSales(Context<?> context) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            cubeAltSales,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier1::new);
     }
 }

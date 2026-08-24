@@ -39,153 +39,128 @@ import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_W
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_RESULT;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.List;
+import java.net.URL;
+import java.util.Map;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.daanse.rolap.testkit.junit.api.Roles;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Andrey Khayrutdinov
  * @see RolapNativeTopCountTestCases
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class RolapNativeTopCountTest extends BatchTestCase {
 
-    @AfterEach
-    public void afterEach() {
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCount_ImplicitCountMeasure(Context<?> context) throws Exception {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testTopCount_ImplicitCountMeasure(Connection connection) throws Exception {
+        assertQueryReturns(connection,
             IMPLICIT_COUNT_MEASURE_QUERY, IMPLICIT_COUNT_MEASURE_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCount_CountMeasure(Context<?> context) throws Exception {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, CUSTOM_COUNT_MEASURE_CUBE,
-                    null, null, null, null);
-
-        withSchema(context, schema);
-        //withCube(CUSTOM_COUNT_MEASURE_CUBE_NAME);
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.CustomCountMeasureCubeName::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.CustomCountMeasureCubeName.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testTopCount_CountMeasure(Connection connection) throws Exception {
+        assertQueryReturns(connection,
             CUSTOM_COUNT_MEASURE_QUERY, CUSTOM_COUNT_MEASURE_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCount_SumMeasure(Context<?> context) throws Exception {
-        assertQueryReturns(context.getConnectionWithDefaultRole(), SUM_MEASURE_QUERY, SUM_MEASURE_RESULT);
+    @Test
+    void testTopCount_SumMeasure(Connection connection) throws Exception {
+        assertQueryReturns(connection, SUM_MEASURE_QUERY, SUM_MEASURE_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testEmptyCellsAreShown_Countries(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testEmptyCellsAreShown_Countries(Connection connection) {
+        assertQueryReturns(connection,
             EMPTY_CELLS_ARE_SHOWN_COUNTRIES_QUERY,
             EMPTY_CELLS_ARE_SHOWN_COUNTRIES_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testEmptyCellsAreShown_States(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testEmptyCellsAreShown_States(Connection connection) {
+        assertQueryReturns(connection,
             EMPTY_CELLS_ARE_SHOWN_STATES_QUERY,
             EMPTY_CELLS_ARE_SHOWN_STATES_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testEmptyCellsAreShown_ButNoMoreThanReallyExist(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testEmptyCellsAreShown_ButNoMoreThanReallyExist(Connection connection) {
+        assertQueryReturns(connection,
             EMPTY_CELLS_ARE_SHOWN_NOT_MORE_THAN_EXIST_QUERY,
             EMPTY_CELLS_ARE_SHOWN_NOT_MORE_THAN_EXIST_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testEmptyCellsAreHidden_WhenNonEmptyIsDeclaredExplicitly(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testEmptyCellsAreHidden_WhenNonEmptyIsDeclaredExplicitly(Connection connection) {
+        assertQueryReturns(connection,
             EMPTY_CELLS_ARE_HIDDEN_WHEN_NON_EMPTY_QUERY,
             EMPTY_CELLS_ARE_HIDDEN_WHEN_NON_EMPTY_RESULT);
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRoleRestrictionWorks_ForRowWithData(Context<?> context) throws Exception {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                ROLE_RESTRICTION_WORKS_WA_ROLE_DEF);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.RoleRestrictionWorksWaRoleDef::new);
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME))),
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RoleRestrictionWorksWaRoleDef.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testRoleRestrictionWorks_ForRowWithData(
+        @Roles(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME) Connection connection) throws Exception
+    {
+        assertQueryReturns(connection,
             ROLE_RESTRICTION_WORKS_WA_QUERY,
             ROLE_RESTRICTION_WORKS_WA_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRoleRestrictionWorks_ForRowWithOutData(Context<?> context) throws Exception {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                ROLE_RESTRICTION_WORKS_DF_ROLE_DEF);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.RoleRestrictionWorksDfRoleDef::new);
-        assertQueryReturns(((TestContext) context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME))),
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RoleRestrictionWorksDfRoleDef.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testRoleRestrictionWorks_ForRowWithOutData(
+        @Roles(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME) Connection connection) throws Exception
+    {
+        assertQueryReturns(connection,
             ROLE_RESTRICTION_WORKS_DF_QUERY,
             ROLE_RESTRICTION_WORKS_DF_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMimicsHeadWhenTwoParams_States(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testMimicsHeadWhenTwoParams_States(Connection connection) {
+        assertQueryReturns(connection,
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY,
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMimicsHeadWhenTwoParams_Cities(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testMimicsHeadWhenTwoParams_Cities(Connection connection) {
+        assertQueryReturns(connection,
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_QUERY,
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMimicsHeadWhenTwoParams_ShowsNotMoreThanExist(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testMimicsHeadWhenTwoParams_ShowsNotMoreThanExist(Connection connection) {
+        assertQueryReturns(connection,
             RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_QUERY,
             RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMimicsHeadWhenTwoParams_DoesNotIgnoreNonEmpty(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testMimicsHeadWhenTwoParams_DoesNotIgnoreNonEmpty(Connection connection) {
+        assertQueryReturns(connection,
             NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_QUERY,
             NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_RESULT);
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 }

@@ -8,11 +8,11 @@
 */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushCache;
 
@@ -34,12 +34,10 @@ import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.common.CacheControlImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 import mondrian.test.DiffRepository;
 
@@ -49,6 +47,7 @@ import mondrian.test.DiffRepository;
  * @author jhyde
  * @since Sep 27, 2006
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class CacheControlTest {
 
     @AfterEach
@@ -88,10 +87,10 @@ class CacheControlTest {
      * @param connection Connection
      */
     private void standardQuery(Connection connection) {
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select {[Time].[Time].Members} on columns,\n"
             + " {[Product].Children} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -244,8 +243,7 @@ class CacheControlTest {
      * Tests creation of a cell region against an abstract implementation of
      * {@link CacheControl}.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCreateCellRegion(Context<?> context) {
         // Execute a query.
         final Connection connection =
@@ -259,8 +257,7 @@ class CacheControlTest {
     /**
      * Creates a cell region, runs a query, then flushes the cache.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNormalize2(Context<?> context) {
         // Execute a query.
         Connection connection = context.getConnectionWithDefaultRole();
@@ -288,14 +285,13 @@ class CacheControlTest {
     /**
      * Creates a cell region, runs a query, then flushes the cache.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFlush(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Product].[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
             + "{{[Gender].[Gender].[Gender].MEMBERS}, {[Gender].[Gender].[All Gender]}} ON AXIS(1)\n"
-            + "FROM [Sales 2] WHERE {[Measures].[Unit Sales]}",
+            + "FROM [Sales 2] WHERE {[Measures].[Unit Sales]}").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #1:\n"
@@ -401,13 +397,6 @@ class CacheControlTest {
 
         flushCache(connection);
 
-        // Make sure MaxConstraint is high enough
-        int minConstraints = 3;
-
-        if (((TestContextImpl)context).getMaxConstraints() < minConstraints) {
-            ((TestContextImpl)context).setMaxConstraints(minConstraints);
-        }
-
         // Execute a query, to bring data into the cache.
         standardQuery(connection);
 
@@ -437,8 +426,7 @@ class CacheControlTest {
     /**
      * Creates a partial cell region, runs a query, then flushes the cache.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPartialFlush(Context<?> context) {
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
@@ -505,8 +493,7 @@ class CacheControlTest {
      * <p>SegmentCacheIndexImpl.intersects was not comparing the
      * header column values to those of the cache region.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPartialFlush_2(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
@@ -543,8 +530,7 @@ class CacheControlTest {
      * Creates a partial cell region over a range, runs a query, then flushes
      * the cache.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPartialFlushRange(Context<?> context) {
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
@@ -861,8 +847,7 @@ class CacheControlTest {
      * A number of negative tests, trying to do invalid things with cache
      * flushing and getting errors.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegative(Context<?> context) {
         final Connection connection = context.getConnectionWithDefaultRole();
         final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
@@ -1007,8 +992,7 @@ class CacheControlTest {
     /**
      * Tests crossjoin of regions, {@link CacheControl#createCrossjoinRegion}.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoin(Context<?> context) {
         final Connection connection = context.getConnectionWithDefaultRole();
         final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
@@ -1116,8 +1100,7 @@ class CacheControlTest {
      * Tests the algorithm which converts a cache region specification into
      * normal form.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNormalize(Context<?> context) {
         // Create
         // Union(
@@ -1189,8 +1172,7 @@ class CacheControlTest {
      * "Cache flush for region that is not necessarily populated results in
      * NullPointerException"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFlushNonPrimedContent(Context<?> context) throws Exception {
         Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
@@ -1209,8 +1191,7 @@ class CacheControlTest {
         cacheControl.flush(flushRegion);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMondrian1094(Context<?> context) throws Exception {
         final String query =
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
@@ -1219,8 +1200,7 @@ class CacheControlTest {
         Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
 
-        assertQueryReturns(connection,
-            query,
+        assertThatQuery(connection, query).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1231,13 +1211,6 @@ class CacheControlTest {
 
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
-        }
-
-        // Make sure MaxConstraint is high enough
-        int minConstraints = 3;
-
-        if (((TestContextImpl)context).getMaxConstraints() < minConstraints) {
-            ((TestContextImpl)context).setMaxConstraints(minConstraints);
         }
 
         StringWriter sw = new StringWriter();

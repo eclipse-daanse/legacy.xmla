@@ -21,20 +21,22 @@ import java.util.Optional;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.db.DatabaseColumn;
 import org.eclipse.daanse.olap.api.element.db.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.db.DatabaseTable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.daanse.rolap.testkit.junit.api.Roles;
+import org.junit.jupiter.api.Test;
 
+import mondrian.rolap.CellKeyTest.FoodmartData;
+
+@RolapContextTest(FoodmartTestInstance.class)
 public class RoleTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDatabaseSchemaWithNoRole(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         try {
@@ -58,12 +60,10 @@ public class RoleTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDatabaseSchemaWithRole(Context<?> context) {
-        TestUtil.withSchemaEmf(context, RoleTestModifier::new);
-        Connection connection = context.getConnection(new ConnectionProps(List.of("Test")));
-
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, RoleTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testDatabaseSchemaWithRole(@Roles("Test") Connection connection) {
         try {
             CatalogReader schemaReader = connection.getCatalogReader();
             List<? extends DatabaseSchema> dsList = schemaReader.getDatabaseSchemas();

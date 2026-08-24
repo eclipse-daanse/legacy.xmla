@@ -8,24 +8,24 @@
 */
 package mondrian.olap.fun;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for UnionFunDef
  *
  * @author Yury Bakhmutski
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class UnionFunDefTest {
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testArity4TupleUnion(Context<?> context) {
     String tupleSet =
         "CrossJoin( [Customers].[USA].Children,"
@@ -44,11 +44,10 @@ class UnionFunDefTest {
         + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997].[Q3], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997].[Q4], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Union( " + tupleSet + ", " + tupleSet + ")", expected);
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Union( " + tupleSet + ", " + tupleSet + ")").returns(expected);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testArity5TupleUnion(Context<?> context) {
     String tupleSet = "CrossJoin( [Customers].[Canada].Children, "
         + "CrossJoin( [Time].[1997].lastChild, "
@@ -62,7 +61,7 @@ class UnionFunDefTest {
     Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, "Sales", tupleSet, expected);
 
-    assertAxisReturns(connection, "Sales", "Union( " + tupleSet + ", " + tupleSet + ")", expected);
+    assertThatAxis(connection, "Sales", "Union( " + tupleSet + ", " + tupleSet + ")").returns(expected);
   }
 
   void testArity5TupleUnionAll(Context<?> context) {
@@ -78,15 +77,14 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1998].[Q1], [Education Level].[Partial High School], [Gender].[F], [Marital Status].[M]}";
 
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, "Sales", tupleSet, expected);
+    assertThatAxis(connection, "Sales", tupleSet).returns(expected);
 
-    assertAxisReturns(connection, "Sales",
-        "Union( " + tupleSet + ", " + tupleSet + ", " + "ALL" + ")",
+    assertThatAxis(connection, "Sales",
+        "Union( " + tupleSet + ", " + tupleSet + ", " + "ALL" + ")").returns(
         expected + "\n" + expected);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testArity6TupleUnion(Context<?> context) {
     String tupleSet1 = "CrossJoin( [Customers].[Canada].Children, "
         + "CrossJoin( [Time].[1997].firstChild, "
@@ -102,7 +100,7 @@ class UnionFunDefTest {
     String tupleSet1Expected =
         "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$90K - $110K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, "Sales", tupleSet1, tupleSet1Expected);
+    assertThatAxis(connection, "Sales", tupleSet1).returns(tupleSet1Expected);
 
     String tupleSet2Expected =
         "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$10K - $30K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
@@ -114,15 +112,14 @@ class UnionFunDefTest {
         + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$70K - $90K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + tupleSet1Expected;
 
-    assertAxisReturns(connection, "Sales", tupleSet2, tupleSet2Expected);
+    assertThatAxis(connection, "Sales", tupleSet2).returns(tupleSet2Expected);
 
-    assertAxisReturns(connection, "Sales",
-        "Union( " + tupleSet2 + ", " + tupleSet1 + ")",
+    assertThatAxis(connection, "Sales",
+        "Union( " + tupleSet2 + ", " + tupleSet1 + ")").returns(
         tupleSet2Expected);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testArity6TupleUnionAll(Context<?> context) {
     String tupleSet1 = "CrossJoin( [Customers].[Canada].Children, "
         + "CrossJoin( [Time].[1997].firstChild, "
@@ -138,7 +135,7 @@ class UnionFunDefTest {
     String tupleSet1Expected =
         "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$90K - $110K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, "Sales", tupleSet1, tupleSet1Expected);
+    assertThatAxis(connection, "Sales", tupleSet1).returns(tupleSet1Expected);
 
     String tupleSet2Expected =
         "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$10K - $30K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
@@ -149,10 +146,10 @@ class UnionFunDefTest {
         + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$50K - $70K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$70K - $90K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + tupleSet1Expected;
-    assertAxisReturns(connection, "Sales", tupleSet2, tupleSet2Expected);
+    assertThatAxis(connection, "Sales", tupleSet2).returns(tupleSet2Expected);
 
-    assertAxisReturns(connection, "Sales",
-            "Union( " + tupleSet1 + ", " + tupleSet2 + ", " + "ALL" + ")",
+    assertThatAxis(connection, "Sales",
+            "Union( " + tupleSet1 + ", " + tupleSet2 + ", " + "ALL" + ")").returns(
         tupleSet1Expected + "\n" + tupleSet2Expected);
   }
 

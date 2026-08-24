@@ -12,16 +12,11 @@
 package mondrian.olap.fun;
 
 import static org.eclipse.daanse.olap.common.Util.assertTrue;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.assertStubbedEqualsVerbose;
 import static org.opencube.junit5.TestUtil.compileExpression;
 import static org.opencube.junit5.TestUtil.executeExpr;
@@ -44,6 +39,7 @@ import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +47,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opencube.junit5.MondrianRuntimeExtension;
-import org.opencube.junit5.TestUtil;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,20 +175,20 @@ public class FunctionTest {//extends FoodMartTestCase {
       + "Row #1: \n"
       + "Row #2: \n"
       + "Row #3: \n";
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expected );
   }
 
 
   @Test
   void testNumericLiteral(Context<?> context) {
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "2", "2" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "2").returns( "2" );
     if ( false ) {
       // The test is currently broken because the value 2.5 is formatted
       // as "2". TODO: better default format string
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "2.5", "2.5" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "2.5").returns( "2.5" );
     }
-     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "-10.0", "-10" );
-    TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "1.5", "{}" );
+     assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-10.0").returns( "-10" );
+    FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1.5").dependsOn();
   }
 
   @Test
@@ -202,12 +197,12 @@ public class FunctionTest {//extends FoodMartTestCase {
     if ( false ) {
       // TODO: enhance parser so that you can include a quoted string
       //   inside a WITH MEMBER clause
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "'foobar'", "foobar" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "'foobar'").returns( "foobar" );
     }
     // double-quoted string
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "\"foobar\"", "foobar" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "\"foobar\"").returns( "foobar" );
     // literals don't depend on any dimensions
-    TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "\"foobar\"", "{}" );
+    FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "\"foobar\"").dependsOn();
   }
 
 
@@ -216,30 +211,30 @@ public class FunctionTest {//extends FoodMartTestCase {
   @Test
   void testNullMember(Context<?> context) {
     // MSAS fails here, but Mondrian doesn't.
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "[Gender].[All Gender].Parent.Level.UniqueName",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "[Gender].[All Gender].Parent.Level.UniqueName").returns(
       "[Gender].[Gender].[(All)]" );
 
     // MSAS fails here, but Mondrian doesn't.
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "[Gender].[All Gender].Parent.Hierarchy.UniqueName", "[Gender].[Gender]" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "[Gender].[All Gender].Parent.Hierarchy.UniqueName").returns( "[Gender].[Gender]" );
 
     // MSAS fails here, but Mondrian doesn't.
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "[Gender].[All Gender].Parent.Dimension.UniqueName", "[Gender]" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "[Gender].[All Gender].Parent.Dimension.UniqueName").returns( "[Gender]" );
 
     // MSAS succeeds too
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "[Gender].[All Gender].Parent.Children.Count", "0" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "[Gender].[All Gender].Parent.Children.Count").returns( "0" );
 
     if ( isDefaultNullMemberRepresentation(context) ) {
       // MSAS returns "" here.
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-        "[Gender].[All Gender].Parent.UniqueName", "[Gender].[Gender].[#null]" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+        "[Gender].[All Gender].Parent.UniqueName").returns( "[Gender].[Gender].[#null]" );
 
       // MSAS returns "" here.
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-        "[Gender].[All Gender].Parent.Name", "#null" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+        "[Gender].[All Gender].Parent.Name").returns( "#null" );
     }
   }
 
@@ -248,12 +243,12 @@ public class FunctionTest {//extends FoodMartTestCase {
    */
   @Test
   void testNullValue(Context<?> context) {
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Measures].[X] as 'IIF([Measures].[Store Sales]>10000,[Measures].[Store Sales],Null)'\n"
         + "select\n"
         + "{[Measures].[X]} on columns,\n"
         + "{[Product].[Product Department].members} on rows\n"
-        + "from Sales",
+        + "from Sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -310,23 +305,23 @@ public class FunctionTest {//extends FoodMartTestCase {
   @Test
   void testNullInMultiplication(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    TestUtil.assertExprReturns(connection, "Sales", "NULL*1", "" );
-    TestUtil.assertExprReturns(connection, "Sales", "1*NULL", "" );
-    TestUtil.assertExprReturns(connection, "Sales", "NULL*NULL", "" );
+    assertThatExpr(connection, "Sales", "NULL*1").returns( "" );
+    assertThatExpr(connection, "Sales", "1*NULL").returns( "" );
+    assertThatExpr(connection, "Sales", "NULL*NULL").returns( "" );
   }
 
   @Test
   void testNullInAddition(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    TestUtil.assertExprReturns(connection, "Sales", "1+NULL", "1" );
-    TestUtil.assertExprReturns(connection, "Sales", "NULL+1", "1" );
+    assertThatExpr(connection, "Sales", "1+NULL").returns( "1" );
+    assertThatExpr(connection, "Sales", "NULL+1").returns( "1" );
   }
 
   @Test
   void testNullInSubtraction(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    TestUtil.assertExprReturns(connection, "Sales", "1-NULL", "1" );
-    TestUtil.assertExprReturns(connection, "Sales", "NULL-1", "-1" );
+    assertThatExpr(connection, "Sales", "1-NULL").returns( "1" );
+    assertThatExpr(connection, "Sales", "NULL-1").returns( "-1" );
   }
 
   @Disabled //TODO need investigate
@@ -352,32 +347,32 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Row #0: 5\n"
         + "Row #0: 4\n";
 
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH MEMBER [Measures].[Foo] AS 'Iif(IsEmpty([Measures].[Unit Sales]), 5, [Measures].[Unit Sales])'\n"
         + "SELECT {[Store].[USA].[WA].children} on columns\n"
         + "FROM Sales\n"
         + "WHERE ([Time].[1997].[Q4].[12],\n"
         + " [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth "
         + "Imported Beer],\n"
-        + " [Measures].[Foo])",
+        + " [Measures].[Foo])").returnsGrid(
       desiredResult );
 
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH MEMBER [Measures].[Foo] AS 'Iif([Measures].[Unit Sales] IS EMPTY, 5, [Measures].[Unit Sales])'\n"
         + "SELECT {[Store].[USA].[WA].children} on columns\n"
         + "FROM Sales\n"
         + "WHERE ([Time].[1997].[Q4].[12],\n"
         + " [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth "
         + "Imported Beer],\n"
-        + " [Measures].[Foo])",
+        + " [Measures].[Foo])").returnsGrid(
       desiredResult );
 
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH MEMBER [Measures].[Foo] AS 'Iif([Measures].[Bar] IS EMPTY, 1, [Measures].[Bar])'\n"
         + "MEMBER [Measures].[Bar] AS 'CAST(\"42\" AS INTEGER)'\n"
         + "SELECT {[Measures].[Unit Sales], [Measures].[Foo]} on columns\n"
         + "FROM Sales\n"
-        + "WHERE ([Time].[1998].[Q4].[12])",
+        + "WHERE ([Time].[1998].[Q4].[12])").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[1998].[Q4].[12]}\n"
         + "Axis #1:\n"
@@ -389,11 +384,11 @@ public class FunctionTest {//extends FoodMartTestCase {
 
   @Test
   void testQueryWithoutValidMeasure(Context<?> context) {
-    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with\n"
         + "member measures.[without VM] as ' [measures].[unit sales] '\n"
         + "select {measures.[without VM] } on 0,\n"
-        + "[Warehouse].[Country].members on 1 from [warehouse and sales]\n",
+        + "[Warehouse].[Country].members on 1 from [warehouse and sales]\n").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -421,7 +416,7 @@ public class FunctionTest {//extends FoodMartTestCase {
   //* @see mondrian.rolap.FastBatchingCellReaderTest#testAggregateDistinctCount()
   @Test
   void testMultiselectCalculations(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "MEMBER [Measures].[Declining Stores Count] AS\n"
         + " ' Count(Filter(Descendants(Store.CurrentMember, Store.[Store Name]), [Store Sales] < ([Store Sales],Time"
@@ -432,7 +427,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "  NON EMPTY HIERARCHIZE(AddCalculatedMembers({DrillDownLevel({[Product].[All Products]})})) \n"
         + "    DIMENSION PROPERTIES PARENT_UNIQUE_NAME ON COLUMNS \n"
         + "FROM [Sales] \n"
-        + "WHERE ([Measures].[Declining Stores Count], [Time].[1998].[Q3], [Store].[XL_QZX])",
+        + "WHERE ([Measures].[Declining Stores Count], [Time].[1998].[Q3], [Store].[XL_QZX])").returnsGrid(
       "Axis #0:\n"
         + "{[Measures].[Declining Stores Count], [Time].[Time].[1998].[Q3], [Store].[Store].[XL_QZX]}\n"
         + "Axis #1:\n"
@@ -448,7 +443,7 @@ public class FunctionTest {//extends FoodMartTestCase {
 
   @Test
   void testBug715177(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH MEMBER [Product].[Non-Consumable].[Other] AS\n"
         + " 'Sum(Except( [Product].[Product Department].Members,\n"
         + "       TopCount([Product].[Product Department].Members, 3)),\n"
@@ -457,7 +452,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "  { [Measures].[Unit Sales] } ON COLUMNS,\n"
         + "  { TopCount([Product].[Product Department].Members,3),\n"
         + "              [Product].[Non-Consumable].[Other] } ON ROWS\n"
-        + "FROM [Sales]",
+        + "FROM [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -477,8 +472,8 @@ public class FunctionTest {//extends FoodMartTestCase {
   void testBug714707(Context<?> context) {
     // Same issue as bug 715177 -- "children" returns immutable
     // list, which set operator must make mutable.
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{[Store].[USA].[CA].children, [Store].[USA]}",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{[Store].[USA].[CA].children, [Store].[USA]}").returns(
       "[Store].[Store].[USA].[CA].[Alameda]\n"
         + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
         + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
@@ -489,8 +484,8 @@ public class FunctionTest {//extends FoodMartTestCase {
 
   @Test
 	void testTuple(Context<?> context) {
-		assertExprReturns(context.getConnectionWithDefaultRole(),
-				"([Gender].[M], " + "[Time].[Time].Children.Item(2), " + "[Measures].[Unit Sales])", "33,249");
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+				"([Gender].[M], " + "[Time].[Time].Children.Item(2), " + "[Measures].[Unit Sales])").returns( "33,249");
 		// Calc calls MemberValue with 3 args -- more efficient than
 		// constructing a tuple.
 		String expr = "([Gender].[M], [Time].[Time].Children.Item(2), [Measures].[Unit Sales])";
@@ -514,96 +509,96 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void testTupleArgTypes(Context<?> context) {
     // can coerce dimensions (if they have a unique hierarchy) and
     // hierarchies to members
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "([Gender], [Time].[Time])",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Gender], [Time].[Time])").returns(
       "266,773" );
 
     // can coerce hierarchy to member
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "([Gender].[M], " + TimeWeekly + ")", "135,215" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Gender].[M], " + TimeWeekly + ")").returns( "135,215" );
 
     // coerce args (hierarchy, member, member, dimension)
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media])}",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media])}").returns(
       "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[Marital Status].[M], [Promotion Media].[Promotion Media].[All "
         + "Media]}" );
 
     // usage of different hierarchies in the [Time] dimension
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Time])}",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Time])}").returns(
       "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[Marital Status].[M], [Time].[Time].[1997]}" );
 
     // two usages of the [Time].[Weekly] hierarchy
 
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Weekly])}",
-      "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." , "Sales");
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Weekly])}").throwsMessage(
+      "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." );
 
     // cannot coerce integer to member
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "{([Gender].[M], 123)}",
-      "No function matches signature '(<Member>, <Numeric Expression>)'" , "Sales");
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{([Gender].[M], 123)}").throwsMessage(
+      "No function matches signature '(<Member>, <Numeric Expression>)'" );
   }
 
   @Test
   void testTupleItem(Context<?> context) {
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(2)",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(2)").returns(
       "[Gender].[Gender].[M]" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(1)",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(1)").returns(
       "[Customers].[Customers].[USA].[OR]" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{[Time].[1997].[Q1].[1]}.item(0)",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{[Time].[1997].[Q1].[1]}.item(0)").returns(
       "[Time].[Time].[1997].[Q1].[1]" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{[Time].[1997].[Q1].[1]}.Item(0).Item(0)",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "{[Time].[1997].[Q1].[1]}.Item(0).Item(0)").returns(
       "[Time].[Time].[1997].[Q1].[1]" );
 
     // given out of bounds index, item returns null
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(-1)",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(-1)").returns(
       "" );
 
     // given out of bounds index, item returns null
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(500)",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(500)").returns(
       "" );
 
     // empty set
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "Filter([Gender].members, 1 = 0).Item(0)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Filter([Gender].members, 1 = 0).Item(0)").returns(
       "" );
 
     // empty set of unknown type
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "{}.Item(3)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "{}.Item(3)").returns(
       "" );
 
     // past end of set
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "{[Gender].members}.Item(4)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "{[Gender].members}.Item(4)").returns(
       "" );
 
     // negative index
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "{[Gender].members}.Item(-50)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "{[Gender].members}.Item(-50)").returns(
       "" );
   }
 
   @Test
   void testTupleAppliedToUnknownHierarchy(Context<?> context) {
     // manifestation of bug 1735821
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with \n"
         + "member [Product].[Test] as '([Product].[Food],Dimensions(0).defaultMember)' \n"
         + "select \n"
         + "{[Product].[Test], [Product].[Food]} on columns, \n"
         + "{[Measures].[Store Sales]} on rows \n"
-        + "from Sales",
+        + "from Sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -617,24 +612,22 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testTupleDepends(Context<?> context) {
-    assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-      "([Store].[USA], [Gender].[F])", "{}" );
+    FunDependencies.assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Store].[USA], [Gender].[F])").dependsOn();
 
-    assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-      "([Store].[USA], [Gender])", "{[Gender].[Gender]}" );
+    FunDependencies.assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Store].[USA], [Gender])").dependsOn("[Gender].[Gender]");
 
     // in a scalar context, the expression depends on everything except
     // the explicitly stated dimensions
-    assertExprDependsOn(context.getConnectionWithDefaultRole(),
-      "([Store].[USA], [Gender])",
-      allHiersExcept( "[Store].[Store]" ) );
+    FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Store].[USA], [Gender])").dependsOn( hiersExcept( "[Store].[Store]" ) );
 
     // The result should be all dims except [Gender], but there's a small
     // bug in MemberValueCalc.dependsOn where we escalate 'might depend' to
     // 'depends' and we return that it depends on all dimensions.
-    assertExprDependsOn(context.getConnectionWithDefaultRole(),
-      "(Dimensions('Store').CurrentMember, [Gender].[F])",
-      allHiers() );
+    FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "(Dimensions('Store').CurrentMember, [Gender].[F])").dependsOn( hiersExcept() );
   }
 
   @Test
@@ -648,23 +641,23 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     // is different.
 
     // MSAS returns error here.
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "Filter([Gender].members, 1 = 0).Item(0).Dimension.Name",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Filter([Gender].members, 1 = 0).Item(0).Dimension.Name").returns(
       "Gender" );
 
     // MSAS returns error here.
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "Filter([Gender].members, 1 = 0).Item(0).Parent",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Filter([Gender].members, 1 = 0).Item(0).Parent").returns(
       "" );
-    assertExprReturns(context.getConnectionWithDefaultRole(),
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
       "(Filter([Store].members, 0 = 0).Item(0).Item(0),"
-        + "Filter([Store].members, 0 = 0).Item(0).Item(0))",
+        + "Filter([Store].members, 0 = 0).Item(0).Item(0))").returns(
       "266,773" );
 
     if ( isDefaultNullMemberRepresentation(context) ) {
       // MSAS returns error here.
-      assertExprReturns(context.getConnectionWithDefaultRole(),
-        "Filter([Gender].members, 1 = 0).Item(0).Name",
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+        "Filter([Gender].members, 1 = 0).Item(0).Name").returns(
         "#null" );
     }
   }
@@ -672,12 +665,12 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   @Test
   void testTupleNull(Context<?> context) {
     // if a tuple contains any null members, it evaluates to null
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} on columns,\n"
         + " { ([Gender].[M], [Store]),\n"
         + "   ([Gender].[F], [Store].parent),\n"
         + "   ([Gender].parent, [Store])} on rows\n"
-        + "from [Sales]",
+        + "from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -688,22 +681,22 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
     // the set function eliminates tuples which are wholly or partially
     // null
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
       "([Gender].parent, [Marital Status]),\n" // part null
         + " ([Gender].[M], [Marital Status].parent),\n" // part null
         + " ([Gender].parent, [Marital Status].parent),\n" // wholly null
-        + " ([Gender].[M], [Marital Status])", // not null
+        + " ([Gender].[M], [Marital Status])").returns( // not null
       "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status]}" );
 
     if ( isDefaultNullMemberRepresentation(context) ) {
       // The tuple constructor returns a null tuple if one of its
       // arguments is null -- and the Item function returns null if the
       // tuple is null.
-      assertExprReturns(context.getConnectionWithDefaultRole(),
-        "([Gender].parent, [Marital Status]).Item(0).Name",
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+        "([Gender].parent, [Marital Status]).Item(0).Name").returns(
         "#null" );
-      assertExprReturns(context.getConnectionWithDefaultRole(),
-        "([Gender].parent, [Marital Status]).Item(1).Name",
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+        "([Gender].parent, [Marital Status]).Item(1).Name").returns(
         "#null" );
     }
   }
@@ -742,39 +735,39 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void testLevelMemberExpressions(Context<?> context) {
 	context.getCatalogCache().clear();
     // Should return Beverly Hills in California.
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "[Store].[Store City].[Beverly Hills]",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "[Store].[Store City].[Beverly Hills]").returns(
       "[Store].[Store].[USA].[CA].[Beverly Hills]" );
 
     // There are two months named "1" in the time dimension: one
     // for 1997 and one for 1998.  <Level>.<Member> should return
     // the first one.
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Month].[1]", "[Time].[Time].[1997].[Q1].[1]" );
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Month].[1]").returns( "[Time].[Time].[1997].[Q1].[1]" );
 
     // Shouldn't be able to find a member named "Q1" on the month level.
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "[Time].[Month].[Q1]",
-      "MDX object '[Time].[Month].[Q1]' not found in cube", "Sales");
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "[Time].[Month].[Q1]").throwsMessage(
+      "MDX object '[Time].[Month].[Q1]' not found in cube");
   }
 
   @Test
   void testCaseTestMatch(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "CASE WHEN 1=0 THEN \"first\" WHEN 1=1 THEN \"second\" WHEN 1=2 THEN \"third\" ELSE \"fourth\" END",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE WHEN 1=0 THEN \"first\" WHEN 1=1 THEN \"second\" WHEN 1=2 THEN \"third\" ELSE \"fourth\" END").returns(
       "second" );
   }
 
   @Test
   void testCaseTestMatchElse(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "CASE WHEN 1=0 THEN \"first\" ELSE \"fourth\" END",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE WHEN 1=0 THEN \"first\" ELSE \"fourth\" END").returns(
       "fourth" );
   }
 
   @Test
   void testCaseTestMatchNoElse(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "CASE WHEN 1=0 THEN \"first\" END",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE WHEN 1=0 THEN \"first\" END").returns(
       "" );
   }
 
@@ -783,7 +776,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    */
   @Test
   void testCaseTestReturnsMemberBug1799391(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + " MEMBER [Product].[CaseTest] AS\n"
         + " 'CASE\n"
@@ -791,7 +784,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + " ELSE [Gender].[F]\n"
         + " END'\n"
         + "                \n"
-        + "SELECT {[Product].[CaseTest]} ON 0, {[Gender].[M]} ON 1 FROM Sales",
+        + "SELECT {[Product].[CaseTest]} ON 0, {[Gender].[M]} ON 1 FROM Sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -800,55 +793,55 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "{[Gender].[Gender].[M]}\n"
         + "Row #0: 131,558\n" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "CASE WHEN 1+1 = 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE WHEN 1+1 = 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END").returns(
       "[Gender].[Gender].[F]" );
 
     // try case match for good measure
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "CASE 1 WHEN 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END",
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE 1 WHEN 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END").returns(
       "[Gender].[Gender].[All Gender]" );
   }
 
   @Test
   void testCaseMatch(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "CASE 2 WHEN 1 THEN \"first\" WHEN 2 THEN \"second\" WHEN 3 THEN \"third\" ELSE \"fourth\" END",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE 2 WHEN 1 THEN \"first\" WHEN 2 THEN \"second\" WHEN 3 THEN \"third\" ELSE \"fourth\" END").returns(
       "second" );
   }
 
   @Test
   void testCaseMatchElse(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "CASE 7 WHEN 1 THEN \"first\" ELSE \"fourth\" END",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE 7 WHEN 1 THEN \"first\" ELSE \"fourth\" END").returns(
       "fourth" );
   }
 
   @Test
   void testCaseMatchNoElse(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "CASE 8 WHEN 0 THEN \"first\" END",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "CASE 8 WHEN 0 THEN \"first\" END").returns(
       "" );
   }
 
   @Test
   void testCaseTypeMismatch(Context<?> context) {
     // type mismatch between case and else
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "CASE 1 WHEN 1 THEN 2 ELSE \"foo\" END",
-      "No function matches signature", "Sales" );
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales" ,
+      "CASE 1 WHEN 1 THEN 2 ELSE \"foo\" END").throwsMessage(
+      "No function matches signature");
     // type mismatch between case and case
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "CASE 1 WHEN 1 THEN 2 WHEN 2 THEN \"foo\" ELSE 3 END",
-      "No function matches signature", "Sales" );
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales" ,
+      "CASE 1 WHEN 1 THEN 2 WHEN 2 THEN \"foo\" ELSE 3 END").throwsMessage(
+      "No function matches signature");
     // type mismatch between value and case
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "CASE 1 WHEN \"foo\" THEN 2 ELSE 3 END",
-      "No function matches signature", "Sales" );
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales" ,
+      "CASE 1 WHEN \"foo\" THEN 2 ELSE 3 END").throwsMessage(
+      "No function matches signature");
     // non-boolean condition
-    assertAxisThrows(context.getConnectionWithDefaultRole(),
-      "CASE WHEN 1 = 2 THEN 3 WHEN 4 THEN 5 ELSE 6 END",
-      "No function matches signature", "Sales" );
+    assertThatAxis(context.getConnectionWithDefaultRole(), "Sales" ,
+      "CASE WHEN 1 = 2 THEN 3 WHEN 4 THEN 5 ELSE 6 END").throwsMessage(
+      "No function matches signature");
   }
 
   /**
@@ -865,34 +858,34 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     // get the type deduction right, the MDX exp compiler will handle the
     // rest.
     if ( false ) {
-      assertExprReturns(context.getConnectionWithDefaultRole(),
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
         "case 1 when 0 then 1.5\n"
-          + " else ([Gender].[M], [Measures].[Unit Sales]) end",
+          + " else ([Gender].[M], [Measures].[Unit Sales]) end").returns(
         "135,215" );
     }
 
     // "case when" variant always worked
-    assertExprReturns(context.getConnectionWithDefaultRole(),
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
       "case when 1=0 then 1.5\n"
-        + " else ([Gender].[M], [Measures].[Unit Sales]) end",
+        + " else ([Gender].[M], [Measures].[Unit Sales]) end").returns(
       "135,215" );
 
     // case 2: cannot deduce type (tuple x) vs. (tuple y). Should be able
     // to deduce that the result type is tuple-type<member-type<Gender>,
     // member-type<Measures>>.
     if ( false ) {
-      assertExprReturns(context.getConnectionWithDefaultRole(),
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
         "case when 1=0 then ([Gender].[M], [Measures].[Store Sales])\n"
-          + " else ([Gender].[M], [Measures].[Unit Sales]) end",
+          + " else ([Gender].[M], [Measures].[Unit Sales]) end").returns(
         "xxx" );
     }
 
     // case 3: mixture of member & tuple. Should be able to deduce that
     // result type is an expression.
     if ( false ) {
-      assertExprReturns(context.getConnectionWithDefaultRole(),
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
         "case when 1=0 then ([Measures].[Store Sales])\n"
-          + " else ([Gender].[M], [Measures].[Unit Sales]) end",
+          + " else ([Gender].[M], [Measures].[Unit Sales]) end").returns(
         "xxx" );
     }
   }
@@ -901,8 +894,8 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void testMod(Context<?> context) {
     // the following tests are consistent with excel xp
 
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(11, 3)", "2" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(-12, 3)", "0" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(11, 3)").returns( "2" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(-12, 3)").returns( "0" );
 
     // can handle non-ints, using the formula MOD(n, d) = n - d * INT(n / d)
     assertExprReturns(context.getConnectionWithDefaultRole(), "mod(7.2, 3)", 1.2, 0.0001 );
@@ -910,16 +903,16 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertExprReturns(context.getConnectionWithDefaultRole(), "mod(7.2, -3.2)", -2.4, 0.0001 );
 
     // per Excel doc "sign of result is same as divisor"
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(3, 2)", "1" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(-3, 2)", "1" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(3, -2)", "-1" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(-3, -2)", "-1" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(3, 2)").returns( "1" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(-3, 2)").returns( "1" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(3, -2)").returns( "-1" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(-3, -2)").returns( "-1" );
 
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "mod(4, 0)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "mod(4, 0)").throwsMessage(
       "java.lang.ArithmeticException: / by zero" );
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "mod(0, 0)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "mod(0, 0)").throwsMessage(
       "java.lang.ArithmeticException: / by zero" );
   }
 
@@ -928,41 +921,41 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void testString(Context<?> context) {
     // The String(Integer,Char) function requires us to implicitly cast a
     // string to a char.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member measures.x as 'String(3, \"yahoo\")'\n"
-        + "select measures.x on 0 from [Sales]",
+        + "select measures.x on 0 from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
         + "{[Measures].[x]}\n"
         + "Row #0: yyy\n" );
     // String is converted to char by taking first character
-    assertExprReturns(context.getConnectionWithDefaultRole(), "String(3, \"yahoo\")", "yyy" ); // SSAS agrees
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "String(3, \"yahoo\")").returns( "yyy" ); // SSAS agrees
     // Integer is converted to char by converting to string and taking first
     // character
     if ( Bug.Ssas2005Compatible ) {
       // SSAS2005 can implicitly convert an integer (32) to a string, and
       // then to a char by taking the first character. Mondrian requires
       // an explicit cast.
-      assertExprReturns(context.getConnectionWithDefaultRole(), "String(3, 32)", "333" );
-      assertExprReturns(context.getConnectionWithDefaultRole(), "String(8, -5)", "--------" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "String(3, 32)").returns( "333" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "String(8, -5)").returns( "--------" );
     } else {
-      assertExprReturns(context.getConnectionWithDefaultRole(), "String(3, Cast(32 as string))", "333" );
-      assertExprReturns(context.getConnectionWithDefaultRole(), "String(8, Cast(-5 as string))", "--------" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "String(3, Cast(32 as string))").returns( "333" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "String(8, Cast(-5 as string))").returns( "--------" );
     }
     // Error if length<0
-    assertExprReturns(context.getConnectionWithDefaultRole(), "String(0, 'x')", "" ); // SSAS agrees
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "String(-1, 'x')", "NegativeArraySizeException" ); // SSAS agrees
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "String(-200, 'x')", "NegativeArraySizeException" ); // SSAS agrees
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "String(0, 'x')").returns( "" ); // SSAS agrees
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "String(-1, 'x')").throwsMessage( "NegativeArraySizeException" ); // SSAS agrees
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "String(-200, 'x')").throwsMessage( "NegativeArraySizeException" ); // SSAS agrees
   }
 
     public static void checkNullOp(Connection connection, final String op ) {
-        assertBooleanExprReturns(connection, "Sales", " 0 " + op + " " + NullNumericExpr, false );
-        assertBooleanExprReturns(connection, "Sales", NullNumericExpr + " " + op + " 0", false );
-        assertBooleanExprReturns(connection, "Sales",
-            NullNumericExpr + " " + op + " " + NullNumericExpr, false );
+        assertThatExpr(connection, "Sales", " 0 " + op + " " + NullNumericExpr).isFalse();
+        assertThatExpr(connection, "Sales", NullNumericExpr + " " + op + " 0").isFalse();
+        assertThatExpr(connection, "Sales",
+            NullNumericExpr + " " + op + " " + NullNumericExpr).isFalse();
     }
 
   /**
@@ -1055,32 +1048,32 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
     // From integer
     // To integer (trivial)
-    assertExprReturns(context.getConnectionWithDefaultRole(), "0 + Cast(1 + 2 AS Integer)", "3" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "0 + Cast(1 + 2 AS Integer)").returns( "3" );
     // To String
-    assertExprReturns(context.getConnectionWithDefaultRole(), "'' || Cast(1 + 2 AS String)", "3.0" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "'' || Cast(1 + 2 AS String)").returns( "3.0" );
     // To Boolean
-    assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND Cast(1 + 2 AS Boolean)", "true" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND Cast(1 - 1 AS Boolean)", "false" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND Cast(1 + 2 AS Boolean)").returns( "true" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND Cast(1 - 1 AS Boolean)").returns( "false" );
 
 
     // From boolean
     // To String
-    assertExprReturns(context.getConnectionWithDefaultRole(), "'' || Cast((1 = 1 AND 1 = 2) AS String)", "false" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "'' || Cast((1 = 1 AND 1 = 2) AS String)").returns( "false" );
 
     // This case demonstrates the relative precedence of 'AS' in 'CAST'
     // and 'AS' for creating inline named sets. See also bug MONDRIAN-648.
 //    discard( Bug.Bug648Fixed );
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "'xxx' || Cast(1 = 1 AND 1 = 2 AS String)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "'xxx' || Cast(1 = 1 AND 1 = 2 AS String)").returns(
       "xxxfalse" );
 
     // To boolean (trivial)
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "1=1 AND Cast((1 = 1 AND 1 = 2) AS Boolean)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "1=1 AND Cast((1 = 1 AND 1 = 2) AS Boolean)").returns(
       "false" );
 
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "1=1 OR Cast(1 = 1 AND 1 = 2 AS Boolean)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "1=1 OR Cast(1 = 1 AND 1 = 2 AS Boolean)").returns(
       "true" );
 
     // From null : should not throw exceptions since RolapResult.executeBody
@@ -1089,31 +1082,31 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     // To Integer : Expect to return NULL
 
     // Expect to return NULL
-    assertExprReturns(context.getConnectionWithDefaultRole(), "0 * Cast(NULL AS Integer)", "" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "0 * Cast(NULL AS Integer)").returns( "" );
 
     // To Numeric : Expect to return NULL
     // Expect to return NULL
-    assertExprReturns(context.getConnectionWithDefaultRole(), "0 * Cast(NULL AS Numeric)", "" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "0 * Cast(NULL AS Numeric)").returns( "" );
 
     // To String : Expect to return "null"
-    assertExprReturns(context.getConnectionWithDefaultRole(), "'' || Cast(NULL AS String)", "null" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "'' || Cast(NULL AS String)").returns( "null" );
 
     // To Boolean : Expect to return NULL, but since FunUtil.BooleanNull
     // does not implement three-valued boolean logic yet, this will return
     // false
-    assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND Cast(NULL AS Boolean)", "false" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND Cast(NULL AS Boolean)").returns( "false" );
 
     // Double is not allowed as a type
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "Cast(1 AS Double)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Cast(1 AS Double)").throwsMessage(
       "Unknown type 'Double'; values are NUMERIC, STRING, BOOLEAN" );
 
     // An integer constant is not allowed as a type
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "Cast(1 AS 5)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Cast(1 AS 5)").throwsMessage(
       "Encountered an error at (or somewhere around) input:1:11" );
 
-    assertExprReturns(context.getConnectionWithDefaultRole(), "Cast('tr' || 'ue' AS boolean)", "true" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Cast('tr' || 'ue' AS boolean)").returns( "true" );
   }
 
   @Test
@@ -1121,7 +1114,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 	    // To Boolean : Expect to return NULL, but since FunUtil.BooleanNull
 	    // does not implement three-valued boolean logic yet, this will return
 	    // false
-	    assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND Cast(NULL AS Boolean)", "false" );
+	    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND Cast(NULL AS Boolean)").returns( "false" );
   }
 
   @Test
@@ -1129,7 +1122,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 	    // To Boolean : Expect to return NULL, but since FunUtil.BooleanNull
 	    // does not implement three-valued boolean logic yet, this will return
 	    // false
-	    assertExprReturns(context.getConnectionWithDefaultRole(), "Cast(NULL AS Boolean)", "false" );
+	    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Cast(NULL AS Boolean)").returns( "false" );
   }
   /**
    * Testcase for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-524"> MONDRIAN-524, "VB functions: expected
@@ -1137,8 +1130,8 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    */
   @Test
   void testCastBug524(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "Cast(Int([Measures].[Store Sales] / 3600) as String)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Cast(Int([Measures].[Store Sales] / 3600) as String)").returns(
       "157" );
   }
 
@@ -1156,9 +1149,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLeftFunctionWithValidArguments(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
-        + "Left([Store].CURRENTMEMBER.Name, 4)=\"Bell\") on 0 from sales",
+        + "Left([Store].CURRENTMEMBER.Name, 4)=\"Bell\") on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1168,10 +1161,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLeftFunctionWithLengthValueZero(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "Left([Store].CURRENTMEMBER.Name, 0)=\"\" And "
-        + "[Store].CURRENTMEMBER.Name = \"Bellingham\") on 0 from sales",
+        + "[Store].CURRENTMEMBER.Name = \"Bellingham\") on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1181,10 +1174,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLeftFunctionWithLengthValueEqualToStringLength(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "Left([Store].CURRENTMEMBER.Name, 10)=\"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1194,10 +1187,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLeftFunctionWithLengthMoreThanStringLength(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "Left([Store].CURRENTMEMBER.Name, 20)=\"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1207,10 +1200,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLeftFunctionWithZeroLengthString(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,Left(\"\", 20)=\"\" "
         + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1220,20 +1213,20 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLeftFunctionWithNegativeLength(Context<?> context) {
-    assertQueryThrows(context,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "Left([Store].CURRENTMEMBER.Name, -20)=\"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").throwsMessage(
       "StringIndexOutOfBoundsException: Range [0, -20) out of bounds for length 10" );
   }
 
   @Test
   void testMidFunctionWithValidArguments(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", 4, 6) = \"lingha\")"
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1243,11 +1236,11 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testMidFunctionWithZeroLengthStringArgument(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"\", 4, 6) = \"\")"
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1257,11 +1250,11 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testMidFunctionWithLengthArgumentLargerThanStringLength(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", 4, 20) = \"lingham\")"
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1271,11 +1264,11 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testMidFunctionWithStartIndexGreaterThanStringLength(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", 20, 2) = \"\")"
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1288,22 +1281,22 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     // Note: SSAS 2005 treats start<=0 as 1, therefore gives different
     // result for this query. We favor the VBA spec over SSAS 2005.
     if ( Bug.Ssas2005Compatible ) {
-      assertQueryReturns(context.getConnectionWithDefaultRole(),
+      assertThatQuery(context.getConnectionWithDefaultRole(),
         "select filter([Store].MEMBERS,"
           + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
           + "And Mid(\"Bellingham\", 0, 2) = \"Be\")"
-          + "on 0 from sales",
+          + "on 0 from sales").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
           + "{[Store].[USA].[WA].[Bellingham]}\n"
           + "Row #0: 2,237\n" );
     } else {
-      assertQueryThrows(context,
+      assertThatQuery(context.getConnectionWithDefaultRole(),
         "select filter([Store].MEMBERS,"
           + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
           + "And Mid(\"Bellingham\", 0, 2) = \"Be\")"
-          + "on 0 from sales",
+          + "on 0 from sales").throwsMessage(
         "Invalid parameter. Start parameter of Mid function must be "
           + "positive" );
     }
@@ -1311,11 +1304,11 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testMidFunctionWithStartIndexOne(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", 1, 2) = \"Be\")"
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1325,33 +1318,33 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testMidFunctionWithNegativeStartIndex(Context<?> context) {
-    assertQueryThrows(context,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", -20, 2) = \"\")"
-        + "on 0 from sales",
+        + "on 0 from sales").throwsMessage(
       "Invalid parameter. "
         + "Start parameter of Mid function must be positive" );
   }
 
   @Test
   void testMidFunctionWithNegativeLength(Context<?> context) {
-    assertQueryThrows(context,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", 2, -2) = \"\")"
-        + "on 0 from sales",
+        + "on 0 from sales").throwsMessage(
       "Invalid parameter. "
         + "Length parameter of Mid function must be non-negative" );
   }
 
   @Test
   void testMidFunctionWithoutLength(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,"
         + "[Store].CURRENTMEMBER.Name = \"Bellingham\""
         + "And Mid(\"Bellingham\", 2) = \"ellingham\")"
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1361,9 +1354,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLenFunctionWithNonEmptyString(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS, "
-        + "Len([Store].CURRENTMEMBER.Name) = 3) on 0 from sales",
+        + "Len([Store].CURRENTMEMBER.Name) = 3) on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1373,10 +1366,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testLenFunctionWithAnEmptyString(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,Len(\"\")=0 "
         + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1386,10 +1379,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testInStrFunctionWithValidArguments(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,InStr(\"Bellingham\", \"ingha\")=5 "
         + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1400,10 +1393,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testInStrFunctionWithEmptyString1(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,InStr(\"\", \"ingha\")=0 "
         + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1413,10 +1406,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testInStrFunctionWithEmptyString2(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select filter([Store].MEMBERS,InStr(\"Bellingham\", \"\")=1 "
         + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
-        + "on 0 from sales",
+        + "on 0 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1436,7 +1429,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   @Test
   void testVbaBasic(Context<?> context) {
     // Exp is a simple function: one arg.
-    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(0)", "1" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "exp(0)").returns( "1" );
     assertExprReturns(context.getConnectionWithDefaultRole(), "exp(1)", Math.E, 0.00000001 );
     assertExprReturns(context.getConnectionWithDefaultRole(), "exp(-2)", 1d / ( Math.E * Math.E ), 0.00000001 );
 
@@ -1444,46 +1437,46 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   @Test
   void testVbaBasic1(Context<?> context) {
 	  // If any arg is null, result is null.
-	    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(null)", "" );
+	    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "exp(null)").returns( "" );
 
   }
   @Test
   void testVbaBasic2(Context<?> context) {
 	  // If any arg is null, result is null.
-	    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(cast(null as numeric))", "" );
+	    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "exp(cast(null as numeric))").returns( "" );
 
   }
 
   // Test a VBA function with variable number of args.
   @Test
   void testVbaOverloading(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(), "replace('xyzxyz', 'xy', 'a')", "azaz" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "replace('xyzxyz', 'xy', 'a', 2)", "xyzaz" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "replace('xyzxyz', 'xy', 'a', 1, 1)", "azxyz" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "replace('xyzxyz', 'xy', 'a')").returns( "azaz" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "replace('xyzxyz', 'xy', 'a', 2)").returns( "xyzaz" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "replace('xyzxyz', 'xy', 'a', 1, 1)").returns( "azxyz" );
   }
 
   // Test VBA exception handling
   @Test
   void testVbaExceptions(Context<?> context) {
-    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-      "right(\"abc\", -4)",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "right(\"abc\", -4)").throwsMessage(
       "StringIndexOutOfBoundsException: Range [7, 3) out of bounds for length 3");
   }
 
   @Test
   void testVbaDateTime(Context<?> context) {
     // function which returns date
-    assertExprReturns(context.getConnectionWithDefaultRole(),
-      "Format(DateSerial(2006, 4, 29), \"Long Date\")",
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Format(DateSerial(2006, 4, 29), \"Long Date\")").returns(
       "Saturday, April 29, 2006" );
     // function with date parameter
-    assertExprReturns(context.getConnectionWithDefaultRole(), "Year(DateSerial(2006, 4, 29))", "2,006" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Year(DateSerial(2006, 4, 29))").returns( "2,006" );
   }
 
   @Test
   void testExcelPi(Context<?> context) {
     // The PI function is defined in the Excel class.
-    assertExprReturns(context.getConnectionWithDefaultRole(), "Pi()", "3" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Pi()").returns( "3" );
   }
 
   @Test
@@ -1498,7 +1491,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   // conditional path.
   @Test
   void testBug1881739(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(), "LEFT(\"TEST\", LEN(\"TEST\"))", "TEST" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "LEFT(\"TEST\", LEN(\"TEST\"))").returns( "TEST" );
   }
 
   /**
@@ -1507,29 +1500,29 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
    */
   @Test
   void testCubeTimeDimensionFails(Context<?> context) {
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select LastPeriods(1) on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select LastPeriods(1) on columns from [Store]").throwsMessage(
       "'LastPeriods', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select OpeningPeriod() on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select OpeningPeriod() on columns from [Store]").throwsMessage(
       "'OpeningPeriod', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select OpeningPeriod([Store Type]) on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select OpeningPeriod([Store Type]) on columns from [Store]").throwsMessage(
       "'OpeningPeriod', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select ClosingPeriod() on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select ClosingPeriod() on columns from [Store]").throwsMessage(
       "'ClosingPeriod', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select ClosingPeriod([Store Type]) on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select ClosingPeriod([Store Type]) on columns from [Store]").throwsMessage(
       "'ClosingPeriod', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select ParallelPeriod() on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select ParallelPeriod() on columns from [Store]").throwsMessage(
       "'ParallelPeriod', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select PeriodsToDate() on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select PeriodsToDate() on columns from [Store]").throwsMessage(
       "'PeriodsToDate', no time dimension" );
-    assertQueryThrows(context.getConnectionWithDefaultRole(),
-      "select Mtd() on columns from [Store]",
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select Mtd() on columns from [Store]").throwsMessage(
       "'Mtd', no time dimension" );
   }
 
@@ -1553,7 +1546,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #2: 135,215\n";
 
     // hand written case
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select\n"
         + "   [Measures].[Unit Sales] on 0,\n"
         + "   Distinct({\n"
@@ -1573,7 +1566,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "         2),\n"
         + "       1),\n"
         + "     [Gender].[M]}) on 1\n"
-        + "from [Sales]", expected );
+        + "from [Sales]").returnsGrid( expected );
 
     // generated equivalent
     StringBuilder buf = new StringBuilder();
@@ -1587,7 +1580,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     if ( false ) {
       System.out.println( buf.toString().length() + ": " + buf.toString() );
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(), buf.toString(), expected );
+    assertThatQuery(context.getConnectionWithDefaultRole(), buf.toString()).returnsGrid( expected );
   }
 
   /**
@@ -1649,7 +1642,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       + "Row #0: 266,773\n"
       + "Row #1: 131,558\n"
       + "Row #2: 135,215\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expected );
   }
 
   @Test
@@ -1679,7 +1672,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #3: 853\n"
         + "Row #4: 273\n"
         + "Row #5: 909\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1719,7 +1712,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #3: 1,237\n"
         + "Row #4: 394\n"
         + "Row #5: 1,277\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1761,7 +1754,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #3: 1,237\n"
         + "Row #4: 394\n"
         + "Row #5: 1,277\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1803,7 +1796,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Row #3: 1,237\n"
         + "Row #4: 394\n"
         + "Row #5: 1,277\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1830,7 +1823,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1862,7 +1855,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
 
@@ -1891,7 +1884,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 278\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1919,7 +1912,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1950,7 +1943,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -1979,7 +1972,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -2001,7 +1994,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -2030,7 +2023,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -2061,7 +2054,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Test
@@ -2099,7 +2092,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "{[Time].[Time].[1997].[Q1]}\n"
         + "Row #0: 1,671\n"
         + "Row #1: 1,173\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( expectedResult );
   }
 
   @Disabled //TODO need investigate
@@ -2124,7 +2117,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "WHERE {[Time].[H1 1997],[Time].[1998].[Q1]}";
     final String errorMessagePattern =
       "Calculated member 'H1 1997' is not supported within a compound predicate";
-    assertQueryThrows(context, query, errorMessagePattern );
+    assertThatQuery(context.getConnectionWithDefaultRole(), query).throwsMessage( errorMessagePattern );
   }
 
   /**
@@ -2162,6 +2155,20 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   public static String allHiers() {
     return allHiersExcept();
+  }
+
+  /**
+   * Same selection as {@link #allHiersExcept(String...)}, as individual hierarchy names rather
+   * than a joined {@code "{A, B}"} string - what {@link FunDependencies}'s
+   * {@code dependsOn(String...)} takes.
+   */
+  private static String[] hiersExcept( String... hiers ) {
+    for ( String hier : hiers ) {
+      assert contains( AllHiers, hier ) : "unknown hierarchy " + hier;
+    }
+    return java.util.Arrays.stream( AllHiers )
+      .filter( hier -> !contains( hiers, hier ) )
+      .toArray( String[]::new );
   }
 
   /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */

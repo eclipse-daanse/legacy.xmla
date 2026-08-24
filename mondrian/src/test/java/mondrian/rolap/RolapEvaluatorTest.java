@@ -17,11 +17,11 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.common.agg.CompoundPredicateInfo;
 import org.eclipse.daanse.rolap.common.evaluator.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.result.RolapResult;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class RolapEvaluatorTest {
 
     /** The slicer predicate string with identifier quoting stripped — the structural pin stays
@@ -32,8 +32,7 @@ class RolapEvaluatorTest {
         return info.getPredicateString().replaceAll("[`\"\\[\\]]", "");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGetSlicerPredicateInfo(Context<?> context) throws Exception {
         RolapResult result = (RolapResult) executeQuery(context.getConnectionWithDefaultRole(),
             "select  from sales "
@@ -70,8 +69,7 @@ class RolapEvaluatorTest {
     }
     */
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testListColumnPredicateInfo(Context<?> context) throws Exception {
       RolapResult result = (RolapResult) executeQuery(context.getConnectionWithDefaultRole(),
           "select  from sales "
@@ -85,8 +83,7 @@ class RolapEvaluatorTest {
       assertTrue(slicerPredicateInfo.isSatisfiable());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testOrPredicateInfo(Context<?> context) throws Exception {
       RolapResult result = (RolapResult) executeQuery(context.getConnectionWithDefaultRole(),
           "select  from sales "

@@ -35,29 +35,18 @@ import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.execution.ExecutionContext;
-import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
 import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
-import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import  org.eclipse.daanse.olap.util.Pair;
 import org.eclipse.daanse.rolap.api.element.RolapMember;
 import org.eclipse.daanse.rolap.common.RolapUtil;
-import org.eclipse.daanse.rolap.common.agg.AggregationManager;
-import org.eclipse.daanse.rolap.common.agg.AndPredicate;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
 import org.eclipse.daanse.rolap.common.agg.GroupingSet;
-import org.eclipse.daanse.rolap.common.agg.OrPredicate;
-import org.eclipse.daanse.rolap.common.agg.Segment;
-import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
-import org.eclipse.daanse.rolap.common.agg.ValueColumnPredicate;
 import org.eclipse.daanse.rolap.common.cache.HardSmartCache;
 import org.eclipse.daanse.rolap.common.catalog.RolapCatalogReader;
 import org.eclipse.daanse.rolap.common.member.MemberCacheHelper;
@@ -67,15 +56,13 @@ import org.eclipse.daanse.rolap.common.nativize.RolapNative.NativeEvent;
 import org.eclipse.daanse.rolap.common.nativize.RolapNative.TupleEvent;
 import org.eclipse.daanse.rolap.common.nativize.RolapNativeRegistry;
 import org.eclipse.daanse.rolap.common.result.BatchLoader;
-import org.eclipse.daanse.rolap.common.result.FastBatchingCellReader;
-import org.eclipse.daanse.rolap.common.result.GroupingSetsCollector;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
-import org.eclipse.daanse.rolap.common.star.StarPredicate;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.element.RolapLevel;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContextImpl;
 import org.slf4j.LoggerFactory;
@@ -116,104 +103,48 @@ public class BatchTestCase{
     protected final String measureUnitSales = "[Measures].[Unit Sales]";
     protected String fieldGender = "gender";
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.BatchBuilder}; this stays as a thin
+     * positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected BatchLoader.Batch createBatch(
         Connection connection,
         BatchLoader fbcr,
         String[] tableNames, String[] fieldNames, String[][] fieldValues,
         String cubeName, String measure)
     {
-        List<String> values = new ArrayList<>();
-        for (int i = 0; i < tableNames.length; i++) {
-            values.add(fieldValues[i][0]);
-        }
-        BatchLoader.Batch batch = fbcr.new Batch(
-            createRequest(connection,
-                cubeName, measure, tableNames, fieldNames,
-                values.toArray(new String[values.size()])));
-
-        addRequests(connection,
-            batch, cubeName, measure, tableNames, fieldNames,
-            fieldValues, new ArrayList<String>(), 0);
-        return batch;
+        return createBatch(
+            connection, fbcr, tableNames, fieldNames, fieldValues, cubeName, measure, null);
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.BatchBuilder}; this stays as a thin
+     * positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected BatchLoader.Batch createBatch(
         Connection connection,
         BatchLoader fbcr,
         String[] tableNames, String[] fieldNames, String[][] fieldValues,
         String cubeName, String measure, CellRequestConstraint constraint)
     {
-        List<String> values = new ArrayList<>();
+        CellRequestFixture.BatchBuilder builder =
+            CellRequestFixture.of(connection).batch(fbcr).cube(cubeName).measure(measure);
         for (int i = 0; i < tableNames.length; i++) {
-            values.add(fieldValues[i][0]);
+            builder.where(tableNames[i], fieldNames[i], fieldValues[i]);
         }
-        BatchLoader.Batch batch = fbcr.new Batch(
-            createRequest(connection,
-                cubeName, measure, tableNames, fieldNames,
-                values.toArray(new String[values.size()]), constraint));
-
-        addRequests(connection,
-            batch, cubeName, measure, tableNames, fieldNames,
-            fieldValues, new ArrayList<String>(), 0, constraint);
-        return batch;
+        if (constraint != null) {
+            builder.constrain(constraint.delegate);
+        }
+        return builder.build();
     }
 
-    private void addRequests(Connection connection,
-        BatchLoader.Batch batch,
-        String cubeName,
-        String measure,
-        String[] tableNames,
-        String[] fieldNames,
-        String[][] fieldValues,
-        List<String> selectedValues,
-        int currPos)
-    {
-        if (currPos < fieldNames.length) {
-            for (int j = 0; j < fieldValues[currPos].length; j++) {
-                selectedValues.add(fieldValues[currPos][j]);
-                addRequests(connection,
-                    batch, cubeName, measure, tableNames,
-                    fieldNames, fieldValues, selectedValues, currPos + 1);
-                selectedValues.remove(fieldValues[currPos][j]);
-            }
-        } else {
-            batch.add(
-                createRequest(connection,
-                    cubeName, measure, tableNames, fieldNames,
-                    selectedValues.toArray(new String[selectedValues.size()])));
-        }
-    }
-
-    private void addRequests(
-        Connection connection,
-        BatchLoader.Batch batch,
-        String cubeName,
-        String measure,
-        String[] tableNames,
-        String[] fieldNames,
-        String[][] fieldValues,
-        List<String> selectedValues,
-        int currPos,
-        CellRequestConstraint constraint)
-    {
-        if (currPos < fieldNames.length) {
-            for (int j = 0; j < fieldValues[currPos].length; j++) {
-                selectedValues.add(fieldValues[currPos][j]);
-                addRequests(connection,
-                    batch, cubeName, measure, tableNames,
-                    fieldNames, fieldValues, selectedValues, currPos + 1,
-                    constraint);
-                selectedValues.remove(fieldValues[currPos][j]);
-            }
-        } else {
-            batch.add(
-                createRequest(connection,
-                    cubeName, measure, tableNames, fieldNames,
-                    selectedValues.toArray(
-                        new String[selectedValues.size()]), constraint));
-        }
-    }
-
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.GroupingSetBuilder}; this stays as a
+     * thin positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected GroupingSet getGroupingSet(
         Connection connection,
         final String[] tableNames,
@@ -222,36 +153,12 @@ public class BatchTestCase{
         final String cubeName,
         final String measure)
     {
-        ExecutionImpl execution = new ExecutionImpl(
-            ((Connection) connection).getInternalStatement(),
-            Optional.of(Duration.ofMinutes(5)));
-        ExecutionMetadata metadata = ExecutionMetadata.of("BatchTestCase.getGroupingSet", "BatchTestCase.getGroupingSet", null, 0);
-        return ExecutionContext.where(
-            execution.asContext().createChild(metadata, Optional.empty()),
-            () -> {
-                final RolapCube cube = getCube(connection, cubeName);
-                AbstractBasicContext<?> abc = (AbstractBasicContext) connection.getContext();
-                final BatchLoader fbcr =
-                    new BatchLoader(
-                        ExecutionContext.current(),
-                        ((AggregationManager)abc.getAggregationManager()).getCacheMgr(),
-                        org.eclipse.daanse.rolap.common.sql.SqlQueryCapabilities.of(
-                            cube.getStar().getDialect()),
-                        cube);
-                BatchLoader.Batch batch =
-                    createBatch(connection,
-                        fbcr,
-                        tableNames, fieldNames,
-                        fieldValues, cubeName,
-                        measure);
-                GroupingSetsCollector collector =
-                    new GroupingSetsCollector(true);
-                final List<Future<Map<Segment, SegmentWithData>>>
-                    segmentFutures =
-                        new ArrayList<>();
-                batch.loadAggregation(collector, segmentFutures);
-                return collector.getGroupingSets().get(0);
-            });
+        CellRequestFixture.GroupingSetBuilder builder =
+            CellRequestFixture.of(connection).groupingSet().cube(cubeName).measure(measure);
+        for (int i = 0; i < tableNames.length; i++) {
+            builder.where(tableNames[i], fieldNames[i], fieldValues[i]);
+        }
+        return builder.build();
     }
 
     /**
@@ -297,12 +204,10 @@ public class BatchTestCase{
         SqlPattern[] patterns,
         boolean negative)
     {
-        final RolapStar star = requests[0].getMeasure().getStar();
         final String cubeName = requests[0].getMeasure().getCubeName();
-        final RolapCube cube = lookupCube(connection, cubeName);
-        final Dialect sqlDialect = star.getDialect();
+        final RolapCube cube = getCube(connection, cubeName);
+        final Dialect sqlDialect = requests[0].getMeasure().getStar().getDialect();
         DatabaseProduct d = getDatabaseProduct(sqlDialect.name());
-        SqlPattern sqlPattern = SqlPattern.getPattern(d, patterns);
         if (d == DatabaseProduct.UNKNOWN) {
             // If the dialect is not one in the pattern set, do not run the
             // test. We do not print any warning message.
@@ -319,8 +224,8 @@ public class BatchTestCase{
 
             clearCache(connection, cube);
 
-            String sql = sqlPattern.getSql();
-            String trigger = sqlPattern.getTriggerSql();
+            String sql = pattern.getSql();
+            String trigger = pattern.getTriggerSql();
             switch (d) {
             case ORACLE:
                 sql = sql.replaceAll(" =as= ", " ");
@@ -332,56 +237,17 @@ public class BatchTestCase{
                 break;
             }
 
-            // Create a dummy DataSource which will throw a 'bomb' if it is
-            // asked to execute a particular SQL statement, but will otherwise
-            // behave exactly the same as the current DataSource.
-            RolapUtil.setHook(connection.getContext(), new TriggerHook(trigger));
-            Bomb bomb;
-            final ExecutionImpl execution =
-                new ExecutionImpl(
-                    ((Connection) connection).getInternalStatement(),
-                    Optional.of(Duration.ofMillis(1000)));
-            AbstractBasicContext<?> abc = (AbstractBasicContext) execution.getDaanseStatement()
-                    .getDaanseConnection()
-                    .getContext();
-            final AggregationManager aggMgr =
-                (AggregationManager)abc.getAggregationManager();
-            ExecutionMetadata metadata = ExecutionMetadata.of("BatchTestCase", "BatchTestCase", null, 0);
-            final ExecutionContext executionContext =
-                execution.asContext().createChild(metadata, Optional.empty());
-            try {
-                FastBatchingCellReader fbcr =
-                    new FastBatchingCellReader(
-                        execution, getCube(connection, cubeName), aggMgr);
-                for (CellRequest request : requests) {
-                    fbcr.recordCellRequest(request);
-                }
-                // The FBCR will presume there is a current ExecutionContext,
-                // so let's set it up.
-                ExecutionContext.where(executionContext, () -> {
-                    fbcr.loadAggregations();
-                });
-                bomb = null;
-            } catch (Bomb e) {
-                bomb = e;
-            } catch (RuntimeException e) {
-                // Walk up the exception tree and see if the root cause
-                // was a SQL bomb.
-                bomb = Util.getMatchingCause(e, Bomb.class);
-                if (bomb == null) {
-                    throw e;
-                }
-            } finally {
-                RolapUtil.setHook(connection.getContext(), null);
+            // The actual "run the requests, trap the SQL, compare" mechanic - and the
+            // rendered-request failure output - lives in CellRequestFixture now; this loop only
+            // owns picking the right pattern for the current dialect.
+            CellRequestFixture.RequestSqlAssert assertion =
+                CellRequestFixture.of(connection).forRequests(requests);
+            if (negative) {
+                assertion.forbidSql(trigger);
+            } else {
+                assertion.expectSql(sql, trigger);
             }
-            if (!negative && bomb == null) {
-                fail("expected query [" + sql + "] did not occur");
-            } else if (negative && bomb != null) {
-                fail("forbidden query [" + sql + "] detected");
-            }
-            assertEqualsVerbose(
-                replaceQuotes(sql),
-                replaceQuotes(bomb.sql));
+            assertion.verify();
         }
 
         // Print warning message that no pattern was specified for the current
@@ -397,15 +263,6 @@ public class BatchTestCase{
                     + "\" and test not run]");
             }
         }
-    }
-
-    private RolapCube lookupCube(Connection connection, String cubeName) {
-        for (Cube cube : connection.getCatalog().getCubes()) {
-            if (cube.getName().equals(cubeName)) {
-                return (RolapCube) cube;
-            }
-        }
-        return null;
     }
 
 
@@ -680,6 +537,11 @@ public class BatchTestCase{
         return s;
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
+     * positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected CellRequest createRequest(Connection connection,
         final String cube, final String measure,
         final String table, final String column, final String value)
@@ -689,28 +551,23 @@ public class BatchTestCase{
             new String[]{table}, new String[]{column}, new String[]{value});
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
+     * positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected CellRequest createRequest(Connection connection,
         final String cube, final String measureName,
         final String[] tables, final String[] columns, final String[] values)
     {
-        RolapStar.Measure starMeasure = getMeasure(connection, cube, measureName);
-        CellRequest request = new CellRequest(starMeasure, false, false);
-        final RolapStar star = starMeasure.getStar();
-        for (int i = 0; i < tables.length; i++) {
-            String table = tables[i];
-            if (table != null && table.length() > 0) {
-                String column = columns[i];
-                String value = values[i];
-                final RolapStar.Column storeTypeColumn =
-                    star.lookupColumn(table, column);
-                request.addConstrainedColumn(
-                    storeTypeColumn,
-                    new ValueColumnPredicate(storeTypeColumn, value));
-            }
-        }
-        return request;
+        return createRequest(connection, cube, measureName, tables, columns, values, null);
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
+     * positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected CellRequest createRequest(Connection connection,
         final String cube, final String measure,
         final String table, final String column, final String value,
@@ -722,21 +579,27 @@ public class BatchTestCase{
             aggConstraint);
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
+     * positional-array wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     protected CellRequest createRequest(Connection connection,
         final String cube, final String measureName,
         final String[] tables, final String[] columns, final String[] values,
         CellRequestConstraint aggConstraint)
     {
-        RolapStar.Measure starMeasure = getMeasure(connection, cube, measureName);
-
-        CellRequest request =
-            createRequest(connection, cube, measureName, tables, columns, values);
-        final RolapStar star = starMeasure.getStar();
-
-        request.addAggregateList(
-            aggConstraint.getBitKey(star),
-            aggConstraint.toPredicate(star));
-        return request;
+        CellRequestFixture.RequestBuilder builder =
+            CellRequestFixture.of(connection).request().cube(cube).measure(measureName);
+        for (int i = 0; i < tables.length; i++) {
+            if (tables[i] != null && tables[i].length() > 0) {
+                builder.where(tables[i], columns[i], values[i]);
+            }
+        }
+        if (aggConstraint != null) {
+            builder.constrain(aggConstraint.delegate);
+        }
+        return builder.build();
     }
 
     protected void updateSchemaIfNeed(Context<?> context, String currentTestCaseName){
@@ -750,58 +613,42 @@ public class BatchTestCase{
         return Optional.empty();
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.Constraint#yearQuarterMonth}; this
+     * stays as a thin {@code List<String[]>}-to-varargs wrapper so existing call sites keep
+     * compiling.
+     */
+    @Deprecated
     static CellRequestConstraint makeConstraintYearQuarterMonth(
         List<String[]> values)
     {
-        String[] aggConstraintTables =
-            new String[] { "time_by_day", "time_by_day", "time_by_day" };
-        String[] aggConstraintColumns =
-            new String[] { "the_year", "quarter", "month_of_year" };
-        List<String[]> aggConstraintValues = new ArrayList<>();
-
-        for (String[] value : values) {
-            assert value.length == 3;
-            aggConstraintValues.add(value);
-        }
-
-        return new CellRequestConstraint(
-            aggConstraintTables, aggConstraintColumns, aggConstraintValues);
+        return CellRequestConstraint.wrap(
+            CellRequestFixture.Constraint.yearQuarterMonth(values.toArray(new String[0][])));
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.Constraint#countryState}; this stays
+     * as a thin {@code List<String[]>}-to-varargs wrapper so existing call sites keep compiling.
+     */
+    @Deprecated
     static CellRequestConstraint makeConstraintCountryState(
         List<String[]> values)
     {
-        String[] aggConstraintTables =
-            new String[] { "store", "store"};
-        String[] aggConstraintColumns =
-            new String[] { "store_country", "store_state"};
-        List<String[]> aggConstraintValues = new ArrayList<>();
-
-        for (String[] value : values) {
-            assert value.length == 2;
-            aggConstraintValues.add(value);
-        }
-
-        return new CellRequestConstraint(
-            aggConstraintTables, aggConstraintColumns, aggConstraintValues);
+        return CellRequestConstraint.wrap(
+            CellRequestFixture.Constraint.countryState(values.toArray(new String[0][])));
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.Constraint#productFamilyDepartment};
+     * this stays as a thin {@code List<String[]>}-to-varargs wrapper so existing call sites keep
+     * compiling.
+     */
+    @Deprecated
     static CellRequestConstraint makeConstraintProductFamilyDepartment(
         List<String[]> values)
     {
-        String[] aggConstraintTables =
-            new String[] { "product_class", "product_class"};
-        String[] aggConstraintColumns =
-            new String[] { "product_family", "product_department"};
-        List<String[]> aggConstraintValues = new ArrayList<>();
-
-        for (String[] value : values) {
-            assert value.length == 2;
-            aggConstraintValues.add(value);
-        }
-
-        return new CellRequestConstraint(
-            aggConstraintTables, aggConstraintColumns, aggConstraintValues);
+        return CellRequestConstraint.wrap(
+            CellRequestFixture.Constraint.productFamilyDepartment(values.toArray(new String[0][])));
     }
 
     void clearAndHardenCache(MemberCacheHelper helper) {
@@ -1196,52 +1043,29 @@ public class BatchTestCase{
         }
     }
 
+    /**
+     * @deprecated Logic moved to {@link CellRequestFixture.Constraint}; this stays as a thin
+     * wrapper around it so existing call sites (which pass this type into {@code createRequest}
+     * / {@code createBatch}) keep compiling.
+     */
+    @Deprecated
     static class CellRequestConstraint {
-        String[] tables;
-        String[] columns;
-        List<String[]> valueList;
+        final CellRequestFixture.Constraint delegate;
 
         CellRequestConstraint(
             String[] tables,
             String[] columns,
             List<String[]> valueList)
         {
-            this.tables = tables;
-            this.columns = columns;
-            this.valueList = valueList;
+            this.delegate = CellRequestFixture.Constraint.of(tables, columns, valueList);
         }
 
-        BitKey getBitKey(RolapStar star) {
-            return star.getBitKey(tables, columns);
+        private CellRequestConstraint(CellRequestFixture.Constraint delegate) {
+            this.delegate = delegate;
         }
 
-        StarPredicate toPredicate(RolapStar star) {
-            RolapStar.Column starColumn[] = new RolapStar.Column[tables.length];
-            for (int i = 0; i < tables.length; i++) {
-                String table = tables[i];
-                String column = columns[i];
-                starColumn[i] = star.lookupColumn(table, column);
-            }
-
-            List<StarPredicate> orPredList = new ArrayList<>();
-            for (String[] values : valueList) {
-                assert (values.length == tables.length);
-                List<StarPredicate> andPredList =
-                    new ArrayList<>();
-                for (int i = 0; i < values.length; i++) {
-                    andPredList.add(
-                        new ValueColumnPredicate(starColumn[i], values[i]));
-                }
-                final StarPredicate predicate =
-                    andPredList.size() == 1
-                        ? andPredList.get(0)
-                        : new AndPredicate(andPredList);
-                orPredList.add(predicate);
-            }
-
-            return orPredList.size() == 1
-                ? orPredList.get(0)
-                : new OrPredicate(orPredList);
+        static CellRequestConstraint wrap(CellRequestFixture.Constraint delegate) {
+            return new CellRequestConstraint(delegate);
         }
     }
 

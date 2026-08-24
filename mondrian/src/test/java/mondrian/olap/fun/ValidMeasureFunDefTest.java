@@ -9,16 +9,16 @@
 */
 package mondrian.olap.fun;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import java.sql.SQLException;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -27,14 +27,16 @@ import mondrian.rolap.SchemaModifiersEmf;
  *
  * Created by Yury_Bakhmutski on 9/2/2015.
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class ValidMeasureFunDefTest {
 
   /**
    * Test for MONDRIAN-1032 issue.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testSecondHierarchyInDimension(Context<?> context) throws SQLException {
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.ValidMeasureFunDefTestModifier.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testSecondHierarchyInDimension(Context<?> context) throws SQLException {
     /*
     final String schema = "<?xml version=\"1.0\"?>\n"
     + "<Schema name=\"FoodMart\">\n"
@@ -75,10 +77,6 @@ class ValidMeasureFunDefTest {
         + "select [Measures].[TestValid] on columns,\n"
         + "TopCount([Product].[BrandOnly].[Product].members, 1) on rows\n"
         + "from [Virtual Cube]";
-    /*
-    TestUtil.withSchema(context, schema);
-     */
-    withSchemaEmf(context, SchemaModifiersEmf.ValidMeasureFunDefTestModifier::new);
 
     final String expected = "Axis #0:\n"
         + "{}\n"
@@ -86,21 +84,29 @@ class ValidMeasureFunDefTest {
         + "{[Measures].[TestValid]}\n" + "Axis #2:\n"
         + "{[Product].[BrandOnly].[ADJ]}\n" + "Row #0: 266,773\n";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-        query, expected);
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+        query).returnsGrid(expected);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testValidMeasureWithNullTuple(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+      assertThatQuery(context.getConnectionWithDefaultRole(),
         "with member measures.vm as "
         + "'ValidMeasure((Measures.[Unit Sales], Store.[All Stores].Parent))' "
-        + "select measures.vm on 0 from [warehouse and sales]",
+        + "select measures.vm on 0 from [warehouse and sales]").returnsGrid(
         "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
         + "{[Measures].[vm]}\n"
         + "Row #0: \n");
   }
+
+  /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+  public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+      @Override
+      public java.util.Map<String, java.net.URL> csvResources() {
+          return new FoodmartTestInstance().dataSupplier().csvResources();
+      }
+  }
+
 }
