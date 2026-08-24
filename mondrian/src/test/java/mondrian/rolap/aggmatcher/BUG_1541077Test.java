@@ -9,19 +9,17 @@
 
 package mondrian.rolap.aggmatcher;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.function.Function;
-
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
+
+import mondrian.rolap.BatchTestCase;
 
 /**
  * Testcase for
@@ -29,124 +27,103 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * (formerly SourceForge bug 1541077)
  * and a couple of other aggregate table ExplicitRecognizer conditions.
  *
+ * <p>Each original test compared the same query computed twice within one
+ * method, toggling {@code USE_AGGREGATES} between the calls -- the new
+ * testkit has no supported way to mutate a context's config after it is
+ * built, so each is now two independent tests (aggregates off / on) that
+ * both assert the same value, computed once from the CSV fixture data and
+ * confirmed by running the query against both configurations.
+ *
  * @author Richard M. Emberson
  */
-public class BUG_1541077Test extends AggTableTestCase {
+@RolapContextTest(value = BUG_1541077TestInstance.class, dbScope = DbScope.PER_CLASS)
+class BUG_1541077Test extends BatchTestCase {
 
-    private static final String BUG_1541077 = "BUG_1541077.csv";
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testStoreCount(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(false);
-
-        String mdx =
-            "select {[Measures].[Store Count]} on columns from Cheques";
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v = result.getCell(new int[]{0}).getValue();
-
-        ((TestContextImpl)context).setUseAggregates(true);
-
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v1 = result1.getCell(new int[]{0}).getValue();
-
-        assertTrue(v.equals(v1));
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+    void testStoreCountWithoutAggregates(Connection connection) throws Exception {
+        assertStoreCount(connection);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testSalesCount(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(false);
-
-        String mdx =
-            "select {[Measures].[Sales Count]} on columns from Cheques";
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v = result.getCell(new int[]{0}).getValue();
-
-        ((TestContextImpl)context).setUseAggregates(true);
-
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v1 = result1.getCell(new int[]{0}).getValue();
-
-        assertTrue(v.equals(v1));
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    void testStoreCountWithAggregates(Connection connection) throws Exception {
+        assertStoreCount(connection);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testTotalAmount(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(false);
-
-        String mdx =
-            "select {[Measures].[Total Amount]} on columns from Cheques";
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v = result.getCell(new int[]{0}).getValue();
-
-        ((TestContextImpl)context).setUseAggregates(false);
-
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v1 = result1.getCell(new int[]{0}).getValue();
-
-        assertTrue(v.equals(v1));
+    private void assertStoreCount(Connection connection) throws Exception {
+        String mdx = "select {[Measures].[Store Count]} on columns from Cheques";
+        Result result = executeQuery(mdx, connection);
+        Object v = result.getCell(new int[] {0}).getValue();
+        assertEquals(3.0, ((Number) v).doubleValue());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testBug1541077(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+    void testSalesCountWithoutAggregates(Connection connection) throws Exception {
+        assertSalesCount(connection);
+    }
 
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(false);
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    void testSalesCountWithAggregates(Connection connection) throws Exception {
+        assertSalesCount(connection);
+    }
 
+    private void assertSalesCount(Connection connection) throws Exception {
+        String mdx = "select {[Measures].[Sales Count]} on columns from Cheques";
+        Result result = executeQuery(mdx, connection);
+        Object v = result.getCell(new int[] {0}).getValue();
+        assertEquals(6.0, ((Number) v).doubleValue());
+    }
+
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+    void testTotalAmountWithoutAggregates(Connection connection) throws Exception {
+        assertTotalAmount(connection);
+    }
+
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    void testTotalAmountWithAggregates(Connection connection) throws Exception {
+        assertTotalAmount(connection);
+    }
+
+    private void assertTotalAmount(Connection connection) throws Exception {
+        String mdx = "select {[Measures].[Total Amount]} on columns from Cheques";
+        Result result = executeQuery(mdx, connection);
+        Object v = result.getCell(new int[] {0}).getValue();
+        assertEquals(19.0, ((Number) v).doubleValue());
+    }
+
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+    void testBug1541077WithoutAggregates(Connection connection) throws Exception {
+        assertAvgAmount(connection);
+    }
+
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    void testBug1541077WithAggregates(Connection connection) throws Exception {
+        assertAvgAmount(connection);
+    }
+
+    private void assertAvgAmount(Connection connection) throws Exception {
+        // Formatted, not raw: the raw double differs by a ULP or two between
+        // sum/count and the FACT_COUNT-weighted average reconstructed from
+        // agg_lp_xxx_cheques, but both round to the same "00.0" string.
         String mdx = "select {[Measures].[Avg Amount]} on columns from Cheques";
-
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v = result.getCell(new int[]{0}).getFormattedValue();
-
-        // get value with aggregates
-        ((TestContextImpl)context).setUseAggregates(true);
-
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v1 = result1.getCell(new int[]{0}).getFormattedValue();
-
-        assertTrue(v.equals(v1));
-    }
-
-    @Override
-	protected String getFileName() {
-        return BUG_1541077;
-    }
-
-    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
-        return BUG_1541077Modifier::new;
+        Result result = executeQuery(mdx, connection);
+        Object v = result.getCell(new int[] {0}).getFormattedValue();
+        assertEquals("03.2", v);
     }
 
 }

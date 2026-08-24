@@ -25,23 +25,23 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.query.component.Query;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import org.opencube.junit5.propupdator.EnableNonEmptyOnAllAxis;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link ConfigConstants#ENABLE_NON_EMPTY_ON_ALL_AXIS} property.
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class NonEmptyPropertyForAllAxisTest {
 
     // No teardown needed: the setting lives on each test's own context, set by the
     // EnableNonEmptyOnAllAxis updater, and dies with it.
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
     void testNonEmptyForAllAxesWithPropertySet(Context<?> context) {
 
         final String MDX_QUERY =
@@ -91,10 +91,9 @@ class NonEmptyPropertyForAllAxisTest {
         assertQueryReturns(context.getConnectionWithDefaultRole(), MDX_QUERY, EXPECTED_RESULT);
     }
 
-    @ParameterizedTest
+    @Test
     // Deliberately without the EnableNonEmptyOnAllAxis updater - this test is the
     // one that checks behaviour with the setting off.
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyForAllAxesWithOutPropertySet(Context<?> context) {
         final String MDX_QUERY =
             "SELECT {customers.USA.CA.[Santa Cruz].[Brian Merlo]} on 0, "
@@ -218,8 +217,8 @@ class NonEmptyPropertyForAllAxisTest {
         assertQueryReturns(context.getConnectionWithDefaultRole(), MDX_QUERY, EXPECTED_RESULT);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
     void testSlicerAxisDoesNotGetNonEmptyApplied(Context<?> context) {
 
         String mdxQuery = "select from [Sales]\n"

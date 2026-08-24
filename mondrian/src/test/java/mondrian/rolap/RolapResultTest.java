@@ -9,28 +9,21 @@
 
 package mondrian.rolap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
-import java.util.function.Function;
+import java.net.URL;
+import java.util.Map;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.aggmatcher.AggTableTestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcase for
@@ -39,9 +32,8 @@ import mondrian.rolap.aggmatcher.AggTableTestCase;
  * @author <a>Richard M. Emberson</a>
  * @since Feb 21 2007
  */
-class RolapResultTest extends AggTableTestCase {
-
-    private static final String RolapResultTest = "RolapResultTest.csv";
+@RolapContextTest(value = RolapResultTestInstance.class, dbScope = DbScope.PER_CLASS)
+class RolapResultTest extends BatchTestCase {
 
     private static final String RESULTS_ALL =
         "Axis #0:\n"
@@ -87,16 +79,10 @@ class RolapResultTest extends AggTableTestCase {
 
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAll(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testAll(Connection connection) throws Exception {
         String mdx =
             "select "
             + " filter({[D1].[a],[D1].[b],[D1].[c]}, "
@@ -106,25 +92,13 @@ class RolapResultTest extends AggTableTestCase {
             + " ON ROWS "
             + "from FTAll";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, RESULTS_ALL);
-/*
-        Result result = getCubeTestContext().executeQuery(mdx);
-        String resultString = TestContext.toString(result);
-//System.out.println(resultString);
-
-        assertTrue(resultString.equals(RESULTS_ALL));
-*/
+        assertThatQuery(connection, mdx).returnsGrid(RESULTS_ALL);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testD1(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testD1(Connection connection) throws Exception {
         String mdx =
             "select "
             + " filter({[D1].[a],[D1].[b],[D1].[c]}, "
@@ -134,32 +108,17 @@ class RolapResultTest extends AggTableTestCase {
             + " ON ROWS "
             + "from FT1";
 
-        //getCubeTestContext().assertQueryReturns(mdx, RESULTS);
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        String resultString = TestUtil.toString(result);
-//System.out.println(resultString);
-/*
- This is what is produced
-Axis #0:
-{}
-Axis #1:
-Axis #2:
-{[D2].[x]}
-{[D2].[y]}
-{[D2].[z]}
-*/
-        assertEquals(resultString, RESULTS);
+        assertThatQuery(connection, mdx).returnsGrid(RESULTS);
+        
+        //Result result = executeQuery(mdx, connection);
+        //String resultString = TestUtil.toString(result);
+        //assertEquals(resultString, RESULTS);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testD2(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testD2(Connection connection) throws Exception {
         String mdx =
             "select "
             + " NON EMPTY filter({[D1].[a],[D1].[b],[D1].[c]}, "
@@ -169,13 +128,7 @@ Axis #2:
             + " ON ROWS "
             + "from FT2";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, RESULTS);
-/*
-        Result result = getCubeTestContext().executeQuery(mdx);
-        String resultString = TestContext.toString(result);
-//System.out.println(resultString);
-        assertTrue(resultString.equals(RESULTS));
-*/
+        assertThatQuery(connection, mdx).returnsGrid(RESULTS_ALL);
     }
 
     /**
@@ -188,16 +141,10 @@ Axis #2:
      * @throws Exception
      */
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void _testNullDefaultMeasure(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void _testNullDefaultMeasure(Connection connection) throws Exception {
         String mdx =
             "select "
             + " NON EMPTY filter({[D1].[a],[D1].[b],[D1].[c]}, "
@@ -207,42 +154,22 @@ Axis #2:
             + " ON ROWS "
             + "from FT2Extra";
 
-        //getCubeTestContext().assertQueryReturns(mdx, RESULTS);
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        String resultString = TestUtil.toString(result);
-        assertTrue(resultString.equals(RESULTS));
+        //Result result = executeQuery(mdx, connection);
+        //String resultString = TestUtil.toString(result);
+        //assertTrue(resultString.equals(RESULTS));
+        assertThatQuery(connection, mdx).returnsGrid(RESULTS_ALL);
     }
 
-
-
-
-    @Override
-	protected String getFileName() {
-        return RolapResultTest;
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonAllPromotionMembers(Context<?> context) {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Promotions2\" foreignKey=\"promotion_id\">\n"
-            + "  <Hierarchy hasAll=\"false\" primaryKey=\"promotion_id\">\n"
-            + "    <Table name=\"promotion\"/>\n"
-            + "    <Level name=\"Promotion2 Name\" column=\"promotion_name\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-         */
-        ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-        withSchemaEmf(context, SchemaModifiersEmf.RolapResultTestModifier::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RolapResultTestModifier.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testNonAllPromotionMembers(Connection connection) {
+        assertThatQuery(connection,
             "select {[Promotion2 Name].[Price Winners], [Promotion2 Name].[Sale Winners]} * {Tail([Time].[Year].Members,3)} ON COLUMNS, "
             + "NON EMPTY Crossjoin({[Store].CurrentMember.Children},  {[Store Type].[All Store Types].Children}) ON ROWS "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -268,8 +195,12 @@ Axis #2:
             + "Row #2: \n");
     }
 
-    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
-        return RolapResultTestModifierEmf::new;
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 
 }

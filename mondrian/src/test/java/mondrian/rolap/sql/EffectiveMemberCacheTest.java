@@ -1,45 +1,45 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2006-2017 Hitachi Vantara and others
-// All Rights Reserved.
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
  */
 package mondrian.rolap.sql;
 
-import static org.opencube.junit5.TestUtil.assertQuerySql;
-import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
 
+/**
+ * Tests member-cache reuse across level-members / children-members MDX, and
+ * the {@code LevelPreCacheThreshold} setting that governs how eagerly a
+ * level's members get pulled into cache.
+ */
+@RolapContextTest(FoodmartTestInstance.class)
+@RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
 class EffectiveMemberCacheTest {
 
-
-    @AfterEach
-    public void afterEach() {
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCachedLevelMembers(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
-        clearCache(connection);
         // verify query for specific members can be fulfilled by members cached
         // from a level members query.
         String sql = "select\n"
@@ -53,7 +53,7 @@ class EffectiveMemberCacheTest {
                 + "group by\n"
                 + "    `product`.`product_name`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`product`.`product_name`) ASC, "
                 + "`product`.`product_name` ASC");
@@ -70,13 +70,9 @@ class EffectiveMemberCacheTest {
         );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCachedChildMembers(Context<?> context) {
-    	context.getCatalogCache().clear();
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
-        clearCache(connection);
         // verify query for specific members can be fulfilled by members cached
         // from a child members query.
         String sql = "select\n"
@@ -91,7 +87,7 @@ class EffectiveMemberCacheTest {
                 + "group by\n"
                 + "    `product`.`product_name`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`product`.`product_name`) ASC, "
                 + "`product`.`product_name` ASC");
@@ -108,16 +104,14 @@ class EffectiveMemberCacheTest {
         );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "300", type = Integer.class)
     void testLevelPreCacheThreshold(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
-        clearCache(connection);
+        flushSchemaCache(connection);
         // [Store Type] members cardinality falls well below
         // LevelPreCacheThreshold.  All members should be loaded, not
         // just the 2 referenced.
-        ((TestContextImpl)context).setLevelPreCacheThreshold(300);
         String sql = "select\n"
                 + "    `store`.`store_type` as `c0`\n"
                 + "from\n"
@@ -129,25 +123,21 @@ class EffectiveMemberCacheTest {
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`store`.`store_type`) ASC, "
                 + "`store`.`store_type` ASC");
-        assertQuerySql(connection,
-            "select {[Store Type].[Gourmet Supermarket], "
-            + "[Store Type].[HeadQuarters]} on 0 from sales",
-            new SqlPattern[] {
-                new SqlPattern(
-                    DatabaseProduct.MYSQL, sql, null)
-            });
+        SqlAssert.forQuery(connection,
+                "select {[Store Type].[Gourmet Supermarket], "
+                + "[Store Type].[HeadQuarters]} on 0 from sales")
+            .expectSql(new SqlPattern(DatabaseProduct.MYSQL, sql, null))
+            .verify();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
     void testLevelPreCacheThresholdDisabled(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        Connection connection = context.getConnectionWithDefaultRole();
+        flushSchemaCache(connection);
         // with LevelPreCacheThreshold set to 0, we should not load
         // all [store type] members, we should only retrieve the 2
         // specified.
-        Connection connection = context.getConnectionWithDefaultRole();
-        clearCache(connection);
-        ((TestContextImpl)context).setLevelPreCacheThreshold(0);
         String sql = "select\n"
                 + "    `store`.`store_type` as `c0`\n"
                 + "from\n"
@@ -162,26 +152,21 @@ class EffectiveMemberCacheTest {
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`store`.`store_type`) ASC, "
                 + "`store`.`store_type` ASC");
-        assertQuerySql(
-            connection,
-            "select {[Store Type].[Store Type].[Gourmet Supermarket], "
-            + "[Store Type].[Store Type].[HeadQuarters]} on 0 from sales",
-            new SqlPattern[] {
-                new SqlPattern(
-                    DatabaseProduct.MYSQL, sql, null)
-            });
+        SqlAssert.forQuery(connection,
+                "select {[Store Type].[Store Type].[Gourmet Supermarket], "
+                + "[Store Type].[Store Type].[HeadQuarters]} on 0 from sales")
+            .expectSql(new SqlPattern(DatabaseProduct.MYSQL, sql, null))
+            .verify();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "1000", type = Integer.class)
     void testLevelPreCacheThresholdParentDegenerate(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        Connection connection = context.getConnectionWithDefaultRole();
+        flushSchemaCache(connection);
         // we should avoid pulling all deg members, regardless of cardinality.
         // The cost of doing full scans of the fact table is assumed
         // to be too high.
-        Connection connection = context.getConnectionWithDefaultRole();
-        clearCache(connection);
-        ((TestContextImpl)context).setLevelPreCacheThreshold(1000);
         String sql = "select\n"
                 + "    `store`.`coffee_bar` as `c0`\n"
                 + "from\n"
@@ -195,41 +180,37 @@ class EffectiveMemberCacheTest {
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`store`.`coffee_bar`) ASC, "
                 + "`store`.`coffee_bar` ASC");
-        assertQuerySql(
-            connection,
-            "select {[Has coffee bar].[All Has coffee bars].[false]} on 0 from Store",
-            new SqlPattern[]{
-                new SqlPattern(
-                    DatabaseProduct.MYSQL, sql, null)});
+        SqlAssert.forQuery(connection,
+                "select {[Has coffee bar].[All Has coffee bars].[false]} on 0 from Store")
+            .expectSql(new SqlPattern(DatabaseProduct.MYSQL, sql, null))
+            .verify();
     }
-
 
     /**
      * Execute testMdx both with and without running the cacheMdx first,
      * validating that sqlToLoadTestMdxMembers either fires or doesn't fire,
      * as appropriate.
      *
-     * Assumption is that if the cacheMdx has fired, then members shoould
-     * already be in cache and there is no need to load them.  If cacheMedx
+     * Assumption is that if the cacheMdx has fired, then members should
+     * already be in cache and there is no need to load them.  If cacheMdx
      * is not fired we should see the sqlToLoadTestMdxMembers.
      */
     private void testWithAndWithoutCachedMembers(Connection connection,
         String cacheMdx, String testMdx, SqlPattern[] sqlToLoadTestMdxMembers)
     {
         for (boolean membersCached : new boolean[] {false, true}) {
-            clearCache(connection);
+            flushSchemaCache(connection);
             if (membersCached) {
                 executeQuery(connection, cacheMdx);
             }
-            assertQuerySqlOrNot(connection,
-                testMdx,
-                sqlToLoadTestMdxMembers,
-                membersCached, false, false);
+            SqlAssert.QuerySqlAssert assertion =
+                    SqlAssert.forQuery(connection, testMdx).keepCache();
+            if (membersCached) {
+                assertion.expectNoSql(sqlToLoadTestMdxMembers);
+            } else {
+                assertion.expectSql(sqlToLoadTestMdxMembers);
+            }
+            assertion.verify();
         }
-    }
-
-    private void clearCache(Connection connection) {
-        flushSchemaCache(connection);
-        //testContext<?> = getTestContext().withFreshConnection();
     }
 }

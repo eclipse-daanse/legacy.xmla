@@ -14,8 +14,10 @@
 package mondrian.rolap.aggmatcher;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
@@ -370,6 +372,18 @@ public class BUG_1541077Modifier implements CatalogMappingSupplier {
         AggregationMeasure aggMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
         aggMeasure.setName("[Measures].[Avg Amount]");
         aggMeasure.setColumn(amountAvg);
+
+        // AggTableManager resolves both the fact table and candidate aggregate
+        // tables by looking them up (by name) in the CWM Schema reachable from
+        // the catalog mapping -- so all four physical tables must be owned
+        // elements of that Schema, not just referenced from the cube/TableSource.
+        if (!Packages.available(catalogCopy, Schema.class).isEmpty()) {
+            Schema dbSchema = Packages.available(catalogCopy, Schema.class).get(0);
+            dbSchema.getOwnedElement().add(cheques);
+            dbSchema.getOwnedElement().add(store_x);
+            dbSchema.getOwnedElement().add(product_x);
+            dbSchema.getOwnedElement().add(aggLpXxxCheques);
+        }
 
         // Create aggregation name using RolapMappingFactory
         ExplicitAggregationTable aggregationName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();

@@ -24,6 +24,7 @@
 package mondrian.rolap;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -31,9 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -69,6 +68,8 @@ import org.eclipse.daanse.rolap.common.result.BatchLoader;
 import org.eclipse.daanse.rolap.common.result.FastBatchingCellReader;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn;
@@ -85,16 +86,15 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.EmfUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -104,6 +104,7 @@ import mondrian.test.SqlPattern;
  * @author Thiyagu
  * @since 24-May-2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class FastBatchingCellReaderTest extends BatchTestCase {
 
     private ExecutionContext executionContext;
@@ -156,11 +157,10 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 new MyDelegatingInvocationHandler(dialect, supportsGroupingSets));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMissingSubtotalBugMetricFilter(Context<?> context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "With " + "Set [*NATIVE_CJ_SET] as "
+        assertThatQuery(context.getConnectionWithDefaultRole(), "With " + "Set [*NATIVE_CJ_SET] as "
                 + "'NonEmptyCrossJoin({[Time].[Year].[1997]},"
                 + "                   NonEmptyCrossJoin({[Product].[All Products].[Drink]},{[Education Level].[All Education Levels].[Bachelors Degree]}))' "
                 + "Set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET],[Measures].[*Unit Sales_SEL~SUM] > 1000.0)' "
@@ -170,18 +170,17 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "Select " + "{[Measures].[Unit Sales]} on columns, "
                 + "Non Empty Union(CrossJoin(Generate([*METRIC_CJ_SET], {([Time].[Time].CurrentMember,[Product].CurrentMember)}),{[Education Level].[*CTX_MEMBER_SEL~SUM]}),"
                 + "                Generate([*METRIC_CJ_SET], {([Time].[Time].CurrentMember,[Product].CurrentMember,[Education Level].CurrentMember)})) on rows "
-                + "From [Sales]",
+                + "From [Sales]").returnsGrid(
                 "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
                         + "{[Time].[Time].[1997], [Product].[Product].[Drink], [Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
                         + "{[Time].[Time].[1997], [Product].[Product].[Drink], [Education Level].[Education Level].[Bachelors Degree]}\n"
                         + "Row #0: 6,423\n" + "Row #1: 6,423\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMissingSubtotalBugMultiLevelMetricFilter(Context<?> context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "With "
+        assertThatQuery(context.getConnectionWithDefaultRole(), "With "
                 + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Education Level])' "
                 + "Set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET],[Measures].[*Store Cost_SEL~SUM] > 1000.0)' "
                 + "Set [*BASE_MEMBERS_Product] as '{[Product].[All Products].[Drink].[Beverages],[Product].[All Products].[Food].[Baked Goods]}' "
@@ -194,60 +193,55 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "Member [Education Level].[*CTX_MEMBER_SEL~SUM] as 'Sum(Filter([*METRIC_MEMBERS_Education Level],[Measures].[*Store Cost_SEL~SUM] > 1000.0))', SOLVE_ORDER=-101 "
                 + "Select " + "{[Measures].[Store Cost]} on columns, "
                 + "NonEmptyCrossJoin({[Product].[Drink].[*CTX_MEMBER_SEL~SUM],[Product].[Food].[*CTX_MEMBER_SEL~SUM]},{[Education Level].[*CTX_MEMBER_SEL~SUM]}) "
-                + "on rows From [Sales]",
+                + "on rows From [Sales]").returnsGrid(
                 "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n" + "Axis #2:\n"
                         + "{[Product].[Product].[Drink].[*CTX_MEMBER_SEL~SUM], [Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
                         + "{[Product].[Product].[Food].[*CTX_MEMBER_SEL~SUM], [Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
                         + "Row #0: 6,535.30\n" + "Row #1: 3,860.89\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testShouldUseGroupingFunctionOnPropertyTrueAndOnSupportedDB(Context<?> context) {
         context.getCatalogCache().clear();
         prepareContext(context);
-        ((TestContextImpl) context).setEnableGroupingSets(true);
         ExecutionContext.where(executionContext, () -> {
             BatchLoader fbcr = createFbcr(true, salesCube);
             assertTrue(fbcr.shouldUseGroupingFunction());
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testShouldUseGroupingFunctionOnPropertyTrueAndOnNonSupportedDB(Context<?> context) {
         prepareContext(context);
-        ((TestContextImpl) context).setEnableGroupingSets(true);
         ExecutionContext.where(executionContext, () -> {
             BatchLoader fbcr = createFbcr(false, salesCube);
             assertFalse(fbcr.shouldUseGroupingFunction());
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "false", type = Boolean.class)
     void testShouldUseGroupingFunctionOnPropertyFalseOnSupportedDB(Context<?> context) {
         prepareContext(context);
-        ((TestContextImpl) context).setEnableGroupingSets(false);
         ExecutionContext.where(executionContext, () -> {
             BatchLoader fbcr = createFbcr(true, salesCube);
             assertFalse(fbcr.shouldUseGroupingFunction());
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "false", type = Boolean.class)
     void testShouldUseGroupingFunctionOnPropertyFalseOnNonSupportedDB(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
-            ((TestContextImpl) context).setEnableGroupingSets(false);
             BatchLoader fbcr = createFbcr(false, salesCube);
             assertFalse(fbcr.shouldUseGroupingFunction());
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDoesDBSupportGroupingSets(Context<?> context) {
         prepareContext(context);
         final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
@@ -269,8 +263,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 "grouping-sets capability of " + dialect.name());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGroupBatchesForNonGroupableBatchesWithSorting(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -290,8 +283,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGroupBatchesForNonGroupableBatchesWithConstraints(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -315,8 +307,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGroupBatchesForGroupableBatches(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -346,8 +337,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGroupBatchesForGroupableBatchesAndNonGroupableBatches(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -405,8 +395,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGroupBatchesForTwoSetOfGroupableBatches(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -421,48 +410,61 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch batch1RollupOnGender = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableStore, tableProductClass },
-                    new String[] { fieldYear, fieldStoreType, fieldProductFamily },
-                    new String[][] { fieldValuesYear, fieldValuesStoreType, fieldValuesProductFamily }, cubeNameSales,
-                    measureUnitSales);
+            BatchLoader.Batch batch1RollupOnGender = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableStore, fieldStoreType, fieldValuesStoreType)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .build();
 
-            BatchLoader.Batch batch1RollupOnGenderAndProductDepartment = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass }, new String[] { fieldYear, fieldProductFamily },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily }, cubeNameSales, measureUnitSales);
+            BatchLoader.Batch batch1RollupOnGenderAndProductDepartment = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .build();
 
-            BatchLoader.Batch batch1RollupOnStoreTypeAndProductDepartment = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableCustomer }, new String[] { fieldYear, fieldGender },
-                    new String[][] { fieldValuesYear, fieldValuesGender }, cubeNameSales, measureUnitSales);
+            BatchLoader.Batch batch1RollupOnStoreTypeAndProductDepartment = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
-            BatchLoader.Batch batch1Detailed = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableStore, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldStoreType, fieldProductFamily, fieldGender }, new String[][] {
-                            fieldValuesYear, fieldValuesStoreType, fieldValuesProductFamily, fieldValuesGender },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch batch1Detailed = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableStore, fieldStoreType, fieldValuesStoreType)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
             String warehouseCube = "Warehouse";
             String measure2 = "[Measures].[Warehouse Sales]";
-            BatchLoader.Batch batch2RollupOnStoreType = createBatch(connection, fbcr,
-                    new String[] { tableWarehouse, tableTime, tableProductClass },
-                    new String[] { fieldWarehouseCountry, fieldYear, fieldProductFamily },
-                    new String[][] { fieldValuesWarehouseCountry, fieldValuesYear, fieldValuesProductFamily },
-                    warehouseCube, measure2);
+            BatchLoader.Batch batch2RollupOnStoreType = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(warehouseCube).measure(measure2)
+                    .where(tableWarehouse, fieldWarehouseCountry, fieldValuesWarehouseCountry)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .build();
 
-            BatchLoader.Batch batch2RollupOnStoreTypeAndWareHouseCountry = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass }, new String[] { fieldYear, fieldProductFamily },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily }, warehouseCube, measure2);
+            BatchLoader.Batch batch2RollupOnStoreTypeAndWareHouseCountry = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(warehouseCube).measure(measure2)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .build();
 
-            BatchLoader.Batch batch2RollupOnProductFamilyAndWareHouseCountry = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableStore }, new String[] { fieldYear, fieldStoreType },
-                    new String[][] { fieldValuesYear, fieldValuesStoreType }, warehouseCube, measure2);
+            BatchLoader.Batch batch2RollupOnProductFamilyAndWareHouseCountry = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(warehouseCube).measure(measure2)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableStore, fieldStoreType, fieldValuesStoreType)
+                    .build();
 
-            BatchLoader.Batch batch2Detailed = createBatch(connection, fbcr,
-                    new String[] { tableWarehouse, tableTime, tableStore, tableProductClass },
-                    new String[] { fieldWarehouseCountry, fieldYear, fieldStoreType, fieldProductFamily },
-                    new String[][] { fieldValuesWarehouseCountry, fieldValuesYear, fieldValuesStoreType,
-                            fieldValuesProductFamily },
-                    warehouseCube, measure2);
+            BatchLoader.Batch batch2Detailed = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(warehouseCube).measure(measure2)
+                    .where(tableWarehouse, fieldWarehouseCountry, fieldValuesWarehouseCountry)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableStore, fieldStoreType, fieldValuesStoreType)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .build();
 
             List<BatchLoader.Batch> batchList = new ArrayList<>();
 
@@ -494,8 +496,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddToCompositeBatchForBothBatchesNotPartOfCompositeBatch(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -515,8 +516,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddToCompositeBatchForDetailedBatchAlreadyPartOfACompositeBatch(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -545,8 +545,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddToCompositeBatchForAggregationBatchAlreadyPartOfACompositeBatch(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -575,8 +574,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddToCompositeBatchForBothBatchAlreadyPartOfACompositeBatch(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -617,33 +615,33 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * Tests that can batch for batch with super set of contraint column bit key and
      * all values for additional condition.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForSuperSet(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment, fieldGender },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment,
-                            fieldValuesGender },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
             assertTrue(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForBatchWithConstraint(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -651,28 +649,32 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             List<String[]> compoundMembers = new ArrayList<>();
             compoundMembers.add(new String[] { "USA", "CA" });
             compoundMembers.add(new String[] { "Canada", "BC" });
-            CellRequestConstraint constraint = makeConstraintCountryState(compoundMembers);
+            CellRequestFixture.Constraint constraint =
+                CellRequestFixture.Constraint.countryState(compoundMembers.toArray(new String[0][]));
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales, constraint);
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .constrain(constraint)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment, fieldGender },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment,
-                            fieldValuesGender },
-                    cubeNameSales, measureUnitSales, constraint);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .constrain(constraint)
+                    .build();
 
             assertTrue(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForBatchWithConstraint2(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
@@ -681,34 +683,39 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             List<String[]> compoundMembers1 = new ArrayList<>();
             compoundMembers1.add(new String[] { "USA", "CA" });
             compoundMembers1.add(new String[] { "Canada", "BC" });
-            CellRequestConstraint constraint1 = makeConstraintCountryState(compoundMembers1);
+            CellRequestFixture.Constraint constraint1 =
+                CellRequestFixture.Constraint.countryState(compoundMembers1.toArray(new String[0][]));
 
             // Different constraint will cause the Batch not to match.
             List<String[]> compoundMembers2 = new ArrayList<>();
             compoundMembers2.add(new String[] { "USA", "CA" });
             compoundMembers2.add(new String[] { "USA", "OR" });
-            CellRequestConstraint constraint2 = makeConstraintCountryState(compoundMembers2);
+            CellRequestFixture.Constraint constraint2 =
+                CellRequestFixture.Constraint.countryState(compoundMembers2.toArray(new String[0][]));
 
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales, constraint1);
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .constrain(constraint1)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment, fieldGender },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment,
-                            fieldValuesGender },
-                    cubeNameSales, measureUnitSales, constraint2);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .constrain(constraint2)
+                    .build();
 
             assertTrue(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForBatchWithDistinctCountInDetailedBatch(Context<?> context) {
         prepareContext(context);
         if (!context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE,
@@ -719,24 +726,25 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         }
         final BatchLoader fbcr = createFbcr(null, salesCube);
         Connection connection = context.getConnectionWithDefaultRole();
-        BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                new String[] { tableTime, tableProductClass, tableProductClass },
-                new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                cubeNameSales, measureUnitSales);
+        BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                .cube(cubeNameSales).measure(measureUnitSales)
+                .where(tableTime, fieldYear, fieldValuesYear)
+                .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                .build();
 
-        BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                new String[] { tableTime, tableProductClass, tableProductClass },
-                new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                cubeNameSales, "[Measures].[Customer Count]");
+        BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                .cube(cubeNameSales).measure("[Measures].[Customer Count]")
+                .where(tableTime, fieldYear, fieldValuesYear)
+                .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                .build();
 
         assertFalse(detailedBatch.canBatch(aggregationBatch));
         assertFalse(aggregationBatch.canBatch(detailedBatch));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForBatchWithDistinctCountInAggregateBatch(Context<?> context) {
         prepareContext(context);
         if (!context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE,
@@ -747,24 +755,25 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         }
         final BatchLoader fbcr = createFbcr(null, salesCube);
         Connection connection = context.getConnectionWithDefaultRole();
-        BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                new String[] { tableTime, tableProductClass, tableProductClass },
-                new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                cubeNameSales, "[Measures].[Customer Count]");
+        BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                .cube(cubeNameSales).measure("[Measures].[Customer Count]")
+                .where(tableTime, fieldYear, fieldValuesYear)
+                .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                .build();
 
-        BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                new String[] { tableTime, tableProductClass, tableProductClass },
-                new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                cubeNameSales, measureUnitSales);
+        BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                .cube(cubeNameSales).measure(measureUnitSales)
+                .where(tableTime, fieldYear, fieldValuesYear)
+                .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                .build();
 
         assertFalse(detailedBatch.canBatch(aggregationBatch));
         assertFalse(aggregationBatch.canBatch(detailedBatch));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchSummaryBatchWithDetailedBatchWithDistinctCount(Context<?> context) {
         prepareContext(context);
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE,
@@ -776,15 +785,17 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr, new String[] { tableTime },
-                    new String[] { fieldYear }, new String[][] { fieldValuesYear }, cubeNameSales,
-                    "[Measures].[Customer Count]");
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure("[Measures].[Customer Count]")
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
             assertFalse(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
@@ -795,24 +806,25 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * Test that can batch for batch with non superset of constraint column bit key
      * and all values for additional condition.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNonSuperSet(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldProductFamily, fieldProductDepartment, fieldGender },
-                    new String[][] { fieldValuesProductFamily, fieldValueProductDepartment, fieldValuesGender },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
             assertFalse(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
@@ -823,46 +835,50 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * Tests that can batch for batch with super set of constraint column bit key
      * and NOT all values for additional condition.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSuperSetAndNotAllValues(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment, fieldGender },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment,
-                            new String[] { "M" } },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, new String[] { "M" })
+                    .build();
 
             assertFalse(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForBatchesFromSameAggregationButDifferentRollupOption(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch batch1 = createBatch(connection, fbcr, new String[] { tableTime },
-                    new String[] { fieldYear }, new String[][] { fieldValuesYear }, cubeNameSales, measureUnitSales);
+            BatchLoader.Batch batch1 = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .build();
 
-            BatchLoader.Batch batch2 = createBatch(connection, fbcr, new String[] { tableTime, tableTime, tableTime },
-                    new String[] { fieldYear, "quarter", "month_of_year" },
-                    new String[][] { fieldValuesYear, new String[] { "Q1", "Q2", "Q3", "Q4" },
-                            new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" } },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch batch2 = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableTime, "quarter", new String[] { "Q1", "Q2", "Q3", "Q4" })
+                    .where(tableTime, "month_of_year",
+                            new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" })
+                    .build();
 
             // Until MONDRIAN-1001 is fixed, behavior is flaky due to interaction
             // with previous tests.
@@ -886,33 +902,33 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * Tests that Can Batch For Batch With Super Set Of Constraint Column Bit Key
      * And Different Values For Overlapping Columns.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSuperSetDifferentValues(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch aggregationBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { new String[] { "1997" }, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch aggregationBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, new String[] { "1997" })
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment, fieldGender },
-                    new String[][] { new String[] { "1998" }, fieldValuesProductFamily, fieldValueProductDepartment,
-                            fieldValuesGender },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, new String[] { "1998" })
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
             assertFalse(detailedBatch.canBatch(aggregationBatch));
             assertFalse(aggregationBatch.canBatch(detailedBatch));
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCanBatchForBatchWithDifferentAggregationTable(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -929,12 +945,16 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
-            BatchLoader.Batch summaryBatch = createBatch(connection, fbcr, new String[] { tableTime },
-                    new String[] { fieldYear }, new String[][] { fieldValuesYear }, cubeNameSales, measureUnitSales);
+            BatchLoader.Batch summaryBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr, new String[] { tableTime, tableCustomer },
-                    new String[] { fieldYear, fieldGender }, new String[][] { fieldValuesYear, fieldValuesGender },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
             if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE,
                     Boolean.class)
@@ -949,32 +969,32 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCannotBatchTwoBatchesAtTheSameLevel(Context<?> context) {
         prepareContext(context);
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
-            BatchLoader.Batch firstBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, new String[] { "Food" }, fieldValueProductDepartment },
-                    cubeNameSales, "[Measures].[Customer Count]");
+            BatchLoader.Batch firstBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure("[Measures].[Customer Count]")
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, new String[] { "Food" })
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
-            BatchLoader.Batch secondBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, new String[] { "Drink" }, fieldValueProductDepartment },
-                    cubeNameSales, "[Measures].[Customer Count]");
+            BatchLoader.Batch secondBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure("[Measures].[Customer Count]")
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, new String[] { "Drink" })
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
             assertFalse(firstBatch.canBatch(secondBatch));
             assertFalse(secondBatch.canBatch(firstBatch));
         });
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCompositeBatchLoadAggregation(Context<?> context) throws Exception {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -987,17 +1007,20 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         ExecutionContext.where(executionContext, () -> {
             final BatchLoader fbcr = createFbcr(null, salesCube);
 
-            BatchLoader.Batch summaryBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment },
-                    new String[][] { fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch summaryBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .build();
 
-            BatchLoader.Batch detailedBatch = createBatch(connection, fbcr,
-                    new String[] { tableTime, tableProductClass, tableProductClass, tableCustomer },
-                    new String[] { fieldYear, fieldProductFamily, fieldProductDepartment, fieldGender }, new String[][] {
-                            fieldValuesYear, fieldValuesProductFamily, fieldValueProductDepartment, fieldValuesGender },
-                    cubeNameSales, measureUnitSales);
+            BatchLoader.Batch detailedBatch = CellRequestFixture.of(connection).batch(fbcr)
+                    .cube(cubeNameSales).measure(measureUnitSales)
+                    .where(tableTime, fieldYear, fieldValuesYear)
+                    .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+                    .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+                    .where(tableCustomer, fieldGender, fieldValuesGender)
+                    .build();
 
             final BatchLoader.CompositeBatch compositeBatch = new BatchLoader.CompositeBatch(detailedBatch);
 
@@ -1056,8 +1079,9 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * <code>count(distinct "col1" + "col2"), count(distinct query)</code>, are
      * loaded individually, and separately from the other aggregates.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLoadDistinctSqlMeasureModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLoadDistinctSqlMeasure(Context<?> context) {
         prepareContext(context);
         // Some databases cannot handle scalar subqueries inside
@@ -1084,100 +1108,92 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             return;
         }
 
-        String cube = "<Cube name=\"Warehouse2\">" + "   <Table name=\"warehouse\"/>"
-                + "   <DimensionUsage name=\"Store Type\" source=\"Store Type\" foreignKey=\"stores_id\"/>"
-                + "   <Measure name=\"Count Distinct of Warehouses (Large Owned)\" aggregator=\"distinct count\" formatString=\"#,##0\">"
-                + "       <MeasureExpression>"
-                + "       <SQL dialect=\"generic\">(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')</SQL>"
-                + "       </MeasureExpression>" + "   </Measure>"
-                + "   <Measure name=\"Count Distinct of Warehouses (Large Independent)\" aggregator=\"distinct count\" formatString=\"#,##0\">"
-                + "       <MeasureExpression>"
-                + "       <SQL dialect=\"generic\">(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')</SQL>"
-                + "       </MeasureExpression>" + "   </Measure>"
-                + "   <Measure name=\"Count All of Warehouses (Large Independent)\" aggregator=\"count\" formatString=\"#,##0\">"
-                + "       <MeasureExpression>"
-                + "           <SQL dialect=\"generic\">(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')</SQL>"
-                + "       </MeasureExpression>" + "   </Measure>"
-                + "   <Measure name=\"Count Distinct Store+Warehouse\" aggregator=\"distinct count\" formatString=\"#,##0\">"
-                + "       <MeasureExpression><SQL dialect=\"generic\">`store_id`+`warehouse_id`</SQL></MeasureExpression>"
-                + "   </Measure>"
-                + "   <Measure name=\"Count All Store+Warehouse\" aggregator=\"count\" formatString=\"#,##0\">"
-                + "       <MeasureExpression><SQL dialect=\"generic\">`store_id`+`warehouse_id`</SQL></MeasureExpression>"
-                + "   </Measure>"
-                + "   <Measure name=\"Store Count\" column=\"stores_id\" aggregator=\"count\" formatString=\"#,###\"/>"
-                + "</Cube>";
-        cube = cube.replaceAll("`", dialect.getQuoteIdentifierString());
-        if (getDatabaseProduct(dialect.name()) == DatabaseProduct.ORACLE) {
-            cube = cube.replaceAll(" AS ", " ");
-        }
-
         String query = "select " + "   [Store Type].Children on rows, "
                 + "   {[Measures].[Count Distinct of Warehouses (Large Owned)],"
                 + "    [Measures].[Count Distinct of Warehouses (Large Independent)],"
                 + "    [Measures].[Count All of Warehouses (Large Independent)],"
                 + "    [Measures].[Count Distinct Store+Warehouse]," + "    [Measures].[Count All Store+Warehouse],"
                 + "    [Measures].[Store Count]} on columns " + "from [Warehouse2]";
-        /*
-         * class TestLoadDistinctSqlMeasureModifier extends PojoMappingModifier {
-         *
-         * public TestLoadDistinctSqlMeasureModifier(CatalogMapping catalog) {
-         * super(catalog); }
-         *
-         * @Override protected List<CubeMapping> cubes(List<? extends CubeMapping>
-         * cubes) { List<CubeMapping> result = new ArrayList<>();
-         * result.addAll(super.cubes(cubes));
-         * result.add(PhysicalCubeMappingImpl.builder() .withName("Warehouse2")
-         * .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.
-         * WAREHOUSE_TABLE).build()) .withDimensionConnectors(List.of(
-         * DimensionConnectorMappingImpl.builder()
-         * .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_WAREHOUSE)
-         * .withOverrideDimensionName("Store Type")
-         * .withDimension((DimensionMappingImpl)
-         * look(FoodmartMappingSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE)) .build()
-         * )) .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
-         * .withMeasures(List.of( CountMeasureMappingImpl.builder()
-         * .withName("Count Distinct of Warehouses (Large Owned)") .withDistinct(true)
-         * .withFormatString("#,##0")
-         * .withColumn(SQLExpressionMappingColumnImpl.builder()
-         * .withSqls(List.of(SqlStatementMappingImpl.builder()
-         * .withDialects(List.of("generic"))
-         * .withSql("(select warehouse_class.warehouse_class_id AS warehouse_class_id from warehouse_class AS warehouse_class where warehouse_class.warehouse_class_id = warehouse.warehouse_class_id and warehouse_class.description = 'Large Owned')"
-         * ) .build())) .build()) .build(), CountMeasureMappingImpl.builder()
-         * .withName("Count Distinct of Warehouses (Large Independent)")
-         * .withDistinct(true) .withFormatString("#,##0")
-         * .withColumn(SQLExpressionMappingColumnImpl.builder()
-         * .withSqls(List.of(SqlStatementMappingImpl.builder()
-         * .withDialects(List.of("generic"))
-         * .withSql("(select warehouse_class.warehouse_class_id AS warehouse_class_id from warehouse_class AS warehouse_class where warehouse_class.warehouse_class_id = warehouse.warehouse_class_id and warehouse_class.description = 'Large Independent')"
-         * ) .build())) .build()) .build(), CountMeasureMappingImpl.builder()
-         * .withName("Count All of Warehouses (Large Independent)")
-         * .withFormatString("#,##0")
-         * .withColumn(SQLExpressionMappingColumnImpl.builder()
-         * .withSqls(List.of(SqlStatementMappingImpl.builder()
-         * .withDialects(List.of("generic"))
-         * .withSql("(select warehouse_class.warehouse_class_id AS warehouse_class_id from warehouse_class AS warehouse_class where warehouse_class.warehouse_class_id = warehouse.warehouse_class_id and warehouse_class.description = 'Large Independent')"
-         * ) .build())) .build()) .build(), CountMeasureMappingImpl.builder()
-         * .withName("Count Distinct Store+Warehouse") .withDistinct(true)
-         * .withFormatString("#,##0")
-         * .withColumn(SQLExpressionMappingColumnImpl.builder()
-         * .withSqls(List.of(SqlStatementMappingImpl.builder()
-         * .withDialects(List.of("generic")) .withSql("`store_id`+`warehouse_id`")
-         * .build())) .build()) .build(), CountMeasureMappingImpl.builder()
-         * .withName("Count All Store+Warehouse") .withFormatString("#,##0")
-         * .withColumn(SQLExpressionMappingColumnImpl.builder()
-         * .withSqls(List.of(SqlStatementMappingImpl.builder()
-         * .withDialects(List.of("generic")) .withSql("`store_id`+`warehouse_id`")
-         * .build())) .build()) .build(), CountMeasureMappingImpl.builder()
-         * .withName("Store Count")
-         * .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_WAREHOUSE)
-         * .withFormatString("#,###") .build() )) .build())) .build()); return result; }
-         * }
-         */
-        /**
-         * EMF version of TestLoadDistinctSqlMeasureModifier Creates a test cube with
-         * various distinct count measures using SQL expressions
-         */
-        class TestLoadDistinctSqlMeasureModifierEmf implements CatalogMappingSupplier {
+
+        String desiredResult = "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+                + "{[Measures].[Count Distinct of Warehouses (Large Owned)]}\n"
+                + "{[Measures].[Count Distinct of Warehouses (Large Independent)]}\n"
+                + "{[Measures].[Count All of Warehouses (Large Independent)]}\n"
+                + "{[Measures].[Count Distinct Store+Warehouse]}\n" + "{[Measures].[Count All Store+Warehouse]}\n"
+                + "{[Measures].[Store Count]}\n" + "Axis #2:\n" + "{[Store Type].[Store Type].[Deluxe Supermarket]}\n"
+                + "{[Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Store Type].[Store Type].[HeadQuarters]}\n"
+                + "{[Store Type].[Store Type].[Mid-Size Grocery]}\n" + "{[Store Type].[Store Type].[Small Grocery]}\n"
+                + "{[Store Type].[Store Type].[Supermarket]}\n" + "Row #0: 1\n" + "Row #0: 0\n" + "Row #0: 0\n"
+                + "Row #0: 6\n" + "Row #0: 6\n" + "Row #0: 6\n" + "Row #1: 1\n" + "Row #1: 0\n" + "Row #1: 0\n"
+                + "Row #1: 2\n" + "Row #1: 2\n" + "Row #1: 2\n" + "Row #2: \n" + "Row #2: \n" + "Row #2: \n"
+                + "Row #2: \n" + "Row #2: \n" + "Row #2: \n" + "Row #3: 0\n" + "Row #3: 1\n" + "Row #3: 1\n"
+                + "Row #3: 4\n" + "Row #3: 4\n" + "Row #3: 4\n" + "Row #4: 0\n" + "Row #4: 1\n" + "Row #4: 1\n"
+                + "Row #4: 4\n" + "Row #4: 4\n" + "Row #4: 4\n" + "Row #5: 0\n" + "Row #5: 1\n" + "Row #5: 3\n"
+                + "Row #5: 8\n" + "Row #5: 8\n" + "Row #5: 8\n";
+
+        assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid( desiredResult);
+
+        String loadCountDistinct_luciddb1 = "select " + "\"store\".\"store_type\" as \"c0\", " + "count(distinct "
+                + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
+                + "from \"warehouse_class\" AS \"warehouse_class\" "
+                + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" "
+                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
+                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
+
+        String loadCountDistinct_luciddb2 = "select " + "\"store\".\"store_type\" as \"c0\", " + "count(distinct "
+                + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
+                + "from \"warehouse_class\" AS \"warehouse_class\" "
+                + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" "
+                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
+                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
+
+        String loadOtherAggs_luciddb = "select " + "\"store\".\"store_type\" as \"c0\", " + "count("
+                + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
+                + "from \"warehouse_class\" AS \"warehouse_class\" "
+                + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", "
+                + "count(distinct \"store_id\"+\"warehouse_id\") as \"m1\", "
+                + "count(\"store_id\"+\"warehouse_id\") as \"m2\", " + "count(\"warehouse\".\"stores_id\") as \"m3\" "
+                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
+                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
+
+        // Derby splits into multiple statements.
+        String loadCountDistinct_derby1 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadCountDistinct_derby2 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadCountDistinct_derby3 = "select \"store\".\"store_type\" as \"c0\", count(distinct \"store_id\"+\"warehouse_id\") as \"m0\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+        String loadOtherAggs_derby = "select \"store\".\"store_type\" as \"c0\", count((select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", count(\"store_id\"+\"warehouse_id\") as \"m1\", count(\"warehouse\".\"stores_id\") as \"m2\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
+
+        // MySQL does it in one statement.
+        String load_mysql = "select" + " `store`.`store_type` as `c0`,"
+                + " count(distinct (select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')) as `m0`,"
+                + " count(distinct (select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')) as `m1`,"
+                + " count((select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')) as `m2`,"
+                + " count(distinct `store_id`+`warehouse_id`) as `m3`," + " count(`store_id`+`warehouse_id`) as `m4`,"
+                + " count(`warehouse`.`stores_id`) as `m5` " + "from `warehouse` as `warehouse`"
+                + " join `store` as `store` " + "on `warehouse`.`stores_id` = `store`.`store_id` "
+                + "group by `store`.`store_type`";
+
+        SqlPattern[] patterns = {
+                new SqlPattern(DatabaseProduct.LUCIDDB, loadCountDistinct_luciddb1, loadCountDistinct_luciddb1),
+                new SqlPattern(DatabaseProduct.LUCIDDB, loadCountDistinct_luciddb2, loadCountDistinct_luciddb2),
+                new SqlPattern(DatabaseProduct.LUCIDDB, loadOtherAggs_luciddb, loadOtherAggs_luciddb),
+
+                new SqlPattern(DatabaseProduct.DERBY, loadCountDistinct_derby1, loadCountDistinct_derby1),
+                new SqlPattern(DatabaseProduct.DERBY, loadCountDistinct_derby2, loadCountDistinct_derby2),
+                new SqlPattern(DatabaseProduct.DERBY, loadCountDistinct_derby3, loadCountDistinct_derby3),
+                new SqlPattern(DatabaseProduct.DERBY, loadOtherAggs_derby, loadOtherAggs_derby),
+
+                new SqlPattern(DatabaseProduct.MYSQL, load_mysql, load_mysql), };
+
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+    }
+
+    /**
+     * Creates the Warehouse2 cube with distinct-count measures based on SQL
+     * expressions, layered onto the FoodMart catalog via composition
+     * ({@code catalog = { CatalogSupplier, TestLoadDistinctSqlMeasureModifierEmf }})
+     * instead of the legacy {@code withSchemaEmf} in-test mutation.
+     */
+    public static class TestLoadDistinctSqlMeasureModifierEmf implements CatalogMappingSupplier {
 
             /** The dialects that quote identifiers with a backtick. */
             private static final List<String> BACKTICK_DIALECTS = List.of("mysql", "mariadb", "infobright");
@@ -1325,90 +1341,16 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             }
         }
 
-        withSchemaEmf(context, TestLoadDistinctSqlMeasureModifierEmf::new);
-        String desiredResult = "Axis #0:\n" + "{}\n" + "Axis #1:\n"
-                + "{[Measures].[Count Distinct of Warehouses (Large Owned)]}\n"
-                + "{[Measures].[Count Distinct of Warehouses (Large Independent)]}\n"
-                + "{[Measures].[Count All of Warehouses (Large Independent)]}\n"
-                + "{[Measures].[Count Distinct Store+Warehouse]}\n" + "{[Measures].[Count All Store+Warehouse]}\n"
-                + "{[Measures].[Store Count]}\n" + "Axis #2:\n" + "{[Store Type].[Store Type].[Deluxe Supermarket]}\n"
-                + "{[Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Store Type].[Store Type].[HeadQuarters]}\n"
-                + "{[Store Type].[Store Type].[Mid-Size Grocery]}\n" + "{[Store Type].[Store Type].[Small Grocery]}\n"
-                + "{[Store Type].[Store Type].[Supermarket]}\n" + "Row #0: 1\n" + "Row #0: 0\n" + "Row #0: 0\n"
-                + "Row #0: 6\n" + "Row #0: 6\n" + "Row #0: 6\n" + "Row #1: 1\n" + "Row #1: 0\n" + "Row #1: 0\n"
-                + "Row #1: 2\n" + "Row #1: 2\n" + "Row #1: 2\n" + "Row #2: \n" + "Row #2: \n" + "Row #2: \n"
-                + "Row #2: \n" + "Row #2: \n" + "Row #2: \n" + "Row #3: 0\n" + "Row #3: 1\n" + "Row #3: 1\n"
-                + "Row #3: 4\n" + "Row #3: 4\n" + "Row #3: 4\n" + "Row #4: 0\n" + "Row #4: 1\n" + "Row #4: 1\n"
-                + "Row #4: 4\n" + "Row #4: 4\n" + "Row #4: 4\n" + "Row #5: 0\n" + "Row #5: 1\n" + "Row #5: 3\n"
-                + "Row #5: 8\n" + "Row #5: 8\n" + "Row #5: 8\n";
-
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, desiredResult);
-
-        String loadCountDistinct_luciddb1 = "select " + "\"store\".\"store_type\" as \"c0\", " + "count(distinct "
-                + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
-                + "from \"warehouse_class\" AS \"warehouse_class\" "
-                + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" "
-                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
-                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
-
-        String loadCountDistinct_luciddb2 = "select " + "\"store\".\"store_type\" as \"c0\", " + "count(distinct "
-                + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
-                + "from \"warehouse_class\" AS \"warehouse_class\" "
-                + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" "
-                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
-                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
-
-        String loadOtherAggs_luciddb = "select " + "\"store\".\"store_type\" as \"c0\", " + "count("
-                + "(select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" "
-                + "from \"warehouse_class\" AS \"warehouse_class\" "
-                + "where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", "
-                + "count(distinct \"store_id\"+\"warehouse_id\") as \"m1\", "
-                + "count(\"store_id\"+\"warehouse_id\") as \"m2\", " + "count(\"warehouse\".\"stores_id\") as \"m3\" "
-                + "from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" "
-                + "on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" " + "group by \"store\".\"store_type\"";
-
-        // Derby splits into multiple statements.
-        String loadCountDistinct_derby1 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Owned')) as \"m0\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-        String loadCountDistinct_derby2 = "select \"store\".\"store_type\" as \"c0\", count(distinct (select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-        String loadCountDistinct_derby3 = "select \"store\".\"store_type\" as \"c0\", count(distinct \"store_id\"+\"warehouse_id\") as \"m0\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-        String loadOtherAggs_derby = "select \"store\".\"store_type\" as \"c0\", count((select \"warehouse_class\".\"warehouse_class_id\" AS \"warehouse_class_id\" from \"warehouse_class\" AS \"warehouse_class\" where \"warehouse_class\".\"warehouse_class_id\" = \"warehouse\".\"warehouse_class_id\" and \"warehouse_class\".\"description\" = 'Large Independent')) as \"m0\", count(\"store_id\"+\"warehouse_id\") as \"m1\", count(\"warehouse\".\"stores_id\") as \"m2\" from \"warehouse\" as \"warehouse\" join \"store\" as \"store\" on \"warehouse\".\"stores_id\" = \"store\".\"store_id\" group by \"store\".\"store_type\"";
-
-        // MySQL does it in one statement.
-        String load_mysql = "select" + " `store`.`store_type` as `c0`,"
-                + " count(distinct (select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')) as `m0`,"
-                + " count(distinct (select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')) as `m1`,"
-                + " count((select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')) as `m2`,"
-                + " count(distinct `store_id`+`warehouse_id`) as `m3`," + " count(`store_id`+`warehouse_id`) as `m4`,"
-                + " count(`warehouse`.`stores_id`) as `m5` " + "from `warehouse` as `warehouse`"
-                + " join `store` as `store` " + "on `warehouse`.`stores_id` = `store`.`store_id` "
-                + "group by `store`.`store_type`";
-
-        SqlPattern[] patterns = {
-                new SqlPattern(DatabaseProduct.LUCIDDB, loadCountDistinct_luciddb1, loadCountDistinct_luciddb1),
-                new SqlPattern(DatabaseProduct.LUCIDDB, loadCountDistinct_luciddb2, loadCountDistinct_luciddb2),
-                new SqlPattern(DatabaseProduct.LUCIDDB, loadOtherAggs_luciddb, loadOtherAggs_luciddb),
-
-                new SqlPattern(DatabaseProduct.DERBY, loadCountDistinct_derby1, loadCountDistinct_derby1),
-                new SqlPattern(DatabaseProduct.DERBY, loadCountDistinct_derby2, loadCountDistinct_derby2),
-                new SqlPattern(DatabaseProduct.DERBY, loadCountDistinct_derby3, loadCountDistinct_derby3),
-                new SqlPattern(DatabaseProduct.DERBY, loadOtherAggs_derby, loadOtherAggs_derby),
-
-                new SqlPattern(DatabaseProduct.MYSQL, load_mysql, load_mysql), };
-
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCount(Context<?> context) {
         prepareContext(context);
         // solve_order=1 says to aggregate [CA] and [OR] before computing their
         // sums
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
                 "WITH MEMBER [Time].[Time].[1997 Q1 plus Q2] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q2]})', solve_order=1\n"
                         + "SELECT {[Measures].[Customer Count]} ON COLUMNS,\n"
                         + "      {[Time].[1997].[Q1], [Time].[1997].[Q2], [Time].[1997 Q1 plus Q2]} ON ROWS\n"
-                        + "FROM Sales\n" + "WHERE ([Store].[USA].[CA])",
+                        + "FROM Sales\n" + "WHERE ([Store].[USA].[CA])").returnsGrid(
                 "Axis #0:\n" + "{[Store].[Store].[USA].[CA]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
                         + "Axis #2:\n" + "{[Time].[Time].[1997].[Q1]}\n" + "{[Time].[Time].[1997].[Q2]}\n"
                         + "{[Time].[Time].[1997 Q1 plus Q2]}\n" + "Row #0: 1,110\n" + "Row #1: 1,173\n"
@@ -1419,15 +1361,14 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * As {@link #testAggregateDistinctCount()}, but (a) calc member includes
      * members from different levels and (b) also display [unit sales].
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCount2(Context<?> context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH MEMBER [Time].[Time].[1997 Q1 plus July] AS\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "WITH MEMBER [Time].[Time].[1997 Q1 plus July] AS\n"
                 + " 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q3].[7]})', solve_order=1\n"
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Customer Count]} ON COLUMNS,\n"
                 + "      {[Time].[1997].[Q1],\n" + "       [Time].[1997].[Q2],\n" + "       [Time].[1997].[Q3].[7],\n"
-                + "       [Time].[1997 Q1 plus July]} ON ROWS\n" + "FROM Sales\n" + "WHERE ([Store].[USA].[CA])",
+                + "       [Time].[1997 Q1 plus July]} ON ROWS\n" + "FROM Sales\n" + "WHERE ([Store].[USA].[CA])").returnsGrid(
                 "Axis #0:\n" + "{[Store].[Store].[USA].[CA]}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n"
                         + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Time].[Time].[1997].[Q1]}\n"
                         + "{[Time].[Time].[1997].[Q2]}\n" + "{[Time].[Time].[1997].[Q3].[7]}\n"
@@ -1443,17 +1384,16 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * As {@link #testAggregateDistinctCount2()}, but with two calc members
      * simultaneously.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCount3(Context<?> context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "WITH\n"
                 + "  MEMBER [Promotion Media].[TV plus Radio] AS 'AGGREGATE({[Promotion Media].[TV], [Promotion Media].[Radio]})', solve_order=1\n"
                 + "  MEMBER [Time].[Time].[1997 Q1 plus July] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q3].[7]})', solve_order=1\n"
                 + "SELECT {[Promotion Media].[TV plus Radio],\n" + "        [Promotion Media].[TV],\n"
                 + "        [Promotion Media].[Radio]} ON COLUMNS,\n" + "       {[Time].[1997],\n"
                 + "        [Time].[1997].[Q1],\n" + "        [Time].[1997 Q1 plus July]} ON ROWS\n" + "FROM Sales\n"
-                + "WHERE [Measures].[Customer Count]",
+                + "WHERE [Measures].[Customer Count]").returnsGrid(
                 "Axis #0:\n" + "{[Measures].[Customer Count]}\n" + "Axis #1:\n"
                         + "{[Promotion Media].[Promotion Media].[TV plus Radio]}\n"
                         + "{[Promotion Media].[Promotion Media].[TV]}\n"
@@ -1529,8 +1469,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * to count them twice for rollable measures such as [Unit Sales], but not for
      * distinct-count measures such as [Customer Count].
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCount4(Context<?> context) {
         prepareContext(context);
         // CA and USA are overlapping members
@@ -1554,19 +1493,18 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "Row #0: 112,347\n" + "Row #1: 1,386\n" + "Row #1: 22,293\n" + "Row #2: 3,505\n" + "Row #2: 90,054\n"
                 + "Row #3: 2,981\n" + "Row #3: 83,181\n" + "Row #4: 1,462\n" + "Row #4: 29,166\n";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQuery, result);
+        assertThatQuery(context.getConnectionWithDefaultRole(), mdxQuery).returnsGrid( result);
     }
 
     /**
      * Fix a problem when genergating predicates for distinct count aggregate
      * loading and using the aggregate function in the slicer.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.MAX_CONSTRAINTS, value = "2", type = Integer.class)
     void testAggregateDistinctCount5(Context<?> context) {
         prepareContext(context);
         // make sure tuple optimization will be used
-        ((TestContextImpl)context).setMaxConstraints(2);
 
         String query = "With " + "Set [Products] as " + " '{[Product].[Drink], " + "   [Product].[Food], "
                 + "   [Product].[Non-Consumable]}' " + "Member [Product].[Selected Products] as "
@@ -1597,8 +1535,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
     }
 
     // Test for multiple members on different levels within the same hierarchy.
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCount6(Context<?> context) {
         prepareContext(context);
         // CA and USA are overlapping members
@@ -1623,7 +1560,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "Row #1: 1,877\n" + "Row #1: 36,177\n" + "Row #2: 845\n" + "Row #2: 13,123\n" + "Row #3: 2,073\n"
                 + "Row #3: 37,789\n" + "Row #4: 3,753\n" + "Row #4: 142,407\n";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQuery, result);
+        assertThatQuery(context.getConnectionWithDefaultRole(), mdxQuery).returnsGrid( result);
     }
 
     /**
@@ -1634,8 +1571,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      * no longer in use (and removed). So this bug will not occur; however, keeping
      * the test case here to get some coverage for a query with a slicer.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctCountBug1785406(Context<?> context) {
         prepareContext(context);
         String query = "With \n" + "Set [*BASE_MEMBERS_Product] as {[Product].[All Products].[Food].[Deli]}\n"
@@ -1645,7 +1581,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "NonEmptyCrossJoin([*BASE_MEMBERS_Store],{([Product].[*CTX_MEMBER_SEL~SUM])})\n" + "on rows\n"
                 + "From [Sales]\n" + "where ([Time].[1997])";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query,
+        assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid(
                 "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
                         + "Axis #2:\n" + "{[Store].[Store].[USA].[WA], [Product].[Product].[*CTX_MEMBER_SEL~SUM]}\n"
                         + "Row #0: 889\n");
@@ -1697,15 +1633,14 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctCountBug1785406_2(Context<?> context) {
         prepareContext(context);
         String query = "With " + "Member [Product].[x] as 'Aggregate({Gender.CurrentMember})'\n"
                 + "member [Measures].[foo] as '([Product].[x],[Measures].[Customer Count])'\n"
                 + "select Filter([Gender].members,(Not IsEmpty([Measures].[foo]))) on 0 " + "from Sales";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query,
+        assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid(
                 "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[Gender].[All Gender]}\n"
                         + "{[Gender].[Gender].[F]}\n" + "{[Gender].[Gender].[M]}\n" + "Row #0: 266,773\n"
                         + "Row #0: 131,558\n" + "Row #0: 135,215\n");
@@ -1736,24 +1671,23 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCount2ndParameter(Context<?> context) {
         prepareContext(context);
         // simple case of count distinct measure as second argument to
         // Aggregate(). Should apply distinct-count aggregator (MONDRIAN-2016)
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
                 "with\n" + "  set periods as [Time].[Time].[1997].[Q1].[1] : [Time].[Time].[1997].[Q4].[10]\n"
                         + "  member [Time].[Time].[agg] as Aggregate(periods, [Measures].[Customer Count])\n"
                         + "select\n" + "  [Time].[agg]  ON COLUMNS,\n" + "  [Gender].[Gender].[M] on ROWS\n"
-                        + "FROM [Sales]",
+                        + "FROM [Sales]").returnsGrid(
                 "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Time].[Time].[agg]}\n" + "Axis #2:\n"
                         + "{[Gender].[Gender].[M]}\n" + "Row #0: 2,651\n");
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
                 "WITH MEMBER [Measures].[My Distinct Count] AS \n"
                         + "'AGGREGATE([1997].Children, [Measures].[Customer Count])' \n"
                         + "SELECT {[Measures].[My Distinct Count], [Measures].[Customer Count]} ON COLUMNS,\n"
-                        + "{[1997].Children} ON ROWS\n" + "FROM Sales",
+                        + "{[1997].Children} ON ROWS\n" + "FROM Sales").returnsGrid(
                 "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[My Distinct Count]}\n"
                         + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Time].[Time].[1997].[Q1]}\n"
                         + "{[Time].[Time].[1997].[Q2]}\n" + "{[Time].[Time].[1997].[Q3]}\n"
@@ -1762,63 +1696,63 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                         + "Row #3: 3,261\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCountDistinctAggWithOtherCountDistinctInContext(Context<?> context) {
         prepareContext(context);
         // tests that Aggregate( <set>, <count-distinct measure>) aggregates
         // the correct measure when a *different* count-distinct measure is
         // in context (MONDRIAN-2128)
-        /*
-         * class TestCountDistinctAggWithOtherCountDistinctInContextModifier extends
-         * PojoMappingModifier {
-         *
-         * private static CountMeasureMappingImpl m = CountMeasureMappingImpl.builder()
-         * .withName("Store Count")
-         * .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
-         * .withDistinct(true) .build();
-         *
-         *
-         *
-         * public
-         * TestCountDistinctAggWithOtherCountDistinctInContextModifier(CatalogMapping
-         * catalog) { super(catalog); }
-         *
-         * @Override protected List<CubeMapping> cubes(List<? extends CubeMapping>
-         * cubes) { List<CubeMapping> result = new ArrayList<>();
-         * result.addAll(super.cubes(cubes));
-         * result.add(PhysicalCubeMappingImpl.builder() .withName("2CountDistincts")
-         * .withDefaultMeasure(m)
-         * .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.
-         * SALES_FACT_1997_TABLE).build()) .withDimensionConnectors(List.of(
-         * DimensionConnectorMappingImpl.builder()
-         * .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-         * .withOverrideDimensionName("Time") .withDimension((DimensionMappingImpl)
-         * look(FoodmartMappingSupplier.DIMENSION_TIME)) .build(),
-         * DimensionConnectorMappingImpl.builder()
-         * .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
-         * .withOverrideDimensionName("Store") .withDimension((DimensionMappingImpl)
-         * look(FoodmartMappingSupplier.DIMENSION_STORE_WITH_QUERY_STORE)) .build(),
-         * DimensionConnectorMappingImpl.builder()
-         * .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
-         * .withOverrideDimensionName("Product") .withDimension((DimensionMappingImpl)
-         * look(FoodmartMappingSupplier.DIMENSION_PRODUCT)) .build() ))
-         * .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
-         * .withMeasures(List.of( m, CountMeasureMappingImpl.builder()
-         * .withName("Customer Count")
-         * .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-         * .withDistinct(true) .build(), SumMeasureMappingImpl.builder()
-         * .withName("Unit Sales")
-         * .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-         * .build() )) .build())) .build()); return result; }
-         *
-         * }
-         */
-        /**
-         * EMF version of TestCountDistinctAggWithOtherCountDistinctInContextModifier
-         * Creates a test cube with multiple distinct count measures
-         */
-        class TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf implements CatalogMappingSupplier {
+        // We should get the same answer whether the default [Store Count]
+        // measure is in context or [Unit Sales]. The measure specified in the
+        // second param of Aggregate() should be used.
+        final String queryStoreCountInContext = "with member Store.agg as "
+                + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
+                + " select Store.agg on 0 from [2CountDistincts] ";
+        final String queryUnitSalesInContext = "with member Store.agg as "
+                + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
+                + " select Store.agg on 0 from [2CountDistincts] where " + "measures.[Unit Sales] ";
+        assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), queryStoreCountInContext,
+                queryUnitSalesInContext);
+
+        final String queryCAORRollup = "with member measures.agg as "
+                + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
+                + " select {measures.agg, measures.[Customer Count]} on 0,  "
+                + " [Product].[All Products].children on 1 " + "from [2CountDistincts] ";
+        Connection connection = context.getConnectionWithDefaultRole();
+        assertThatQuery(connection, queryCAORRollup).returnsGrid(
+                "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[agg]}\n" + "{[Measures].[Customer Count]}\n"
+                        + "Axis #2:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n"
+                        + "{[Product].[Product].[Non-Consumable]}\n" + "Row #0: 2,243\n" + "Row #0: 3,485\n"
+                        + "Row #1: 3,711\n" + "Row #1: 5,525\n" + "Row #2: 2,957\n" + "Row #2: 4,468\n");
+
+        // [Customer Count] should override context
+        assertThatQuery(connection,
+                "with member Store.agg as " + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, "
+                        + "           measures.[Customer Count])'"
+                        + " select {measures.[Store Count], measures.[Customer Count]} on 0,  " + " [Store].agg on 1 "
+                        + "from [2CountDistincts] ").returnsGrid(
+                "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Count]}\n"
+                        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[agg]}\n"
+                        + "Row #0: 3,753\n" + "Row #0: 3,753\n");
+        // aggregate should pick up measure in context
+        assertThatQuery(connection,
+                "with member Store.agg as " + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]})'"
+                        + " select {measures.[Store Count], measures.[Customer Count]} on 0,  " + " [Store].agg on 1 "
+                        + "from [2CountDistincts] ").returnsGrid(
+                "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Count]}\n"
+                        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[agg]}\n" + "Row #0: 6\n"
+                        + "Row #0: 3,753\n");
+    }
+
+    /**
+     * Creates the 2CountDistincts cube with multiple distinct-count measures,
+     * layered onto the FoodMart catalog via composition ({@code catalog = {
+     * CatalogSupplier, TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf }})
+     * instead of the legacy {@code withSchemaEmf} in-test mutation.
+     */
+    public static class TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf implements CatalogMappingSupplier {
 
             private CatalogImpl catalog;
 
@@ -1894,68 +1828,23 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             }
         }
 
-        withSchemaEmf(context, TestCountDistinctAggWithOtherCountDistinctInContextModifierEmf::new);
-        // We should get the same answer whether the default [Store Count]
-        // measure is in context or [Unit Sales]. The measure specified in the
-        // second param of Aggregate() should be used.
-        final String queryStoreCountInContext = "with member Store.agg as "
-                + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
-                + " select Store.agg on 0 from [2CountDistincts] ";
-        final String queryUnitSalesInContext = "with member Store.agg as "
-                + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
-                + " select Store.agg on 0 from [2CountDistincts] where " + "measures.[Unit Sales] ";
-        assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), queryStoreCountInContext,
-                queryUnitSalesInContext);
-
-        final String queryCAORRollup = "with member measures.agg as "
-                + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
-                + " select {measures.agg, measures.[Customer Count]} on 0,  "
-                + " [Product].[All Products].children on 1 " + "from [2CountDistincts] ";
-        Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection, queryCAORRollup,
-                "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[agg]}\n" + "{[Measures].[Customer Count]}\n"
-                        + "Axis #2:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n"
-                        + "{[Product].[Product].[Non-Consumable]}\n" + "Row #0: 2,243\n" + "Row #0: 3,485\n"
-                        + "Row #1: 3,711\n" + "Row #1: 5,525\n" + "Row #2: 2,957\n" + "Row #2: 4,468\n");
-
-        // [Customer Count] should override context
-        assertQueryReturns(connection,
-                "with member Store.agg as " + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, "
-                        + "           measures.[Customer Count])'"
-                        + " select {measures.[Store Count], measures.[Customer Count]} on 0,  " + " [Store].agg on 1 "
-                        + "from [2CountDistincts] ",
-                "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Count]}\n"
-                        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[agg]}\n"
-                        + "Row #0: 3,753\n" + "Row #0: 3,753\n");
-        // aggregate should pick up measure in context
-        assertQueryReturns(connection,
-                "with member Store.agg as " + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]})'"
-                        + " select {measures.[Store Count], measures.[Customer Count]} on 0,  " + " [Store].agg on 1 "
-                        + "from [2CountDistincts] ",
-                "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Count]}\n"
-                        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[agg]}\n" + "Row #0: 6\n"
-                        + "Row #0: 3,753\n");
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testContextSetCorrectlyWith2ParamAggregate(Context<?> context) {
         prepareContext(context);
         // Aggregate with a second parameter may change context. Verify
         // the evaluator is restored. The query below would return
         // the [Unit Sales] value instead of [Store Sales] if context was
         // not restored.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
                 "with \n" + "member Store.cond as 'iif( \n"
                         + "aggregate({[Store].[All Stores].[USA]}, measures.[unit sales])\n"
                         + " > 70000, (Store.[All Stores], measures.currentMember), 0)'\n"
-                        + "select Store.cond on 0 from sales\n" + "where measures.[store sales]\n",
+                        + "select Store.cond on 0 from sales\n" + "where measures.[store sales]\n").returnsGrid(
                 "Axis #0:\n" + "{[Measures].[Store Sales]}\n" + "Axis #1:\n" + "{[Store].[Store].[cond]}\n"
                         + "Row #0: 565,238.13\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDistinctCountInDimensionFilter(Context<?> context) {
         prepareContext(context);
         String query = "With "
@@ -1966,7 +1855,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "{[Measures].[Customer Count]} on columns " + "From [Sales] "
                 + "Where ([Product].[Selected Products])";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query,
+        assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid(
                 "Axis #0:\n" + "{[Product].[Product].[Selected Products]}\n" + "Axis #1:\n"
                         + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[USA].[CA]}\n"
                         + "{[Store].[Store].[USA].[OR]}\n" + "Row #0: 2,692\n" + "Row #1: 1,036\n");
@@ -2026,8 +1915,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testInMemoryAggSum(Context<?> context) throws Exception {
         prepareContext(context);
         // Double arrays
@@ -2069,8 +1957,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         assertEquals(10, SumAggregator.INSTANCE.aggregate(Arrays.asList(intSet4), DataTypeJdbc.INTEGER));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testInMemoryAggMin(Context<?> context) throws Exception {
         prepareContext(context);
         // Double arrays
@@ -2112,8 +1999,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         assertEquals(3, MinAggregator.INSTANCE.aggregate(Arrays.asList(intSet4), DataTypeJdbc.INTEGER));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testInMemoryAggMax(Context<?> context) throws Exception {
         prepareContext(context);
         // Double arrays
@@ -2164,15 +2050,21 @@ class FastBatchingCellReaderTest extends BatchTestCase {
      *
      * @see <a href="http://jira.pentaho.com/browse/MONDRIAN-2251">Jira issue</a>
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.CELL_BATCH_SIZE, value = "1", type = Integer.class)
     void testCellBatchSizeWithUdf(Context<?> context) {
         prepareContext(context);
-        ((TestContextImpl) context).setCellBatchSize(1);
-        // propSaver.set( MondrianProperties.instance().CellBatchSize, 1 );
-        assertQueryReturns(connection,
-                "select lastnonempty([education level].members, measures.[unit sales]) on 0 from sales",
+        assertThatQuery(connection,
+                "select lastnonempty([education level].members, measures.[unit sales]) on 0 from sales").returnsGrid(
                 "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Education Level].[Education Level].[Partial High School]}\n"
                         + "Row #0: 79,155\n");
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public java.util.Map<String, java.net.URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 }

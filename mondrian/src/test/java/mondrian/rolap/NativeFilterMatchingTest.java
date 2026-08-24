@@ -10,21 +10,24 @@ package mondrian.rolap;
 
 
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.util.List;
+import java.net.URL;
+import java.util.Map;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -56,39 +59,25 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.RollupPol
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.assertions.NativeVerify;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.daanse.rolap.testkit.junit.api.Roles;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.EmfUtil;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
-import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Test case for pushing MDX filter conditions down to SQL.
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class NativeFilterMatchingTest extends BatchTestCase {
 
-
-    @BeforeEach
-    public void beforeEach() {
-
-    }
-
-    @AfterEach
-    public void afterEach() {
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPositiveMatching(Context<?> context) throws Exception {
     	context.getCatalogCache().clear();
         if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
@@ -166,15 +155,14 @@ class NativeFilterMatchingTest extends BatchTestCase {
             false,
             true,
             true);
-        assertQueryReturns(
+        assertThatQuery(
             context.getConnectionWithDefaultRole(),
-            query,
+            query).returnsGrid(
             queryResults);
-        verifySameNativeAndNot(context.getConnectionWithDefaultRole(), query, null);
+        NativeVerify.assertSameNativeAndNot(context, query, null);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegativeMatching(Context<?> context) throws Exception {
     	context.getCatalogCache().clear();
         if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
@@ -233,7 +221,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
         final Result result = executeQuery(query, context.getConnectionWithDefaultRole());
         final String resultString = TestUtil.toString(result);
         assertFalse(resultString.contains("Jeanne"));
-        verifySameNativeAndNot(context.getConnectionWithDefaultRole(), query, null);
+        NativeVerify.assertSameNativeAndNot(context, query, null);
     }
 
     /**
@@ -243,10 +231,9 @@ class NativeFilterMatchingTest extends BatchTestCase {
      *
      * @see mondrian.test.DialectTest#testRegularExpressionSqlInjection()
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMatchBugMondrian983(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "With\n"
             + "Set [*NATIVE_CJ_SET] as 'Filter([*BASE_MEMBERS_Product], Not IsEmpty ([Measures].[Unit Sales]))' \n"
             + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],[Product].CurrentMember.OrderKey,BASC,Ancestor([Product].CurrentMember,[Product].[Product Department]).OrderKey,BASC)' \n"
@@ -260,7 +247,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Select\n"
             + "[*BASE_MEMBERS_Measures] on columns,\n"
             + "Union({[Product].[*TOTAL_MEMBER_SEL~SUM]},[*SORTED_ROW_AXIS]) on rows\n"
-            + "From [Sales]",
+            + "From [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -270,61 +257,73 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Row #0: \n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNativeFilterSameAsNonNative(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1694
         // In some cases native filter would includes an unnecessary fact table
         // join which incorrectly eliminated some tuples from the set
-        Connection connection = context.getConnectionWithDefaultRole();
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "select Filter([Store].[Store Name].Members, Store.CurrentMember.Name matches \"Store.*\") "
             + " on 0 from sales",
             "Filter w/ regex.");
 
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "select Filter([Store].[Store Name].Members, Measures.[Unit Sales] > 100 and Store.CurrentMember.Name matches \"Store.*\") "
             + " on 0 from sales",
             "Filter w/ regex and measure constraint.");
 
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "select Filter([Store].[Store Name].Members, measures.[Unit Sales] > 100) "
             + " on 0 from sales",
             "Filter w/ measure constraint.");
 
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "select non empty Filter([Store].[Store Name].Members, Store.CurrentMember.Name matches \"Store.*\") "
             + " on 0 from sales",
             "Filter w/ regex in non-empty context.");
 
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "with set [filterSet] as 'Filter([Store].[Store Name].Members, Store.CurrentMember.Name matches \"Store.*\")'"
             + " select [filterSet] on 0 from sales",
             "Filter w/ regex defined in named set.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCachedNativeFilter(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1694
 
         // verify that the RolapNativeSet cached values from NON EMPTY context
         // are not reused when not NON EMPTY.
-        Connection connection = context.getConnectionWithDefaultRole();
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "select NON EMPTY Filter([Store].[Store Name].Members, Store.CurrentMember.Name matches \"Store.*\") "
             + " on 0 from sales",
             "Filter w/ regex.");
-        verifySameNativeAndNot(connection,
+        NativeVerify.assertSameNativeAndNot(context,
             "select Filter([Store].[Store Name].Members, Store.CurrentMember.Name matches \"Store.*\") "
             + " on 0 from sales",
             "Filter w/ regex.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMatchesWithAccessControl(Context<?> context) {
-        /*
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMatchesWithAccessControlModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testMatchesWithAccessControl(@Roles("test") Connection connection ) {
+        NativeVerify.assertSameNativeAndNot(connection.getContext(),
+            "select Filter([Product].[Product Category].Members, [Product].CurrentMember.Name matches \"(?i).*Food.*\")"
+            + " on 0 from tinysales",
+            "Filter on dim with full access.");
+        NativeVerify.assertSameNativeAndNot(connection.getContext(),
+            "select Filter([Store2].[USA].Children, [Store2].CurrentMember.Name matches \"WA.*\")"
+            + " on 0 from tinysales",
+            "Filter on restricted dimension.  Should be empty set.");
+        NativeVerify.assertSameNativeAndNot(connection.getContext(),
+            "select Filter(CrossJoin({[Store2].[USA].Children}, [Product].[Product Category].Members), [Store2].CurrentMember.Name matches \".*A.*\")"
+            + " on 0 from tinysales",
+            "Filter on partially accessible set of tuples.");
+    }
+
+    /*
+    OLD_MARKER_TO_DELETE
         class TestCachedNativeFilterModifier extends PojoMappingModifier {
 
         	private static final HierarchyMappingImpl h =ExplicitHierarchyMappingImpl.builder()
@@ -434,17 +433,17 @@ class NativeFilterMatchingTest extends BatchTestCase {
             }
         }
         */
-        /**
-         * EMF version of TestCachedNativeFilterModifier
-         * Creates TinySales cube with Store2 dimension and access role with member grants
-         */
-        class TestCachedNativeFilterModifierEmf implements CatalogMappingSupplier {
+    /**
+     * EMF version of TestCachedNativeFilterModifier.
+     * Creates TinySales cube with Store2 dimension and access role with member grants.
+     */
+    public static class TestMatchesWithAccessControlModifierEmf implements CatalogMappingSupplier {
 
             private CatalogImpl catalog;
             private ExplicitHierarchy hierarchy;
             private PhysicalCube tinySalesCube;
 
-            public TestCachedNativeFilterModifierEmf(Catalog cat) {
+            public TestMatchesWithAccessControlModifierEmf(Catalog cat) {
                 // Copy catalog using EcoreUtil
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 catalog = (CatalogImpl) copier.get(cat);
@@ -584,36 +583,20 @@ class NativeFilterMatchingTest extends BatchTestCase {
             public Catalog get() {
                 return catalog;
             }
-        }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                dimension,
-            cube, null, null, null,
-            roleDefs);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestCachedNativeFilterModifierEmf::new);
-        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("test")));
-        verifySameNativeAndNot(connection,
-            "select Filter([Product].[Product Category].Members, [Product].CurrentMember.Name matches \"(?i).*Food.*\")"
-            + " on 0 from tinysales",
-            "Filter on dim with full access.");
-        verifySameNativeAndNot(connection,
-            "select Filter([Store2].[USA].Children, [Store2].CurrentMember.Name matches \"WA.*\")"
-            + " on 0 from tinysales",
-            "Filter on restricted dimension.  Should be empty set.");
-        verifySameNativeAndNot(connection,
-            "select Filter(CrossJoin({[Store2].[USA].Children}, [Product].[Product Category].Members), [Store2].CurrentMember.Name matches \".*A.*\")"
-            + " on 0 from tinysales",
-            "Filter on partially accessible set of tuples.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
+
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testNativeFilterWithCompoundSlicer(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String mdx =
             "with member measures.avgQtrs as 'avg( filter( time.time.quarter.members, measures.[unit sales] > 80))' "
             + "select measures.avgQtrs * gender.gender.members on 0 from sales where head( product.product.[product name].members, 3)";
@@ -686,8 +669,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 true);
         }
         // Make sure the numbers are right
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
             + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
@@ -701,12 +684,11 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Row #0: \n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
     void testNativeFilterWithCompoundSlicerWithAggs(Context<?> context) {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String mdx =
             "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] > 80))' "
             + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)";
@@ -749,9 +731,9 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 true);
         }
         // Make sure the numbers are right
-        assertQueryReturns(
+        assertThatQuery(
             context.getConnectionWithDefaultRole(),
-            mdx,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
             + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
@@ -765,11 +747,10 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Row #0: \n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
     void testNativeFilterWithCompoundSlicer_1(Context<?> context) {
     	context.getCatalogCache().clear();
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String mdx =
             "with member [measures].[avgQtrs] as 'count(filter([Customers].[Name].Members, [Measures].[Unit Sales] > 0))' "
             + "select [measures].[avgQtrs] on 0 from sales where ( {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Food].[Baked Goods].[Bread].[Muffins]} )";
@@ -909,8 +890,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 true);
         }
         // Make sure the numbers are right
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
             + "{[Product].[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
@@ -919,39 +900,35 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Row #0: 1,281\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNativeFilterWithCompoundSlicer_2(Context<?> context) {
-        verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
+        NativeVerify.assertSameNativeAndNot(context,
             "WITH MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter({[Store].[Store City].members}, ([Measures].[Unit Sales] > 1000 OR ( [Measures].[Unit Sales] > 40 AND [Store].[Store City].CurrentMember.Name = \"San Francisco\" ) ) ) )'\n"
             + "SELECT [Measures].[TotalVal] ON 0, [Product].[All Products].Children on 1 FROM [Sales] WHERE {[Time].[1997].[Q1],[Time].[1997].[Q2]}",
             "Failed.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNativeFilterWithCompoundSlicer_3(Context<?> context) {
-        verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
+        NativeVerify.assertSameNativeAndNot(context,
             "WITH MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter({[Store].[Store City].members}, [Measures].[Unit Sales] > 1000 ) )'\n"
             + "SELECT [Measures].[TotalVal] ON 0, [Product].[All Products].Children on 1 FROM [Sales] WHERE {[Time].[1997].[Q1],[Time].[1997].[Q2]}",
             "Failed.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNativeFilterWithCompoundSlicer_4(Context<?> context) {
-        verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
+        NativeVerify.assertSameNativeAndNot(context,
             "WITH MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter({[Store].[Store City].members}, ([Measures].[Unit Sales] > 1000 OR ( [Measures].[Unit Sales] > 500 AND [Store].[Store City].CurrentMember.Name = \"San Francisco\" ) ) ) )'\n"
             + "SELECT [Measures].[TotalVal] ON 0, [Product].[All Products].Children on 1 FROM [Sales] WHERE {[Time].[1997].[Q1],[Time].[1997].[Q2]}",
             "Failed.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNativeFilterWithCompoundSlicerDifferentProducts(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member measures.avgQtrs as 'count(filter(Customers.[Name].members, [Unit Sales] > 0))' "
-            + "select measures.avgQtrs on 0 from sales where ( {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Food].[Baked Goods].[Bread].[Muffins]} )",
+            + "select measures.avgQtrs on 0 from sales where ( {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Food].[Baked Goods].[Bread].[Muffins]} )").returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
             + "{[Product].[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"

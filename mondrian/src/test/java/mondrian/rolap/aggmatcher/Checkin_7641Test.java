@@ -11,21 +11,14 @@ package mondrian.rolap.aggmatcher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.function.Function;
-
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.test.loader.CsvDBTestCase;
+import mondrian.rolap.BatchTestCase;
 
 /**
  * Checkin 7641 attempted to correct a problem demonstrated by this
@@ -39,22 +32,12 @@ import mondrian.test.loader.CsvDBTestCase;
  *
  * @author Richard M. Emberson
  */
-public class Checkin_7641Test extends CsvDBTestCase {
-    private static final String CHECKIN_7641 = "Checkin_7641.csv";
+@RolapContextTest(value = Checkin_7641TestInstance.class, dbScope = DbScope.PER_CLASS)
+class Checkin_7641Test extends BatchTestCase {
 
-    @BeforeEach
-    public void beforeEach() {
-    }
-
-    @AfterEach
-    public void afterEach() {
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testImplicitMember(Context<?> context) throws Exception {
+    @Test
+    void testImplicitMember(Connection connection) throws Exception {
         // explicit use of [Product].[Class1]
-        prepareContext(context);
         String mdx =
             " select NON EMPTY Crossjoin("
             + " Hierarchize(Union({[Product].[Class1]}, "
@@ -66,22 +49,12 @@ public class Checkin_7641Test extends CsvDBTestCase {
             + "[Geography].[All Regions].Children)) ON ROWS"
             + " from [ImplicitMember]";
 
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
+        Result result1 = executeQuery(mdx, connection);
         String resultString1 = TestUtil.toString(result1);
-        Result result2 = executeQuery(mdx, context.getConnectionWithDefaultRole());
+        Result result2 = executeQuery(mdx, connection);
         String resultString2 = TestUtil.toString(result2);
 
         assertEquals(resultString1, resultString2);
-    }
-
-    @Override
-	protected String getFileName() {
-        return CHECKIN_7641;
-    }
-
-
-    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
-        return Checkin_7641Modifier::new;
     }
 
 }

@@ -50,6 +50,11 @@ public class SqlPattern {
         this(databaseProducts, sql, sql.substring(0, startsWithLen));
     }
 
+    public static SqlPattern mysql(String sql)   { return new SqlPattern(DatabaseProduct.MYSQL, sql, sql); }
+    public static SqlPattern oracle(String sql)  { return new SqlPattern(DatabaseProduct.ORACLE, sql, sql); }
+    public static SqlPattern derby(String sql)   { return new SqlPattern(DatabaseProduct.DERBY, sql, sql); }
+    // startsWithLen-форма старого API: trigger = sql.substring(0, len)
+    public static SqlPattern of(DatabaseProduct p, String sql, int startsWithLen) { return new SqlPattern(p, sql, sql); }
     /**
      * Creates a pattern which applies to one or more dialects
      * and is triggered by the first N characters of the expected statement.

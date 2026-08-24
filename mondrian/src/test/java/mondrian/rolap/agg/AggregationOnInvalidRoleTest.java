@@ -8,102 +8,30 @@
 */
 package mondrian.rolap.agg;
 
-import java.util.List;
-import java.util.function.Function;
-
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.daanse.rolap.testkit.junit.api.Roles;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.test.loader.CsvDBTestCase;
 
 /**
  * @author Andrey Khayrutdinov
  */
-class AggregationOnInvalidRoleTest extends CsvDBTestCase {
+@RolapContextTest(value = AggregationOnInvalidRoleTestInstance.class, dbScope = DbScope.PER_CLASS)
+class AggregationOnInvalidRoleTest {
 
-    @Override
-    protected String getFileName() {
-        return "mondrian_2225.csv";
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS, value = "true", type = Boolean.class)
+    void test_ExecutesCorrectly_WhenIgnoringInvalidMembers(@Roles("Test") Connection connection) {
+        executeAnalyzerQuery(connection);
     }
 
-    @BeforeEach
-    public void beforeEach() {
-    }
-
-    @AfterEach
-    public void afterEach() {
-    }
-
-
-    protected void prepareContext(Context<?> context) {
-        super.prepareContext(context);
-    }
-
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void test_ExecutesCorrectly_WhenIgnoringInvalidMembers(Context<?> context) {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setIgnoreInvalidMembers(true);
-        prepareContext(context);
-        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("Test")));
-        //TestContext<?> context = getTestContext().withFreshConnection();
-        try {
-            executeAnalyzerQuery(connection);
-        } finally {
-            connection.close();
-        }
-    }
-
-    /*
-    static final String CUBE = ""
-        + "<Cube name=\"mondrian2225\" visible=\"true\" cache=\"true\" enabled=\"true\">"
-        + "  <Table name=\"mondrian2225_fact\">"
-        + "    <AggName name=\"mondrian2225_agg\" ignorecase=\"true\">"
-        + "      <AggFactCount column=\"fact_count\"/>"
-        + "      <AggMeasure column=\"fact_Measure\" name=\"[Measures].[Measure]\"/>"
-        + "      <AggLevel column=\"dim_code\" name=\"[Product Code].[Code]\" collapsed=\"true\"/>"
-        + "    </AggName>"
-        + "  </Table>"
-        + "  <Dimension type=\"StandardDimension\" visible=\"true\" foreignKey=\"customer_id\" highCardinality=\"false\" name=\"Customer\">"
-        + "    <Hierarchy name=\"Customer\" visible=\"true\" hasAll=\"true\" primaryKey=\"customer_id\">"
-        + "      <Table name=\"mondrian2225_customer\"/>"
-        + "        <Level name=\"First Name\" visible=\"true\" column=\"customer_name\" type=\"String\" uniqueMembers=\"false\" levelType=\"Regular\" hideMemberIf=\"Never\"/>"
-        + "    </Hierarchy>"
-        + "  </Dimension>"
-        + "  <Dimension type=\"StandardDimension\" visible=\"true\" foreignKey=\"product_ID\" highCardinality=\"false\" name=\"Product Code\">"
-        + "    <Hierarchy name=\"Product Code\" visible=\"true\" hasAll=\"true\" primaryKey=\"product_id\">"
-        + "      <Table name=\"mondrian2225_dim\"/>"
-        + "      <Level name=\"Code\" visible=\"true\" column=\"product_code\" type=\"String\" uniqueMembers=\"false\" levelType=\"Regular\" hideMemberIf=\"Never\"/>"
-        + "    </Hierarchy>"
-        + "  </Dimension>"
-        + "  <Measure name=\"Measure\" column=\"fact\" aggregator=\"sum\" visible=\"true\"/>"
-        + "</Cube>";
-
-    static final String ROLE = ""
-        + "<Role name=\"Test\">"
-        + "  <SchemaGrant access=\"none\">"
-        + "    <CubeGrant cube=\"mondrian2225\" access=\"all\">"
-        + "      <HierarchyGrant hierarchy=\"[Customer.Customer]\" topLevel=\"[Customer.Customer].[First Name]\" access=\"custom\">"
-        + "        <MemberGrant member=\"[Customer.Customer].[NonExistingName]\" access=\"all\"/>"
-        + "      </HierarchyGrant>"
-        + "    </CubeGrant>"
-        + "  </SchemaGrant>"
-        + "</Role>";
-    */
+    /** Shared with {@link AggregationOnInvalidRoleWhenNotIgnoringTest}. */
     static void executeAnalyzerQuery(Connection connection) {
         // select measures on columns
         // and sorted lexicography products on rows
@@ -142,10 +70,6 @@ class AggregationOnInvalidRoleTest extends CsvDBTestCase {
             + "Row #6: 2\n";
 
         TestUtil.assertQueryReturns(connection, queryFromAnalyzer, expected);
-    }
-
-    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
-        return AggregationOnInvalidRoleTestModifierEmf::new;
     }
 
 }

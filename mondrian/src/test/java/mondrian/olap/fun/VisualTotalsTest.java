@@ -41,11 +41,10 @@ import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.impl.CellImpl;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsFunDef;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 /**
  * <code>VisualTotalsTest</code> tests the internal functions defined in
@@ -53,6 +52,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  *
  * @author efine
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class VisualTotalsTest {
 
     /**
@@ -61,8 +61,7 @@ class VisualTotalsTest {
      *
      * @throws java.sql.SQLException on error
      */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testDrillthroughVisualTotal(Context<?> foodMartContext) throws SQLException {
         Connection conn = foodMartContext.getConnectionWithDefaultRole();
         CellSet cellSet =
@@ -100,8 +99,7 @@ class VisualTotalsTest {
      *
      * @throws java.sql.SQLException on error
      */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testVisualTotalCaptionBug(Context<?> foodMartContext) throws SQLException {
         CellSet cellSet =
     		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
@@ -128,8 +126,7 @@ class VisualTotalsTest {
      *
      * @throws java.sql.SQLException on error
      */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testVisualTotalsAggregatedMemberBug(Context<?> foodMartContext) throws SQLException {
         CellSet cellSet =
     		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),

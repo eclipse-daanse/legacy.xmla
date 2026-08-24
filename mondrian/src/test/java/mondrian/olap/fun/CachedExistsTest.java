@@ -8,6 +8,8 @@
 */
 package mondrian.olap.fun;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+
 import java.net.URL;
 import java.util.Map;
 
@@ -38,7 +40,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opencube.junit5.MondrianRuntimeExtension;
-import org.opencube.junit5.TestUtil;
 /**
  * Tests the CachedExists function.
  *
@@ -49,7 +50,7 @@ import org.opencube.junit5.TestUtil;
 class CachedExistsTest{
 
 
-	@Test
+    @Test
     void testEducationLevelSubtotals(Connection connection) {
     String query =
         "WITH "
@@ -74,7 +75,7 @@ class CachedExistsTest{
             + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Food]}\n"
             + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Drink]}\n" + "Row #0: 55,788\n" + "Row #1: 12,580\n"
             + "Row #2: 49,365\n" + "Row #3: 6,423\n" + "Row #4: 11,255\n" + "Row #5: 1,325\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -102,7 +103,7 @@ class CachedExistsTest{
             + "{[Product].[Product].[Non-Consumable].[Periodicals]}\n" + "Row #0: 24,597\n" + "Row #1: 50,236\n"
             + "Row #2: 6,838\n" + "Row #3: 13,573\n" + "Row #4: 4,186\n" + "Row #5: 841\n" + "Row #6: 1,779\n"
             + "Row #7: 16,284\n" + "Row #8: 27,038\n" + "Row #9: 4,294\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -136,7 +137,7 @@ class CachedExistsTest{
             + "{[Product].[Product].[Non-Consumable].[Periodicals], [Gender].[Gender].[M]}\n" + "Row #0: 13,573\n" + "Row #1: 4,186\n"
             + "Row #2: 4,294\n" + "Row #3: 17,759\n" + "Row #4: 4,294\n" + "Row #5: 6,776\n" + "Row #6: 6,797\n"
             + "Row #7: 1,987\n" + "Row #8: 2,199\n" + "Row #9: 2,168\n" + "Row #10: 2,126\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -173,7 +174,7 @@ class CachedExistsTest{
             + "Row #1: 11,890\n" + "Row #2: 5,806\n" + "Row #2: 2,934\n" + "Row #2: 2,872\n" + "Row #3: 6,065\n"
             + "Row #3: 3,042\n" + "Row #3: 3,023\n" + "Row #4: 11,997\n" + "Row #4: 6,144\n" + "Row #4: 5,853\n"
             + "Row #5: 12,399\n" + "Row #5: 6,362\n" + "Row #5: 6,037\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -214,7 +215,7 @@ class CachedExistsTest{
             + "Row #3: 3,892\n"
             + "Row #4: 2,607\n"
             + "Row #5: 2,502\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -285,7 +286,7 @@ class CachedExistsTest{
             + "Row #17: 291\n"
             + "Row #18: 47\n"
             + "Row #19: 319\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -314,7 +315,7 @@ class CachedExistsTest{
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Time].[Time].[1997], [Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
             + "{[Product].[Product].[Drink], [Education Level].[Education Level].[Bachelors Degree], [Customers].[Customers].[USA].[WA].[Spokane].[Wildon Cameron]}\n"
             + "Row #0: 47\n";
-    TestUtil.assertQueryReturns( connection, query, expected );
+    assertThatQuery(connection, query).returnsGrid(expected);
   }
 
 	@Test
@@ -322,7 +323,7 @@ class CachedExistsTest{
 	        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian2704(Connection connection) {
     // Verifies second arg of CachedExists uses a tuple type
-    	TestUtil.assertQueryReturns(connection,
+    	assertThatQuery(connection,
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly_])'\n" +
         "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
@@ -338,7 +339,7 @@ class CachedExistsTest{
         "[*BASE_MEMBERS__Measures_] ON COLUMNS\n" +
         ", NON EMPTY\n" +
         "UNION(CROSSJOIN({[Time].[Time].[*TOTAL_MEMBER_SEL~SUM]},{([Time].[Weekly].[*DEFAULT_MEMBER])}),UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Time].[Time].CURRENTMEMBER)}),{[Time].[Weekly].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS])) ON ROWS\n" +
-        "FROM [Alternate Sales]",
+        "FROM [Alternate Sales]").returnsGrid(
         "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -352,7 +353,7 @@ class CachedExistsTest{
             + "Row #2: 266,773\n");
 
     // Verified second arg of CachedExists uses a member type
-    TestUtil.assertQueryReturns(connection,
+    assertThatQuery(connection,
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time.Weekly_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly2_]))'\n" +
         "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Weekly2].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
@@ -367,7 +368,7 @@ class CachedExistsTest{
         "[*BASE_MEMBERS__Measures_] ON COLUMNS\n" +
         ", NON EMPTY\n" +
         "UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Time].[Weekly].CURRENTMEMBER,[Time].[Time].CURRENTMEMBER)}),{[Time].[Weekly2].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS]) ON ROWS\n" +
-        "FROM [Alternate Sales]",
+        "FROM [Alternate Sales]").returnsGrid(
         "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

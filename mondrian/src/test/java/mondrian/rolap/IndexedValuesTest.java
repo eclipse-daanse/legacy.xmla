@@ -9,15 +9,14 @@
 
 package mondrian.rolap;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 /**
  * Test case for '&amp;[..]' capability in MDX identifiers.
@@ -29,10 +28,10 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  *
  * @author pierluiggi@users.sourceforge.net
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class IndexedValuesTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testQueryWithIndex(Context<?> context) {
         final String desiredResult =
@@ -47,11 +46,11 @@ class IndexedValuesTest {
             + "Row #0: 7,392\n";
         Connection connection = context.getConnectionWithDefaultRole();
         // Query using name
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Org Salary], [Measures].[Count]} "
             + "ON COLUMNS, "
             + "{[Employees].[Employees].[Sheri Nowmer]} "
-            + "ON ROWS FROM [HR]",
+            + "ON ROWS FROM [HR]").returnsGrid(
             desiredResult);
 
         // Member-by-key resolution ("&[key]") is not supported: the SQL builder

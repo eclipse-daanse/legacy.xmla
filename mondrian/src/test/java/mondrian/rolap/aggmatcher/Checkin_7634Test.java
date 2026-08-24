@@ -11,22 +11,16 @@ package mondrian.rolap.aggmatcher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.function.Function;
-
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.test.loader.CsvDBTestCase;
+import mondrian.rolap.BatchTestCase;
 
 /**
  * Checkin 7634 attempted to correct a problem demonstrated by this
@@ -47,22 +41,12 @@ import mondrian.test.loader.CsvDBTestCase;
  *
  * @author Richard M. Emberson
   */
-public class Checkin_7634Test extends CsvDBTestCase {
+@RolapContextTest(value = Checkin_7634TestInstance.class, dbScope = DbScope.PER_CLASS)
+class Checkin_7634Test extends BatchTestCase {
 
-    private static final String CHECKIN_7634 = "Checkin_7634.csv";
-
-    @BeforeEach
-    public void beforeEach() {
-    }
-
-    @AfterEach
-    public void afterEach() {
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testCrossJoin(Context<?> context) throws Exception {
-        prepareContext(context);
+    @Test
+    @RolapConfig(key = ConfigConstants.CROSS_JOIN_OPTIMIZER_SIZE, value = "2147483647", type = Integer.class)
+    void testCrossJoin(Connection connection) throws Exception {
         // explicit use of [Product].[Class1]
         String mdx =
         "select {[Measures].[Requested Value]} ON COLUMNS,"+
@@ -72,30 +56,18 @@ public class Checkin_7634Test extends CsvDBTestCase {
         ") ON ROWS"+
         " from [Checkin_7634]";
 
-
-        // Execute query but do not used the CrossJoin nonEmptyList optimization
-        ((TestContextImpl)context).setCrossJoinOptimizerSize(Integer.MAX_VALUE);
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
+        // The original test toggled CrossJoinOptimizerSize between these two
+        // executions to compare the old and new nonEmptyList optimizations;
+        // both branches set the same value (a pre-existing quirk of the
+        // test), so this is preserved as a determinism check: the same query
+        // against the same config must return the same result twice.
+        Result result1 = executeQuery(mdx, connection);
         String resultString1 = TestUtil.toString(result1);
 
-        // Execute query using the new version of the CrossJoin
-        // nonEmptyList optimization
-        ((TestContextImpl)context).setCrossJoinOptimizerSize(Integer.MAX_VALUE);
-        Result result2 = executeQuery(mdx, context.getConnectionWithDefaultRole());
+        Result result2 = executeQuery(mdx, connection);
         String resultString2 = TestUtil.toString(result2);
 
-        // This succeeds.
         assertEquals(resultString1, resultString2);
-    }
-
-    @Override
-	protected String getFileName() {
-        return CHECKIN_7634;
-    }
-
-
-    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
-        return Checkin_7634Modifier::new;
     }
 
 }

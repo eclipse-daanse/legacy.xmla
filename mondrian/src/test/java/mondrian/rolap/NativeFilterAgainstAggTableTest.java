@@ -8,25 +8,27 @@
 */
 package mondrian.rolap;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.NativeVerify;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.test.SqlPattern;
 
 /**
  * @author Andrey Khayrutdinov
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class NativeFilterAgainstAggTableTest extends BatchTestCase {
 
 
@@ -38,11 +40,10 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
     public void afterEach() {
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
     void testFilteringOnAggregated_ByCount(Context<?> context) {
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setUseAggregates(true);
         // http://jira.pentaho.com/browse/MONDRIAN-2155
         // Aggregation table can have fact's count value exceeding 1,
         // so that to compute the overall amount of facts it is necessary
@@ -90,14 +91,13 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
             + "Row #0: 1,959\n"
             + "Row #0: 4,090\n";
 
-        doTestFilteringOnAggregatedBy(context.getConnectionWithDefaultRole(), "COUNT", query, expectedResult);
+        doTestFilteringOnAggregatedBy(context, "COUNT", query, expectedResult);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testFilteringOnAggregated_BySum(Context<?> context) {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
         String query = ""
             + "SELECT "
             + "   {FILTER("
@@ -119,38 +119,37 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
             + "Row #0: 101,261.32\n"
             + "Row #0: 26,781.23\n";
 
-        doTestFilteringOnAggregatedBy(context.getConnectionWithDefaultRole(), "SUM", query, expectedResult);
+        doTestFilteringOnAggregatedBy(context, "SUM", query, expectedResult);
     }
 
     private void doTestFilteringOnAggregatedBy(
-            Connection connection,
+            Context<?> context,
             String aggregator,
             String query,
             String expectedResult)
     {
-        assertQueryReturns(connection, query, expectedResult);
-        verifySameNativeAndNot(connection, query, "Aggregated with " + aggregator);
+        assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid(expectedResult);
+        verifySameNativeAndNot(context, query, "Aggregated with " + aggregator);
     }
 
-    private void verifySameNativeAndNot(Connection connection, String query, String testCase) {
+    private void verifySameNativeAndNot(Context<?> context, String query, String testCase) {
         String message = String.format(
             "[%s]: Native and non-native executions of FILTER() differ. "
             + "The query:\n\t\t%s",
             query, testCase);
-        TestUtil.verifySameNativeAndNot(connection, query, message);
+        NativeVerify.assertSameNativeAndNot(context, query, message);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
     void testAggTableWithNotAllMeasures(Context<?> context) {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
         // http://jira.pentaho.com/browse/MONDRIAN-1703
         // If a filter condition contains one or more measures that are
         // not present in the aggregate table, the SQL should omit the
         // having clause altogether.
-        ((TestContextImpl)context).setDisableCaching(true);
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
 
         String sqlMysqlNoHaving =
             "select\n"
