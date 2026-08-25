@@ -7,9 +7,13 @@ This repository is the original clone repository of the (Mondrian fork)[https://
 The main components have been moved to the following repositories:
 
 https://github.com/eclipse-daanse/org.eclipse.daanse.sql/
+
 https://github.com/eclipse-daanse/org.eclipse.daanse.mdx/
+
 https://github.com/eclipse-daanse/org.eclipse.daanse.olap/
+
 https://github.com/eclipse-daanse/org.eclipse.daanse.rolap/
+
 https://github.com/eclipse-daanse/org.eclipse.daanse.rolap.mapping/
 
 Only some of remaining integration tests are still located in this repository.
