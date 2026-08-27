@@ -34,16 +34,16 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.execution.QueryTiming;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.result.CellSet;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 /**
  * Tests related to explain plan and QueryTiming
@@ -51,6 +51,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @author Benny
  *
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class ExplainPlanTest {
 
 
@@ -64,8 +65,7 @@ class ExplainPlanTest {
   }
 
   @Disabled //TODO need investigate
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
   void testExplain(Context<?> context) throws SQLException {
 //    Level originalLevel = RolapUtil.PROFILE_LOGGER.getLevel();
     //Util.setLevel( RolapUtil.PROFILE_LOGGER, Level.OFF ); // Must turn off in case test environment has enabled profiling
@@ -102,9 +102,8 @@ mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarc
   }
 
   @Disabled //TODO need investigate
-  @ParameterizedTest
+  @Test
   @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
 	void testExplainComplex(Context<?> context) throws SQLException {
 //    Level originalLevel = RolapUtil.PROFILE_LOGGER.getLevel();
 		// Util.setLevel( RolapUtil.PROFILE_LOGGER, Level.OFF );; // Must turn off in
@@ -222,8 +221,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
 		// Util.setLevel( RolapUtil.PROFILE_LOGGER, originalLevel );
 	}
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
   void testExplainInvalid(Context<?> context) throws SQLException {
     Connection connection = context.getConnectionWithDefaultRole();
     final Statement statement = connection.createStatement();
@@ -243,8 +241,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    *
    * @throws SQLException
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
   void testQueryTimingAnalyzer(Context<?> context) throws SQLException {
 
     final String mdx =
@@ -284,8 +281,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
         "SqlStatement-SqlTupleReader.readTuples [[Gender].[Gender].[Gender], [Education Level].[Education Level].[Education Level]] invoked 1 times" ) );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
   void testMutiKeySort(Context<?> context) throws SQLException {
     final String mdx =
         "WITH\r\n"
@@ -314,8 +310,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    *
    * @throws SQLException
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
   void testNestedSumFunDef(Context<?> context) throws SQLException {
     final String mdx =
         "WITH\r\n"
@@ -344,8 +339,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    *
    * @throws SQLException
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
   void testAggAboveSlicerSolveOrder(Context<?> context) throws SQLException {
 
     final String mdx =
@@ -379,13 +373,10 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    *
    * @throws SQLException
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
+  @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+  @RolapConfig(key = ConfigConstants.COMPOUND_SLICER_MEMBER_SOLVE_ORDER, value = "0", type = Integer.class)
   void testAggBelowSlicerSolveOrder(Context<?> context) throws SQLException {
-    ((TestContextImpl)context).setDisableCaching(true);
-      ((TestContextImpl)context).setCompoundSlicerMemberSolveOrder(0);
-
-
     final String mdx =
         "WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Customers_],[*BASE_MEMBERS__Product_]))'\r\n"

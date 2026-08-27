@@ -10,180 +10,49 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.opencube.junit5.TestUtil.assertQuerySql;
 import static org.opencube.junit5.TestUtil.getDialect;
+import static org.opencube.junit5.TestUtil.mysqlPattern;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationColumnName;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationExclude;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationFactory;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationForeignKey;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevel;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationLevelProperty;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationMeasure;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.ExplicitAggregationTable;
-import org.eclipse.daanse.rolap.mapping.model.database.aggregation.AggregationTable;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextArgumentsProvider;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-class ExplicitRecognizerTest extends AggTableTestCase {
 
-    //## TableName: exp_agg_test
-    //## ColumnNames:  testyear,testqtr,testmonthord,testmonthname,testmonthcap,testmonprop1,testmonprop2,gender,test_unit_sales,test_store_cost,fact_count
-    //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,DECIMAL(10,4),INTEGER
-    private static Column testyearExpAggTest = createColumn("testyear", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testqtrExpAggTest = createColumn("testqtr", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonthordExpAggTest = createColumn("testmonthord", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testmonthnameExpAggTest = createColumn("testmonthname", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonthcapExpAggTest = createColumn("testmonthcap", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonprop1ExpAggTest = createColumn("testmonprop1", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testmonprop2ExpAggTest = createColumn("testmonprop2", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column genderExpAggTest = createColumn("gender", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column testUnitSalesExpAggTest = createColumn("test_unit_sales", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testStoreCostExpAggTest = createColumn("test_store_cost", SQLSimpleTypes.decimalType(18, 4), null, 10, 4);
-    private static Column factCountExpAggTest = createColumn("fact_count", SQLSimpleTypes.Sql99.integerType(), null, null, null);
+/**
+ * Each test method builds its own FoodMart-based "ExtraCol" cube with a
+ * specific explicit aggregate-table configuration -- see the
+ * {@link ExplicitRecognizerTestInstances} variants (one {@code CatalogTestInstance}
+ * per scenario, mirroring what the pre-migration test built inline per
+ * method via {@code setupMultiColDimCube}).
+ *
+ * <p>{@code SAME_THREAD}: every scenario constructs its own {@code CatalogSupplier}
+ * (FoodMart mapping) instance -- like the pre-migration {@code CsvDBTestCase}
+ * base class, this opts out of the module's default concurrent execution so
+ * those constructions don't race across this class's own methods.
+ */
+@Execution(ExecutionMode.SAME_THREAD)
+class ExplicitRecognizerTest {
 
-    private static Table expAggTest = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
-    static {
-    expAggTest.setName("exp_agg_test");
-    expAggTest.getFeature().add(testyearExpAggTest);
-    expAggTest.getFeature().add(testqtrExpAggTest);
-    expAggTest.getFeature().add(testmonthordExpAggTest);
-    expAggTest.getFeature().add(testmonthnameExpAggTest);
-    expAggTest.getFeature().add(testmonthcapExpAggTest);
-    expAggTest.getFeature().add(testmonprop1ExpAggTest);
-    expAggTest.getFeature().add(testmonprop2ExpAggTest);
-    expAggTest.getFeature().add(genderExpAggTest);
-    expAggTest.getFeature().add(testUnitSalesExpAggTest);
-    expAggTest.getFeature().add(testStoreCostExpAggTest);
-    expAggTest.getFeature().add(factCountExpAggTest);
-    }
-
-    //## TableName:  exp_agg_test_distinct_count
-    //## ColumnNames:  fact_count,testyear,gender,store_name,store_country,store_st,store_cty,store_add,unit_s,cust_cnt
-    //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,INTEGER
-    private static Column factCountExpAggTestDistinctCount = createColumn("fact_count", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column testyearExpAggTestDistinctCount = createColumn("testyear", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column genderExpAggTestDistinctCount = createColumn("gender", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeNameExpAggTestDistinctCount = createColumn("store_name", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeCountryExpAggTestDistinctCount = createColumn("store_country", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeStExpAggTestDistinctCount = createColumn("store_st", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeCtyExpAggTestDistinctCount = createColumn("store_cty", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column storeAddExpAggTestDistinctCount = createColumn("store_add", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column unitSExpAggTestDistinctCount = createColumn("unit_s", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column custCntExpAggTestDistinctCount = createColumn("cust_cnt", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-
-    private static Table expAggTestDistinctCount = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
-    static {
-        expAggTestDistinctCount.setName("exp_agg_test_distinct_count");
-        expAggTestDistinctCount.getFeature().add(factCountExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(testyearExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(genderExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(storeNameExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(storeCountryExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(storeStExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(storeCtyExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(storeAddExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(unitSExpAggTestDistinctCount);
-        expAggTestDistinctCount.getFeature().add(custCntExpAggTestDistinctCount);
-    }
-    @Override
-	@BeforeEach
-    public void beforeEach() {
-        super.beforeEach();
-    }
-
-    @Override
-	@AfterEach
-    public void afterEach() {
-    }
-
-    @Override
-    protected String getFileName() {
-        return "explicit_aggs.csv";
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggExtraColsRequiringJoin(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable((Table) copier.get(CatalogSupplier.TABLE_AGG_G_MS_PCAT_SALES_FACT));
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn((Column) copier.get(CatalogSupplier.COLUMN_FACT_COUNT_AGG_G_MS_PCAT_SALES_FACT_1997));
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_UNIT_SALES_AGG_G_MS_PCAT_SALES_FACT_1997));
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender].[Gender]");
-        genderLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_GENDER_AGG_G_MS_PCAT_SALES_FACT_1997));
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_THE_YEAR_AGG_G_MS_PCAT_SALES_FACT_1997));
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        quarterLevel.setName("[TimeExtra].[TimeExtra].[Quarter]");
-        quarterLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_QUARTER_AGG_G_MS_PCAT_SALES_FACT_1997));
-        aggName.getAggregationLevels().add(quarterLevel);
-
-        AggregationLevel monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        monthLevel.setName("[TimeExtra].[TimeExtra].[Month]");
-        monthLevel.setColumn((Column) copier.get(CatalogSupplier.COLUMN_MONTH_YEAR_AGG_G_MS_PCAT_SALES_FACT_1997));
-        aggName.getAggregationLevels().add(monthLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-                List.of(aggName),
-                (Column) copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-                (Column) copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-                (Column) copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY),
-                (Column) copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY),
-                (Column) copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount));
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.ExplicitAggExtraColsRequiringJoin.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testExplicitAggExtraColsRequiringJoin(Connection connection) {
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
-        TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
+        TestUtil.flushSchemaCache(connection);
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -207,7 +76,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `time_by_day`.`the_month`,\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`gender`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -217,7 +86,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`month_of_year`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`month_of_year` ASC,\n"
                     + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`gender`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`gender` ASC")));
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -239,63 +108,13 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`gender`"));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitForeignKey(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(CatalogSupplier.TABLE_AGG_C_14_SALES_FACT);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn(CatalogSupplier.COLUMN_FACT_COUNT_AGG_C_14_SALES_FACT_1997);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationForeignKey foreignKey = AggregationFactory.eINSTANCE.createAggregationForeignKey();
-        foreignKey.setFactColumn(CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-        foreignKey.setAggregationColumn(CatalogSupplier.COLUMN_STORE_ID_AGG_C_14_SALES_FACT_1997);
-        aggName.getAggregationForeignKeys().add(foreignKey);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn(CatalogSupplier.COLUMN_UNIT_SALES_AGG_C_14_SALES_FACT_1997);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationMeasure storeCostMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        storeCostMeasure.setName("[Measures].[Store Cost]");
-        storeCostMeasure.setColumn(CatalogSupplier.COLUMN_STORE_COST_AGG_C_14_SALES_FACT_1997);
-        aggName.getAggregationMeasures().add(storeCostMeasure);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn(CatalogSupplier.COLUMN_THE_YEAR_AGG_C_14_SALES_FACT_1997);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        quarterLevel.setName("[TimeExtra].[TimeExtra].[Quarter]");
-        quarterLevel.setColumn(CatalogSupplier.COLUMN_QUARTER_AGG_C_14_SALES_FACT_1997);
-        aggName.getAggregationLevels().add(quarterLevel);
-
-        AggregationLevel monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        monthLevel.setName("[TimeExtra].[TimeExtra].[Month]");
-        monthLevel.setColumn(CatalogSupplier.COLUMN_MONTH_YEAR_AGG_C_14_SALES_FACT_1997);
-        aggName.getAggregationLevels().add(monthLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY,
-            CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY,
-            CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY, CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY, CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY, null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount));
-
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.ExplicitForeignKey.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testExplicitForeignKey(Connection connection) {
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Store].[Store].[Store Name].members}) on rows "
@@ -303,7 +122,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         // Run the query twice, verifying both the SqlTupleReader and
         // Segment load queries.
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -337,7 +156,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `store`.`store_name`,\n"
                 + "    `store`.`store_street_address`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -354,7 +173,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     + "    ISNULL(`store`.`store_name`) ASC, `store`.`store_name` ASC")));
 
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -378,65 +197,20 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `store`.`store_name`"));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggOrdinalOnAggTable(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(expAggTest);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn((Column) factCountExpAggTest);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn((Column) testUnitSalesExpAggTest);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender].[Gender]");
-        genderLevel.setColumn((Column) genderExpAggTest);
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn((Column) testyearExpAggTest);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        quarterLevel.setName("[TimeExtra].[TimeExtra].[Quarter]");
-        quarterLevel.setColumn((Column) testqtrExpAggTest);
-        aggName.getAggregationLevels().add(quarterLevel);
-
-        AggregationLevel monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        monthLevel.setName("[TimeExtra].[TimeExtra].[Month]");
-        monthLevel.setColumn((Column) testmonthnameExpAggTest);
-        monthLevel.getOrdinalColumns().addAll(List.of((Column) testmonthordExpAggTest));
-        aggName.getAggregationLevels().add(monthLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY), null, (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount));
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.ExplicitAggOrdinalOnAggTable.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testExplicitAggOrdinalOnAggTable(Connection connection) {
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -456,7 +230,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test`.`testmonthord`,\n"
                 + "    `exp_agg_test`.`gender`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c3`) ASC, `c3` ASC,\n"
@@ -469,65 +243,20 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC")));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggCaptionOnAggTable(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(expAggTest);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn((Column) factCountExpAggTest);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn((Column) testUnitSalesExpAggTest);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender].[Gender]");
-        genderLevel.setColumn((Column) genderExpAggTest);
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn((Column) testyearExpAggTest);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        quarterLevel.setName("[TimeExtra].[TimeExtra].[Quarter]");
-        quarterLevel.setColumn((Column) testqtrExpAggTest);
-        aggName.getAggregationLevels().add(quarterLevel);
-
-        AggregationLevel monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        monthLevel.setName("[TimeExtra].[TimeExtra].[Month]");
-        monthLevel.setColumn((Column) testmonthnameExpAggTest);
-        monthLevel.setCaptionColumn((Column) testmonthcapExpAggTest);
-        aggName.getAggregationLevels().add(monthLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY), (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null, null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount));
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.ExplicitAggCaptionOnAggTable.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testExplicitAggCaptionOnAggTable(Connection connection) {
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -547,7 +276,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test`.`testmonthcap`,\n"
                 + "    `exp_agg_test`.`gender`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -559,75 +288,20 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggNameColumnOnAggTable(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(expAggTest);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn((Column) factCountExpAggTest);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn((Column) testUnitSalesExpAggTest);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender]");
-        genderLevel.setColumn((Column) genderExpAggTest);
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[Year]");
-        yearLevel.setColumn((Column) testyearExpAggTest);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel quarterLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        quarterLevel.setName("[TimeExtra].[Quarter]");
-        quarterLevel.setColumn((Column) testqtrExpAggTest);
-        aggName.getAggregationLevels().add(quarterLevel);
-
-        AggregationLevel monthLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        monthLevel.setName("[TimeExtra].[Month]");
-        monthLevel.setColumn((Column) testmonthnameExpAggTest);
-        monthLevel.setNameColumn((Column) testmonthcapExpAggTest);
-
-        AggregationLevelProperty property = AggregationFactory.eINSTANCE.createAggregationLevelProperty();
-        property.setName("aProperty");
-        property.setColumn((Column) testmonprop1ExpAggTest);
-        monthLevel.getAggregationLevelProperties().add(property);
-
-        aggName.getAggregationLevels().add(monthLevel);
-
-        MemberProperty memberProperty = LevelFactory.eINSTANCE.createMemberProperty();
-        memberProperty.setName("aProperty");
-        memberProperty.setColumn((Column) CatalogSupplier.COLUMN_FISCAL_PERIOD_TIME_BY_DAY);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY), null, null, (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY),
-            List.of(memberProperty), List.of(expAggTest, expAggTestDistinctCount));
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.ExplicitAggNameColumnOnAggTable.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testExplicitAggNameColumnOnAggTable(Connection connection) {
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[Month].members},{[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -649,7 +323,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test`.`testmonprop1`,\n"
                 + "    `exp_agg_test`.`gender`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -660,87 +334,20 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC")));
     }
 
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggPropertiesOnAggTable(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(expAggTestDistinctCount);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn(factCountExpAggTestDistinctCount);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn(unitSExpAggTestDistinctCount);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationMeasure customerCountMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        customerCountMeasure.setName("[Measures].[Customer Count]");
-        customerCountMeasure.setColumn(custCntExpAggTestDistinctCount);
-        aggName.getAggregationMeasures().add(customerCountMeasure);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn(testyearExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender].[Gender]");
-        genderLevel.setColumn(genderExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel storeCountryLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeCountryLevel.setName("[Store].[Store].[Store Country]");
-        storeCountryLevel.setColumn(storeCountryExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeCountryLevel);
-
-        AggregationLevel storeStateLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeStateLevel.setName("[Store].[Store].[Store State]");
-        storeStateLevel.setColumn(storeStExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeStateLevel);
-
-        AggregationLevel storeCityLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeCityLevel.setName("[Store].[Store].[Store City]");
-        storeCityLevel.setColumn(storeCtyExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeCityLevel);
-
-        AggregationLevel storeNameLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeNameLevel.setName("[Store].[Store].[Store Name]");
-        storeNameLevel.setColumn(storeNameExpAggTestDistinctCount);
-
-        AggregationLevelProperty streetAddressProperty = AggregationFactory.eINSTANCE.createAggregationLevelProperty();
-        streetAddressProperty.setName("Street address");
-        streetAddressProperty.setColumn(storeAddExpAggTestDistinctCount);
-        storeNameLevel.getAggregationLevelProperties().add(streetAddressProperty);
-
-        aggName.getAggregationLevels().add(storeNameLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), (Column)copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY),
-            CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY, null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount));
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.ExplicitAggPropertiesOnAggTable.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testExplicitAggPropertiesOnAggTable(Connection connection) {
         String query =
             "with member measures.propVal as 'Store.Store.CurrentMember.Properties(\"Street Address\")'"
             + "select { measures.[propVal], measures.[Customer Count], [Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[Gender].[Gender].Gender.members},{[Store].[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
             + "from [ExtraCol]";
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -762,7 +369,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test_distinct_count`.`store_name`,\n"
                 + "    `exp_agg_test_distinct_count`.`store_add`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -774,7 +381,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_cty`) ASC, `exp_agg_test_distinct_count`.`store_cty` ASC,\n"
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC")));
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             "Store Address Property should be '5922 La Salle Ct'",
             query,
             "Axis #0:\n"
@@ -794,7 +401,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             + "Row #1: 11,523\n");
         // Should use agg table for distinct count measure
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -811,79 +418,13 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test_distinct_count`.`store_name` = 'Store 16'"));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCountDistinctAllowableRollup(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(expAggTestDistinctCount);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn(factCountExpAggTestDistinctCount);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn(unitSExpAggTestDistinctCount);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationMeasure customerCountMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        customerCountMeasure.setName("[Measures].[Customer Count]");
-        customerCountMeasure.setColumn(custCntExpAggTestDistinctCount);
-        aggName.getAggregationMeasures().add(customerCountMeasure);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn(testyearExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender].[Gender]");
-        genderLevel.setColumn(genderExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel storeCountryLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeCountryLevel.setName("[Store].[Store].[Store Country]");
-        storeCountryLevel.setColumn(storeCountryExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeCountryLevel);
-
-        AggregationLevel storeStateLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeStateLevel.setName("[Store].[Store].[Store State]");
-        storeStateLevel.setColumn(storeStExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeStateLevel);
-
-        AggregationLevel storeCityLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeCityLevel.setName("[Store].[Store].[Store City]");
-        storeCityLevel.setColumn(storeCtyExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeCityLevel);
-
-        AggregationLevel storeNameLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeNameLevel.setName("[Store].[Store].[Store Name]");
-        storeNameLevel.setColumn(storeNameExpAggTestDistinctCount);
-
-        AggregationLevelProperty streetAddressProperty = AggregationFactory.eINSTANCE.createAggregationLevelProperty();
-        streetAddressProperty.setName("Street address");
-        streetAddressProperty.setColumn(storeAddExpAggTestDistinctCount);
-        storeNameLevel.getAggregationLevelProperties().add(streetAddressProperty);
-
-        aggName.getAggregationLevels().add(storeNameLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY), (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount), "Customer Count");
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.CountDistinctAllowableRollup.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testCountDistinctAllowableRollup(Connection connection) {
         // Query brings in Year and Store Name, omitting Gender.
         // It's okay to roll up the agg table in this case
         // since Customer Count is dependent on Gender.
@@ -893,7 +434,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             + "from [ExtraCol]";
 
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -915,7 +456,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test_distinct_count`.`store_name`,\n"
                 + "    `exp_agg_test_distinct_count`.`store_add`\n"
                 + "order by\n"
-                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                + (getDialect(connection).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -928,7 +469,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC")));
 
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -947,91 +488,23 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "    `exp_agg_test_distinct_count`.`store_name`"));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCountDisallowedRollup(Context<?> context) throws SQLException {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitAggregationTable aggName = AggregationFactory.eINSTANCE.createExplicitAggregationTable();
-        aggName.setTable(expAggTestDistinctCount);
-
-        AggregationColumnName factCount = AggregationFactory.eINSTANCE.createAggregationColumnName();
-        factCount.setColumn(factCountExpAggTestDistinctCount);
-        aggName.setAggregationFactCount(factCount);
-
-        AggregationMeasure unitSalesMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        unitSalesMeasure.setName("[Measures].[Unit Sales]");
-        unitSalesMeasure.setColumn(unitSExpAggTestDistinctCount);
-        aggName.getAggregationMeasures().add(unitSalesMeasure);
-
-        AggregationMeasure customerCountMeasure = AggregationFactory.eINSTANCE.createAggregationMeasure();
-        customerCountMeasure.setName("[Measures].[Customer Count]");
-        customerCountMeasure.setColumn(custCntExpAggTestDistinctCount);
-        aggName.getAggregationMeasures().add(customerCountMeasure);
-
-        AggregationLevel yearLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        yearLevel.setName("[TimeExtra].[TimeExtra].[Year]");
-        yearLevel.setColumn(testyearExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(yearLevel);
-
-        AggregationLevel genderLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        genderLevel.setName("[Gender].[Gender].[Gender]");
-        genderLevel.setColumn(genderExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(genderLevel);
-
-        AggregationLevel storeCountryLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeCountryLevel.setName("[Store].[Store].[Store Country]");
-        storeCountryLevel.setColumn(storeCountryExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeCountryLevel);
-
-        AggregationLevel storeStateLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeStateLevel.setName("[Store].[Store].[Store State]");
-        storeStateLevel.setColumn(storeStExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeStateLevel);
-
-        AggregationLevel storeCityLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeCityLevel.setName("[Store].[Store].[Store City]");
-        storeCityLevel.setColumn(storeCtyExpAggTestDistinctCount);
-        aggName.getAggregationLevels().add(storeCityLevel);
-
-        AggregationLevel storeNameLevel = AggregationFactory.eINSTANCE.createAggregationLevel();
-        storeNameLevel.setName("[Store].[Store].[Store Name]");
-        storeNameLevel.setColumn(storeNameExpAggTestDistinctCount);
-
-        AggregationLevelProperty streetAddressProperty = AggregationFactory.eINSTANCE.createAggregationLevelProperty();
-        streetAddressProperty.setName("Street address");
-        streetAddressProperty.setColumn(storeAddExpAggTestDistinctCount);
-        storeNameLevel.getAggregationLevelProperties().add(streetAddressProperty);
-
-        aggName.getAggregationLevels().add(storeNameLevel);
-
-        setupMultiColDimCube(catalog, copier, context,
-            List.of(aggName),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_MONTH_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null,
-            List.of(), List.of(expAggTest, expAggTestDistinctCount), "Customer Count");
-
+    @Test
+    @RolapContextTest(ExplicitRecognizerTestInstances.CountDisallowedRollup.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testCountDisallowedRollup(Connection connection) {
         String query =
             "select { measures.[Customer Count]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].Year.members},{[Gender].[Gender].[F]}) on rows "
             + "from [ExtraCol]";
 
-
         // Seg load query should not use agg table, since the independent
         // attributes for store are on the aggStar bitkey and not part of the
         // request and rollup is not safe
         assertQuerySql(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -1055,103 +528,6 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 + "group by\n"
                 + "    `time_by_day`.`the_year`,\n"
                 + "    `customer`.`gender`"));
-    }
-
-    public static void setupMultiColDimCube(Catalog catalog, EcoreUtil.Copier copier,
-        Context<?> context, List<AggregationTable> aggTables, Column yearCols, Column qtrCols, Column monthCols,
-        Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol, List<MemberProperty> monthProp, List<Table> tables)
-    {
-        setupMultiColDimCube(catalog, copier, context,
-            aggTables, yearCols, qtrCols, monthCols, monthCaptionCol, monthOrdinalCol, monthNameCol, monthProp, tables, "Unit Sales");
-    }
-
-    public static void setupMultiColDimCube(Catalog catalog, EcoreUtil.Copier copier,
-        Context<?> context, List<AggregationTable> aggTables, Column yearCol, Column qtrCol, Column monthCol,
-        Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol,
-        List<MemberProperty> monthProp, List<Table> tables, String defaultMeasure)
-    {
-        class ExplicitRecognizerTestModifierInner extends ExplicitRecognizerTestModifierEmf {
-
-            public ExplicitRecognizerTestModifierInner(Catalog catalog, EcoreUtil.Copier copier) {
-                super(catalog, copier);
-            }
-
-            @Override
-            protected List<MemberProperty> getMonthProp() {
-                return monthProp;
-            }
-
-            @Override
-            protected Column getMonthOrdinalCol() {
-                return monthOrdinalCol;
-            }
-
-            @Override
-            protected Column getMonthNameCol() {
-                return monthNameCol;
-            }
-
-            @Override
-            protected Column getMonthCaptionCol() {
-                return monthCaptionCol;
-            }
-
-
-            @Override
-            protected List<AggregationTable> getAggTables() {
-                return aggTables;
-            }
-
-            @Override
-            protected List<AggregationExclude> getAggExcludes() {
-                return List.of();
-            }
-
-            @Override
-            protected String getDefaultMeasure() {
-                return defaultMeasure;
-            }
-
-            @Override
-            protected Column getQuarterCol() {
-                return qtrCol;
-            }
-
-            @Override
-            protected Column getMonthCol() {
-                return monthCol;
-            }
-
-            @Override
-            protected Column getYearCol() {
-                return yearCol;
-            }
-
-            @Override
-            protected List<Table> getDatabaseSchemaTables() {
-                return tables;
-            }
-        }
-        context.getCatalogCache().clear();
-        ((TestContext)context).setCatalogMappingSupplier(new ExplicitRecognizerTestModifierInner(catalog, copier));
-    }
-
-    private static Column createColumn(String name, org.eclipse.daanse.cwm.model.cwm.resource.relational.SQLSimpleType dataType, Integer charOctetLength, Integer columnSize, Integer decimalDigits) {
-        Column column = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-        column.setName(name);
-
-        column.setType(dataType);
-
-        if (charOctetLength != null) {
-            // column.setCharOctetLength(charOctetLength);
-        }
-        if (columnSize != null) {
-            // column.setColumnSize(columnSize);
-        }
-        if (decimalDigits != null) {
-            // column.setDecimalDigits(decimalDigits);
-        }
-        return column;
     }
 
 }

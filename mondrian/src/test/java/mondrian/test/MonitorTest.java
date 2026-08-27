@@ -19,6 +19,9 @@ import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;
 import org.eclipse.daanse.olap.impl.StatementImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -29,6 +32,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  *
  * @author jhyde
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class MonitorTest {
     private void println(Object x) {
         // Enable for debugging, but not for checked-in code.
@@ -41,8 +45,7 @@ class MonitorTest {
      * Exercises as many fields of the monitoring stats classes as possible.
      * So that we can check that they are being populated.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMe(Context<?> context) throws SQLException {
         String queryString =
             "WITH MEMBER [Measures].[Foo] AS\n"

@@ -49,7 +49,6 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.eclipse.daanse.sql.model.type.BestFitColumnType;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
@@ -69,16 +68,16 @@ import org.eclipse.daanse.rolap.common.agg.SegmentLoader;
 import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.common.star.StarPredicate;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
+import org.eclipse.daanse.sql.model.type.BestFitColumnType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -89,6 +88,7 @@ import mondrian.test.SqlPattern;
  * @author Thiyagu
  * @since 06-Jun-2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class SegmentLoaderTest extends BatchTestCase {
 
     private ExecutionImpl execution;
@@ -137,8 +137,7 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testRollup(Context<?> context) {
         prepareContext(context);
         for (boolean rollup : new Boolean[] {true, false}) {
@@ -173,8 +172,7 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     @Disabled //has not been fixed during creating Daanse project
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testLoadWithMockResultsForLoadingSummaryAndDetailedSegments(Context<?> context) throws ExecutionException, InterruptedException {
         prepareContext(context);
         GroupingSet groupableSetsInfo = getGroupingSetRollupOnGender(context.getConnectionWithDefaultRole());
@@ -257,8 +255,7 @@ class SegmentLoaderTest extends BatchTestCase {
      * segments with null in rollup column.
      */
     @Disabled //has not been fixed during creating Daanse project
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testLoadWithWithNullInRollupColumn(Context<?> context) throws ExecutionException, InterruptedException {
         prepareContext(context);
         GroupingSet groupableSetsInfo = getGroupingSetRollupOnGender(context.getConnectionWithDefaultRole());
@@ -293,8 +290,7 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     @Disabled //has not been fixed during creating Daanse project
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     public void
         testLoadWithMockResultsForLoadingSummaryAndDetailedSegmentsUsingSparse(Context<?> context) throws ExecutionException, InterruptedException {
         prepareContext(context);
@@ -381,8 +377,7 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     @Disabled //has not been fixed during creating Daanse project
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testLoadWithMockResultsForLoadingOnlyDetailedSegments(Context<?> context) throws ExecutionException,
             InterruptedException {
         prepareContext(context);
@@ -421,8 +416,7 @@ class SegmentLoaderTest extends BatchTestCase {
                 groupingSetsInfo.getSegments().get(0)));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     public void
         testProcessDataForGettingGroupingSetsBitKeysAndLoadingAxisValueSet(Context<?> context) throws SQLException {
         prepareContext(context);
@@ -507,8 +501,7 @@ class SegmentLoaderTest extends BatchTestCase {
                 measureUnitSales);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testProcessDataForSettingNullAxis(Context<?> context)
         throws SQLException
     {
@@ -558,8 +551,7 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     // PDI-16150
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testProcessBinaryData(Context<?> context)
             throws SQLException
     {
@@ -615,8 +607,7 @@ class SegmentLoaderTest extends BatchTestCase {
 
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testProcessDataForNonGroupingSetsScenario(Context<?> context)
         throws SQLException
     {
@@ -753,8 +744,7 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     @Disabled //has not been fixed during creating Daanse project
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGetGroupingBitKey(Context<?> context) throws SQLException {
         prepareContext(context);
         Object[] data = {
@@ -789,8 +779,7 @@ class SegmentLoaderTest extends BatchTestCase {
             new SegmentLoader(cacheMgr).getRollupBitKey(4, rowList, 5));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGroupingSetsUtilForMissingGroupingBitKeys(Context<?> context) {
         prepareContext(context);
         List<GroupingSet> groupingSets = new ArrayList<>();
@@ -834,8 +823,7 @@ class SegmentLoaderTest extends BatchTestCase {
             cubeNameSales, measureUnitSales);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGroupingSetsUtilSetsDetailForRollupColumns(Context<?> context) {
         prepareContext(context);
         RolapStar.Measure measure = getMeasure(context.getConnectionWithDefaultRole(), cubeNameSales, measureUnitSales);
@@ -923,8 +911,7 @@ class SegmentLoaderTest extends BatchTestCase {
             measureUnitSales);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGroupingSetsUtilSetsForDetailForRollupColumns(Context<?> context) {
         prepareContext(context);
         RolapStar.Measure measure = getMeasure(context.getConnectionWithDefaultRole(), cubeNameSales, measureUnitSales);
@@ -971,8 +958,7 @@ class SegmentLoaderTest extends BatchTestCase {
             .getRollupColumns().isEmpty());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGroupingSetsUtilSetsForGroupingFunctionIndex(Context<?> context) {
         prepareContext(context);
         List<GroupingSet> groupingSets = new ArrayList<>();
@@ -999,8 +985,7 @@ class SegmentLoaderTest extends BatchTestCase {
         assertEquals(3, detail.findGroupingFunctionIndex(0));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testGetGroupingColumnsList(Context<?> context) {
         prepareContext(context);
         GroupingSet groupingSetsInfo = getDefaultGroupingSet(context.getConnectionWithDefaultRole());

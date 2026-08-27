@@ -19,7 +19,10 @@ import java.io.StringWriter;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.common.RolapUtil;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -34,12 +37,12 @@ import org.slf4j.LoggerFactory;
  */
 //disabled by reason of we don't plan use log4j
 @Disabled
+@RolapContextTest(FoodmartTestInstance.class)
 class MdcUtilTest {
 
   private static Logger rolapUtilLogger = LoggerFactory.getLogger( RolapUtil.class );
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMdcContext(Context<?> context) throws Exception {
 
     Connection connection = context.getConnectionWithDefaultRole();

@@ -13,14 +13,14 @@
  */
 package mondrian.test;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.ExpressiveNamesDataLoader;
-import org.opencube.junit5.propupdator.AppandExpressiveNamesCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.expressivenames.ExpressiveNamesTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(ExpressiveNamesTestInstance.class)
 class DemoTest {
 
     private static final QueryAndResult[] sampleQueries = {
@@ -29,10 +29,9 @@ class DemoTest {
             "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Measure1]}\n" + "Row #0: 54\n")
     };
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandExpressiveNamesCatalog.class, dataloader = ExpressiveNamesDataLoader.class )
+    @Test
     void testSample0(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[0].query, sampleQueries[0].result );
+        assertThatQuery(context.getConnectionWithDefaultRole(), sampleQueries[0].query).returnsGrid(sampleQueries[0].result );
     }
 
 }

@@ -11,18 +11,17 @@
 
 package mondrian.test;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.ConfigOverride;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import org.opencube.junit5.propupdator.EnableNonEmptyOnAllAxis;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test ignoring of measure when unrelated Dimension is in
@@ -32,6 +31,7 @@ import org.opencube.junit5.propupdator.EnableNonEmptyOnAllAxis;
  * @author ajoglekar
  * @since Dec 12, 2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class IgnoreMeasureForNonJoiningDimensionInAggregationTest
 {
 
@@ -44,19 +44,18 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNoTotalsForCompdMeasureWithComponentsHavingNonJoiningDims(Context<?> context)
     {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with member [Measures].[Total Sales] as "
             + "'[Measures].[Store Sales] + [Measures].[Warehouse Sales]'"
             + "member [Product].x as 'sum({Product.members  * Gender.members})' "
             + "select {[Measures].[Total Sales]} on 0, "
-            + "{Product.x} on 1 from [Warehouse and Sales]",
+            + "{Product.x} on 1 from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -66,10 +65,9 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #0: 7,913,333.82\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNonJoiningDimsWhenAggFunctionIsUsedOrNotUsed(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         final String query = "WITH\n"
@@ -91,8 +89,8 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
                              + "FROM\n"
                              + "[Warehouse and Sales]";
 
-        assertQueryReturns(connection,
-            query,
+        assertThatQuery(connection,
+            query).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -102,9 +100,10 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "{[Warehouse].[Warehouse].[AggSP1]}\n"
             + "Row #0: 196,770.89\n"
             + "Row #1: 196,770.89\n");
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(false);
-        assertQueryReturns(connection,
-            query,
+        ConfigOverride configOverride = ConfigOverride.of(context);
+        configOverride.set(ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, "false");
+        assertThatQuery(connection,
+            query).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -114,15 +113,15 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "{[Warehouse].[Warehouse].[AggSP1]}\n"
             + "Row #0: 762,009.02\n"
             + "Row #1: 762,009.02\n");
+        configOverride.close();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNonJoiningDimForAMemberDefinedOnJoiningDim(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH\n"
             + "MEMBER [Measures].[Total Sales] AS '[Measures].[Store Sales] + "
             + "[Measures].[Warehouse Sales]'\n"
@@ -135,7 +134,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "{[Measures].[Total Sales]} ON AXIS(0),\n"
             + "{[Product].[AggSP1]} ON AXIS(1)\n"
             + "FROM\n"
-            + "[Warehouse and Sales]",
+            + "[Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -145,13 +144,12 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #0: 196,770.89\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNonJoiningDimWithNumericIif(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH\n"
             + "MEMBER [Measures].[Total Sales] AS "
             + "'[Measures].[Store Sales] + [Measures].[Warehouse Sales]'\n"
@@ -168,7 +166,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "{[Measures].[Total Sales]} ON AXIS(0),\n"
             + "{([Warehouse].[AggSP1_1]), ([Warehouse].[AggSP1_2])} ON AXIS(1)\n"
             + "FROM\n"
-            + "[Warehouse and Sales]",
+            + "[Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -180,13 +178,12 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #1: 196,770.89\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNonJoiningDimAtMemberValueCalcMultipleScenarios(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH\n"
             + "MEMBER [Measures].[Total Sales] AS "
             + "'[Measures].[Store Sales] + [Measures].[Warehouse Sales]'\n"
@@ -212,7 +209,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "{([Warehouse].[AggSP1_1]),([Warehouse].[AggSP1_2]),"
             + "([Warehouse].[AggSP1_3]),([Warehouse].[AggSP1_4])} ON AXIS(1)\n"
             + "FROM\n"
-            + "[Warehouse and Sales]",
+            + "[Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -228,13 +225,12 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #3: 196,770.89\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNonJoiningDimAtTupleValueCalcMultipleScenarios(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH\n"
             + "MEMBER [Measures].[Total Sales] AS "
             + "'[Measures].[Store Sales] + [Measures].[Warehouse Sales]'\n"
@@ -269,7 +265,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "[Warehouse].[AggSP1_4],[Warehouse].[AggSP1_5],[Warehouse].[AggSP1_6]} "
             + "ON AXIS(1)\n"
             + "FROM\n"
-            + "[Warehouse and Sales]",
+            + "[Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -289,19 +285,18 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #5: 196,770.89\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testNoTotalsForCompoundMeasureWithNonJoiningDimAtAllLevel(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with member [Measures].[Total Sales] as "
             + "'[Measures].[Store Sales]'"
             + "member [Product].x as 'sum({Product.members  * "
             + "Gender.[All Gender]})' "
             + "select {[Measures].[Total Sales]} on 0, "
-            + "{Product.x} on 1 from [Warehouse and Sales]",
+            + "{Product.x} on 1 from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -311,36 +306,33 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #0: 3,956,666.91\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
-    void testNoTotalForMeasureWithCrossJoinOfJoiningAndNonJoiningDims(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnectionWithDefaultRole();
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    void testNoTotalForMeasureWithCrossJoinOfJoiningAndNonJoiningDims(Connection connection) {
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with member [Product].x as "
             + "'sum({Product.members}  * {Gender.members})' "
             + "select {[Measures].[Warehouse Sales]} on 0, "
-            + "{Product.x} on 1 from [Warehouse and Sales]",
+            + "{Product.x} on 1 from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "Axis #2:\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testShouldTotalAMeasureWithAllJoiningDimensions(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with member [Product].x as "
             + "'sum({Product.members})' "
             + "select "
             + "{[Measures].[Warehouse Sales]} on 0, "
             + "{Product.x} on 1 "
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -350,18 +342,17 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Row #0: 1,377,396.213\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testShouldNotTotalAMeasureWithANonJoiningDimension(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with member [Gender].x as 'sum({Gender.members})'"
             + "select "
             + "{[Measures].[Warehouse Sales]} on 0, "
             + "{Gender.x} on 1 "
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -369,19 +360,18 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     }
 
     // base cube is null for calc measure
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
     void testGetMeasureCubeForCalcMeasureDoesNotThrowCastException(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH MEMBER [Measures].[My Profit] AS "
             + "'Measures.[Profit]', SOLVE_ORDER = 3000 "
             + "MEMBER Gender.G AS "
             + "'sum(CROSSJOIN({GENDER.[M]},{[Product].[All Products].[Drink]}))',"
             + "SOLVE_ORDER = 4 "
-            + "SELECT {[Measures].[My Profit]} ON 0, {Gender.G} ON 1 FROM [SALES]",
+            + "SELECT {[Measures].[My Profit]} ON 0, {Gender.G} ON 1 FROM [SALES]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

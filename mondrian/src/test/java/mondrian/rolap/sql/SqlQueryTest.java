@@ -1,7 +1,7 @@
 /*
 // This software is subject to the terms of the Eclipse Public License v1.0
 // Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
+// http://www.eclipse.org/licenses/epl-v10.html.
 // You must accept the terms of that agreement to use this software.
 //
 // Copyright (C) 2004-2005 Julian Hyde
@@ -10,125 +10,63 @@
 */
 package mondrian.rolap.sql;
 
-import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.POSTGRES;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.opencube.junit5.TestUtil.assertNoQuerySql;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.opencube.junit5.TestUtil.assertQuerySql;
+import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
+import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.sql.SQLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
-import org.eclipse.daanse.sql.dialect.api.Dialect;
-import org.eclipse.daanse.sql.dialect.db.common.AbstractJdbcDialect;
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.sql.SortingDirection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.SqlRender;
 import org.eclipse.daanse.rolap.common.sql.QueryRecorder;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
-import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
-import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
-import org.eclipse.daanse.rolap.mapping.model.access.common.CommonFactory;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessCubeGrant;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessHierarchyGrant;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.AccessMemberGrant;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.CubeAccess;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.HierarchyAccess;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.MemberAccess;
-import org.eclipse.daanse.rolap.mapping.model.access.olap.OlapFactory;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
-import org.eclipse.daanse.rolap.mapping.model.database.relational.ColumnInternalDataType;
-import org.eclipse.daanse.rolap.mapping.model.database.relational.ExpressionColumn;
-import org.eclipse.daanse.rolap.mapping.model.database.source.SourceFactory;
-import org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement;
-import org.eclipse.daanse.rolap.mapping.model.database.source.TableSource;
-import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
-import org.eclipse.daanse.rolap.mapping.model.olap.cube.CubeFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup;
-import org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube;
-import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.MeasureFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.Hierarchy;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.HierarchyFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.RollupPolicy;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.daanse.rolap.testkit.junit.api.Roles;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
+import org.eclipse.daanse.sql.dialect.db.common.AbstractJdbcDialect;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.SchemaModifiersEmf;
 import mondrian.test.SqlPattern;
 /**
  * Test for <code>QueryRecorder</code>.
  *
+ * <p>{@code SAME_THREAD}: the methods that need extra schema each compose
+ * their own {@code CatalogSupplier} (FoodMart mapping) instance -- like
+ * {@link mondrian.rolap.aggmatcher.ExplicitRecognizerTest}, this opts out of
+ * the module's default concurrent execution so those constructions don't
+ * race across this class's own methods.
+ *
  * @author Thiyagu
  * @since 06-Jun-2007
  */
-class SqlQueryTest  extends BatchTestCase {
-    //private String origWarnIfNoPatternForDialect;
+@RolapContextTest(FoodmartTestInstance.class)
+@Execution(ExecutionMode.SAME_THREAD)
+class SqlQueryTest {
 
-    @BeforeEach
-    public void beforeEach() {
-
-        //origWarnIfNoPatternForDialect = prop.WarnIfNoPatternForDialect.get();
-    }
-
-    private void prepareContext(Connection connection) {
-        // This test warns of missing sql patterns for MYSQL.
-        final Dialect dialect = getDialect(connection);
-        if (connection.getContext()
-                .getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class)
-                .equals("ANY")
-                || getDatabaseProduct(dialect.name()) == MYSQL)
-        {
-            ((TestContextImpl)(connection.getContext())).setWarnIfNoPatternForDialect(
-                    getDatabaseProduct(dialect.name()).toString());
-        } else {
-            // Do not warn unless the dialect is "MYSQL", or
-            // if the test chooses to warn regardless of the dialect.
-            ((TestContextImpl)(connection.getContext())).setWarnIfNoPatternForDialect("NONE");
-        }
-
-    }
-
-    @AfterEach
-    public void afterEach() {
-        //prop.WarnIfNoPatternForDialect.set(origWarnIfNoPatternForDialect);
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToStringForSingleGroupingSetSql(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testToStringForSingleGroupingSetSql(Connection connection) {
         if (!isGroupingSetsSupported(connection)) {
             return;
         }
@@ -173,11 +111,8 @@ class SqlQueryTest  extends BatchTestCase {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderBy(Context<?> context) throws SQLException {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testOrderBy(Connection connection) {
         // Test with requireAlias = true. The query has no SELECT, so the alias
         // does not resolve to a projection and the renderer falls back to the
         // raw expression for all cases.
@@ -239,11 +174,8 @@ class SqlQueryTest  extends BatchTestCase {
         return sql;
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToStringForForcedIndexHint(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testToStringForForcedIndexHint(Connection connection) {
         Map<String, String> hints = new HashMap<>();
         hints.put("force_index", "myIndex");
 
@@ -273,7 +205,6 @@ class SqlQueryTest  extends BatchTestCase {
                 formattedMysql,
                 null)};
         for (boolean formatted : new boolean[]{false, true}) {
-            Dialect dialect = getDialect(connection);
             QueryRecorder sqlQuery = new QueryRecorder(formatted);
             sqlQuery.setAllowHints(true);
             sqlQuery.addSelect("c1", null);
@@ -334,12 +265,10 @@ class SqlQueryTest  extends BatchTestCase {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPredicatesAreOptimizedWhenPropertyIsTrue(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
-        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+    @Test
+    void testPredicatesAreOptimizedWhenPropertyIsTrue(Connection connection) {
+        if (connection.getContext().getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE, Boolean.class)
+                && connection.getContext().getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE, Boolean.class)) {
             // Sql pattner will be different if using aggregate tables.
             // This test cover predicate generation so it's sufficient to
             // only check sql pattern when aggregate tables are not used.
@@ -376,14 +305,11 @@ class SqlQueryTest  extends BatchTestCase {
                 DatabaseProduct.ACCESS, accessSql, accessSql),
             new SqlPattern(MYSQL, mysqlSql, mysqlSql)};
 
-        assertSqlEqualsOptimzePredicates(context, true, mdx, sqlPatterns);
+        assertQuerySql(connection, mdx, sqlPatterns);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTableNameIsIncludedWithParentChildQuery(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testTableNameIsIncludedWithParentChildQuery(Connection connection) {
         String sql =
             "select `employee`.`employee_id` as `c0`, "
             + "`employee`.`full_name` as `c1`, "
@@ -417,15 +343,14 @@ class SqlQueryTest  extends BatchTestCase {
         SqlPattern[] sqlPatterns = {
             new SqlPattern(DatabaseProduct.ACCESS, sql, sql)
         };
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdx, sqlPatterns);
+        assertQuerySql(connection, mdx, sqlPatterns);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPredicatesAreNotOptimizedWhenPropertyIsFalse(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
-        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+    @Test
+    @RolapConfig(key = ConfigConstants.OPTIMIZE_PREDICATES, value = "false", type = Boolean.class)
+    void testPredicatesAreNotOptimizedWhenPropertyIsFalse(Connection connection) {
+        if (connection.getContext().getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE, Boolean.class)
+                && connection.getContext().getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE, Boolean.class)) {
             // Sql pattner will be different if using aggregate tables.
             // This test cover predicate generation so it's sufficient to
             // only check sql pattern when aggregate tables are not used.
@@ -463,15 +388,30 @@ class SqlQueryTest  extends BatchTestCase {
                 DatabaseProduct.ACCESS, accessSql, accessSql),
             new SqlPattern(MYSQL, mysqlSql, mysqlSql)};
 
-        assertSqlEqualsOptimzePredicates(context, false, mdx, sqlPatterns);
+        assertQuerySql(connection, mdx, sqlPatterns);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPredicatesAreOptimizedWhenAllTheMembersAreIncluded(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
-        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+    /**
+     * The original test compared the same query computed twice within one
+     * method, toggling {@code OPTIMIZE_PREDICATES} between the calls -- the
+     * new testkit has no supported way to mutate a context's config after it
+     * is built, so it is now two independent tests, both asserting the same
+     * SQL pattern.
+     */
+    @Test
+    void testPredicatesAreOptimizedWhenAllTheMembersAreIncludedWithOptimize(Connection connection) {
+        assertPredicatesAreOptimizedWhenAllTheMembersAreIncluded(connection);
+    }
+
+    @Test
+    @RolapConfig(key = ConfigConstants.OPTIMIZE_PREDICATES, value = "false", type = Boolean.class)
+    void testPredicatesAreOptimizedWhenAllTheMembersAreIncludedWithoutOptimize(Connection connection) {
+        assertPredicatesAreOptimizedWhenAllTheMembersAreIncluded(connection);
+    }
+
+    private void assertPredicatesAreOptimizedWhenAllTheMembersAreIncluded(Connection connection) {
+        if (connection.getContext().getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE, Boolean.class)
+                && connection.getContext().getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE, Boolean.class)) {
             // Sql pattner will be different if using aggregate tables.
             // This test cover predicate generation so it's sufficient to
             // only check sql pattern when aggregate tables are not used.
@@ -507,31 +447,11 @@ class SqlQueryTest  extends BatchTestCase {
                 DatabaseProduct.ACCESS, accessSql, accessSql),
             new SqlPattern(MYSQL, mysqlSql, mysqlSql)};
 
-        assertSqlEqualsOptimzePredicates(context, true, mdx, sqlPatterns);
-        assertSqlEqualsOptimzePredicates(context, false, mdx, sqlPatterns);
+        assertQuerySql(connection, mdx, sqlPatterns);
     }
 
-    private void assertSqlEqualsOptimzePredicates(Context<?> context,
-        boolean optimizePredicatesValue,
-        String inputMdx,
-        SqlPattern[] sqlPatterns)
-    {
-        boolean intialValueOptimize =
-            context.getConfigValue(ConfigConstants.OPTIMIZE_PREDICATES, ConfigConstants.OPTIMIZE_PREDICATES_DEFAULT_VALUE, Boolean.class);
-
-        try {
-            ((TestContextImpl)context).setOptimizePredicates(optimizePredicatesValue);
-            assertQuerySql(context.getConnectionWithDefaultRole(), inputMdx, sqlPatterns);
-        } finally {
-            ((TestContextImpl)context).setOptimizePredicates(intialValueOptimize);
-        }
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToStringForGroupingSetSqlWithEmptyGroup(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testToStringForGroupingSetSqlWithEmptyGroup(Connection connection) {
         if (!isGroupingSetsSupported(connection)) {
             return;
         }
@@ -579,11 +499,8 @@ class SqlQueryTest  extends BatchTestCase {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToStringForMultipleGroupingSetsSql(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testToStringForMultipleGroupingSetsSql(Connection connection) {
         if (!isGroupingSetsSupported(connection)) {
             return;
         }
@@ -648,49 +565,18 @@ class SqlQueryTest  extends BatchTestCase {
      * <p>Mondrian only generates SQL DOUBLE values in a special format for
      * LucidDB; therefore, this test is a no-op on other databases.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDoubleInList(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
-        final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SqlQueryTestDoubleInListModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, value = "true", type = Boolean.class)
+    void testDoubleInList(Connection connection) {
+        final Dialect dialect = getDialect(connection);
         if (getDatabaseProduct(dialect.name()) != DatabaseProduct.LUCIDDB) {
             return;
         }
 
-        ((TestContextImpl)context).setIgnoreInvalidMembers(true);
-        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
-
-        // assertQuerySql(testContext, query, patterns);
-
         // Test when the double value itself cotnains "E".
-        String dimensionSqlExpression =
-            "cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)\n";
-
-        String cubeFirstPart =
-            "<Cube name=\"Sales 3\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"StoreEmpSalary\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Salary\" primaryKey=\"store_id\">\n"
-            + "      <Table name=\"employee\"/>\n"
-            + "      <Level name=\"Salary\" column=\"salary\" type=\"Numeric\" uniqueMembers=\"true\" approxRowCount=\"10000000\">\n"
-            + "        <KeyExpression>\n"
-            + "          <SQL dialect=\"luciddb\">\n";
-
-        String cubeSecondPart =
-            "          </SQL>\n"
-            + "        </KeyExpression>\n"
-            + "      </Level>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"/>\n"
-            + "</Cube>";
-
-        String cube =
-            cubeFirstPart
-            + dimensionSqlExpression
-            + cubeSecondPart;
-
         String query =
             "select "
             + "{[StoreEmpSalary].[All Salary].[6403.162057613773],[StoreEmpSalary].[All Salary].[1184584.980658548],[StoreEmpSalary].[All Salary].[1344664.0320988924], "
@@ -729,169 +615,7 @@ class SqlQueryTest  extends BatchTestCase {
                 loadSqlLucidDB,
                 loadSqlLucidDB)
         };
-        /*
-        class TestDoubleInListModifier extends PojoMappingModifier {
-
-            public TestDoubleInListModifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-            protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.cubes(cubes));
-                result.add(PhysicalCubeMappingImpl.builder()
-                    .withName("Sales 3")
-                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
-                    .withDimensionConnectors(List.of(
-                    	DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("StoreEmpSalary")
-                            .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
-                            .withDimension(StandardDimensionMappingImpl.builder()
-                            	.withName("StoreEmpSalary")
-                            	.withHierarchies(List.of(
-                                ExplicitHierarchyMappingImpl.builder()
-                                    .withHasAll(true)
-                                    .withAllMemberName("All Salary")
-                                    .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
-                                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                                    .withLevels(List.of(
-                                        LevelMappingImpl.builder()
-                                            .withName("Salary").withColumn(FoodmartMappingSupplier.SALARY_COLUMN_IN_EMPLOYEE)
-                                            .withType(InternalDataType.NUMERIC).withUniqueMembers(true)
-                                            .withApproxRowCount("10000000")
-                                            .withCaptionColumn(
-                                                SQLExpressionMappingColumnImpl.builder()
-                                                    .withSqls(List.of(
-                                                        SqlStatementMappingImpl.builder()
-                                                            .withDialects(List.of("luciddb"))
-                                                            .withSql("cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)")
-                                                            .build()
-                                                    ))
-                                                    .withDataType(ColumnDataType.DECIMAL)
-                                                    .build()
-                                            )
-                                            .build()
-                                    )).build())).build())
-                                    .build()))
-                    .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            SumMeasureMappingImpl.builder()
-                            .withName("Store Cost")
-                            .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            .build()
-                    )).build()))
-                    .build());
-                return result;
-            }
-        }
-        */
-        /**
-         * EMF version of TestDoubleInListModifier
-         * Creates Sales 3 cube with StoreEmpSalary dimension containing SQL expression for caption
-         */
-        class TestDoubleInListModifierEmf implements CatalogMappingSupplier {
-
-            private CatalogImpl catalog;
-
-            public TestDoubleInListModifierEmf(Catalog cat) {
-                // Copy catalog using EcoreUtil
-                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-
-                // Create cube
-                PhysicalCube cube =
-                    CubeFactory.eINSTANCE.createPhysicalCube();
-                cube.setName("Sales 3");
-
-                // Set up query
-                TableSource tableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                cube.setSource(tableQuery);
-
-                // Create SQL expression for caption column
-                ExpressionColumn captionExpression =
-                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createExpressionColumn();
-                captionExpression.setType(SQLSimpleTypes.decimalType(18, 4));
-
-                // Create SQL statement for LucidDB
-                SqlStatement sqlStatement =
-                    SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.getDialects().add("luciddb");
-                sqlStatement.setBody("cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)");
-                captionExpression.getSqls().add(sqlStatement);
-
-                // Create Salary level
-                Level salaryLevel =
-                    LevelFactory.eINSTANCE.createLevel();
-                salaryLevel.setName("Salary");
-                salaryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_SALARY_EMPLOYEE);
-                salaryLevel.setColumnType(ColumnInternalDataType.NUMERIC);
-                salaryLevel.setUniqueMembers(true);
-                salaryLevel.setApproxRowCount("10000000");
-                salaryLevel.setCaptionColumn(captionExpression);
-
-                // Create hierarchy
-                ExplicitHierarchy hierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                hierarchy.setHasAll(true);
-                hierarchy.setAllMemberName("All Salary");
-                hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_EMPLOYEE);
-
-                TableSource employeeTableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                employeeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_EMPLOYEE);
-                hierarchy.setSource(employeeTableQuery);
-
-                hierarchy.getLevels().add(salaryLevel);
-
-                // Create dimension
-                StandardDimension dimension =
-                    DimensionFactory.eINSTANCE.createStandardDimension();
-                dimension.setName("StoreEmpSalary");
-                dimension.getHierarchies().add(hierarchy);
-
-                // Create dimension connector
-                DimensionConnector dimConnector =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                dimConnector.setOverrideDimensionName("StoreEmpSalary");
-                dimConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-                dimConnector.setDimension(dimension);
-
-                cube.getDimensionConnectors().add(dimConnector);
-
-                // Create measure
-                SumMeasure storeCostMeasure =
-                    MeasureFactory.eINSTANCE.createSumMeasure();
-                storeCostMeasure.setName("Store Cost");
-                storeCostMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
-
-                // Create measure group
-                MeasureGroup measureGroup =
-                    CubeFactory.eINSTANCE.createMeasureGroup();
-                measureGroup.getMeasures().add(storeCostMeasure);
-
-                cube.getMeasureGroups().add(measureGroup);
-
-                // Add cube to catalog
-                catalog.getImportedElement().add(cube);
-            }
-
-            @Override
-            public Catalog get() {
-                return catalog;
-            }
-        }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null,
-                cube,
-                null,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestDoubleInListModifierEmf::new);
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        assertQuerySql(connection, query, patterns);
     }
 
     /**
@@ -903,11 +627,8 @@ class SqlQueryTest  extends BatchTestCase {
      * "UPPER(`store`.`store_country`) = UPPER('Time.Weekly')" from being
      * generated.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testInvalidSqlMemberLookup(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    void testInvalidSqlMemberLookup(Connection connection) {
         String sqlMySql =
             "select `store`.`store_type` as `c0` from `store` as `store` "
             + "where UPPER(`store`.`store_type`) = UPPER('Time.Weekly') "
@@ -938,23 +659,10 @@ class SqlQueryTest  extends BatchTestCase {
      * not considering the approxRowCount property. It is fixed and
      * this test will ensure it won't happen again.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testApproxRowCountOverridesCount(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
-        final String cubeSchema =
-            "<Cube name=\"ApproxTest\"> \n"
-            + "  <Table name=\"sales_fact_1997\"/> \n"
-            + "  <Dimension name=\"Gender\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Gender\" primaryKey=\"customer_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" approxRowCount=\"2\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"/> \n"
-            + "</Cube>";
-
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SqlQueryTestApproxRowCountModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testApproxRowCountOverridesCount(Connection connection) {
         final String mdxQuery =
             "SELECT {[Gender].[Gender].Members} ON ROWS, {[Measures].[Unit Sales]} ON COLUMNS FROM [ApproxTest]";
 
@@ -970,150 +678,8 @@ class SqlQueryTest  extends BatchTestCase {
             new SqlPattern(
                 MYSQL, forbiddenSqlMysql, null)
         };
-        /*
-        class TestApproxRowCountOverridesCountModifier extends PojoMappingModifier {
-
-            public TestApproxRowCountOverridesCountModifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.cubes(cubes));
-                result.add(PhysicalCubeMappingImpl.builder()
-                    .withName("ApproxTest")
-                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
-                    .withDimensionConnectors(List.of(
-                    	DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("Gender")
-                            .withForeignKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                            .withDimension(StandardDimensionMappingImpl.builder()
-                            		.withName("Gender")
-                            		.withHierarchies(List.of(
-                            			ExplicitHierarchyMappingImpl.builder()
-                            			.withHasAll(true)
-                            			.withAllMemberName("All Gender")
-                            			.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                            			.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
-                            			.withLevels(List.of(
-                            				LevelMappingImpl.builder()
-                                            .withName("Gender").withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
-                                            .withType(InternalDataType.NUMERIC).withUniqueMembers(true)
-                                            .withApproxRowCount("2")
-                                            .build()
-                                    ))
-                                    .build()
-                            )).build())
-                            .build()
-                    ))
-                    .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        SumMeasureMappingImpl.builder()
-                            .withName("Unit Sales")
-                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            .build()
-                    )).build()))
-                    .build());
-                return result;
-            }
-        }
-        */
-        /**
-         * EMF version of TestApproxRowCountOverridesCountModifier
-         * Creates ApproxTest cube with Gender dimension having approxRowCount
-         */
-        class TestApproxRowCountOverridesCountModifierEmf implements CatalogMappingSupplier {
-
-            private CatalogImpl catalog;
-
-            public TestApproxRowCountOverridesCountModifierEmf(Catalog cat) {
-                // Copy catalog using EcoreUtil
-                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-
-                // Create cube
-                PhysicalCube cube =
-                    CubeFactory.eINSTANCE.createPhysicalCube();
-                cube.setName("ApproxTest");
-
-                // Set up query
-                TableSource tableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                cube.setSource(tableQuery);
-
-                // Create Gender level
-                Level genderLevel =
-                    LevelFactory.eINSTANCE.createLevel();
-                genderLevel.setName("Gender");
-                genderLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_GENDER_CUSTOMER);
-                genderLevel.setColumnType(ColumnInternalDataType.NUMERIC);
-                genderLevel.setUniqueMembers(true);
-                genderLevel.setApproxRowCount("2");
-
-                // Create hierarchy
-                ExplicitHierarchy hierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                hierarchy.setHasAll(true);
-                hierarchy.setAllMemberName("All Gender");
-                hierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-
-                TableSource customerTableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                customerTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_CUSTOMER);
-                hierarchy.setSource(customerTableQuery);
-
-                hierarchy.getLevels().add(genderLevel);
-
-                // Create dimension
-                StandardDimension dimension =
-                    DimensionFactory.eINSTANCE.createStandardDimension();
-                dimension.setName("Gender");
-                dimension.getHierarchies().add(hierarchy);
-
-                // Create dimension connector
-                DimensionConnector dimConnector =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                dimConnector.setOverrideDimensionName("Gender");
-                dimConnector.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
-                dimConnector.setDimension(dimension);
-
-                cube.getDimensionConnectors().add(dimConnector);
-
-                // Create measure
-                SumMeasure unitSalesMeasure =
-                    MeasureFactory.eINSTANCE.createSumMeasure();
-                unitSalesMeasure.setName("Unit Sales");
-                unitSalesMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
-
-                // Create measure group
-                MeasureGroup measureGroup =
-                    CubeFactory.eINSTANCE.createMeasureGroup();
-                measureGroup.getMeasures().add(unitSalesMeasure);
-
-                cube.getMeasureGroups().add(measureGroup);
-
-                // Add cube to catalog
-                catalog.getImportedElement().add(cube);
-            }
-
-            @Override
-            public Catalog get() {
-                return catalog;
-            }
-        }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null,
-                cubeSchema,
-                null,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestApproxRowCountOverridesCountModifierEmf::new);
         assertQuerySqlOrNot(
-        	context.getConnectionWithDefaultRole(),
+            connection,
             mdxQuery,
             patterns,
             true,
@@ -1121,151 +687,12 @@ class SqlQueryTest  extends BatchTestCase {
             true);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLimitedRollupMemberRetrievableFromCache(Context<?> context) throws Exception {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SqlQueryTestLimitedRollupMemberModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testLimitedRollupMemberRetrievableFromCache(@Roles("justCA") Connection connection) throws Exception {
         final String mdx =
             "select NON EMPTY { [Store].[Store].[Store State].members } on 0 from [Sales]";
-        /*
-        class TestLimitedRollupMemberRetrievableFromCacheModifier extends PojoMappingModifier {
-
-            public TestLimitedRollupMemberRetrievableFromCacheModifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
-                List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.catalogAccessRoles(schema));
-                result.add(AccessRoleMappingImpl.builder()
-                    .withName("justCA")
-                    .withAccessCatalogGrants(List.of(
-                    	AccessCatalogGrantMappingImpl.builder()
-                            .withAccess(AccessCatalog.ALL)
-                            .withCubeGrant(List.of(
-                            	AccessCubeGrantMappingImpl.builder()
-                                    .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
-                                    .withAccess(AccessCube.ALL)
-                                    .withHierarchyGrants(List.of(
-                                    	AccessHierarchyGrantMappingImpl.builder()
-                                            .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.storeHierarchy))
-                                            .withAccess(AccessHierarchy.CUSTOM)
-                                            .withRollupPolicyType(RollupPolicyType.PARTIAL)
-                                            .withMemberGrants(List.of(
-                                            	AccessMemberGrantMappingImpl.builder()
-                                                    .withMember("[Store].[USA].[CA]")
-                                                    .withAccess(AccessMember.ALL)
-                                                    .build()
-                                            ))
-                                            .build()
-                                    ))
-                                    .build()
-                            ))
-                            .build()
-                    ))
-                    .build());
-                return result;
-            }
-        }
-        */
-        /**
-         * EMF version of TestLimitedRollupMemberRetrievableFromCacheModifier
-         * Creates access role 'justCA' with custom hierarchy access and partial rollup policy
-         */
-        class TestLimitedRollupMemberRetrievableFromCacheModifierEmf implements CatalogMappingSupplier {
-
-            private CatalogImpl catalog;
-
-            public TestLimitedRollupMemberRetrievableFromCacheModifierEmf(Catalog cat) {
-                // Copy catalog using EcoreUtil
-                EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) cat);
-
-                catalog = (CatalogImpl) copier.get(cat);
-
-                // Find Sales cube
-                //PhysicalCube salesCube = null;
-                //Hierarchy storeHierarchy = null;
-
-                /*
-                for (Cube cube : catalog.getCubes()) {
-                    if ("Sales".equals(cube.getName()) && cube instanceof PhysicalCube) {
-                        salesCube = (PhysicalCube) cube;
-                        // Find Store hierarchy
-                        for (DimensionConnector dc : salesCube.getDimensionConnectors()) {
-                            if (dc.getDimension() != null) {
-                                for (Hierarchy h : dc.getDimension().getHierarchies()) {
-                                    if ("Store".equals(h.getName())) {
-                                        storeHierarchy = h;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (storeHierarchy != null) break;
-                        }
-                        break;
-                    }
-                }
-                */
-                // Create member grant
-                AccessMemberGrant memberGrant =
-                    OlapFactory.eINSTANCE.createAccessMemberGrant();
-                memberGrant.setMember(mdx("[Store].[USA].[CA]"));
-                memberGrant.setMemberAccess(MemberAccess.ALL);
-
-                // Create hierarchy grant
-                AccessHierarchyGrant hierarchyGrant =
-                    OlapFactory.eINSTANCE.createAccessHierarchyGrant();
-                hierarchyGrant.setHierarchy((Hierarchy) copier.get(CatalogSupplier.HIERARCHY_STORE));
-                hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
-                hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
-                hierarchyGrant.getMemberGrants().add(memberGrant);
-
-                // Create cube grant
-                AccessCubeGrant cubeGrant =
-                    OlapFactory.eINSTANCE.createAccessCubeGrant();
-                cubeGrant.setCube((Cube) copier.get(CatalogSupplier.CUBE_SALES));
-                cubeGrant.setCubeAccess(CubeAccess.ALL);
-                cubeGrant.getHierarchyGrants().add(hierarchyGrant);
-
-                // Create catalog grant
-                AccessCatalogGrant catalogGrant =
-                    CommonFactory.eINSTANCE.createAccessCatalogGrant();
-                catalogGrant.setCatalogAccess(CatalogAccess.ALL);
-                catalogGrant.getCubeGrants().add(cubeGrant);
-
-                // Create role
-                AccessRole role =
-                    CommonFactory.eINSTANCE.createAccessRole();
-                role.setName("justCA");
-                role.getAccessCatalogGrants().add(catalogGrant);
-
-                // Add role to catalog
-                catalog.getImportedElement().add(role);
-            }
-
-            @Override
-            public Catalog get() {
-                return catalog;
-            }
-        }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                " <Role name='justCA'>\n"
-                + " <SchemaGrant access='all'>\n"
-                + " <CubeGrant cube='Sales' access='all'>\n"
-                + " <HierarchyGrant hierarchy='[Store]' access='custom' rollupPolicy='partial'>\n"
-                + " <MemberGrant member='[Store].[USA].[CA]' access='all'/>\n"
-                + " </HierarchyGrant>\n"
-                + " </CubeGrant>\n"
-                + " </SchemaGrant>\n"
-                + " </Role>\n");
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestLimitedRollupMemberRetrievableFromCacheModifierEmf::new);
 
         String pgSql =
             "select \"store\".\"store_country\" as \"c0\","
@@ -1293,8 +720,7 @@ class SqlQueryTest  extends BatchTestCase {
             + " ISNULL(`store`.`store_state`) ASC, `store`.`store_state` ASC";
         SqlPattern myPattern = new SqlPattern(MYSQL, mySql, mySql.length());
         SqlPattern[] patterns = {pgPattern, myPattern};
-        connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("justCA")));
-        executeQuery(mdx, connection);
+        executeQuery(connection, mdx);
         assertQuerySqlOrNot(connection, mdx, patterns, true, false, false);
     }
 
@@ -1304,25 +730,14 @@ class SqlQueryTest  extends BatchTestCase {
      *
      * <p>Avg Aggregates need to be computed in SQL to get correct values.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAvgAggregator(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
-        prepareContext(connection);
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            null,
-            " <Measure name=\"Avg Sales\" column=\"unit_sales\" aggregator=\"avg\"\n"
-            + " formatString=\"#.###\"/>",
-            null,
-            null));
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.SqlQueryTestModifier::new);
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SqlQueryTestModifier.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    void testAvgAggregator(Connection connection) {
         String mdx = "select measures.[avg sales] on 0 from sales"
                        + " where { time.[1997].q1, time.[1997].q2.[4] }";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             mdx,
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1]}\n"
@@ -1341,12 +756,33 @@ class SqlQueryTest  extends BatchTestCase {
             + "and `time_by_day`.`the_year` = 1997))";
         SqlPattern mySqlPattern =
             new SqlPattern(DatabaseProduct.MYSQL, sql, sql.length());
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[]{mySqlPattern});
+        assertQuerySql(connection, mdx, new SqlPattern[]{mySqlPattern});
     }
 
     private boolean isGroupingSetsSupported(Connection connection) {
         return connection.getContext().getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class)
                 && getDialect(connection).supportsGroupingSets();
+    }
+
+    /** Copied from {@link mondrian.rolap.BatchTestCase#dialectize}, which this class no longer extends. */
+    private String dialectize(DatabaseProduct d, String sql) {
+        sql = sql.replaceAll("\r\n", "\n");
+        switch (d) {
+        case ORACLE:
+            return sql.replaceAll(" =as= ", " ");
+        case GREENPLUM:
+        case POSTGRES:
+        case TERADATA:
+            return sql.replaceAll(" =as= ", " as ");
+        case DERBY:
+            return sql.replaceAll("`", "\"");
+        case ACCESS:
+            return sql.replaceAll(
+                "ISNULL\\(([^)]*)\\)",
+                "Iif($1 IS NULL, 1, 0)");
+        default:
+            return sql;
+        }
     }
 
     public class AbstractJdbcDialectForTest extends AbstractJdbcDialect{
@@ -1358,6 +794,14 @@ class SqlQueryTest  extends BatchTestCase {
         @Override
         public String name() {
             return null;
+        }
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
         }
     }
 }

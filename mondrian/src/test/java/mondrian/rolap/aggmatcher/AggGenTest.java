@@ -37,36 +37,38 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.query.component.Query;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggGen;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Test if lookup columns are there after loading them in
  * AggGen#addCollapsedColumn(...).
  *
  * @author Sherman Wood
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class AggGenTest {
     @AfterEach
     public void afterEach() {
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_AGGREGATE_SQL, value = "true", type = Boolean.class)
     void testCallingLoadColumnsInAddCollapsedColumnOrAddzSpecialCollapsedColumn(Context<?> context) throws Exception
     {
         Logger logger = LoggerFactory.getLogger(AggGen.class);
@@ -80,9 +82,9 @@ class AggGenTest {
 
         // If run in Ant and with mondrian.jar, please comment out this line:
 //        ((TestContextImpl)context).setAggregateRules("/DefaultRules.xml");
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setGenerateAggregateSql(true);
+        //((TestContextImpl)context).setUseAggregates(true);
+        //((TestContextImpl)context).setReadAggregates(true);
+        //((TestContextImpl)context).setGenerateAggregateSql(true);
 
         final org.eclipse.daanse.olap.api.connection.Connection rolapConn = (org.eclipse.daanse.olap.api.connection.Connection) context.getConnectionWithDefaultRole();
         Query query =

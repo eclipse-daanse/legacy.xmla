@@ -10,18 +10,20 @@ package mondrian.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.SchemaModifiersEmf;
+import mondrian.test.AccessControlTest.FoodmartData;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class DrillThroughExcludeFilterTest {
 
     /*
@@ -68,13 +70,12 @@ class DrillThroughExcludeFilterTest {
     */
     // Test for VirtualCube DrillThrough with exclude filter
     // on level not present in report
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.DrillThroughExcludeFilterTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDrillThroughExcludeFilter(Context<?> context) throws Exception    {
         int expectedDrillThroughCountForCell0 = 3773;
         int expectedDrillThroughCountForCell1 = 78120;
-
-        withSchemaEmf(context, SchemaModifiersEmf.DrillThroughExcludeFilterTestModifier::new);
 
         Connection connection = context.getConnectionWithDefaultRole();
         Result result = executeQuery(connection,

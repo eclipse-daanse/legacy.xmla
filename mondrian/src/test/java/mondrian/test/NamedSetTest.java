@@ -21,12 +21,14 @@ import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube;
@@ -36,14 +38,14 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Cal
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.CalculatedMemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
+
+import mondrian.test.AccessControlTest.FoodmartData;
 /**
  * Unit-test for named sets, in all their various forms: <code>WITH SET</code>,
  * sets defined against cubes, virtual cubes, and at the schema level.
@@ -51,6 +53,7 @@ import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
  * @author jhyde
  * @since April 30, 2005
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class NamedSetTest {
 
     @AfterEach
@@ -60,8 +63,7 @@ class NamedSetTest {
     /**
      * Set defined in query according measures, hence context-dependent.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSet(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
@@ -106,8 +108,7 @@ class NamedSetTest {
     /**
      * Set defined on top of calc member.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetOnMember(Context<?> context) {
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case INFOBRIGHT:
@@ -151,8 +152,7 @@ class NamedSetTest {
     /**
      * Set defined by explicit tlist in query.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetAsList(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
@@ -200,10 +200,9 @@ class NamedSetTest {
     /**
      * Set defined using filter expression.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.CASE_SENSITIVE_MDX_INSTR, value = "true", type = Boolean.class)
     void testIntrinsic(Context<?> context) {
-    	((TestContextImpl) context).setCaseSensitiveMdxInstr(true);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
             + "   'Filter([Product].Members, (InStr(1, [Product].CurrentMember.Name, \"chardonnay\") <> 0) OR (InStr(1, [Product].CurrentMember.Name, \"chablis\") <> 0))'\n"
@@ -319,8 +318,7 @@ class NamedSetTest {
     /**
      * Tests a named set defined in a query which consists of tuples.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetCrossJoin(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
@@ -352,8 +350,7 @@ class NamedSetTest {
     // Also, don't know whether [oNormal] will correctly resolve to
     // [Store Type].[oNormal].
     @Disabled
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     public void _testXxx(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store Type].[All Store Type].[oNormal] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Normal\") * {[Store Type].[All Store Type]})'\n"
@@ -369,8 +366,7 @@ class NamedSetTest {
     /**
      * Set used inside expression (Crossjoin).
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetUsedInCrossJoin(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
@@ -431,8 +427,7 @@ class NamedSetTest {
             + "Row #14: 229\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggOnCalcMember(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
@@ -459,8 +454,7 @@ class NamedSetTest {
             + "Row #2: 6,111.74\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testContextSensitiveNamedSet(Context<?> context) {
         // For reference.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -609,8 +603,7 @@ class NamedSetTest {
             + "Row #3: 5,583.81\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOrderedNamedSet(Context<?> context) {
         // From http://www.developersdex.com
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -714,8 +707,7 @@ class NamedSetTest {
             + "Row #4: 5\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGenerate(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
@@ -752,12 +744,11 @@ class NamedSetTest {
             + "Row #1: Q1 and Q2\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, NamedSetsInCubeModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamedSetAgainstCube(Context<?> context) {
 
-        withSchemaEmf(context,
-                NamedSetsInCubeModifierEmf::new);
         // Set defined against cube, using 'formula' attribute.
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
@@ -829,12 +820,11 @@ class NamedSetTest {
             + "Row #1: 25,635\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, NamedSetsInCubeAndSchemaModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamedSetAgainstSchema(Context<?> context) {
     	Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        withSchemaEmf(context,
-        		NamedSetTest.NamedSetsInCubeAndSchemaModifierEmf::new);
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "SELECT {[Measures].[Store Sales]} on columns,\n"
@@ -856,37 +846,10 @@ class NamedSetTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBadNamedSetModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBadNamedSet(Context<?> context) {
-        /**
-         * EMF version of TestBadNamedSetModifier
-         * Creates a named set with bad formula (extra closing brace)
-         */
-        class TestBadNamedSetModifierEmf implements CatalogMappingSupplier {
-
-            private CatalogImpl catalog;
-
-            public TestBadNamedSetModifierEmf(Catalog cat) {
-                // Copy catalog using EcoreUtil
-                catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-
-                // Create named set "Bad" with invalid formula using RolapMappingFactory
-                NamedSet namedSet =
-                    DimensionFactory.eINSTANCE.createNamedSet();
-                namedSet.setName("Bad");
-                namedSet.setFormula(mdx("{[Store].[USA].[WA].Children}}"));
-
-                // Add named set to catalog
-                catalog.getImportedElement().add(namedSet);
-            }
-
-            @Override
-            public Catalog get() {
-                return catalog;
-            }
-        }
-
         /*
         class TestBadNamedSetModifier extends PojoMappingModifier {
 
@@ -917,15 +880,41 @@ class NamedSetTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestBadNamedSetModifierEmf::new);
         assertQueryThrows(context,
             "SELECT {[Measures].[Store Sales]} on columns,\n"
             + " {[Bad]} on rows\n"
             + "FROM [Sales]", "Named set 'Bad' has bad formula");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    /**
+     * EMF version of TestBadNamedSetModifier
+     * Creates a named set with bad formula (extra closing brace)
+     */
+    public static class TestBadNamedSetModifierEmf implements CatalogMappingSupplier {
+
+        private CatalogImpl catalog;
+
+        public TestBadNamedSetModifierEmf(Catalog cat) {
+            // Copy catalog using EcoreUtil
+            catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+            // Create named set "Bad" with invalid formula using RolapMappingFactory
+            NamedSet namedSet =
+                DimensionFactory.eINSTANCE.createNamedSet();
+            namedSet.setName("Bad");
+            namedSet.setFormula(mdx("{[Store].[USA].[WA].Children}}"));
+
+            // Add named set to catalog
+            catalog.getImportedElement().add(namedSet);
+        }
+
+        @Override
+        public Catalog get() {
+            return catalog;
+        }
+    }
+
+    @Test
     void testNamedSetMustBeSet(Context<?> context) {
         Result result;
         String queryString;
@@ -991,13 +980,11 @@ class NamedSetTest {
 //        discard(result);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, MixedNamedSetSchemaModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamedSetsMixedWithCalcMembers(Context<?> context)
     {
-
-        withSchemaEmf(context,
-                MixedNamedSetSchemaModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {\n"
             + "    [Measures].[Unit Sales],\n"
@@ -1051,8 +1038,7 @@ class NamedSetTest {
             + "Row #11: $1,166.0\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetAndUnion(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Set Education Level] as\n"
@@ -1089,11 +1075,10 @@ class NamedSetTest {
     /**
      * Tests that named sets never depend on anything.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, NamedSetsInCubeModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamedSetDependencies(Context<?> context) {
-        withSchemaEmf(context,
-                NamedSetsInCubeModifierEmf::new);
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "[Top CA Cities]", "{}");
     }
 
@@ -1101,8 +1086,7 @@ class NamedSetTest {
      * Test csae for bug 1971080, "hierarchize(named set) causes attempt to
      * sort immutable list".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchizeNamedSetImmutable(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
@@ -1130,8 +1114,7 @@ class NamedSetTest {
             + "Row #4: 89\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentAndCurrentOrdinal(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Gender Marital Status] as\n"
@@ -1191,16 +1174,14 @@ class NamedSetTest {
             + "Row #8: ([Gender].[Gender].[M], [Marital Status].[Marital Status].[S])\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetWithCompoundSlicer(Context<?> context) {
         // MONDRIAN-1654
-        final String mdx = "with set [FilteredNamedSet] as "
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "with set [FilteredNamedSet] as "
             + "'Filter([Customers].[Name].Members, "
             + "measures.[Unit Sales] > 200)' select FilteredNamedSet on 0 from "
-            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}",
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1]}\n"
             + "{[Time].[Time].[1997].[Q2]}\n"
@@ -1221,7 +1202,42 @@ class NamedSetTest {
             + "Row #0: 257\n"
             + "Row #0: 258\n"
             + "Row #0: 227\n");
-        verifySameNativeAndNot(context.getConnectionWithDefaultRole(), mdx, "");
+    }
+
+    /** Same query as {@link #testNamedSetWithCompoundSlicer}, with all native evaluation disabled,
+     * to verify the native and non-native evaluators agree (native is on by default). */
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_FILTER, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_TOP_COUNT, value = "false", type = Boolean.class)
+    void testNamedSetWithCompoundSlicerNonNative(Context<?> context) {
+        // MONDRIAN-1654
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "with set [FilteredNamedSet] as "
+            + "'Filter([Customers].[Name].Members, "
+            + "measures.[Unit Sales] > 200)' select FilteredNamedSet on 0 from "
+            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}",
+            "Axis #0:\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
+            + "Axis #1:\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Daniel Thompson]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Dauna Barton]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Emily Barela]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Joann Mramor]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Matt Bellah]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Wildon Cameron]}\n"
+            + "Row #0: 202\n"
+            + "Row #0: 218\n"
+            + "Row #0: 215\n"
+            + "Row #0: 228\n"
+            + "Row #0: 227\n"
+            + "Row #0: 257\n"
+            + "Row #0: 258\n"
+            + "Row #0: 227\n");
     }
 
     /**
@@ -1229,8 +1245,7 @@ class NamedSetTest {
      * range in the WHERE clause. Current Mondrian behavior appears to be
      * correct.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetRangeInSlicer(Context<?> context) {
         String expected =
             "Axis #0:\n"
@@ -1303,8 +1318,7 @@ class NamedSetTest {
             expected);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMondrian2424(Context<?> context) {
 
         //SystemWideProperties.instance().SsasCompatibleNaming = false;
@@ -1330,8 +1344,7 @@ class NamedSetTest {
      * MONDRIAN-1203, "Error 'Failed to load all aggregations after 10 passes'
      * while evaluating composite slicer"</a>.</p>
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetRangeInSlicerPrimed(Context<?> context) {
         new CompoundSlicerTest().testBugMondrian899(context);
         testNamedSetRangeInSlicer(context);
