@@ -24,8 +24,8 @@
 
 package mondrian.rolap.agg;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import java.util.ArrayList;
@@ -41,10 +41,9 @@ import org.eclipse.daanse.olap.spi.SegmentCache;
 import org.eclipse.daanse.olap.spi.SegmentHeader;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheWorker;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.test.BasicQueryTest;
 
@@ -54,10 +53,10 @@ import mondrian.test.BasicQueryTest;
  *
  * @author LBoudreau
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class SegmentCacheTest {
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCompoundPredicatesCollision(Context<?> context) {
         String query =
             "SELECT [Gender].[All Gender] ON 0, [MEASURES].[CUSTOMER COUNT] ON 1 FROM SALES";
@@ -83,12 +82,11 @@ class SegmentCacheTest {
             + "Row #0: 2,716\n";
         Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(connection, query, result);
-        assertQueryReturns(connection, query2, result2);
+        assertThatQuery(connection, query).returnsGrid(result);
+        assertThatQuery(connection, query2).returnsGrid(result2);
     }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSegmentCacheEvents(Context<?> context) throws Exception {
         SegmentCache mockCache = new MockSegmentCache();
         SegmentCacheWorker testWorker =

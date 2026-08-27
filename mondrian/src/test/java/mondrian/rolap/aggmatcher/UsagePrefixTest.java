@@ -9,18 +9,14 @@
 
 package mondrian.rolap.aggmatcher;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
-
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.SchemaModifiersEmf;
+import org.junit.jupiter.api.Test;
+import org.opencube.junit5.TestUtil;
 
 /**
  * Validates the dimension attribute usagePrefix is correctly
@@ -29,32 +25,19 @@ import mondrian.rolap.SchemaModifiersEmf;
  *
  * @author Matt Campbell
  */
-class UsagePrefixTest extends AggTableTestCase {
-
-    private static final String MONDRIAN_595_CSV = "MONDRIAN-595.csv";
+@RolapContextTest(value = UsagePrefixTestInstance.class, dbScope = DbScope.PER_CLASS)
+class UsagePrefixTest {
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testUsagePrefix(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testUsagePrefix(Connection connection) {
         String mdx =
             "select {[StoreX].[Store Value].members} on columns, "
                 +   "{ measures.[Amount] } on rows from Cheques";
 
-        withSchemaEmf(context, SchemaModifiersEmf.UsagePrefixTestModifier1::new);
-        context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        TestUtil.assertQueryReturns(connection, mdx,
             "Axis #0:\n"
             +    "{}\n"
             +    "Axis #1:\n"
@@ -69,29 +52,16 @@ class UsagePrefixTest extends AggTableTestCase {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testUsagePrefixTwoDims(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testUsagePrefixTwoDims(Connection connection) {
         String mdx =
             "select Crossjoin([StoreX].[Store Value].members, "
             + " [StoreY].[Store Value].members) on columns, "
             +   "{ measures.[Amount] } on rows from Cheques";
 
-        withSchemaEmf(context, SchemaModifiersEmf.UsagePrefixTestModifier1::new);
-        context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        TestUtil.assertQueryReturns(connection, mdx,
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -116,12 +86,5 @@ class UsagePrefixTest extends AggTableTestCase {
                 + "Row #0: \n"
                 + "Row #0: 02.0\n");
     }
-
-
-    @Override
-	protected String getFileName() {
-        return MONDRIAN_595_CSV;
-    }
-
 
 }

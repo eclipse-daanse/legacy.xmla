@@ -8,28 +8,27 @@
 */
 package mondrian.rolap.sql;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for CrossJoinArgFactory
  *
  * @author Yury Bakhmutski
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class CrossJoinArgFactoryTest {
 
      /**
      * test for MONDRIAN-2287 issue. Tests if correct result is returned
      * instead of CCE throwing.
      */
-     @ParameterizedTest
-     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-     void testCrossJoinExample(Context<?> context) {
+     @Test
+     void testCrossJoinExample(Connection connection) {
         String query =
                 "with "
                 + " member [Measures].[aa] as '([Measures].[Store Cost],[Gender].[Gender].[M])'"
@@ -55,6 +54,6 @@ class CrossJoinArgFactoryTest {
                 + "Row #0: 15,941.98\n"
                 + "Row #1: 16,598.87\n"
                 + "Row #1: 15,649.64\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
+        assertThatQuery(connection, query).returnsGrid(expected);
     }
 }

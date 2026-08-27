@@ -9,6 +9,7 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -25,11 +26,10 @@ import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
+
 
 
 /**
@@ -38,6 +38,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  *
  * @author Julian Hyde
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class CacheTest {
     /**
      * Tests that if N queries are executed at the same time, only one segment
@@ -50,8 +51,7 @@ class CacheTest {
      * managed to share work. If it has not increased, the cache was probably
      * not flushed correctly.</p>
      */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     void testNQueriesWaitingForSameSegmentRepeat(Context<?> foodMartContext)
         throws ExecutionException, InterruptedException
     {
@@ -94,10 +94,10 @@ class CacheTest {
             Callable<Boolean> runnable = new Callable<>() {
                 @Override
 				public Boolean call() {
-                    TestUtil.assertQueryReturns(
+                    assertThatQuery(
                 		connection,
                         "select [Gender].Children * [Product].Children on 0\n"
-                        + "from [Sales]",
+                        + "from [Sales]").returnsGrid(
                         "Axis #0:\n"
                         + "{}\n"
                         + "Axis #1:\n"

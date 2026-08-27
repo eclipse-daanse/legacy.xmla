@@ -30,14 +30,12 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thiyagu,Ajit
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class ConcurrentMdxTest {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(FoodMartTestCase.class);
@@ -1302,8 +1301,7 @@ class ConcurrentMdxTest {
             .size() == 0);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testFlushingDoesNotCauseDeadlock(Context<?> context) throws Exception {
         // Create a seeded deterministic random generator.

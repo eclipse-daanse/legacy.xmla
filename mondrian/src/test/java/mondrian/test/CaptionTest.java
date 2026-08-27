@@ -12,10 +12,12 @@ package mondrian.test;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -23,25 +25,27 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test special "caption" settings.
  *
  * @author hhaas
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class CaptionTest{
 
     /**
      * set caption "Anzahl Verkauf" for measure "Unit Sales"
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, MyFoodmartModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMeasureCaption(Context<?> context) {
-        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         String mdxQuery =
@@ -59,10 +63,10 @@ class CaptionTest{
     /**
      * set caption "Werbemedium" for nonshared dimension "Promotion Media"
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, MyFoodmartModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimCaption(Context<?> context) {
-        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         String mdxQuery =
@@ -81,14 +85,14 @@ class CaptionTest{
     /**
      * set caption "Quadrat-Fuesse:-)" for shared dimension "Store Size in SQFT"
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, MyFoodmartModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimCaptionShared(Context<?> context) {
         String mdxQuery =
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
                         + "{[Store Size in SQFT].[All Store Size in SQFTs]} ON ROWS "
                         + "FROM [Sales]";
-        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         Query monQuery = monConnection.parseQuery(mdxQuery);
@@ -110,8 +114,9 @@ class CaptionTest{
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-236">Bug MONDRIAN-683,
      * "Caption expression for dimension levels missing implementation"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, MyFoodmartModifierEmf.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLevelCaptionExpression(Context<?> context) {
 
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
@@ -125,7 +130,6 @@ class CaptionTest{
                 // Oracle and MySQL are supported in this test.
                 return;
         }
-        withSchemaEmf(context, MyFoodmartModifierEmf::new);
         final Connection monConnection =
                 context.getConnectionWithDefaultRole();
         String mdxQuery =
@@ -139,6 +143,14 @@ class CaptionTest{
 
         String caption = mall.getCaption();
         assertEquals("1997-12-31", caption);
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 
 }

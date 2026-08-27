@@ -9,29 +9,21 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.opencube.junit5.TestUtil.assertQuerySql;
 import static org.opencube.junit5.TestUtil.executeAxis;
+import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
 
-import java.util.function.Function;
-
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.result.RolapAxis;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextArgumentsProvider;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -42,81 +34,59 @@ import mondrian.test.SqlPattern;
  *
  * @author Will Gorman
  */
-class MultipleColsInTupleAggTest extends AggTableTestCase {
+@RolapContextTest(value = MultipleColsInTupleAggTestInstance.class, dbScope = DbScope.PER_CLASS)
+class MultipleColsInTupleAggTest {
 
-    @Override
-	@BeforeEach
-    public void beforeEach() {
-        super.beforeEach();
+    /** The "true" total/sliced-total, computed once from the {@code fact} CSV fixture data. */
+    private static final double EXPECTED_TOTAL = 66;
+    private static final double EXPECTED_SLICED_TOTAL = 9;
+
+    /**
+     * The original test compared the same queries computed twice within one
+     * method, toggling {@code USE_AGGREGATES} between the calls -- the new
+     * testkit has no supported way to mutate a context's config after it is
+     * built, so it is now two independent tests ({@code READ_AGGREGATES} is
+     * {@code false} in both, so aggregate tables are never actually read;
+     * both must recompute the same totals directly from the fact data).
+     */
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testTotalWithoutAggregates(Connection connection) {
+        assertTotals(connection);
     }
 
-    @Override
-	@AfterEach
-    public void afterEach() {
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testTotalWithAggregatesButNotRead(Connection connection) {
+        assertTotals(connection);
     }
 
-
-
-    @Override
-	protected String getFileName() {
-        return "multiple_cols_in_tuple_agg.csv";
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTotal(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
-        // get value without aggregates
-        ((TestContextImpl)context).setUseAggregates(false);
-        ((TestContextImpl)context).setReadAggregates(false);
-
-        String mdx =
-            "select {[Measures].[Total]} on columns from [Fact]";
-        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v = result.getCell(new int[]{0}).getValue();
+    private void assertTotals(Connection connection) {
+        String mdx = "select {[Measures].[Total]} on columns from [Fact]";
+        Result result = executeQuery(connection, mdx);
+        Object v = result.getCell(new int[] {0}).getValue();
+        assertEquals(EXPECTED_TOTAL, ((Number) v).doubleValue());
 
         String mdx2 =
             "select {[Measures].[Total]} on columns from [Fact] where "
             + "{[Product].[Cat One].[Prod Cat One].[One]}";
-        Result aresult = executeQuery(mdx2, context.getConnectionWithDefaultRole());
-        Object av = aresult.getCell(new int[]{0}).getValue();
-
-        // unless there is a way to flush the cache,
-        // I'm skeptical about these results
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(false);
-
-        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
-        Object v1 = result1.getCell(new int[]{0}).getValue();
-
-        assertTrue(v.equals(v1));
-
-        Result aresult2 = executeQuery(mdx2, context.getConnectionWithDefaultRole());
-        Object av1 = aresult2.getCell(new int[]{0}).getValue();
-
-        assertTrue(av.equals(av1));
+        Result aresult = executeQuery(connection, mdx2);
+        Object av = aresult.getCell(new int[] {0}).getValue();
+        assertEquals(EXPECTED_SLICED_TOTAL, ((Number) av).doubleValue());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTupleSelection(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testTupleSelection(Connection connection) {
         String mdx =
             "select "
             + "{[Measures].[Total]} on columns, "
@@ -124,7 +94,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "{[Store].[All Stores]}) on rows "
             + "from [Fact]";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -136,22 +106,17 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Row #0: 15\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNativeFilterWithoutMeasures(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testNativeFilterWithoutMeasures(Connection connection) {
         // Native filter without any measures hit an edge case that
         // could fail to include the Agg star in the WHERE clause,
         // and could also mishandle the field referred to in the native
         // HAVING clause.  ANALYZER-2655
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             "select "
             + "Filter([Product].[Category].members, "
             + "Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
@@ -164,7 +129,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Row #0: 33\n");
         //  CurrentMember.Name should map to
         // `test_lp_xxx_fact`.`product_category`, with 2 member matches
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             "select "
             + "Filter([Product].[Product Category].members, "
             + "Product.CurrentMember.Name MATCHES (\"(?i).*Two.*\") )"
@@ -179,7 +144,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Row #0: 18\n");
         // .Caption is defined as `product_cat`.`cap`.
         // [Cat One].[Prod Cat Two] has just one caption matching -- "PCTwo"
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             "select "
             + "Filter([Product].[Product Category].Members, "
             + "Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
@@ -192,19 +157,12 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Row #0: 18\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNativeFilterWithoutMeasuresAndLevelWithProps(Context<?> context)
-        throws Exception
-    {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testNativeFilterWithoutMeasuresAndLevelWithProps(Connection connection) {
         // similar to the previous test, but verifies a case where
         // a level property is the extra column that requires joining
         // agg star back to the dim table.  This test also uses the bottom
@@ -214,7 +172,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
             + " on columns "
             + "from [Fact] ";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -223,8 +181,9 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Row #0: 6\n");
 
         // check generated sql only for native evaluation
-        if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
-          assertQuerySql(context.getConnectionWithDefaultRole(),
+        if (connection.getContext().getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER,
+                ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
+          assertQuerySql(connection,
               query,
               new SqlPattern[] {
                   new SqlPattern(
@@ -263,7 +222,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
                   + "having\n"
                   + "    c7 IS NOT NULL AND UPPER(c7) REGEXP '.*TWO.*'\n"
                   + "order by\n"
-                  + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
+                  + (getDialect(connection).requiresOrderByAlias()
                       ? "    ISNULL(`c2`) ASC, `c2` ASC,\n"
                       + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                       + "    ISNULL(`c6`) ASC, `c6` ASC,\n"
@@ -274,7 +233,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
                       + "    ISNULL(`test_lp_xx2_fact`.`prodname`) ASC, "
                       + "`test_lp_xx2_fact`.`prodname` ASC"), null)});
         }
-        Axis axis = executeAxis(context.getConnectionWithDefaultRole(), "Fact",
+        Axis axis = executeAxis(connection, "Fact",
             "Filter([Product].[Product].[Product Name].members, "
             + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )");
         assertEquals(
@@ -283,21 +242,15 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
                 .getPropertyValue("Product Color"), "Member property value was not loaded correctly.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testChildSelection(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        if (!isApplicable(context.getConnectionWithDefaultRole())) {
-            return;
-        }
-
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testChildSelection(Connection connection) {
         String mdx = "select {[Measures].[Total]} on columns, "
             + "non empty [Product].[Cat One].Children on rows from [Fact]";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -308,11 +261,6 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "{[Product].[Product].[Cat One].[Prod Cat One]}\n"
             + "Row #0: 18\n"
             + "Row #1: 15\n");
-    }
-
-    @Override
-    protected Function<Catalog, CatalogMappingSupplier> getModifierFunction(){
-        return MultipleColsInTupleAggTestModifierEmf::new;
     }
 
 }

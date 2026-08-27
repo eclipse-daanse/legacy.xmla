@@ -162,7 +162,7 @@ public class MultipleColsInTupleAggTestModifierEmf implements CatalogMappingSupp
 
         Column capProductCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
         capProductCat.setName("cap");
-        capProductCat.setType(SQLSimpleTypes.Sql99.integerType());
+        capProductCat.setType(SQLSimpleTypes.varcharType(255));
 
         // Create product_cat table
         Table productCat = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();

@@ -24,8 +24,13 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.result.RolapCell;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
@@ -41,16 +46,16 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @author Yury_Bakhmutski
  * @since Nov 18, 2015
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class DrillThroughFieldListTest {
 
   @AfterEach
   public void afterEach() {
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testOneJoin(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "[Measures].[Unit Sales] ON COLUMNS,\n"
         + "[Time].[Quarter].[Q1] ON ROWS\n"
@@ -121,10 +126,9 @@ class DrillThroughFieldListTest {
     assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testOneJoinTwoMeasures(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "{[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS,\n"
         + "[Time].[Quarter].[Q1] ON ROWS\n"
@@ -199,10 +203,9 @@ class DrillThroughFieldListTest {
     assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testTwoJoins(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "{[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS,\n"
         + "NONEMPTYCROSSJOIN({[Time].[Quarter].[Q1]},"
@@ -288,10 +291,9 @@ class DrillThroughFieldListTest {
     assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testNoJoin(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "Measures.[Store Sqft] on COLUMNS\n"
         + "FROM [Store]";
@@ -335,10 +337,9 @@ class DrillThroughFieldListTest {
     assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+  @Test
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testVirtualCube(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = " SELECT\n"
         + " [Measures].[Unit Sales] ON COLUMNS\n"
         + " FROM [Warehouse and Sales]\n"

@@ -10,6 +10,8 @@
 */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,14 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
 import static org.opencube.junit5.TestUtil.assertExprThrows;
 import static org.opencube.junit5.TestUtil.assertParameterizedExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.checkThrowable;
 import static org.opencube.junit5.TestUtil.executeExpr;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -51,14 +50,18 @@ import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.opencube.junit5.context.TestContextImpl;
+
+import mondrian.test.CaptionTest.FoodmartData;
 
 /**
  * A <code>ParameterTest</code> is a test suite for functionality relating to
@@ -67,6 +70,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @author jhyde
  * @since Feb 13, 2003
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class ParameterTest {
 
     // -- Helper methods ----------
@@ -87,8 +91,7 @@ class ParameterTest {
 
     // -- Tests --------------
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testChangeable(Context<?> context) {
         // jpivot needs to set a parameters value before the query is executed
         String mdx =
@@ -112,15 +115,13 @@ class ParameterTest {
             mdx);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterInFormatString(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[X] as '[Measures].[Store Sales]',\n"
             + "format_string = Parameter(\"fmtstrpara\", STRING, \"#\")\n"
             + "select {[Measures].[X]} ON COLUMNS\n"
-            + "from [Sales]",
-
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -128,8 +129,7 @@ class ParameterTest {
             + "Row #0: 565238\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterInFormatString_Bug1584439(Context<?> context) {
         String queryString =
             "with member [Measures].[X] as '[Measures].[Store Sales]',\n"
@@ -143,14 +143,12 @@ class ParameterTest {
         query.toString();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterOnAxis(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on rows,\n"
             + " {Parameter(\"GenderParam\",[Gender],[Gender].[M],\"Which gender?\")} on columns\n"
-            + "from Sales",
-
+            + "from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -160,16 +158,14 @@ class ParameterTest {
             + "Row #0: 135,215\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNumericParameter(Context<?> context) {
         String s =
             executeExpr(context.getConnectionWithDefaultRole(), "Sales", "Parameter(\"N\",NUMERIC,2+3,\"A numeric parameter\")");
         assertEquals("5", s);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStringParameter(Context<?> context) {
         String s =
             executeExpr(context.getConnectionWithDefaultRole(), "Sales",
@@ -178,8 +174,7 @@ class ParameterTest {
         assertEquals("xy", s);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStringParameterNull(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertParameterizedExprReturns(connection, "Sales",
@@ -205,8 +200,7 @@ class ParameterTest {
             "foo", null);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNumericParameterNull(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertParameterizedExprReturns(connection, "Sales",
@@ -224,8 +218,7 @@ class ParameterTest {
             "foo", null);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMemberParameterNull(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertParameterizedExprReturns(connection, "Sales",
@@ -263,8 +256,7 @@ class ParameterTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-745">MONDRIAN-745,
      * "NullPointerException when passing in null param value"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNullStrToMember(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Query query = connection.parseQuery(
@@ -321,8 +313,7 @@ class ParameterTest {
         assertFalse(parameter0.isSet());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetUnsetParameter(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Query query = connection.parseQuery(
@@ -381,8 +372,7 @@ class ParameterTest {
         assertFalse(parameter0.isSet());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNumericParameterStringValueFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprThrows(connection, "Sales",
@@ -390,14 +380,13 @@ class ParameterTest {
             "java.lang.NumberFormatException: For input string: \"xy\"");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterDimensionWithTwoHierarchies(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\",[Time],[Time].[1997],\"Foo\").Name", "1997");
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\",[Time],[Time].[1997].[Q2].[5],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time],[Time].[1997],\"Foo\").Name").returns("1997");
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time],[Time].[1997].[Q2].[5],\"Foo\").Name").returns(
             "5");
         // wrong dimension
         assertExprThrows(connection, "Sales",
@@ -409,14 +398,13 @@ class ParameterTest {
             "MDX object '[Time].[1997].[Q5]' not found in cube 'Sales'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterDimensionWithOneHierarchy(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-      assertExprReturns(connection, "Sales",
-          "Parameter(\"Foo\",[Store],[Store].[USA],\"Foo\").Name", "USA");
-      assertExprReturns(connection, "Sales",
-          "Parameter(\"Foo\",[Store],[Store].[USA].[OR].[Portland],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+          "Parameter(\"Foo\",[Store],[Store].[USA],\"Foo\").Name").returns("USA");
+        assertThatExpr(connection, "Sales",
+          "Parameter(\"Foo\",[Store],[Store].[USA].[OR].[Portland],\"Foo\").Name").returns(
           "Portland");
       // wrong dimension
       assertExprThrows(connection, "Sales",
@@ -428,12 +416,11 @@ class ParameterTest {
           "MDX object '[Store].[USA].[NY]' not found in cube 'Sales'");
   }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterHierarchy(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\", [Time].[Weekly], [Time].[Weekly].[1997].[40],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\", [Time].[Weekly], [Time].[Weekly].[1997].[40],\"Foo\").Name").returns(
             "40");
         // right dimension, wrong hierarchy
         final String levelName = "[Time].[Weekly]";
@@ -454,20 +441,18 @@ class ParameterTest {
             "MDX object '[Widget].[All Widgets]' not found in cube 'Sales'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterLevel(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3], \"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3], \"Foo\").Name").returns(
             "Q3");
         assertExprThrows(connection, "Sales",
             "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3].[8], \"Foo\").Name",
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<level=[Time].[Time].[Quarter]>");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterMemberFails(Context<?> context) {
         // type of a param can be dimension, hierarchy, level but not member
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
@@ -479,15 +464,14 @@ class ParameterTest {
      * Tests that member parameter fails validation if the level name is
      * invalid.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterMemberFailsBadLevel(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprThrows(connection, "Sales",
             "Parameter(\"Foo\", [Customers].[State], [Customers].[USA].[CA], \"\")",
             "MDX object '[Customers].[State]' not found in cube 'Sales'");
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\", [Customers].[State Province], [Customers].[USA].[CA], \"\")",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\", [Customers].[State Province], [Customers].[USA].[CA], \"\")").returns(
             "74,748");
     }
 
@@ -496,17 +480,16 @@ class ParameterTest {
      * member-valued parameter. It is interpreted to mean the default value of
      * that dimension.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterMemberDefaultValue(Context<?> context) {
         // "[Time]" is shorthand for "[Time].CurrentMember"
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\", [Time], [Time].[Time], \"Description\").UniqueName",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\", [Time], [Time].[Time], \"Description\").UniqueName").returns(
             "[Time].[Time].[1997]");
 
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\", [Time], [Time].[Time].Children.Item(2), \"Description\").UniqueName",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\", [Time], [Time].[Time].Children.Item(2), \"Description\").UniqueName").returns(
             "[Time].[Time].[1997].[Q3]");
     }
 
@@ -516,11 +499,10 @@ class ParameterTest {
      * use it to solve the more common problem "How do I automatically set the
      * time dimension to the latest date for which there are transactions?".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterMemberDefaultValue2(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select [Measures].[Unit Sales] on 0,\n"
             + " [Product].Children on 1\n"
             + "from [Sales]"
@@ -536,7 +518,7 @@ class ParameterTest {
             + "           [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]))\n"
             + "     },\n"
             + "     1),\n"
-            + "   \"Description\")",
+            + "   \"Description\")").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q4].[11]}\n"
             + "Axis #1:\n"
@@ -550,8 +532,7 @@ class ParameterTest {
             + "Row #2: 4,648\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterWithExpressionForHierarchyFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprThrows(connection, "Sales",
@@ -563,23 +544,21 @@ class ParameterTest {
      * Tests a parameter derived from another parameter. OK as long as it is
      * not cyclic.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDerivedParameter(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "Parameter(\"X\", NUMERIC, Parameter(\"Y\", NUMERIC, 1) + 2)",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"X\", NUMERIC, Parameter(\"Y\", NUMERIC, 1) + 2)").returns(
             "3");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterInSlicer(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select {[Measures].[Unit Sales]} on rows,\n"
             + " {[Marital Status].children} on columns\n"
-            + "from Sales where Parameter(\"GenderParam\",[Gender],[Gender].[M],\"Which gender?\")",
+            + "from Sales where Parameter(\"GenderParam\",[Gender],[Gender].[M],\"Which gender?\")").returnsGrid(
             "Axis #0:\n"
             + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
@@ -595,8 +574,7 @@ class ParameterTest {
      * Parameter in slicer and expression on columns axis are both of [Gender]
      * hierarchy, which is illegal.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     public void _testParameterDuplicateDimensionFails(Context<?> context) {
         assertQueryThrows(context,
             "select {[Measures].[Unit Sales]} on rows,\n"
@@ -606,8 +584,7 @@ class ParameterTest {
     }
 
     /** Mondrian can not handle forward references */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     public void dontTestParamRef(Context<?> context) {
         String s = executeExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Parameter(\"X\",STRING,\"x\",\"A string\") || "
@@ -618,14 +595,12 @@ class ParameterTest {
         assertEquals("xyY.xyY", s);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParamRefWithoutParamFails(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "ParamRef(\"Y\")", "Unknown parameter 'Y'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParamDefinedTwiceFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryThrows(connection,
@@ -635,8 +610,7 @@ class ParameterTest {
             + "from Sales", "Parameter 'P' is defined more than once");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParamBadTypeFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprThrows(connection, "Sales",
@@ -644,18 +618,16 @@ class ParameterTest {
             "No function matches signature 'Parameter(<String>, <Numeric Expression>)'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParamCyclicOk(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
+        assertThatExpr(connection, "Sales",
             "Parameter(\"P\", NUMERIC, ParamRef(\"Q\") + 1) + "
-            + "Parameter(\"Q\", NUMERIC, Iif(1 = 0, ParamRef(\"P\"), 2))",
+            + "Parameter(\"Q\", NUMERIC, Iif(1 = 0, ParamRef(\"P\"), 2))").returns(
             "5");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParamCyclicFails(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "Parameter(\"P\", NUMERIC, ParamRef(\"Q\") + 1) + "
@@ -663,8 +635,7 @@ class ParameterTest {
             "Cycle occurred while evaluating parameter 'P'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParameterMetadata(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Query query = connection.parseQuery(
@@ -695,8 +666,7 @@ class ParameterTest {
             Util.unparse(query));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTwoParametersBug1425153(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Query query = connection.parseQuery(
@@ -784,8 +754,7 @@ class ParameterTest {
      * Positive and negative tests assigning values to a parameter of type
      * NUMERIC.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAssignNumericParameter(Context<?> context) {
         final String para = "Parameter(\"x\", NUMERIC, 1)";
         Connection connection = context.getConnectionWithDefaultRole();
@@ -813,8 +782,7 @@ class ParameterTest {
      * Positive and negative tests assigning values to a parameter of type
      * STRING.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAssignStringParameter(Context<?> context) {
         final String para = "Parameter(\"x\", STRING, 'xxx')";
         Connection connection = context.getConnectionWithDefaultRole();
@@ -836,8 +804,7 @@ class ParameterTest {
      * Positive and negative tests assigning values to a parameter whose type is
      * a member.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAssignMemberParameter(Context<?> context) {
         final String para = "Parameter(\"x\", [Customers], [Customers].[USA])";
         Connection connection = context.getConnectionWithDefaultRole();
@@ -932,8 +899,7 @@ class ParameterTest {
      * Positive and negative tests assigning values to a parameter whose type is
      * a set of members.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAssignSetParameter(Context<?> context) {
         final String para =
             "Parameter(\"x\", [Customers], {[Customers].[USA], [Customers].[USA].[CA]})";
@@ -1124,8 +1090,7 @@ class ParameterTest {
     /**
      * Tests a parameter whose type is a set of members.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParamSet(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         try {
@@ -1182,8 +1147,7 @@ class ParameterTest {
     /**
      * Tests that certain connection properties which should be null, are.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testConnectionPropsWhichShouldBeNull(Context<?> context) {
         // properties which must always return null
         Connection connection = context.getConnectionWithDefaultRole();
@@ -1197,28 +1161,26 @@ class ParameterTest {
     /**
      * Tests accessing system properties as parameters in a statement.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.RESULT_LIMIT, value = "4321", type = Integer.class)
+    @RolapConfig(key = ConfigConstants.NULL_MEMBER_REPRESENTATION, value = "#nix", type = String.class)
     void testSystemPropsGet(Context<?> context) {
         // Configuration values are reachable as parameters by their ConfigConstants
         // key. This used to enumerate the JVM-wide property registry; the values now
         // belong to this test's own context, so the test sets what it then reads.
-        ((TestContextImpl) context).setResultLimit(4321);
-        ((TestContextImpl) context).setNullMemberRepresentation("#nix");
 
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "ParamRef(" + Util.singleQuoteString(ConfigConstants.RESULT_LIMIT) + ")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(" + Util.singleQuoteString(ConfigConstants.RESULT_LIMIT) + ")").returns(
             "4321");
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "ParamRef(" + Util.singleQuoteString(ConfigConstants.NULL_MEMBER_REPRESENTATION) + ")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(" + Util.singleQuoteString(ConfigConstants.NULL_MEMBER_REPRESENTATION) + ")").returns(
             "#nix");
     }
 
     /**
      * A configuration key that this context does not set is not a parameter.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnsetConfigPropNotAvailable(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "ParamRef(" + Util.singleQuoteString(ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY) + ")",
@@ -1228,8 +1190,7 @@ class ParameterTest {
     /**
      * Tests getting a java system property is not possible
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSystemPropsNotAvailable(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "ParamRef(\"java.version\")",
@@ -1240,10 +1201,9 @@ class ParameterTest {
     /**
      * Tests setting system properties.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.RESULT_LIMIT, value = "4321", type = Integer.class)
     void testSystemPropsSet(Context<?> context) {
-        ((TestContextImpl) context).setResultLimit(4321);
         for (String propName : List.of(ConfigConstants.RESULT_LIMIT)) {
             assertSetPropertyFails(context.getConnectionWithDefaultRole(), propName, "System");
         }
@@ -1254,8 +1214,9 @@ class ParameterTest {
     /**
      * Tests a schema property with a default value.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSchemaPropModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSchemaProp(Context<?> context) {
         /*
         class TestSchemaPropModifier extends PojoMappingModifier {
@@ -1287,15 +1248,15 @@ class ParameterTest {
             null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestSchemaPropModifier::new);
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "ParamRef(\"prop\")", "foo bar");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "ParamRef(\"prop\")").returns("foo bar");
     }
 
     /**
      * Tests a schema property with a default value.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSchemaPropDupFailsModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSchemaPropDupFails(Context<?> context) {
         /*
         class TestSchemaPropDupFailsModifier extends PojoMappingModifier {
@@ -1340,7 +1301,6 @@ class ParameterTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestSchemaPropDupFailsModifier::new);
         assertExprThrows(context, "Sales",
             "ParamRef(\"foo\")",
             "Duplicate parameter 'foo' in schema");
@@ -1348,9 +1308,10 @@ class ParameterTest {
     }
 
     @Disabled //we not able set bad type. type is enum. this test will delete in future
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSchemaPropIllegalTypeFailsModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSchemaPropIllegalTypeFails(Context<?> context) {
         /*
         class TestSchemaPropIllegalTypeFailsModifier extends PojoMappingModifier {
@@ -1383,7 +1344,6 @@ class ParameterTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestSchemaPropIllegalTypeFailsModifier::new);
         assertExprThrows(context, "Sales",
             "1",
             "In Schema: In Parameter: "
@@ -1391,8 +1351,9 @@ class ParameterTest {
             + "Legal values: {String, Numeric, Integer, Boolean, Date, Time, Timestamp, Member}");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSchemaPropInvalidDefaultExpFailsModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSchemaPropInvalidDefaultExpFails(Context<?> context) {
         /*
         class TestSchemaPropInvalidDefaultExpFailsModifier extends PojoMappingModifier {
@@ -1425,7 +1386,6 @@ class ParameterTest {
             null);
         withSchema(context,schema);
          */
-        withSchemaEmf(context, TestSchemaPropInvalidDefaultExpFailsModifier::new);
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "ParamRef(\"Product Current Member\")",
             "No function matches signature '<Member>.Children(<Numeric Expression>)'");
@@ -1435,8 +1395,9 @@ class ParameterTest {
      * Tests that a schema property fails if it references dimensions which
      * are not available.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSchemaPropContextModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSchemaPropContext(Context<?> context) {
         /*
         class TestSchemaPropContextModifier extends PojoMappingModifier {
@@ -1469,11 +1430,10 @@ class ParameterTest {
             null);
         withSchema(context,schema);
          */
-        withSchemaEmf(context, TestSchemaPropContextModifier::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' ParamRef(\"Customer Current Member\").Name '\n"
             + "select {[Measures].[Foo]} on columns\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

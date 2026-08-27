@@ -55,6 +55,8 @@ import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -75,6 +77,7 @@ import mondrian.test.SqlPattern;
  * @author ajogleka
  * @since 19 December, 2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class AggregationOnDistinctCountMeasuresTest {
     private  final String cubeNameSales = "Sales";
 

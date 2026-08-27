@@ -10,92 +10,34 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
+import static org.opencube.junit5.TestUtil.mysqlPattern;
 
-import java.util.List;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
-import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 /**
  * @author Andrey Khayrutdinov
  */
-class AggregationOverAggTableTest extends AggTableTestCase {
+@RolapContextTest(value = AggregationOverAggTableTestInstance.class, dbScope = DbScope.PER_CLASS)
+class AggregationOverAggTableTest {
 
-	//## TableName:  agg_c_avg_sales_fact_1997
-	//## ColumnNames:  the_year,quarter,month_of_year,gender,unit_sales,fact_count
-	//## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),INTEGER:NULL,INTEGER
-    private static Column theYearAggCAvgSalesFact1997 = createColumn("the_year", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column quarterAggCAvgSalesFact1997 = createColumn("quarter", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column monthOfYearAggCAvgSalesFact1997 = createColumn("month_of_year", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column genderAggCAvgSalesFact1997 = createColumn("gender", SQLSimpleTypes.varcharType(255), 30, null, null);
-    private static Column unitSalesAggCAvgSalesFact1997 = createColumn("unit_sales", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-    private static Column factCountAggCAvgSalesFact1997 = createColumn("fact_count", SQLSimpleTypes.Sql99.integerType(), null, null, null);
-
-    private static Table aggCAvgSalesFact1997 = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createTable();
-    static {
-        aggCAvgSalesFact1997.setName("agg_c_avg_sales_fact_1997");
-        aggCAvgSalesFact1997.getFeature().add(theYearAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getFeature().add(quarterAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getFeature().add(monthOfYearAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getFeature().add(genderAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getFeature().add(unitSalesAggCAvgSalesFact1997);
-        aggCAvgSalesFact1997.getFeature().add(factCountAggCAvgSalesFact1997);
-    }
-
-
-    @Override
-    protected String getFileName() {
-        return "aggregation-over-agg-table.csv";
-    }
-
-    @Override
-	@BeforeEach
-    public void beforeEach() {
-        super.beforeEach();
-    }
-
-    @Override
-	@AfterEach
-    public void afterEach() {
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAvgMeasureLowestGranularity(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-        ((TestContextImpl)context).setDisableCaching(true);
-        prepareContext(context);
-        Catalog catalogMapping = new CatalogSupplier().get();
-        EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
-        Catalog catalog = (Catalog) copier.get(catalogMapping);
-
-        ExplicitRecognizerTest.setupMultiColDimCube(catalog, copier, context,
-            List.of(),
-            (Column)copier.get(CatalogSupplier.COLUMN_THE_YEAR_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY),
-            (Column)copier.get(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY), null, null, null,
-            List.of(), List.of(aggCAvgSalesFact1997));
-
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
+    void testAvgMeasureLowestGranularity(Connection connection) {
         String query =
             "select {[Measures].[Avg Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[1997].[Q1].Children},{[Gender].[M]}) on rows "
             + "from [ExtraCol]";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -110,7 +52,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             + "Row #2: 3\n");
 
         assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
+            connection,
             query,
             mysqlPattern(
                 "select\n"
@@ -132,22 +74,4 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             false, false, true);
     }
 
-    private static Column createColumn(String name, org.eclipse.daanse.cwm.model.cwm.resource.relational.SQLSimpleType dataType, Integer charOctetLength, Integer columnSize, Integer decimalDigits) {
-        Column column = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-        column.setName(name);
-
-        column.setType(dataType);
-
-        if (charOctetLength != null) {
-            // column.setCharOctetLength(charOctetLength);
-        }
-        if (columnSize != null) {
-            // column.setColumnSize(columnSize);
-        }
-        if (decimalDigits != null) {
-            // column.setDecimalDigits(decimalDigits);
-        }
-
-        return column;
-    }
 }

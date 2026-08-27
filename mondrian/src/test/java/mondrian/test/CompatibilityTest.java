@@ -15,25 +15,26 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
+import java.net.URL;
+import java.util.Map;
 
 import org.eclipse.daanse.sql.dialect.api.Dialect;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
@@ -50,7 +51,16 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author sasebb
  * @since March 30, 2005
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class CompatibilityTest {
+
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
+
     @BeforeAll
     public static void beforeAll() {
     }
@@ -67,10 +77,8 @@ class CompatibilityTest {
     /**
      * Cube names are case insensitive.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCubeCase(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testCubeCase(Connection connection) {
         String queryFrom = "select {[Measures].[Unit Sales]} on columns from ";
         String result =
             "Axis #0:\n"
@@ -88,10 +96,8 @@ class CompatibilityTest {
     /**
      * Brackets around cube names are optional.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCubeBrackets(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testCubeBrackets(Connection connection) {
         String queryFrom = "select {[Measures].[Unit Sales]} on columns from ";
         String result =
             "Axis #0:\n"
@@ -109,10 +115,8 @@ class CompatibilityTest {
     /**
      * See how we are at diagnosing reserved words.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testReservedWord(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testReservedWord(Connection connection) {
     	TestUtil.assertAxisThrows(
     		connection,
             "with member [Measures].ordinal as '1'\n"
@@ -132,10 +136,8 @@ class CompatibilityTest {
     /**
      * Dimension names are case insensitive.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDimensionCase(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testDimensionCase(Connection connection) {
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[MEASURES].[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[mEaSuReS].[Unit Sales]");
@@ -150,10 +152,8 @@ class CompatibilityTest {
     /**
      * Brackets around dimension names are optional.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDimensionBrackets(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testDimensionBrackets(Connection connection) {
         checkAxis(connection, "[Measures].[Unit Sales]", "Measures.[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "MEASURES.[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "mEaSuReS.[Unit Sales]");
@@ -168,10 +168,8 @@ class CompatibilityTest {
     /**
      * Member names are case insensitive.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMemberCase(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testMemberCase(Connection connection) {
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[UNIT SALES]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[uNiT sAlEs]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[unit sales]");
@@ -195,11 +193,9 @@ class CompatibilityTest {
     /**
      * Calculated member names are case insensitive.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCalculatedMemberCase(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        ((TestContextImpl) foodMartContext).setCaseSensitive(false);
+    @Test
+    @RolapConfig(key = ConfigConstants.CASE_SENSITIVE, value = "false", type = Boolean.class)
+    void testCalculatedMemberCase(Connection connection) {
         TestUtil.assertQueryReturns(
     		connection,
             "with member [Measures].[CaLc] as '1'\n"
@@ -232,10 +228,8 @@ class CompatibilityTest {
     /**
      * Solve order is case insensitive.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSolveOrderCase(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testSolveOrderCase(Connection connection) {
         checkSolveOrder(connection, "SOLVE_ORDER");
         checkSolveOrder(connection, "SoLvE_OrDeR");
         checkSolveOrder(connection, "solve_order");
@@ -264,10 +258,8 @@ class CompatibilityTest {
     /**
      * Brackets around member names are optional.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMemberBrackets(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testMemberBrackets(Connection connection) {
         checkAxis(connection, "[Measures].[Profit]", "[Measures].Profit");
         checkAxis(connection, "[Measures].[Profit]", "[Measures].pRoFiT");
         checkAxis(connection, "[Measures].[Profit]", "[Measures].PROFIT");
@@ -295,10 +287,8 @@ class CompatibilityTest {
      * Hierarchy names of the form [Dim].[Hier], [Dim.Hier], and
      * Dim.Hier are accepted.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testHierarchyNames(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
+    @Test
+    void testHierarchyNames(Connection connection) {
         checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[All Customers]");
         checkAxis(
     		connection,
@@ -334,12 +324,10 @@ class CompatibilityTest {
      * Tests that a #null member on a Hiearchy Level of type String can
      * still be looked up when case sensitive is off.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCaseInsensitiveNullMember(Context<?> foodMartContext) throws SQLException, IOException {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        DataSource dataSource = connection.getDataSource();
-        final Dialect dialect = foodMartContext.getDialect();
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier4.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCaseInsensitiveNullMember(Context<?> context, Dialect dialect, Connection connection) {
         if (getDatabaseProduct(dialect.name()) == DatabaseProduct.LUCIDDB) {
             // TODO jvs 29-Nov-2006:  LucidDB is strict about
             // null literals (type can't be inferred in this context);
@@ -347,7 +335,7 @@ class CompatibilityTest {
             // types to apply a CAST.
             return;
         }
-        if (!isDefaultNullMemberRepresentation(foodMartContext)) {
+        if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
         /*
@@ -389,8 +377,6 @@ class CompatibilityTest {
             null,
             null);
          */
-        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier4::new);
-        connection = foodMartContext.getConnectionWithDefaultRole();
 
         // This test should work irrespective of the case-sensitivity setting.
         //props.CaseSensitive;
@@ -414,12 +400,10 @@ class CompatibilityTest {
      * Tests that data in Hierarchy.Level attribute "nameColumn" can be null.
      * This will map to the #null memeber.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNullNameColumn(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        DataSource dataSource = connection.getDataSource();
-        final Dialect dialect = foodMartContext.getDialect();
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.CompatibilityTestModifier.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testNullNameColumn(Context<?> context, Dialect dialect, Connection connection) {
         switch (getDatabaseProduct(dialect.name())) {
         case LUCIDDB:
             // TODO jvs 29-Nov-2006:  See corresponding comment in
@@ -445,7 +429,7 @@ class CompatibilityTest {
             //   "alt_promotion"."promo_id" ASC
             return;
         }
-        if (!isDefaultNullMemberRepresentation(foodMartContext)) {
+        if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
         final String cubeName = "Sales_inline";
@@ -482,9 +466,6 @@ class CompatibilityTest {
             + "      formatString=\"#,###.00\"/>\n"
             + "</Cube>", null, null, null, null);
         */
-        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.CompatibilityTestModifier::new);
-        connection = foodMartContext.getConnectionWithDefaultRole();
-
         TestUtil.assertQueryReturns(
     		connection,
             "select {"
@@ -505,12 +486,10 @@ class CompatibilityTest {
      * such as MySQL, NULLs naturally come before other values, so we have to
      * generate a modified ORDER BY clause.
       */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNullCollation(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        DataSource dataSource = connection.getDataSource();
-        final Dialect dialect = foodMartContext.getDialect();
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.CompatibilityTestModifier2.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testNullCollation(Dialect dialect, Connection connection) {
         if (dialect.supportsGroupByExpressions()) {
             // Derby does not support expressions in the GROUP BY clause,
             // therefore this testing strategy of using an expression for the
@@ -518,9 +497,6 @@ class CompatibilityTest {
             return;
         }
         final String cubeName = "Store_NullsCollation";
-        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.CompatibilityTestModifier2::new);
-        connection = foodMartContext.getConnectionWithDefaultRole();
-
         TestUtil.assertQueryReturns(
     		connection,
             "select { [Measures].[Store Sqft] } on columns,\n"
@@ -554,11 +530,10 @@ class CompatibilityTest {
      * that you run the test once with mondrian.olap.case.sensitive=true,
      * and once with mondrian.olap.case.sensitive=false.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testPropertyCaseSensitivity(Context<?> foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        boolean caseSensitive = ((TestContextImpl) foodMartContext).isCaseSensitive();
+    @Test
+    void testPropertyCaseSensitivity(Context<?> context, Connection connection) {
+        boolean caseSensitive = context.getConfigValue(
+                ConfigConstants.CASE_SENSITIVE, ConfigConstants.CASE_SENSITIVE_DEFAULT_VALUE, Boolean.class);
 
         // A user-defined property of a member.
         TestUtil.assertExprReturns(

@@ -10,20 +10,20 @@
 */
 package mondrian.test;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import org.opencube.junit5.propupdator.EnableNonEmptyOnAllAxis;
+import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.SchemaModifiersEmf;
+import mondrian.test.AccessControlTest.FoodmartData;
 
 /**
  * Test case to
@@ -33,13 +33,9 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author ajoglekar
  * @since Dec 03, 2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class IgnoreUnrelatedDimensionsTest {
 
-
-
-    // EnableNonEmptyOnAllAxis is set on each test's own context by the
-    // EnableNonEmptyOnAllAxis updater in @ContextSource; @BeforeEach cannot do it,
-    // the Context only arrives as a parameter of the test method.
     @AfterEach
     public void afterEach() {
     }
@@ -83,60 +79,12 @@ class IgnoreUnrelatedDimensionsTest {
         + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Sales]\"/>\n"
         + "</VirtualCube>";
 
-    private void prepareContext(Context<?> context) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Warehouse and Sales2\" defaultMeasure=\"Store Sales\">\n"
-            + "  <CubeUsages>"
-            + "   <CubeUsage cubeName=\"Sales\" ignoreUnrelatedDimensions=\"true\"/>\n"
-            + "   <CubeUsage cubeName=\"Warehouse\" ignoreUnrelatedDimensions=\"true\"/>\n"
-            + "  </CubeUsages>"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Education Level\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Gender\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Marital Status\"/>\n"
-            + "  <VirtualCubeDimension name=\"Product\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Promotion Media\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Promotions\"/>\n"
-            + "  <VirtualCubeDimension name=\"Store\"/>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Yearly Income\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Warehouse\" name=\"Warehouse\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Sales Count]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Cost]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Unit Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Profit]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Profit Growth]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Store Invoice]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Supply Time]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Units Ordered]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Units Shipped]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Cost]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Profit]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Average Warehouse Sale]\"/>\n"
-            + "  <CalculatedMember name=\"Profit Per Unit Shipped\" dimension=\"Measures\">\n"
-            + "    <Formula>[Measures].[Profit] / [Measures].[Units Shipped]</Formula>\n"
-            + "  </CalculatedMember>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-    	withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier::new);
-
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTotalingOnCrossJoinOfJoiningAndNonJoiningDimensions(Context<?> context) {
-    	prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER = 3000 "
             + "MEMBER Gender.G AS 'AGGREGATE(CROSSJOIN({[Gender].[Gender].[Gender].MEMBERS},"
@@ -144,7 +92,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "SELECT "
             + "{[MEASURES].[Unit Sales VM]} ON 0,"
             + "{Gender.G} ON 1 "
-            + "FROM [WAREHOUSE AND SALES2]",
+            + "FROM [WAREHOUSE AND SALES2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -154,11 +102,12 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #0: 266,773\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testVMShouldNotPushUpAggMemberDefinedOnNonJoiningDimension(Context<?> context) {
-    	prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Total Sales] AS "
             + "'ValidMeasure(Measures.[Warehouse Sales]) + [Measures].[Unit Sales]',"
             + "SOLVE_ORDER = 3000 "
@@ -167,7 +116,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "SOLVE_ORDER = 4 "
             + "SELECT "
             + "{[MEASURES].[Total Sales]} ON 0,"
-            + "{Gender.G} ON 1 FROM [WAREHOUSE AND SALES2]",
+            + "{Gender.G} ON 1 FROM [WAREHOUSE AND SALES2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -177,8 +126,10 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #0: 30,405.602\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAggMemberDefinedOnNonJoiningDimensionWithNonAllDefltMember(Context<?> context)
     {
         // Gender dim to have Gender.F as default member
@@ -188,8 +139,7 @@ class IgnoreUnrelatedDimensionsTest {
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-    	withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Total Sales] AS "
             + "'ValidMeasure(Measures.[Warehouse Sales]) + [Measures].[Unit Sales]',"
             + "SOLVE_ORDER = 3000 "
@@ -198,7 +148,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "SOLVE_ORDER = 4 "
             + "SELECT "
             + "{[MEASURES].[Total Sales]} ON 0,"
-            + "{Gender.G} ON 1 FROM [WAREHOUSE AND SALES 3]",
+            + "{Gender.G} ON 1 FROM [WAREHOUSE AND SALES 3]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -212,21 +162,22 @@ class IgnoreUnrelatedDimensionsTest {
      * Without a fix for MONDRIAN-1837, this result of the following query
      * would be empty.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testIgnoreUnrelatedDimsOnSlicer(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
-            + " FROM [WAREHOUSE AND SALES 3] where ([Gender].[M])",
+            + " FROM [WAREHOUSE AND SALES 3] where ([Gender].[M])").returnsGrid(
             "Axis #0:\n"
             + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
@@ -235,24 +186,25 @@ class IgnoreUnrelatedDimensionsTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testIgnoreUnrelatedDimsOnCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where "
             + "{[Education Level].[Graduate Degree],"
-            + "[Education Level].[High School Degree]}",
+            + "[Education Level].[High School Degree]}").returnsGrid(
             "Axis #0:\n"
             + "{[Education Level].[Education Level].[Graduate Degree]}\n"
             + "{[Education Level].[Education Level].[High School Degree]}\n"
@@ -261,25 +213,26 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #0: 196,770.888\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRelatedAndUnrelatedDimsOnCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where "
             + "Crossjoin( {[Education Level].[Graduate Degree],"
             + "[Education Level].[High School Degree]},"
-            + "  {[Warehouse].[USA].[WA], [Warehouse].[USA].[CA]} )",
+            + "  {[Warehouse].[USA].[WA], [Warehouse].[USA].[CA]} )").returnsGrid(
             "Axis #0:\n"
             + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[WA]}\n"
             + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[CA]}\n"
@@ -290,29 +243,30 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #0: 157,935.834\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testPartiallyRelatedMeasureWithCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
             null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1::new);
         // Should equal the [Unit Sales] of [Graduate Degree] and
         // [High School Degree] (with default Gender.F),
         //  plus the total [warehouse sales].
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member measures.bothCubes as "
             + "'measures.[unit sales] + measures.[warehouse sales]'"
             + " SELECT "
             + "{[Measures].[bothCubes]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where "
             + " {[Education Level].[Graduate Degree],"
-            + "[Education Level].[High School Degree]} ",
+            + "[Education Level].[High School Degree]} ").returnsGrid(
             "Axis #0:\n"
             + "{[Education Level].[Education Level].[Graduate Degree]}\n"
             + "{[Education Level].[Education Level].[High School Degree]}\n"
@@ -322,7 +276,7 @@ class IgnoreUnrelatedDimensionsTest {
         // [Sales] does not ignoreUnrelatedDimensions, so the [Unit Sales]
         // part of the formula below should result in NULL given the
         // [Warehouse] dim in the slicer.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member measures.bothCubes as "
             + "'measures.[unit sales] + measures.[warehouse sales]'"
             + " SELECT "
@@ -330,7 +284,7 @@ class IgnoreUnrelatedDimensionsTest {
             + " FROM [WAREHOUSE AND SALES 3] where "
             + "Crossjoin( {[Education Level].[Graduate Degree],"
             + "[Education Level].[High School Degree]},"
-            + "  {[Warehouse].[USA].[WA], [Warehouse].[USA].[CA]} )",
+            + "  {[Warehouse].[USA].[WA], [Warehouse].[USA].[CA]} )").returnsGrid(
             "Axis #0:\n"
             + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[WA]}\n"
             + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[CA]}\n"
@@ -341,29 +295,31 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #0: 157,936\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNonJoiningDimWithMeasureInCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             " SELECT "
             + " FROM [WAREHOUSE AND SALES2] where "
             + "crossjoin( measures.[warehouse sales], "
             + " {[Education Level].[Graduate Degree],"
-            + "[Education Level].[High School Degree]}) ",
+            + "[Education Level].[High School Degree]}) ").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Warehouse Sales], [Education Level].[Education Level].[Graduate Degree]}\n"
             + "{[Measures].[Warehouse Sales], [Education Level].[Education Level].[High School Degree]}\n"
             + "196,770.888");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTotalingForValidAndNonValidMeasuresWithJoiningDimensions(Context<?> context) {
-    	prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])',"
             + "SOLVE_ORDER = 3000 "
@@ -371,7 +327,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "[STORE].[STORE NAME].MEMBERS))'"
             + "SELECT "
             + "{[MEASURES].[Unit Sales VM], [MEASURES].[STORE COST]} ON 0,"
-            + "{PRODUCT.G} ON 1 FROM [WAREHOUSE AND SALES2]",
+            + "{PRODUCT.G} ON 1 FROM [WAREHOUSE AND SALES2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -383,11 +339,12 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #0: 225,627.23\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTotalingWhenIgnoreUnrelatedDimensionsPropertyIsTrue(Context<?> context) {
-    	prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER = 3000 "
             + "MEMBER [Gender].[COG_OQP_USR_Aggregate(Gender SET)] AS "
@@ -420,7 +377,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "{[COG_OQP_INT_s2], HEAD({([Gender].[COG_OQP_USR_Aggregate(Gender SET)], "
             + "[WAREHOUSE].DEFAULTMEMBER)}, "
             + "IIF(COUNT([COG_OQP_INT_s1], INCLUDEEMPTY) > 0, 1, 0))} ON AXIS(1) "
-            + "FROM [WAREHOUSE AND SALES2]",
+            + "FROM [WAREHOUSE AND SALES2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -442,11 +399,12 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #6: 266,773\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTotalingOnNonJoiningDimension(Context<?> context) {
-    	prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER =3000"
             + "MEMBER MEASURES.[VirtualMeasure] AS "
@@ -482,7 +440,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "[Warehouse].DEFAULTMEMBER)}, "
             + "IIF(COUNT([COG_OQP_INT_s3], INCLUDEEMPTY) > 0, 1, 0))} "
             + "DIMENSION PROPERTIES PARENT_LEVEL, PARENT_UNIQUE_NAME ON AXIS(1) "
-            + "FROM [WAREHOUSE AND SALES2]",
+            + "FROM [WAREHOUSE AND SALES2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -520,13 +478,13 @@ class IgnoreUnrelatedDimensionsTest {
             + "Row #6: 0.27\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, EnableNonEmptyOnAllAxis.class}, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnrelatedDimPropOverridesIgnoreMeasure(Context<?> context) {
-        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
-
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "MEMBER [Measures].[Total Sales] AS '[Measures].[Store Sales] + "
             + "[Measures].[Warehouse Sales]'\n"
@@ -543,7 +501,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "{[Measures].[Total Sales]} ON AXIS(0),\n"
             + "{[Product].[AggSP1_1], [Product].[AggSP1_2]} ON AXIS(1)\n"
             + "FROM\n"
-            + "[Warehouse and Sales2]",
+            + "[Warehouse and Sales2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

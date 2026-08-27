@@ -13,20 +13,24 @@ import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.SchemaModifiersEmf;
+import mondrian.test.SqlPattern;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class DefaultRecognizerTest {
 
     @AfterEach
@@ -40,12 +44,16 @@ class DefaultRecognizerTest {
      * When an alias is used for the fact table, the default agg table
      * recognizer doesn't use the agg tables anymore.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.DefaultRecognizerTestModifier.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testDefaultRecognizerWithFactAlias(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
+        //((TestContextImpl)context).setGenerateFormattedSql(true);
+        //((TestContextImpl)context).setUseAggregates(true);
+        //((TestContextImpl)context).setReadAggregates(true);
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         /*
@@ -99,7 +107,7 @@ class DefaultRecognizerTest {
             + "and\n"
             + "    `agg_c_10_sales_fact_1997`.`month_of_year` in (1, 2, 3)";
 
-        withSchemaEmf(context, SchemaModifiersEmf.DefaultRecognizerTestModifier::new);
+        //withSchemaEmf(context, SchemaModifiersEmf.DefaultRecognizerTestModifier::new);
         assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
             query,
             mysqlPattern(expectedSql),
@@ -108,12 +116,11 @@ class DefaultRecognizerTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testTupleReaderWithDistinctCountMeasureInContext(Context<?> context) {
-        ((TestContextImpl)context).setGenerateFormattedSql(true);
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         // Validates that if a distinct count measure is in context
@@ -177,4 +184,13 @@ class DefaultRecognizerTest {
             mysqlPattern(sql),
             false, true, true);
     }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public java.util.Map<String, java.net.URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
+
 }

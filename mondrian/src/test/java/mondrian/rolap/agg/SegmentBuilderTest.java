@@ -10,9 +10,9 @@ package mondrian.rolap.agg;
 
 import static java.util.Arrays.asList;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
@@ -31,11 +31,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.daanse.sql.model.type.Datatype;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.cache.OlapSegmentCacheManager;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.spi.SegmentBody;
@@ -49,14 +49,15 @@ import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.agg.DenseObjectSegmentBody;
 import org.eclipse.daanse.rolap.common.agg.SegmentBuilder;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.ConfigOverride;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.daanse.sql.model.type.Datatype;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.PerformanceTest;
@@ -66,6 +67,7 @@ import mondrian.test.PerformanceTest;
  *
  * @author mcampbell
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class SegmentBuilderTest {
 
     public static final double MOCK_CELL_VALUE = 123.123;
@@ -76,8 +78,7 @@ class SegmentBuilderTest {
         // with it.
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNullMemberOffset(Context<?> context) {
         // verifies that presence of a null member does not cause
         // offsets to be incorrect for a Segment rollup.
@@ -87,9 +88,9 @@ class SegmentBuilderTest {
         executeQuery(connection,
             "select [Store Size in SQFT].[Store Sqft].members * "
             + "gender.gender.members  on 0 from sales");
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select non empty [Store Size in SQFT].[Store Sqft].members on 0"
-            + " from sales",
+            + " from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -117,8 +118,7 @@ class SegmentBuilderTest {
             + "Row #0: 24,576\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNullMemberOffset2ColRollup(Context<?> context) {
         // verifies that presence of a null member does not cause
         // offsets to be incorrect for a Segment rollup involving 2
@@ -130,10 +130,10 @@ class SegmentBuilderTest {
             "select [Store Size in SQFT].[Store Sqft].members * "
             + "[store].[store state].members * time.[quarter].members on 0"
             + " from sales where [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables]");
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select non empty [Store Size in SQFT].[Store Sqft].members "
             + " * [store].[store state].members  on 0"
-            + " from sales where [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables]",
+            + " from sales where [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables]").returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables]}\n"
             + "Axis #1:\n"
@@ -163,8 +163,7 @@ class SegmentBuilderTest {
             + "Row #0: 1,907\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSparseRollup(Context<?> context) {
         // functional test for a case that causes OOM if rollup creates
         // a dense segment.
@@ -197,8 +196,7 @@ class SegmentBuilderTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverlappingSegments(Context<?> context) {
         // MONDRIAN-2107
         // The segments created by the first 2 queries below overlap on
@@ -239,8 +237,8 @@ class SegmentBuilderTest {
                         "Expected cells to be pulled from cache");
             }
         });
-        assertQueryReturns(connection,
-            "select [Time].[1997].children on 0 from sales",
+        assertThatQuery(connection,
+            "select [Time].[1997].children on 0 from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -254,8 +252,8 @@ class SegmentBuilderTest {
             + "Row #0: 72,024\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_IN_MEMORY_ROLLUP, value = "false", type = Boolean.class)
     void testNonOverlappingRollupWithUnconstrainedColumn(Context<?> context) {
         // MONDRIAN-2107
         // The two segments loaded by the 1st 2 queries will have predicates
@@ -267,12 +265,13 @@ class SegmentBuilderTest {
         flushSchemaCache(connection);
         //TestContext<?> context = getTestContext().withFreshConnection();
         final String query = "select customers.[name].members on 0 from sales";
-        ((TestContextImpl)context).setEnableInMemoryRollup(false);
         Result result = executeQuery(connection, query);
 
         flushSchemaCache(connection);
         //context = getTestContext().withFreshConnection();
-        ((TestContextImpl)context).setEnableInMemoryRollup(true);
+        ConfigOverride configOverride =  ConfigOverride.of(context);
+        configOverride.set(ConfigConstants.ENABLE_IN_MEMORY_ROLLUP, "true");
+        //((TestContextImpl)context).setEnableInMemoryRollup(true);
         executeQuery(connection,
             "select "
             + "{[customers].[name].members} on 0 from sales where gender.f");
@@ -293,13 +292,13 @@ class SegmentBuilderTest {
             }
         });
 
-        assertQueryReturns(connection,
-                query,
+        assertThatQuery(connection,
+                query).returnsGrid(
                 TestUtil.toString(result));
+        configOverride.close();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNonOverlappingRollupWithUnconstrainedColumnAndHasNull(Context<?> context) {
         // MONDRIAN-2107
         // Creates 10 segments, one for each city, with various sets
@@ -339,13 +338,12 @@ class SegmentBuilderTest {
             }
         });
 
-        assertQueryReturns(connection,
-            query,
+        assertThatQuery(connection,
+            query).returnsGrid(
             TestUtil.toString(result));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBadRollupCausesGreaterThan12Iterations(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // The first two queries populate the cache with segments
@@ -374,8 +372,8 @@ class SegmentBuilderTest {
         executeQuery(connection, "select [Time].[1998].[Q1] on 0 from sales");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.OPTIMIZE_PREDICATES, value = "false", type = Boolean.class)
     void testSameRollupRegardlessOfSegmentOrderWithEmptySegmentBody(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // rollup of segments {A, B} should produce the same resulting segment
@@ -419,8 +417,8 @@ class SegmentBuilderTest {
             + "Compound Predicates:[]\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.OPTIMIZE_PREDICATES, value = "false", type = Boolean.class)
     void testSameRollupRegardlessOfSegmentOrderWithData(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests a wildcarded segment rolled up w/ a seg containing a single
@@ -457,6 +455,8 @@ class SegmentBuilderTest {
     	segmentCache.getSegmentHeaders().stream().forEach(it -> segmentCache.remove(it));
 	}
 
+    @Test
+    @RolapConfig(key = ConfigConstants.OPTIMIZE_PREDICATES, value = "false", type = Boolean.class)
     void testSameRollupRegardlessOfSegmentOrderNoWildcards(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests 2 segments, each w/ no wildcarded values.
@@ -482,8 +482,8 @@ class SegmentBuilderTest {
             + "Compound Predicates:[]\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.OPTIMIZE_PREDICATES, value = "false", type = Boolean.class)
     void testSameRollupRegardlessOfSegmentOrderThreeSegs(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests 3 segments, each w/ no wildcarded values.
@@ -512,14 +512,12 @@ class SegmentBuilderTest {
             + "Compound Predicates:[]\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSegmentCreationForBoolean_True(Context<?> context) {
         doTestSegmentCreationForBoolean(context.getConnectionWithDefaultRole(), true);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSegmentCreationForBoolean_False(Context<?> context) {
         doTestSegmentCreationForBoolean(context.getConnectionWithDefaultRole(),false);
     }
@@ -558,7 +556,7 @@ class SegmentBuilderTest {
             + "Row #0: 113,881\n"
             + "Row #0: 157,139\n";
 
-        assertQueryReturns(connection, query, expected);
+        assertThatQuery(connection, query).returnsGrid(expected);
     }
 
 
@@ -577,7 +575,7 @@ class SegmentBuilderTest {
         String[] keepColumns,
         String expectedHeader)
     {
-        ((TestContextImpl)(connection.getContext())).setOptimizePredicates(false);
+        //((TestContextImpl)(connection.getContext())).setOptimizePredicates(false);
         loadCacheWithQueries(connection, cachePopulatingQueries);
         Map<SegmentHeader, SegmentBody> map = getReversibleTestMap(connection, Order.FORWARD);
         Set<String> keepColumnsSet = new HashSet<>(Arrays.asList(keepColumns));

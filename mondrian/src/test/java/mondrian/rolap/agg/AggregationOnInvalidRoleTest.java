@@ -8,6 +8,8 @@
 */
 package mondrian.rolap.agg;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
@@ -15,7 +17,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.testkit.junit.api.Roles;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * @author Andrey Khayrutdinov
@@ -69,7 +70,7 @@ class AggregationOnInvalidRoleTest {
             + "Row #5: 1,000\n"
             + "Row #6: 2\n";
 
-        TestUtil.assertQueryReturns(connection, queryFromAnalyzer, expected);
+        assertThatQuery(connection, queryFromAnalyzer).returnsGrid( expected );
     }
 
 }

@@ -29,20 +29,21 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.rolap.common.result.RolapResult;
 import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 import mondrian.olap.fun.CrossJoinTest;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class CancellationTest {
 
     @BeforeEach
@@ -57,12 +58,11 @@ class CancellationTest {
     /**
      * Creates a cell region, runs a query, then flushes the cache.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, value = "1", type = Integer.class)
     void testNonEmptyListCancellation(Context<?> context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.nonEmptyList
-        ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(1);
         CrossJoinFunDefTester crossJoinFunDef =
                 new CrossJoinFunDefTester(new CrossJoinTest.NullFunDef().getFunctionMetaData());
         Result result =
@@ -80,12 +80,11 @@ class CancellationTest {
         verify(exec, times(list.size())).checkCancelOrTimeout();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, value = "1", type = Integer.class)
     void testMutableCrossJoinCancellation(Context<?> context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.mutableCrossJoin
-        ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(1);
         Connection connection = context.getConnectionWithDefaultRole();
         RolapCube salesCube = (RolapCube) cubeByName(
              connection,
