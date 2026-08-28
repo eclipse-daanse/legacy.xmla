@@ -31,25 +31,23 @@ import static org.opencube.junit5.TestUtil.assertQueryThrows;
 
 import org.eclipse.daanse.olap.api.Context;
 import  org.eclipse.daanse.olap.util.Bug;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 public class AsAliasFunDefTest {
 
 	/**
 	 * Tests the AS operator, that gives an expression an alias.
 	 */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAs(Context<?> context) {
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
 				"[Customers].[Customers].[USA]");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithColon(Context<?> context) {
 		// 'AS' and the ':' operator have similar precedence, so it's worth
 		// checking that they play nice.
@@ -73,8 +71,7 @@ public class AsAliasFunDefTest {
 				""");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsFailsMember(Context<?> context) {
 		// AS member fails on SSAS with "The CHILDREN function expects a member
 		// expression for the 0 argument. A tuple set expression was used."
@@ -86,8 +83,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithSetOfMembers(Context<?> context) {
 		// Set of members. OK.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
@@ -136,8 +132,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithAliasMemberImplicitSet(Context<?> context) {
 		// Alias a member. Implicitly becomes set. OK.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
@@ -180,8 +175,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithFailOnAliasTuple(Context<?> context) {
 		// Alias a tuple. Implicitly becomes set. The error confirms that the
 		// named set's type is a set of tuples. SSAS gives error "Descendants
@@ -224,8 +218,7 @@ public class AsAliasFunDefTest {
 			Row #6: 12,950
 			""";
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAs2(Context<?> context) {
 		// Named set and alias with same name (t) and a second alias (t2).
 		// Reference to t from within descendants resolves to alias, of type
@@ -244,8 +237,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWith2AliasesOfSameName(Context<?> context) {
 		// Two aliases with same name. OK.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
@@ -260,8 +252,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithAsterics(Context<?> context) {
 		// Bug MONDRIAN-648 causes 'AS' to have lower precedence than '*'.
 		if (Bug.Bug648Fixed) {
@@ -274,8 +265,7 @@ public class AsAliasFunDefTest {
 		}
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithFailingReferenceTiOtherHierarchy(Context<?> context) {
 		// Reference to hierarchy on other axis.
 		// On SSAS 2005, finds t, and gives error,
@@ -299,8 +289,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithCalcSetCurrMember(Context<?> context) {
 		// Calculated set, CurrentMember
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
@@ -358,8 +347,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithMultiDefOfAliasInSameAxis(Context<?> context) {
 		// Multiple definitions of alias within same axis
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
@@ -449,8 +437,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithFailingSetAsString(Context<?> context) {
 		// 'set AS string' is invalid
 		assertQueryThrows(context.getConnectionWithDefaultRole(), """
@@ -462,8 +449,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithFailingSetAsNumeric(Context<?> context) {
 		// 'set AS numeric' is invalid
 		assertQueryThrows(context.getConnectionWithDefaultRole(), """
@@ -475,8 +461,7 @@ public class AsAliasFunDefTest {
 
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAsWithFailingNumericAsIdentifier(Context<?> context) {
 		// 'numeric AS identifier' is invalid
 		assertQueryThrows(context.getConnectionWithDefaultRole(), """

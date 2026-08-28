@@ -14,59 +14,50 @@
 package org.eclipse.daanse.olap.function.def.operators.divide;
 
 import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class DivideOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDivide(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "10 / 5", "2" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / - 2", "" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / " + NullNumericExpr, "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "10 / 5").returns( "2" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " / - 2").returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " / " + NullNumericExpr).returns( "" );
 
-        boolean origNullDenominatorProducesNull =
-            context.getConfigValue(ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL, ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL_DEFAULT_VALUE, Boolean.class);
-        try {
-            // default behavior
-            ((TestContextImpl)context).setNullDenominatorProducesNull(false);
+        // default behavior (NullDenominatorProducesNull = false)
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-2 / " + NullNumericExpr).returns( "Infinity" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "0 / 0").returns( "NaN" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-3 / (2 - 2)").returns( "-Infinity" );
 
-            assertExprReturns(context.getConnectionWithDefaultRole(), "-2 / " + NullNumericExpr, "Infinity" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "0 / 0", "NaN" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "-3 / (2 - 2)", "-Infinity" );
-
-            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/1", "" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/NULL", "" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "1/NULL", "Infinity" );
-
-            // when NullOrZeroDenominatorProducesNull is set to true
-            ((TestContextImpl)context).setNullDenominatorProducesNull( true );
-
-            assertExprReturns(context.getConnectionWithDefaultRole(), "-2 / " + NullNumericExpr, "" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "0 / 0", "NaN" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "-3 / (2 - 2)", "-Infinity" );
-
-            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/1", "" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/NULL", "" );
-            assertExprReturns(context.getConnectionWithDefaultRole(), "1/NULL", "" );
-        } finally {
-            ((TestContextImpl)context).setNullDenominatorProducesNull( origNullDenominatorProducesNull );
-        }
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "NULL/1").returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "NULL/NULL").returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1/NULL").returns( "Infinity" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL, value = "true", type = Boolean.class)
+    void testDivideNullDenominatorProducesNull(Context<?> context) {
+        // when NullOrZeroDenominatorProducesNull is set to true
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-2 / " + NullNumericExpr).returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "0 / 0").returns( "NaN" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-3 / (2 - 2)").returns( "-Infinity" );
+
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "NULL/1").returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "NULL/NULL").returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1/NULL").returns( "" );
+    }
+
+    @Test
     void testDividePrecedence(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "24 / 4 / 2 * 10 - -1", "31" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "24 / 4 / 2 * 10 - -1").returns( "31" );
     }
 
 }

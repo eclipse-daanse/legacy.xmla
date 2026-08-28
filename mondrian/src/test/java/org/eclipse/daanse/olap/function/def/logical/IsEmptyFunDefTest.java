@@ -13,24 +13,24 @@
  */
 package org.eclipse.daanse.olap.function.def.logical;
 
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import  org.eclipse.daanse.olap.util.Bug;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class IsEmptyFunDefTest {
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsEmptyWithAggregate(Context<?> context) {
-        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [gender].[foo] AS 'isEmpty(Aggregate({[Gender].m}))' "
-                + "SELECT {Gender.foo} on 0 from sales",
+                + "SELECT {Gender.foo} on 0 from sales")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -38,18 +38,17 @@ class IsEmptyFunDefTest {
                 + "Row #0: false\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsEmpty(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertBooleanExprReturns(connection, "Sales", "[Gender].[All Gender].Parent IS NULL", true );
+        assertThatExpr(connection, "Sales", "[Gender].[All Gender].Parent IS NULL").isTrue();
 
         // Any functions that return a member from parameters that
         // include a member and that member is NULL also give a NULL.
         // Not a runtime exception.
-        assertBooleanExprReturns(connection, "Sales",
-            "[Gender].CurrentMember.Parent.NextMember IS NULL",
-            true );
+        assertThatExpr(connection, "Sales",
+            "[Gender].CurrentMember.Parent.NextMember IS NULL")
+            .isTrue();
 
         if ( !Bug.Bug207Fixed ) {
             return;
@@ -58,42 +57,44 @@ class IsEmptyFunDefTest {
         // When resolving a tuple's value in the cube, if there is
         // at least one NULL member in the tuple should return a
         // NULL cell value.
-        assertBooleanExprReturns(connection, "Sales",
-            "IsEmpty(([Time].currentMember.Parent, [Measures].[Unit Sales]))",
-            false );
-        assertBooleanExprReturns(connection, "Sales",
-            "IsEmpty(([Time].currentMember, [Measures].[Unit Sales]))",
-            false );
+        assertThatExpr(connection, "Sales",
+            "IsEmpty(([Time].currentMember.Parent, [Measures].[Unit Sales]))")
+            .isFalse();
+        assertThatExpr(connection, "Sales",
+            "IsEmpty(([Time].currentMember, [Measures].[Unit Sales]))")
+            .isFalse();
 
         // EMPTY refers to a genuine cell value that exists in the cube space,
         // and has no NULL members in the tuple,
         // but has no fact data at that crossing,
         // so it evaluates to EMPTY as a cell value.
-        assertBooleanExprReturns(connection, "Sales",
+        assertThatExpr(connection, "Sales",
             "IsEmpty(\n"
                 + " ([Time].[1997].[Q4].[12],\n"
                 + "  [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth "
                 + "Imported Beer],\n"
-                + "  [Store].[All Stores].[USA].[WA].[Bellingham]))", true );
-        assertBooleanExprReturns(connection, "Sales",
+                + "  [Store].[All Stores].[USA].[WA].[Bellingham]))").isTrue();
+        assertThatExpr(connection, "Sales",
             "IsEmpty(\n"
                 + " ([Time].[1997].[Q4].[11],\n"
                 + "  [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth "
                 + "Imported Beer],\n"
-                + "  [Store].[All Stores].[USA].[WA].[Bellingham]))", false );
+                + "  [Store].[All Stores].[USA].[WA].[Bellingham]))").isFalse();
 
         // The empty set is neither EMPTY nor NULL.
         // should give 0 as a result, not NULL and not EMPTY.
-        TestUtil.assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH SET [empty set] AS '{}'\n"
                 + " MEMBER [Measures].[Set Size] AS 'Count([empty set])'\n"
                 + " MEMBER [Measures].[Set Size Is Empty] AS 'CASE WHEN IsEmpty([Measures].[Set Size]) THEN 1 ELSE 0 END '\n"
-                + "SELECT [Measures].[Set Size] on columns", "" );
+                + "SELECT [Measures].[Set Size] on columns")
+            .returnsGrid( "" );
 
-        TestUtil.assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH SET [empty set] AS '{}'\n"
                 + "WITH MEMBER [Measures].[Set Size] AS 'Count([empty set])'\n"
-                + "SELECT [Measures].[Set Size] on columns", "" );
+                + "SELECT [Measures].[Set Size] on columns")
+            .returnsGrid( "" );
 
         // Run time errors are BAD things.  They should not occur
         // in almost all cases.  In fact there should be no

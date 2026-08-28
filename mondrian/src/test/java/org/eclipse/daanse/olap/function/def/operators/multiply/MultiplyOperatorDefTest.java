@@ -14,40 +14,36 @@
 package org.eclipse.daanse.olap.function.def.operators.multiply;
 
 import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class MultiplyOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMultiply(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "4*7", "28" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "5 * " + NullNumericExpr, "" ); // 5 * null --> null
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " * - 2", "" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " - " + NullNumericExpr, "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "4*7").returns( "28" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "5 * " + NullNumericExpr).returns( "" ); // 5 * null --> null
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " * - 2").returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " - " + NullNumericExpr).returns( "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMultiplyPrecedence(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "3 + 4 * 5 + 6", "29" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "5 * 24 / 4 * 2", "60" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "48 / 4 / 2", "6" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "3 + 4 * 5 + 6").returns( "29" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "5 * 24 / 4 * 2").returns( "60" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "48 / 4 / 2").returns( "6" );
     }
 
     /**
      * Bug 774807 caused expressions to be mistaken for the crossjoin operator.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMultiplyBug774807(Context<?> context) {
         final String desiredResult =
             "Axis #0:\n"
@@ -59,26 +55,29 @@ class MultiplyOperatorDefTest {
                 + "{[Measures].[A]}\n"
                 + "Row #0: 565,238.13\n"
                 + "Row #1: 319,494,143,605.90\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[A] AS\n"
                 + " '([Measures].[Store Sales] * [Measures].[Store Sales])'\n"
                 + "SELECT {[Store]} ON COLUMNS,\n"
                 + " {[Measures].[Store Sales], [Measures].[A]} ON ROWS\n"
-                + "FROM Sales", desiredResult );
+                + "FROM Sales")
+            .returnsGrid( desiredResult );
         // as above, no parentheses
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[A] AS\n"
                 + " '[Measures].[Store Sales] * [Measures].[Store Sales]'\n"
                 + "SELECT {[Store]} ON COLUMNS,\n"
                 + " {[Measures].[Store Sales], [Measures].[A]} ON ROWS\n"
-                + "FROM Sales", desiredResult );
+                + "FROM Sales")
+            .returnsGrid( desiredResult );
         // as above, plus 0
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[A] AS\n"
                 + " '[Measures].[Store Sales] * [Measures].[Store Sales] + 0'\n"
                 + "SELECT {[Store]} ON COLUMNS,\n"
                 + " {[Measures].[Store Sales], [Measures].[A]} ON ROWS\n"
-                + "FROM Sales", desiredResult );
+                + "FROM Sales")
+            .returnsGrid( desiredResult );
     }
 
 }

@@ -48,19 +48,19 @@ import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 
+@RolapContextTest(FoodmartTestInstance.class)
 class IdBatchResolverTest  {
 
 	@Mock
@@ -85,8 +85,7 @@ class IdBatchResolverTest  {
     @AfterEach
     public void  afterEach(){
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testSimpleEnum(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
@@ -131,8 +130,7 @@ class IdBatchResolverTest  {
             "[[Dairy], [Deli], [Eggs], [Produce], [Starchy Foods]]",
             sortedNames(childNames.getAllValues().get(1)));
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testCalcMemsNotResolved(Context<?> context) {
         assertFalse(
             batchResolve(context,
@@ -147,8 +145,7 @@ class IdBatchResolverTest  {
         // .removeAll will only return true if the set has changed, i.e. if
         // one ore more of the members were present.
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testLevelReferenceHandled(Context<?> context) {
         // make sure ["Week", 1997] don't get batched as children of
         // [Time.Weekly].[All]
@@ -170,8 +167,7 @@ class IdBatchResolverTest  {
             sortedNames(childNames.getAllValues().get(0)));
     }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testPhysMemsResolvedWhenCalcsMixedIn(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
@@ -201,8 +197,7 @@ class IdBatchResolverTest  {
             sortedNames(childNames.getAllValues().get(0)));
     }
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testAnalyzerFilterMdx(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
@@ -256,8 +251,7 @@ class IdBatchResolverTest  {
             "[[Beverly Hills], [Los Angeles]]",
             sortedNames(childNames.getAllValues().get(3)));
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testSetWithNullMember(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
@@ -294,8 +288,7 @@ class IdBatchResolverTest  {
             "[[#null], [20319], [21215], [22478], [23598]]",
             sortedNames(childNames.getAllValues().get(0)));
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testMultiHierarchySSAS(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
@@ -333,8 +326,7 @@ class IdBatchResolverTest  {
             "[[4], [5], [6]]",
             sortedNames(childNames.getAllValues().get(1)));
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testParentChild(Context<?> context) {
         // P-C resolution will not result in consolidated SQL, but it should
         // still correctly identify children and attempt to resolve them

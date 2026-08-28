@@ -13,36 +13,35 @@
  */
 package org.eclipse.daanse.olap.function.def.set.range;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class RangeFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRange(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[1997].[Q1].[2] : [Time].[1997].[Q2].[5]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].[Q1].[2] : [Time].[1997].[Q2].[5]")
+            .returns(
             "[Time].[Time].[1997].[Q1].[2]\n"
                 + "[Time].[Time].[1997].[Q1].[3]\n"
                 + "[Time].[Time].[1997].[Q2].[4]\n"
                 + "[Time].[Time].[1997].[Q2].[5]" ); // not parents
 
         // testcase for bug XXXXX: braces required
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Set1] as '[Product].[Drink]:[Product].[Food]' \n"
                 + "\n"
                 + "select [Set1] on columns, {[Measures].defaultMember} on rows \n"
                 + "\n"
-                + "from Sales",
+                + "from Sales")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -57,33 +56,32 @@ class RangeFunDefTest {
     /**
      * tests that a null passed in returns an empty set in range function
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNullRange(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[1997].[Q1].[2] : NULL", //[Time].[1997].[Q2].[5]
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].[Q1].[2] : NULL")
+            .returns( //[Time].[1997].[Q2].[5]
             "" ); // Empty Set
     }
 
     /**
      * tests that an exception is thrown if both parameters in a range function are null.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTwoNullRange(Context<?> context) {
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "NULL : NULL",
-            "Cannot deduce type of call to function ':'" , "Sales");
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "NULL : NULL")
+            .throwsMessage( "Cannot deduce type of call to function ':'" );
     }
 
     /**
      * Large dimensions use a different member reader, therefore need to be tested separately.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeLarge(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Customers].[USA].[CA].[San Francisco] : [Customers].[USA].[WA].[Bellingham]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Customers].[USA].[CA].[San Francisco] : [Customers].[USA].[WA].[Bellingham]")
+            .returns(
             "[Customers].[Customers].[USA].[CA].[San Francisco]\n"
                 + "[Customers].[Customers].[USA].[CA].[San Gabriel]\n"
                 + "[Customers].[Customers].[USA].[CA].[San Jose]\n"
@@ -109,84 +107,82 @@ class RangeFunDefTest {
                 + "[Customers].[Customers].[USA].[WA].[Bellingham]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeStartEqualsEnd(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[1997].[Q3].[7] : [Time].[1997].[Q3].[7]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].[Q3].[7] : [Time].[1997].[Q3].[7]")
+            .returns(
             "[Time].[Time].[1997].[Q3].[7]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeStartEqualsEndLarge(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Customers].[USA].[CA] : [Customers].[USA].[CA]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Customers].[USA].[CA] : [Customers].[USA].[CA]")
+            .returns(
             "[Customers].[Customers].[USA].[CA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeEndBeforeStart(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[1997].[Q3].[7] : [Time].[1997].[Q2].[5]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].[Q3].[7] : [Time].[1997].[Q2].[5]")
+            .returns(
             "[Time].[Time].[1997].[Q2].[5]\n"
                 + "[Time].[Time].[1997].[Q2].[6]\n"
                 + "[Time].[Time].[1997].[Q3].[7]" ); // same as if reversed
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeEndBeforeStartLarge(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Customers].[USA].[WA] : [Customers].[USA].[CA]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Customers].[USA].[WA] : [Customers].[USA].[CA]")
+            .returns(
             "[Customers].[Customers].[USA].[CA]\n"
                 + "[Customers].[Customers].[USA].[OR]\n"
                 + "[Customers].[Customers].[USA].[WA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeBetweenDifferentLevelsIsError(Context<?> context) {
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "[Time].[1997].[Q2] : [Time].[1997].[Q2].[5]",
-            "Members must belong to the same level", "Sales" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].[Q2] : [Time].[1997].[Q2].[5]")
+            .throwsMessage( "Members must belong to the same level" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeBoundedByAll(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Gender] : [Gender]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender] : [Gender]")
+            .returns(
             "[Gender].[Gender].[All Gender]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeBoundedByAllLarge(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Customers].DefaultMember : [Customers]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Customers].DefaultMember : [Customers]")
+            .returns(
             "[Customers].[Customers].[All Customers]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeBoundedByNull(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Gender].[F] : [Gender].[M].NextMember",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender].[F] : [Gender].[M].NextMember")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRangeBoundedByNullLarge(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Customers].PrevMember : [Customers].[USA].[OR]",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Customers].PrevMember : [Customers].[USA].[OR]")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testComplexSlicerWith_Calc(Context<?> context) {
         String query =
             "with "
@@ -215,11 +211,11 @@ class RangeFunDefTest {
                 + "Row #3: 1,237\n"
                 + "Row #4: 394\n"
                 + "Row #5: 1,277\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+        assertThatQuery(context.getConnectionWithDefaultRole(), query)
+            .returnsGrid( expectedResult );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testComplexSlicerWith_CalcBase(Context<?> context) {
         String query =
             "with "
@@ -249,11 +245,11 @@ class RangeFunDefTest {
                 + "Row #3: 1,237\n"
                 + "Row #4: 394\n"
                 + "Row #5: 1,277\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+        assertThatQuery(context.getConnectionWithDefaultRole(), query)
+            .returnsGrid( expectedResult );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testComplexSlicerWith_Calc_Calc(Context<?> context) {
         String query =
             "with "
@@ -271,7 +267,8 @@ class RangeFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Customer Count]}\n"
                 + "Row #0: 1,671\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
+        assertThatQuery(context.getConnectionWithDefaultRole(), query)
+            .returnsGrid( expectedResult );
     }
 
 }

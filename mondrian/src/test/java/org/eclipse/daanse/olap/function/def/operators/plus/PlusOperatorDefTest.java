@@ -15,57 +15,51 @@ package org.eclipse.daanse.olap.function.def.operators.plus;
 
 import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
 import static mondrian.olap.fun.FunctionTest.allHiersExcept;
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class PlusOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPlus(Context<?> context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(), "1 + 2", "{}" );
         String s1 = allHiersExcept( "[Measures]", "[Gender].[Gender]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "([Measures].[Unit Sales], [Gender].[F]) + 2", s1 );
 
-        assertExprReturns(context.getConnectionWithDefaultRole(), "1+2", "3" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "5 + " + NullNumericExpr, "5" ); // 5 + null --> 5
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " + " + NullNumericExpr, "" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " + 0", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1+2").returns( "3" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "5 + " + NullNumericExpr).returns( "5" ); // 5 + null --> 5
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " + " + NullNumericExpr).returns( "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " + 0").returns( "0" );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPlus_NULL_plus_1(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),  "null + 1", "1" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",  "null + 1").returns( "1" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPlus_NULL_plus_0(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),  "null + 0", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",  "null + 0").returns( "0" );
     }
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPlus_NULL_plus_NULL(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),  "null + null", "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",  "null + null").returns( "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMinus(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "1-3", "-2" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "5 - " + NullNumericExpr, "5" ); // 5 - null --> 5
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " - - 2", "2" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " - " + NullNumericExpr, "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1-3").returns( "-2" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "5 - " + NullNumericExpr).returns( "5" ); // 5 - null --> 5
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " - - 2").returns( "2" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", NullNumericExpr + " - " + NullNumericExpr).returns( "" );
     }
 
 }

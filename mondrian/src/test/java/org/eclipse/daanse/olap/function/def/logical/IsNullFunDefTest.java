@@ -13,33 +13,31 @@
  */
 package org.eclipse.daanse.olap.function.def.logical;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class IsNullFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsNull(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Measures.[Profit] IS NULL ", false );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores] IS NULL ", false );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores].parent IS NULL ", true );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsNullWithCalcMem(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member Store.foo as '1010' "
                 + "member measures.bar as 'Store.currentmember IS NULL' "
-                + "SELECT measures.bar on 0, {Store.foo} on 1 from sales",
+                + "SELECT measures.bar on 0, {Store.foo} on 1 from sales").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

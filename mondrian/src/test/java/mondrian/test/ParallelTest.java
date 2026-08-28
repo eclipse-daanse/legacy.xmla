@@ -19,10 +19,9 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * A <code>ParameterTest</code> is a test suite for functionality relating to
@@ -31,11 +30,11 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @author jhyde
  * @since Jun 26, 2006
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class ParallelTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParallelSchemaFlush(Context<?> context) {
         // 5 threads, 8 cycles each, flush cache 1/10 of the time
         checkSchemaFlush(context.getConnectionWithDefaultRole(), 5, 8, 10);

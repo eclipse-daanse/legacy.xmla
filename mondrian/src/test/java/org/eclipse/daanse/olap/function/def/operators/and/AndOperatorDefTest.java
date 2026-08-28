@@ -13,51 +13,43 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.and;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class AndOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAnd(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=2 ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=2 ").isTrue();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAnd2(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=0 ", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=0 ").isFalse();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOr(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 2=0 ", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 2=0 ").isFalse();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBool1(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND 1=0", "false" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND 1=0").returns( "false" );
     }
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBool2(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND 1=1", "true" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND 1=1").returns( "true" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBool3(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND null", "false" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1=1 AND null").returns( "false" );
     }
 
 }

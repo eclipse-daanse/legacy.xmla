@@ -9,13 +9,13 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,19 +33,20 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.fun.sort.Sorter;
 import  org.eclipse.daanse.olap.util.Bug;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.SchemaModifiersEmf;
+import mondrian.test.CaptionTest.FoodmartData;
 
 /**
  * Various unit tests concerned with performance.
@@ -53,6 +54,7 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author jhyde
  * @since August 7, 2006
  */
+@RolapContextTest(FoodmartTestInstance.class)
 public class PerformanceTest {
   /**
    * Certain tests are enabled only if logging is enabled at debug level or higher.
@@ -72,10 +74,11 @@ public class PerformanceTest {
    * <a href="http://jira.pentaho.com/browse/MONDRIAN-550">
    * Bug MONDRIAN-550, "Performance bug with NON EMPTY and large axes"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.PerformanceTestModifier1.class },
+  database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void  testBugMondrian550(Context<?> context) {
-    getBugMondrian550Schema(context);
+    //getBugMondrian550Schema(context);
     final Statistician statistician =
       new Statistician( "testBugMondrian550" );
     for ( int i = 0; i < 10; i++ ) {
@@ -111,10 +114,11 @@ public class PerformanceTest {
   /**
    * As testBugMondrian550() but with tuples on the rows axis.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.PerformanceTestModifier1.class },
+  database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testBugMondrian550Tuple(Context<?> context) {
-    getBugMondrian550Schema(context);
+    //getBugMondrian550Schema(context);
     final Statistician statistician =
       new Statistician( "testBugMondrian550Tuple" );
     int n = LOGGER.isDebugEnabled() ? 10 : 2;
@@ -149,33 +153,6 @@ public class PerformanceTest {
     assertEquals( 3263, result2.getAxes()[ 1 ].getPositions().size() );
   }
 
-  void getBugMondrian550Schema(Context<?> context) {
-    /*
-    ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-      "Sales",
-      "      <Dimension name=\"ACC\" caption=\"Account\" type=\"StandardDimension\" foreignKey=\"customer_id\">\n"
-        + "         <Hierarchy hasAll=\"true\" allMemberName=\"All\" primaryKey=\"customer_id\">\n"
-        + "            <Table name=\"customer\"/>\n"
-        + "            <Level name=\"CODE\" caption=\"Account\" uniqueMembers=\"true\" column=\"account_num\" "
-        + "type=\"String\"/>\n"
-        + "         </Hierarchy>\n"
-        + "      </Dimension>\n"
-        + "      <Dimension name=\"Store Name sans All\" type=\"StandardDimension\" foreignKey=\"store_id\">\n"
-        + "         <Hierarchy hasAll=\"false\" primaryKey=\"store_id\">\n"
-        + "            <Table name=\"store\" />\n"
-        + "            <Level name=\"Store Name\" uniqueMembers=\"true\" column=\"store_number\" type=\"Numeric\" "
-        + "ordinalColumn=\"store_name\"/>\n"
-        + "         </Hierarchy>\n"
-        + "      </Dimension>\n",
-      "      <CalculatedMember dimension=\"Measures\" name=\"EXP2_4\" formula=\"IIf([ACC].CurrentMember.Level.Ordinal"
-        + " = [ACC].[All].Ordinal, Sum([ACC].[All].Children, [Measures].[Unit Sales]),     [Measures].[Unit Sales])"
-        + "\"/>\n"
-        + "      <CalculatedMember dimension=\"Measures\" name=\"EXP2\" formula=\"IIf(0 &#60; [Measures].[EXP2_4], "
-        + "[Measures].[EXP2_4], NULL)\"/>\n" ));
-     */
-      withSchemaEmf(context, SchemaModifiersEmf.PerformanceTestModifier1::new);
-  }
-
   /**
    * Test case for
    * <a href="http://jira.pentaho.com/browse/MONDRIAN-641">
@@ -183,8 +160,7 @@ public class PerformanceTest {
    * with
    * ResultStyle.LIST, 99+ seconds with ITERABLE (on DELL Latitude D630).
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testMondrianBug641(Context<?> context) {
     if ( !Bug.Bug641Fixed ) {
       return;
@@ -204,8 +180,7 @@ public class PerformanceTest {
   /**
    * Tests performance when an MDX query contains a very large explicit set.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testVeryLargeExplicitSet(Context<?> context) {
     final Statistician[] statisticians = {
       // jdk1.6 mackerel access main old    5,000 ms
@@ -337,8 +312,7 @@ public class PerformanceTest {
    * Bug MONDRIAN-639, "RolapNamedSetEvaluator anon classes implement Iterable, causing performance regression from 2.4
    * in FunUtil.count()"</a>.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testBugMondrian639(Context<?> context) {
     // unknown revision before fix mac-mini 233,000 ms
     // unknown revision after fix mac-mini    4,500 ms
@@ -382,8 +356,9 @@ public class PerformanceTest {
    * getNonAllMembers.
    * The performance boost gets more significant as the schema size grows.
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.PerformanceTestModifier2.class },
+  database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testBigResultsWithBigSchemaPerforms(Context<?> context) {
     if ( !LOGGER.isDebugEnabled() ) {
       return;
@@ -401,7 +376,6 @@ public class PerformanceTest {
             + "</Dimension>" ),
         null ));
      */
-      withSchemaEmf(context, SchemaModifiersEmf.PerformanceTestModifier2::new);
       String mdx =
       "with "
         + " member [Measures].[one] as '1'"
@@ -447,8 +421,7 @@ public class PerformanceTest {
    * </ul>
    * Disabled by performance reason run >10 h
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   @Disabled
   void testInMemoryCalc(Context<?> context) {
     if ( !LOGGER.isDebugEnabled() ) {
@@ -519,7 +492,7 @@ public class PerformanceTest {
         + "from [Sales]\n"
         + "where [Time].[1997].[Q3]";
     final long start = System.currentTimeMillis();
-    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, result );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(result );
     printDuration( "in-memory calc", start );
   }
 
@@ -528,8 +501,7 @@ public class PerformanceTest {
    * <a href="http://jira.pentaho.com/browse/MONDRIAN-843">
    * Bug MONDRIAN-843, where Filter is inefficient.</a>
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
   void testBugMondrian843(Context<?> context) {
     // On my core i7 laptop:
     // takes 2.5 seconds before bug fixed
@@ -559,8 +531,9 @@ public class PerformanceTest {
    * "Poor performance when >=2 hierarchies are access-controlled with rollupPolicy=partial"</a>.
    * Disabled by performance reason run 1.8 h
    */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.PerformanceTestModifier3.class },
+  database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   @Disabled
   void testBugMondrian981(Context<?> context) {
     if ( !LOGGER.isDebugEnabled() ) {
@@ -574,11 +547,10 @@ public class PerformanceTest {
     //
     // jdk1.7 marmite   main 14770   30,857 ms
     // jdk1.7 marmite   main 14771   29,083 ms
-    withSchemaEmf(context, SchemaModifiersEmf.PerformanceTestModifier3::new);
-    assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))),
+    assertThatQuery(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))),
       "with member [Measures].[Foo] as\n"
         + "Aggregate([Gender].Members * [Marital Status].Members * [Time].Members)\n"
-        + "select from [Sales] where [Measures].[Foo]",
+        + "select from [Sales] where [Measures].[Foo]").returnsGrid(
       "Axis #0:\n"
         + "{[Measures].[Foo]}\n"
         + "1,184,028" );

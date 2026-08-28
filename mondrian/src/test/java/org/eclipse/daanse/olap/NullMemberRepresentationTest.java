@@ -9,18 +9,17 @@
 
 package org.eclipse.daanse.olap;
 
-import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import java.io.IOException;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.common.RolapUtil;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * <code>NullMemberRepresentationTest</code> tests the null member
@@ -28,18 +27,19 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * {@link SystemWideProperties#NullMemberRepresentation} property.
  * @author ajogleka
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class NullMemberRepresentationTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testClosingPeriodMemberLeafWithCustomNullRepresentation(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' ClosingPeriod().uniquename '\n"
             + "select {[Measures].[Foo]} on columns,\n"
             + "  {[Time].[1997],\n"
             + "   [Time].[1997].[Q2],\n"
             + "   [Time].[1997].[Q2].[4]} on rows\n"
-            + "from Sales",
+            + "from Sales")
+            .returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -56,28 +56,27 @@ class NullMemberRepresentationTest {
             + "");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testItemMemberWithCustomNullMemberRepresentation(Context<?> context)
         throws IOException
     {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "[Time].[1997].Children.Item(6).UniqueName",
-            "[Time].[Time].[" + getNullMemberRepresentation() + "]");
-        assertExprReturns(connection, "Sales",
-            "[Time].[1997].Children.Item(-1).UniqueName",
-            "[Time].[Time].[" + getNullMemberRepresentation() + "]");
+        assertThatExpr(connection, "Sales",
+            "[Time].[1997].Children.Item(6).UniqueName")
+            .returns( "[Time].[Time].[" + getNullMemberRepresentation() + "]" );
+        assertThatExpr(connection, "Sales",
+            "[Time].[1997].Children.Item(-1).UniqueName")
+            .returns( "[Time].[Time].[" + getNullMemberRepresentation() + "]" );
     }
 
     void testNullMemberWithCustomRepresentation(Context<?> context) throws IOException {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection, "Sales",
-            "[Gender].[All Gender].Parent.UniqueName",
-            "[Gender].[" + getNullMemberRepresentation() + "]");
+        assertThatExpr(connection, "Sales",
+            "[Gender].[All Gender].Parent.UniqueName")
+            .returns( "[Gender].[" + getNullMemberRepresentation() + "]" );
 
-        assertExprReturns(connection, "Sales",
-            "[Gender].[All Gender].Parent.Name", getNullMemberRepresentation());
+        assertThatExpr(connection, "Sales",
+            "[Gender].[All Gender].Parent.Name").returns( getNullMemberRepresentation() );
     }
 
     private String getNullMemberRepresentation() {

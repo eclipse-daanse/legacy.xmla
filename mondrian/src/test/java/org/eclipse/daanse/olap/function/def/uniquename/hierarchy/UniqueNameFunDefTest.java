@@ -13,53 +13,47 @@
  */
 package org.eclipse.daanse.olap.function.def.uniquename.hierarchy;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 
+@RolapContextTest(FoodmartTestInstance.class)
 class UniqueNameFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchyUniqueName(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "[Gender].DefaultMember.Hierarchy.UniqueName",
-            "[Gender].[Gender]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender].DefaultMember.Hierarchy.UniqueName")
+            .returns( "[Gender].[Gender]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTime(Context<?> context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[1997].[Q1].[1].Hierarchy.UniqueName", "[Time].[Time]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].[Q1].[1].Hierarchy.UniqueName").returns( "[Time].[Time]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBasic9(Context<?> context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Gender].[All Gender].[F].Hierarchy.UniqueName", "[Gender].[Gender]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender].[All Gender].[F].Hierarchy.UniqueName").returns( "[Gender].[Gender]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstInLevel9(Context<?> context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Education Level].[All Education Levels].[Bachelors Degree].Hierarchy.UniqueName",
-            "[Education Level].[Education Level]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Education Level].[All Education Levels].[Bachelors Degree].Hierarchy.UniqueName")
+            .returns( "[Education Level].[Education Level]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchyAll(Context<?> context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Gender].[All Gender].Hierarchy.UniqueName", "[Gender].[Gender]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender].[All Gender].Hierarchy.UniqueName").returns( "[Gender].[Gender]" );
     }
 
 }

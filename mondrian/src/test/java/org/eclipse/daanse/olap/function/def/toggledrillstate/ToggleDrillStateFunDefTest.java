@@ -13,25 +13,24 @@
  */
 package org.eclipse.daanse.olap.function.def.toggledrillstate;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class ToggleDrillStateFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testToggleDrillState(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState({[Customers].[USA],[Customers].[Canada]},"
-                + "{[Customers].[USA],[Customers].[USA].[CA]})",
+                + "{[Customers].[USA],[Customers].[USA].[CA]})")
+            .returns(
             "[Customers].[Customers].[USA]\n"
                 + "[Customers].[Customers].[USA].[CA]\n"
                 + "[Customers].[Customers].[USA].[OR]\n"
@@ -39,12 +38,12 @@ class ToggleDrillStateFunDefTest {
                 + "[Customers].[Customers].[Canada]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testToggleDrillState2(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState([Product].[Product Department].members, "
-                + "{[Product].[All Products].[Food].[Snack Foods]})",
+                + "{[Product].[All Products].[Food].[Snack Foods]})")
+            .returns(
             "[Product].[Product].[Drink].[Alcoholic Beverages]\n"
                 + "[Product].[Product].[Drink].[Beverages]\n"
                 + "[Product].[Product].[Drink].[Dairy]\n"
@@ -71,33 +70,33 @@ class ToggleDrillStateFunDefTest {
                 + "[Product].[Product].[Non-Consumable].[Periodicals]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testToggleDrillState3(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState("
                 + "{[Time].[1997].[Q1],"
                 + " [Time].[1997].[Q2],"
                 + " [Time].[1997].[Q2].[4],"
                 + " [Time].[1997].[Q2].[6],"
                 + " [Time].[1997].[Q3]},"
-                + "{[Time].[1997].[Q2]})",
+                + "{[Time].[1997].[Q2]})")
+            .returns(
             "[Time].[Time].[1997].[Q1]\n"
                 + "[Time].[Time].[1997].[Q2]\n"
                 + "[Time].[Time].[1997].[Q3]" );
     }
 
     // bug 634860
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testToggleDrillStateTuple(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState(\n"
                 + "{([Store].[USA].[CA],"
                 + "  [Product].[All Products].[Drink].[Alcoholic Beverages]),\n"
                 + " ([Store].[USA],"
                 + "  [Product].[All Products].[Drink])},\n"
-                + "{[Store].[All stores].[USA].[CA]})",
+                + "{[Store].[All stores].[USA].[CA]})")
+            .returns(
             "{[Store].[Store].[USA].[CA], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
                 + "{[Store].[Store].[USA].[CA].[Alameda], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
                 + "{[Store].[Store].[USA].[CA].[Beverly Hills], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
@@ -107,17 +106,16 @@ class ToggleDrillStateFunDefTest {
                 + "{[Store].[Store].[USA], [Product].[Product].[Drink]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testToggleDrillStateRecursive(Context<?> context) {
         // We expect this to fail.
-        assertQueryThrows(context,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "Select \n"
                 + "    ToggleDrillState(\n"
                 + "        {[Store].[USA]}, \n"
                 + "        {[Store].[USA]}, recursive) on Axis(0) \n"
-                + "from [Sales]\n",
-            "'RECURSIVE' is not supported in ToggleDrillState." );
+                + "from [Sales]\n")
+            .throwsMessage( "'RECURSIVE' is not supported in ToggleDrillState." );
     }
 
 }

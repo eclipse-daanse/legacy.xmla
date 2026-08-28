@@ -14,17 +14,19 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.Context;
+import java.net.URL;
+import java.util.Map;
+
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import org.opencube.junit5.propupdator.NullMemberRepresentationNull;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
@@ -36,12 +38,14 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author jhyde
  * @since Apr 19, 2004
  */
+@RolapContextTest(FoodmartTestInstance.class)
+@RolapConfig(key = ConfigConstants.NULL_MEMBER_REPRESENTATION, value = "null", type = String.class)
 class RaggedHierarchyTest {
 
 
-	  // NullMemberRepresentation is set on each test's own context by the
-	  // NullMemberRepresentationNull updater in @ContextSource; @BeforeEach cannot
-	  // do it, the Context only arrives as a parameter of the test method.
+	  // NullMemberRepresentation is set for the whole class by the class-level
+	  // @RolapConfig; a method-level @RolapContextTest (for the schema-modified
+	  // tests below) replaces class config entirely, so it is re-declared there.
 
     private void assertRaggedReturns(Connection connection, String expression, String expected) {
         //getTestContext().withCube("[Sales Ragged]")
@@ -50,10 +54,9 @@ class RaggedHierarchyTest {
 
     // ~ The tests ------------------------------------------------------------
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testChildrenOfRoot(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testChildrenOfRoot(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Store].children",
             "[Store].[Store].[Canada]\n"
             + "[Store].[Store].[Israel]\n"
@@ -62,10 +65,9 @@ class RaggedHierarchyTest {
             + "[Store].[Store].[Vatican]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testChildrenOfUSA(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testChildrenOfUSA(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Store].[USA].children",
             "[Store].[Store].[USA].[CA]\n"
             + "[Store].[Store].[USA].[OR]\n"
@@ -75,69 +77,60 @@ class RaggedHierarchyTest {
 
     // Israel has one real child, which is hidden, and which has children
     // Haifa and Tel Aviv
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testChildrenOfIsrael(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testChildrenOfIsrael(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Israel].children",
             "[Store].[Store].[Israel].[Israel].[Haifa]\n"
             + "[Store].[Store].[Israel].[Israel].[Tel Aviv]");
     }
 
     // Vatican's descendants at the province and city level are hidden
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    public void testChildrenOfVatican(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    public void testChildrenOfVatican(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Vatican].children",
             "[Store].[Store].[Vatican].[Vatican].[null].[Store 17]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testParentOfHaifa(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testParentOfHaifa(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Store].[Israel].[Haifa].Parent", "[Store].[Store].[Israel]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testParentOfVatican(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testParentOfVatican(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Vatican].Parent", "[Store].[Store].[All Stores]");
     }
 
     // PrevMember must return something at the same level -- a city
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testPrevMemberOfHaifa(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testPrevMemberOfHaifa(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Israel].[Haifa].PrevMember",
             "[Store].[Store].[Canada].[BC].[Victoria]");
     }
 
     // PrevMember must return something at the same level -- a city
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testNextMemberOfTelAviv(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testNextMemberOfTelAviv(Connection connection) {
+        assertRaggedReturns(connection,
             "[Store].[Israel].[Tel Aviv].NextMember",
             "[Store].[Store].[Mexico].[DF].[Mexico City]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testNextMemberOfBC(Context<?> context) {
+    @Test
+    void testNextMemberOfBC(Connection connection) {
         // The next state after BC is Israel, but it's hidden
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+        assertRaggedReturns(connection,
             "[Store].[Canada].[BC].NextMember",
             "[Store].[Store].[Mexico].[DF]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testLead(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
+    @Test
+    void testLead(Connection connection) {
         assertRaggedReturns(connection,
             "[Store].[Mexico].[DF].Lead(1)",
             "[Store].[Store].[Mexico].[Guerrero]");
@@ -158,28 +151,25 @@ class RaggedHierarchyTest {
             "[Store].[Mexico].[DF].Lead(-543)", "");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    public void testDescendantsOfVatican(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    public void testDescendantsOfVatican(Connection connection) {
+        assertRaggedReturns(connection,
             "Descendants([Store].[Vatican])",
             "[Store].[Store].[Vatican]\n"
             + "[Store].[Store].[Vatican].[Vatican].[null].[Store 17]");
     }
 
     // The only child of Vatican at state level is hidden
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testDescendantsOfVaticanAtStateLevel(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testDescendantsOfVaticanAtStateLevel(Connection connection) {
+        assertRaggedReturns(connection,
             "Descendants([Store].[Vatican], [Store].[Store State])",
             "");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testDescendantsOfRootAtCity(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testDescendantsOfRootAtCity(Connection connection) {
+        assertRaggedReturns(connection,
             "Descendants([Store], [Store City])",
             "[Store].[Store].[Canada].[BC].[Vancouver]\n"
             + "[Store].[Store].[Canada].[BC].[Victoria]\n"
@@ -207,21 +197,19 @@ class RaggedHierarchyTest {
     }
 
     // no ancestor at the State level
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testAncestorOfHaifa(Context<?> context) {
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testAncestorOfHaifa(Connection connection) {
+        assertRaggedReturns(connection,
             "Ancestor([Store].[Israel].[Haifa], [Store].[Store State])",
             "");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchize(Context<?> context) {
+    @Test
+    void testHierarchize(Connection connection) {
         // Haifa and Tel Aviv should appear directly after Israel
         // Vatican should have no children
         // Washington should appear after WA
-        assertRaggedReturns(context.getConnectionWithDefaultRole(),
+        assertRaggedReturns(connection,
             "Hierarchize(Descendants([Store], [Store].[Store City], SELF_AND_BEFORE))",
             "[Store].[Store].[All Stores]\n"
             + "[Store].[Store].[Canada]\n"
@@ -271,10 +259,9 @@ class RaggedHierarchyTest {
      * because one of the columns is null, so the SQL generator might get
      * confused.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    public void testMeasuresVatican(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    public void testMeasuresVatican(Connection connection) {
+        assertQueryReturns(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {Descendants([Store].[Vatican])} ON ROWS\n"
             + "FROM [Sales Ragged]",
@@ -292,10 +279,9 @@ class RaggedHierarchyTest {
     // Make sure that the numbers are right!
     /**
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    public void testMeasures(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    public void testMeasures(Connection connection) {
+        assertQueryReturns(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " NON EMPTY {Descendants([Store])} ON ROWS\n"
             + "FROM [Sales Ragged]",
@@ -378,10 +364,9 @@ class RaggedHierarchyTest {
      * <p>Cause was that ancestor yielded a null member, which was a RolapMember
      * but Order required it to be a RolapCubeMember.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testNullMember(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+    @Test
+    void testNullMember(Connection connection) {
+        assertQueryReturns(connection,
             "With \n"
             + " Set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_Geography]' \n"
             + " Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],Ancestor([Geography].CurrentMember, [Geography].[Country]).OrderKey,BASC,Ancestor([Geography].CurrentMember, [Geography].[State]).OrderKey,BASC,[Geography].CurrentMember.OrderKey,BASC)' \n"
@@ -448,10 +433,12 @@ class RaggedHierarchyTest {
             + "Row #22: 0\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testHideIfBlankHidesWhitespace(Context<?> context) {
-        if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RaggedHierarchyTestModifier1.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.NULL_MEMBER_REPRESENTATION, value = "null", type = String.class)
+    void testHideIfBlankHidesWhitespace(Connection connection) {
+        if (getDatabaseProduct(getDialect(connection).name())
             != DatabaseProduct.ORACLE)
         {
             return;
@@ -475,9 +462,7 @@ class RaggedHierarchyTest {
                     + "    </Hierarchy>\n"
                     + "  </Dimension>"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.RaggedHierarchyTestModifier1::new);
-
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             " select {[Gender4].[Gender].members} "
             + "on COLUMNS "
             + "from sales",
@@ -488,9 +473,11 @@ class RaggedHierarchyTest {
             + "Row #0: 135,215\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testNativeFilterWithHideMemberIfBlankOnLeaf(Context<?> context) throws Exception {
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RaggedHierarchyTestModifier2.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.NULL_MEMBER_REPRESENTATION, value = "null", type = String.class)
+    void testNativeFilterWithHideMemberIfBlankOnLeaf(Connection connection) throws Exception {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
             "Sales Ragged",
@@ -506,8 +493,7 @@ class RaggedHierarchyTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.RaggedHierarchyTestModifier2::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             "SELECT\n"
             + "[Measures].[Unit Sales] ON COLUMNS\n"
             + ",FILTER([Store].[Store City].MEMBERS, NOT ISEMPTY ([Measures].[Unit Sales])) ON ROWS\n"
@@ -543,9 +529,11 @@ class RaggedHierarchyTest {
             + "Row #11: 23,591\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, NullMemberRepresentationNull.class}, dataloader = FastFoodmardDataLoader.class)
-    void testNativeCJWithHideMemberIfBlankOnLeaf(Context<?> context) throws Exception {
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RaggedHierarchyTestModifier2.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.NULL_MEMBER_REPRESENTATION, value = "null", type = String.class)
+    void testNativeCJWithHideMemberIfBlankOnLeaf(Connection connection) throws Exception {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
             "Sales Ragged",
@@ -561,9 +549,7 @@ class RaggedHierarchyTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
          */
-        withSchemaEmf(context,  SchemaModifiersEmf.RaggedHierarchyTestModifier2::new);
-
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertQueryReturns(connection,
             "SELECT\n"
             + "[Measures].[Unit Sales] ON COLUMNS\n"
             + ",non empty Crossjoin([Gender].[Gender].[Gender].members, [Store].[Store].[Store City].MEMBERS) ON ROWS\n"
@@ -621,5 +607,13 @@ class RaggedHierarchyTest {
             + "Row #21: 12,936\n"
             + "Row #22: 11,498\n"
             + "Row #23: 11,523\n");
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 }

@@ -14,29 +14,26 @@
 package org.eclipse.daanse.olap.function.def.properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class PropertiesFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPropertiesExpr(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")",
-            "Gourmet Supermarket" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")")
+            .returns( "Gourmet Supermarket" );
     }
 
     /**
@@ -44,39 +41,36 @@ class PropertiesFunDefTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-1227">MONDRIAN-1227,
      * "Properties function does not implicitly convert dimension to member; has documentation typos"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPropertiesOnDimension(Context<?> context) {
         // [Store] is a dimension. When called with a property like FirstChild,
         // it is implicitly converted to a member.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Store].FirstChild", "[Store].[Store].[Canada]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Store].FirstChild").returns( "[Store].[Store].[Canada]" );
 
         // The same should happen with the <Member>.Properties(<String>)
         // function; now the bug is fixed, it does. Dimension is implicitly
         // converted to member.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Store].Properties('MEMBER_UNIQUE_NAME')",
-            "[Store].[Store].[All Stores]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Store].Properties('MEMBER_UNIQUE_NAME')")
+            .returns( "[Store].[Store].[All Stores]" );
 
         // Hierarchy is implicitly converted to member.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Store].[USA].Hierarchy.Properties('MEMBER_UNIQUE_NAME')",
-            "[Store].[Store].[All Stores]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Store].[USA].Hierarchy.Properties('MEMBER_UNIQUE_NAME')")
+            .returns( "[Store].[Store].[All Stores]" );
     }
 
     /**
      * Tests that non-existent property throws an error. *
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPropertiesNonExistent(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Foo\")",
-            "Property 'Foo' is not valid for" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Foo\")")
+            .throwsMessage( "Property 'Foo' is not valid for" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPropertiesFilter(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "SELECT { [Store Sales] } ON COLUMNS,\n"
@@ -87,8 +81,7 @@ class PropertiesFunDefTest {
         assertEquals( 8, result.getAxes()[ 1 ].getPositions().size() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPropertyInCalculatedMember(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Store Sales per Sqft]\n"

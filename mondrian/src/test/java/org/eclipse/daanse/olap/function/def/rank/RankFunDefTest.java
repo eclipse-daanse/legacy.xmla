@@ -14,8 +14,8 @@
 package org.eclipse.daanse.olap.function.def.rank;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
@@ -24,87 +24,94 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class RankFunDefTest {
 
 
     /**
      * Tests the <code>Rank(member, set)</code> MDX function.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRank(Context<?> context) {
         // Member within set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[CA], "
                 + "{[Store].[USA].[OR],"
                 + " [Store].[USA].[CA],"
-                + " [Store].[USA]})", "2" );
+                + " [Store].[USA]})")
+            .returns( "2" );
         // Member not in set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[WA], "
                 + "{[Store].[USA].[OR],"
                 + " [Store].[USA].[CA],"
-                + " [Store].[USA]})", "0" );
+                + " [Store].[USA]})")
+            .returns( "0" );
         // Member not in empty set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Rank([Store].[USA].[WA], {})", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Rank([Store].[USA].[WA], {})")
+            .returns( "0" );
         // Null member not in set returns null.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].Parent, "
                 + "{[Store].[USA].[OR],"
                 + " [Store].[USA].[CA],"
-                + " [Store].[USA]})", "" );
+                + " [Store].[USA]})")
+            .returns( "" );
         // Null member in empty set. (MSAS returns an error "Formula error -
         // dimension count is not valid - in the Rank function" but I think
         // null is the correct behavior.)
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Rank([Gender].Parent, {})", "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Rank([Gender].Parent, {})")
+            .returns( "" );
         // Member occurs twice in set -- pick first
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[WA], \n"
                 + "{[Store].[USA].[WA],"
                 + " [Store].[USA].[CA],"
                 + " [Store].[USA],"
-                + " [Store].[USA].[WA]})", "1" );
+                + " [Store].[USA].[WA]})")
+            .returns( "1" );
         // Tuple not in set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].[M]), \n"
                 + "{([Gender].[F], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[S]),\n"
-                + " ([Gender].[M], [Marital Status].[M])})", "0" );
+                + " ([Gender].[M], [Marital Status].[M])})")
+            .returns( "0" );
         // Tuple in set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].[M]), \n"
                 + "{([Gender].[F], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[S]),\n"
-                + " ([Gender].[F], [Marital Status].[M])})", "3" );
+                + " ([Gender].[F], [Marital Status].[M])})")
+            .returns( "3" );
         // Tuple not in empty set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Rank(([Gender].[F], [Marital Status].[M]), \n" + "{})", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Rank(([Gender].[F], [Marital Status].[M]), \n" + "{})")
+            .returns( "0" );
         // Partially null tuple in set, returns null
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].Parent), \n"
                 + "{([Gender].[F], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[S]),\n"
-                + " ([Gender].[F], [Marital Status].[M])})", "" );
+                + " ([Gender].[F], [Marital Status].[M])})")
+            .returns( "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRankWithExpr(Context<?> context) {
         // Note that [Good] and [Top Measure] have the same [Unit Sales]
         // value (5), but [Good] ranks 1 and [Top Measure] ranks 2. Even though
         // they are sorted descending on unit sales, they remain in their
         // natural order (member name) because MDX sorts are stable.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Sibling Rank] as ' Rank([Product].CurrentMember, [Product].CurrentMember.Siblings) '\n"
                 + "  member [Measures].[Sales Rank] as ' Rank([Product].CurrentMember, Order([Product].Parent.Children, "
                 + "[Measures].[Unit Sales], DESC)) '\n"
@@ -113,7 +120,8 @@ class RankFunDefTest {
                 + "select {[Measures].[Unit Sales], [Measures].[Sales Rank], [Measures].[Sales Rank2]} on columns,\n"
                 + " {[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].children} on rows\n"
                 + "from [Sales]\n"
-                + "WHERE ([Store].[USA].[OR].[Portland].[Store 11], [Time].[1997].[Q2].[6])",
+                + "WHERE ([Store].[USA].[OR].[Portland].[Store 11], [Time].[1997].[Q2].[6])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Store].[Store].[USA].[OR].[Portland].[Store 11], [Time].[Time].[1997].[Q2].[6]}\n"
                 + "Axis #1:\n"
@@ -143,17 +151,17 @@ class RankFunDefTest {
                 + "Row #4: 3\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRankMembersWithTiedExpr(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with "
                 + " Set [Beers] as {[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].children} "
                 + "  member [Measures].[Sales Rank] as ' Rank([Product].CurrentMember, [Beers], [Measures].[Unit Sales]) '\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Sales Rank]} on columns,\n"
                 + " Generate([Beers], {[Product].CurrentMember}) on rows\n"
                 + "from [Sales]\n"
-                + "WHERE ([Store].[USA].[OR].[Portland].[Store 11], [Time].[1997].[Q2].[6])",
+                + "WHERE ([Store].[USA].[OR].[Portland].[Store 11], [Time].[1997].[Q2].[6])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Store].[Store].[USA].[OR].[Portland].[Store 11], [Time].[Time].[1997].[Q2].[6]}\n"
                 + "Axis #1:\n"
@@ -177,10 +185,9 @@ class RankFunDefTest {
                 + "Row #4: 3\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRankTuplesWithTiedExpr(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with "
                 + " Set [Beers for Store] as 'NonEmptyCrossJoin("
                 + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].children, "
@@ -190,7 +197,8 @@ class RankFunDefTest {
                 + "select {[Measures].[Unit Sales], [Measures].[Sales Rank]} on columns,\n"
                 + " Generate([Beers for Store], {([Product].CurrentMember, [Store].CurrentMember)}) on rows\n"
                 + "from [Sales]\n"
-                + "WHERE ([Time].[1997].[Q2].[6])",
+                + "WHERE ([Time].[1997].[Q2].[6])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q2].[6]}\n"
                 + "Axis #1:\n"
@@ -215,84 +223,93 @@ class RankFunDefTest {
                 + "Row #3: 3\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRankWithExpr2(Context<?> context) {
         // Data: Unit Sales
         // All gender 266,733
         // F          131,558
         // M          135,215
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[All Gender],"
                 + " {[Gender].Members},"
-                + " [Measures].[Unit Sales])", "1" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+                + " [Measures].[Unit Sales])")
+            .returns( "1" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[F],"
                 + " {[Gender].Members},"
-                + " [Measures].[Unit Sales])", "3" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+                + " [Measures].[Unit Sales])")
+            .returns( "3" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {[Gender].Members},"
-                + " [Measures].[Unit Sales])", "2" );
+                + " [Measures].[Unit Sales])")
+            .returns( "2" );
         // Null member. Expression evaluates to null, therefore value does
         // not appear in the list of values, therefore the rank is null.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[All Gender].Parent,"
                 + " {[Gender].Members},"
-                + " [Measures].[Unit Sales])", "" );
+                + " [Measures].[Unit Sales])")
+            .returns( "" );
         // Empty set. Value would appear after all elements in the empty set,
         // therefore rank is 1.
         // Note that SSAS gives error 'The first argument to the Rank function,
         // a tuple expression, should reference the same hierachies as the
         // second argument, a set expression'. I think that's because it can't
         // deduce a type for '{}'. SSAS's problem, not Mondrian's. :)
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {},"
-                + " [Measures].[Unit Sales])",
+                + " [Measures].[Unit Sales])")
+            .returns(
             "1" );
         // As above, but SSAS can type-check this.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " Filter(Gender.Members, 1 = 0),"
-                + " [Measures].[Unit Sales])",
+                + " [Measures].[Unit Sales])")
+            .returns(
             "1" );
         // Member is not in set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Rank([Gender].[M]," + " {[Gender].[All Gender], [Gender].[F]})",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Rank([Gender].[M]," + " {[Gender].[All Gender], [Gender].[F]})")
+            .returns(
             "0" );
         // Even though M is not in the set, its value lies between [All Gender]
         // and [F].
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {[Gender].[All Gender], [Gender].[F]},"
-                + " [Measures].[Unit Sales])", "2" );
+                + " [Measures].[Unit Sales])")
+            .returns( "2" );
         // Expr evaluates to null for some values of set.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Product].[Non-Consumable].[Household],"
                 + " {[Product].[Food], [Product].[All Products], [Product].[Drink].[Dairy]},"
-                + " [Product].CurrentMember.Parent)", "2" );
+                + " [Product].CurrentMember.Parent)")
+            .returns( "2" );
         // Expr evaluates to null for all values in the set.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {[Gender].[All Gender], [Gender].[F]},"
-                + " [Marital Status].[All Marital Status].Parent)", "1" );
+                + " [Marital Status].[All Marital Status].Parent)")
+            .returns( "1" );
     }
 
     /**
      * Tests the 3-arg version of the RANK function with a value which returns null within a set of nulls.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRankWithNulls(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[X] as "
                 + "'iif([Measures].[Store Sales]=777,"
                 + "[Measures].[Store Sales],Null)'\n"
                 + "member [Measures].[Y] as 'Rank([Gender].[M],"
                 + "{[Measures].[X],[Measures].[X],[Measures].[X]},"
                 + " [Marital Status].[All Marital Status].Parent)'"
-                + "select {[Measures].[Y]} on columns from Sales",
+                + "select {[Measures].[Y]} on columns from Sales")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -303,11 +320,10 @@ class RankFunDefTest {
     /**
      * Tests a RANK function which is so large that we need to use caching in order to execute it efficiently.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testRankHuge(Context<?> context) {
         // If caching is disabled, don't even try -- it will take too long.
-        if ( !((TestContextImpl) context).isEnableExpCache() ) {
+        if ( !context.getConfigValue(ConfigConstants.ENABLE_EXP_CACHE, ConfigConstants.ENABLE_EXP_CACHE_DEFAULT_VALUE, Boolean.class) ) {
             return;
         }
 
@@ -336,11 +352,10 @@ class RankFunDefTest {
      * <p>Disabled by jhyde, 2006/2/14. Bug 1431316 logged.
      */
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void _testRank3Huge(Context<?> context) {
         // If caching is disabled, don't even try -- it will take too long.
-        if ( !((TestContextImpl) context).isEnableExpCache() ) {
+        if ( !context.getConfigValue(ConfigConstants.ENABLE_EXP_CACHE, ConfigConstants.ENABLE_EXP_CACHE_DEFAULT_VALUE, Boolean.class) ) {
             return;
         }
 

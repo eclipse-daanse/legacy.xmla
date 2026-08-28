@@ -13,67 +13,66 @@
  */
 package org.eclipse.daanse.olap.function.def.set.distinct;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class DistinctFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctTwoMembers(Context<?> context) {
         //getTestContext().withCube( "HR" ).
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
-                + "[Employees].[Sheri Nowmer].[Donna Arnold]})",
+                + "[Employees].[Sheri Nowmer].[Donna Arnold]})")
+            .returns(
             "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctThreeMembers(Context<?> context) {
         //getTestContext().withCube( "HR" ).
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz],"
-                + "[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold]})",
+                + "[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold]})")
+            .returns(
             "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]\n"
                 + "[Employees].[Employees].[Sheri Nowmer].[Darren Stanz]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctFourMembers(Context<?> context) {
         //getTestContext().withCube( "HR" ).
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
-                + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz]})",
+                + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz]})")
+            .returns(
             "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]\n"
                 + "[Employees].[Employees].[Sheri Nowmer].[Darren Stanz]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctTwoTuples(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
-                + "([Time].[1997], [Store].[All Stores].[Mexico])})",
+                + "([Time].[1997], [Store].[All Stores].[Mexico])})")
+            .returns(
             "{[Time].[Time].[1997], [Store].[Store].[Mexico]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDistinctSomeTuples(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
-                + "crossjoin({[Time].[1997]},{[Store].[All Stores].children})})",
+                + "crossjoin({[Time].[1997]},{[Store].[All Stores].children})})")
+            .returns(
             "{[Time].[Time].[1997], [Store].[Store].[Mexico]}\n"
                 + "{[Time].[Time].[1997], [Store].[Store].[Canada]}\n"
                 + "{[Time].[Time].[1997], [Store].[Store].[USA]}" );

@@ -14,39 +14,40 @@
 package org.eclipse.daanse.olap.function.def.set.membersx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class MembersFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.members
-        assertAxisReturns(connection, "Sales",
-            "{[Customers].[Country].Members}",
+        assertThatAxis(connection, "Sales",
+            "{[Customers].[Country].Members}")
+            .returns(
             "[Customers].[Customers].[Canada]\n"
                 + "[Customers].[Customers].[Mexico]\n"
                 + "[Customers].[Customers].[USA]" );
 
         // <Level>.members applied to 'all' level
-        assertAxisReturns(connection, "Sales",
-            "{[Customers].[(All)].Members}", "[Customers].[Customers].[All Customers]" );
+        assertThatAxis(connection, "Sales",
+            "{[Customers].[(All)].Members}")
+            .returns( "[Customers].[Customers].[All Customers]" );
 
         // <Level>.members applied to measures dimension
         // Note -- no cube-level calculated members are present
-        assertAxisReturns(connection, "Sales",
-            "{[Measures].[MeasuresLevel].Members}",
+        assertThatAxis(connection, "Sales",
+            "{[Measures].[MeasuresLevel].Members}")
+            .returns(
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
                 + "[Measures].[Store Sales]\n"
@@ -55,8 +56,9 @@ class MembersFunDefTest {
                 + "[Measures].[Promotion Sales]" );
 
         // <Dimension>.members applied to Measures
-        assertAxisReturns(connection, "Sales",
-            "{[Measures].Members}",
+        assertThatAxis(connection, "Sales",
+            "{[Measures].Members}")
+            .returns(
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
                 + "[Measures].[Store Sales]\n"
@@ -72,9 +74,10 @@ class MembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(connection,
+                assertThatQuery(connection,
                     "with member [Measures].[Xxx] AS ' [Measures].[Unit Sales] '"
-                        + "select {[Measures].members} on columns from [Sales]",
+                        + "select {[Measures].members} on columns from [Sales]")
+            .returnsGrid(
                     "Axis #0:\n"
                         + "{}\n"
                         + "Axis #1:\n"
@@ -100,9 +103,10 @@ class MembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(connection,
+                assertThatQuery(connection,
                     "with member [Measures].[Xxx] AS ' [Measures].[Unit Sales] '"
-                        + "select {[Measures].[Measures].members} on columns from [Sales]",
+                        + "select {[Measures].[Measures].members} on columns from [Sales]")
+            .returnsGrid(
                     "Axis #0:\n"
                         + "{}\n"
                         + "Axis #1:\n"
@@ -121,12 +125,12 @@ class MembersFunDefTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchyMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "Sales",
-            "Head({[Time].[Weekly].Members}, 10)",
+        assertThatAxis(connection, "Sales",
+            "Head({[Time].[Weekly].Members}, 10)")
+            .returns(
             "[Time].[Weekly].[All Weeklys]\n"
                 + "[Time].[Weekly].[1997]\n"
                 + "[Time].[Weekly].[1997].[1]\n"
@@ -137,8 +141,9 @@ class MembersFunDefTest {
                 + "[Time].[Weekly].[1997].[1].[19]\n"
                 + "[Time].[Weekly].[1997].[1].[20]\n"
                 + "[Time].[Weekly].[1997].[2]" );
-        assertAxisReturns(connection, "Sales",
-            "Tail({[Time].[Weekly].Members}, 5)",
+        assertThatAxis(connection, "Sales",
+            "Tail({[Time].[Weekly].Members}, 5)")
+            .returns(
             "[Time].[Weekly].[1998].[51].[5]\n"
                 + "[Time].[Weekly].[1998].[51].[29]\n"
                 + "[Time].[Weekly].[1998].[51].[30]\n"

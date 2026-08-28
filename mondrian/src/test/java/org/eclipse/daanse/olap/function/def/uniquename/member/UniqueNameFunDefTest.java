@@ -13,34 +13,32 @@
  */
 package org.eclipse.daanse.olap.function.def.uniquename.member;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 
+@RolapContextTest(FoodmartTestInstance.class)
 class UniqueNameFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMemberUniqueName(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "[Gender].DefaultMember.UniqueName",
-            "[Gender].[Gender].[All Gender]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender].DefaultMember.UniqueName")
+            .returns( "[Gender].[Gender].[All Gender]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMemberUniqueNameOfNull(Context<?> context) {
         if ( isDefaultNullMemberRepresentation(context) ) {
-            assertExprReturns(context.getConnectionWithDefaultRole(),
-                "[Measures].[Unit Sales].FirstChild.UniqueName",
-                "[Measures].[#null]" ); // MSOLAP gives "" here
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+                "[Measures].[Unit Sales].FirstChild.UniqueName")
+                .returns( "[Measures].[#null]" ); // MSOLAP gives "" here
         }
     }
 

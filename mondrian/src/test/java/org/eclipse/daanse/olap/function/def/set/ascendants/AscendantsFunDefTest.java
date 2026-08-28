@@ -13,39 +13,36 @@
  */
 package org.eclipse.daanse.olap.function.def.set.ascendants;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class AscendantsFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAscendants(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Ascendants([Store].[USA].[CA])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Ascendants([Store].[USA].[CA])")
+            .returns(
             "[Store].[Store].[USA].[CA]\n"
                 + "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[All Stores]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAscendantsAll(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Ascendants([Store].DefaultMember)", "[Store].[Store].[All Stores]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Ascendants([Store].DefaultMember)").returns( "[Store].[Store].[All Stores]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAscendantsNull(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Ascendants([Gender].[F].PrevMember)", "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Ascendants([Gender].[F].PrevMember)").returns( "" );
     }
 
 }

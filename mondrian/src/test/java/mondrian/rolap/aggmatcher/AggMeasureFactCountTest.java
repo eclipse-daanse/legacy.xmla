@@ -11,10 +11,10 @@
 
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -109,7 +109,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
         assertQuerySql(connection, sqlMysql);
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Test
@@ -119,7 +119,7 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testDefaultRecognitionWithoutAggregates(Connection connection) {
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Test
@@ -145,7 +145,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
         assertQuerySql(connection, aggSql);
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Test
@@ -155,7 +155,7 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testAggNameWithoutAggregates(Connection connection) {
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Disabled // TODO need investigate
@@ -168,7 +168,7 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testFactColumnNotExists(Context<?> context) {
         try {
-            assertQueryReturns(context.getConnectionWithDefaultRole(), QUERY, "");
+            assertThatQuery(context.getConnectionWithDefaultRole(), QUERY).returnsGrid("");
             fail("Should throw mondrian exception");
         } catch (OlapRuntimeException e) {
             assertTrue(
@@ -272,7 +272,7 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testMeasureFactColumnAndAggFactCountNotExist(Context<?> context) {
         try {
-            assertQueryReturns(context.getConnectionWithDefaultRole(), QUERY, "");
+            assertThatQuery(context.getConnectionWithDefaultRole(), QUERY).returnsGrid("");
             fail("Should have thrown mondrian exception");
         } catch (OlapRuntimeException e) {
             assertEquals(
@@ -305,7 +305,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_csv_different_column_names`.`quarter`";
 
         assertQuerySql(connection, aggSql);
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Test
@@ -315,7 +315,7 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testAggNameDifferentColumnNamesWithoutAggregates(Connection connection) {
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Test
@@ -350,7 +350,7 @@ class AggMeasureFactCountTest {
                 + "Row #2: 3\n"
                 + "Row #2: 3\n";
 
-        assertQueryReturns(connection, QUERY, result);
+        assertThatQuery(connection, QUERY).returnsGrid(result);
     }
 
     @Test
@@ -376,7 +376,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
         assertQuerySql(connection, aggSql);
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     @Test
@@ -386,7 +386,7 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testAggPatternWithoutAggregates(Connection connection) {
-        assertQueryReturns(connection, QUERY, CLEAN_RESULT);
+        assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
     private void assertQuerySql(Connection connection, String sql) {

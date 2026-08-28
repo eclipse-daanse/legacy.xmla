@@ -8,8 +8,8 @@
 */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQuerySql;
 import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeQuery;
@@ -94,8 +94,8 @@ class MultipleColsInTupleAggTest {
             + "{[Store].[All Stores]}) on rows "
             + "from [Fact]";
 
-        assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -116,12 +116,12 @@ class MultipleColsInTupleAggTest {
         // could fail to include the Agg star in the WHERE clause,
         // and could also mishandle the field referred to in the native
         // HAVING clause.  ANALYZER-2655
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select "
             + "Filter([Product].[Category].members, "
             + "Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
             + " on columns "
-            + "from [Fact]",
+            + "from [Fact]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -129,12 +129,12 @@ class MultipleColsInTupleAggTest {
             + "Row #0: 33\n");
         //  CurrentMember.Name should map to
         // `test_lp_xxx_fact`.`product_category`, with 2 member matches
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select "
             + "Filter([Product].[Product Category].members, "
             + "Product.CurrentMember.Name MATCHES (\"(?i).*Two.*\") )"
             + " on columns "
-            + "from [Fact]",
+            + "from [Fact]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -144,12 +144,12 @@ class MultipleColsInTupleAggTest {
             + "Row #0: 18\n");
         // .Caption is defined as `product_cat`.`cap`.
         // [Cat One].[Prod Cat Two] has just one caption matching -- "PCTwo"
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select "
             + "Filter([Product].[Product Category].Members, "
             + "Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
             + " on columns "
-            + "from [Fact]",
+            + "from [Fact]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -172,8 +172,8 @@ class MultipleColsInTupleAggTest {
             + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
             + " on columns "
             + "from [Fact] ";
-        assertQueryReturns(connection,
-            query,
+        assertThatQuery(connection,
+            query).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -250,8 +250,8 @@ class MultipleColsInTupleAggTest {
     void testChildSelection(Connection connection) {
         String mdx = "select {[Measures].[Total]} on columns, "
             + "non empty [Product].[Cat One].Children on rows from [Fact]";
-        assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

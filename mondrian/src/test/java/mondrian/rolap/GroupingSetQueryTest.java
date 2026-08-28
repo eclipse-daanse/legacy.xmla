@@ -11,27 +11,23 @@
 
 package mondrian.rolap;
 
-import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -43,6 +39,7 @@ import mondrian.test.SqlPattern;
  * @author Thiyagu
  * @since 08-Jun-2007
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class GroupingSetQueryTest extends BatchTestCase{
     private static final String cubeNameSales2 = "Sales 2";
     private static final String measureStoreSales = "[Measures].[Store Sales]";
@@ -59,43 +56,17 @@ class GroupingSetQueryTest extends BatchTestCase{
     public void afterEach() {
     }
 
-    private void pripareContext(Context<?> context) {
-        // This test warns of missing sql patterns for
-        //
-        // ACCESS
-        // ORACLE
-        final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
-        if (context
-                .getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class)
-                .equals("ANY")
-                || getDatabaseProduct(dialect.name()) == DatabaseProduct.ACCESS
-                || getDatabaseProduct(dialect.name()) == DatabaseProduct.ORACLE)
-        {
-            ((TestContextImpl)context).setWarnIfNoPatternForDialect(getDatabaseProduct(dialect.name()).toString());
-        } else {
-            // Do not warn unless the dialect is "ACCESS" or "ORACLE", or
-            // if the test chooses to warn regardless of the dialect.
-            ((TestContextImpl)context).setWarnIfNoPatternForDialect("NONE");
-        }
-
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGroupingSetsWithAggregateOverDefaultMember(Context<?> context) {
-        pripareContext(context);
         // testcase for MONDRIAN-705
         Connection connection = context.getConnectionWithDefaultRole();
-        if (getDialect(connection).supportsGroupingSets()) {
-            ((TestContextImpl)context).setEnableGroupingSets(true);
-        }
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with member [Gender].[Gender].[agg] as ' "
             + "  Aggregate({[Gender].[Gender].DefaultMember}, [Measures].[Store Cost])' "
             + "select "
             + "  {[Measures].[Store Cost]} ON COLUMNS, "
             + "  {[Gender].[Gender].[Gender].Members, [Gender].[Gender].[agg]} ON ROWS "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -109,11 +80,9 @@ class GroupingSetQueryTest extends BatchTestCase{
             + "Row #2: 225,627.23\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testGroupingSetForSingleColumnConstraint(Context<?> context) {
-        pripareContext(context);
-        ((TestContextImpl)context).setDisableCaching(false);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "M");
@@ -152,6 +121,44 @@ class GroupingSetQueryTest extends BatchTestCase{
                 null)
         };
 
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+            assertRequestSql(connection,
+                new CellRequest[] {request3, request1, request2},
+                patternsWithAggs);
+        } else {
+            assertRequestSql(connection,
+                new CellRequest[] {request3, request1, request2},
+                patternsWithGsets);
+        }
+    }
+
+    @Test
+    void testGroupingSetForSingleColumnConstraintGroupingSetsDisabled(Context<?> context) {
+        Connection connection = context.getConnectionWithDefaultRole();
+        CellRequest request1 = createRequest(connection,
+            cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "M");
+
+        CellRequest request2 = createRequest(connection,
+            cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "F");
+
+        CellRequest request3 = createRequest(connection,
+            cubeNameSales2, measureUnitSales, null, "", "");
+
+        SqlPattern[] patternsWithAggs = {
+            new SqlPattern(
+                ORACLE_TERADATA,
+                "select sum(\"agg_c_10_sales_fact_1997\".\"unit_sales\") as \"m0\""
+                + " from \"agg_c_10_sales_fact_1997\" \"agg_c_10_sales_fact_1997\"",
+                null),
+            new SqlPattern(
+                ORACLE_TERADATA,
+                "select \"agg_g_ms_pcat_sales_fact_1997\".\"gender\" as \"c0\","
+                + " sum(\"agg_g_ms_pcat_sales_fact_1997\".\"unit_sales\") as \"m0\" "
+                + "from \"agg_g_ms_pcat_sales_fact_1997\" \"agg_g_ms_pcat_sales_fact_1997\" "
+                + "group by \"agg_g_ms_pcat_sales_fact_1997\".\"gender\"",
+                null)
+        };
+
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
                 DatabaseProduct.ACCESS,
@@ -169,21 +176,6 @@ class GroupingSetQueryTest extends BatchTestCase{
                 26)
         };
 
-        ((TestContextImpl)context).setEnableGroupingSets(true);
-        connection = context.getConnectionWithDefaultRole();
-
-        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
-            assertRequestSql(connection,
-                new CellRequest[] {request3, request1, request2},
-                patternsWithAggs);
-        } else {
-            assertRequestSql(connection,
-                new CellRequest[] {request3, request1, request2},
-                patternsWithGsets);
-        }
-
-        ((TestContextImpl)context).setEnableGroupingSets(false);
-
         if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             assertRequestSql(connection,
                 new CellRequest[] {request3, request1, request2},
@@ -194,10 +186,10 @@ class GroupingSetQueryTest extends BatchTestCase{
                 patternsWithoutGsets);
         }
     }
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testNotUsingGroupingSetWhenGroupUsesDifferentAggregateTable(Context<?> context) {
-        pripareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
         {
@@ -216,8 +208,6 @@ class GroupingSetQueryTest extends BatchTestCase{
         CellRequest request3 = createRequest(connection,
             cubeNameSales,
             measureUnitSales, null, "", "");
-
-        ((TestContextImpl)context).setEnableGroupingSets(true);
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -240,15 +230,13 @@ class GroupingSetQueryTest extends BatchTestCase{
             patternsWithoutGsets);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testNotUsingGroupingSet(Context<?> context) {
-        pripareContext(context);
         if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        ((TestContextImpl)context).setEnableGroupingSets(true);
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
             measureUnitSales, tableCustomer, fieldGender, "M");
@@ -268,8 +256,21 @@ class GroupingSetQueryTest extends BatchTestCase{
         assertRequestSql(connection,
             new CellRequest[] {request1, request2},
             patternsWithGsets);
+    }
 
-        ((TestContextImpl)context).setEnableGroupingSets(false);
+    @Test
+    void testNotUsingGroupingSetGroupingSetsDisabled(Context<?> context) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+            return;
+        }
+        Connection connection = context.getConnectionWithDefaultRole();
+        CellRequest request1 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldGender, "M");
+
+        CellRequest request2 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldGender, "F");
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -290,14 +291,12 @@ class GroupingSetQueryTest extends BatchTestCase{
             patternsWithoutGsets);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testGroupingSetForMultipleMeasureAndSingleConstraint(Context<?> context) {
-        pripareContext(context);
         if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
-        ((TestContextImpl)context).setEnableGroupingSets(true);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -332,8 +331,32 @@ class GroupingSetQueryTest extends BatchTestCase{
             new CellRequest[] {
                 request1, request2, request3, request4, request5, request6},
             patternsWithGsets);
+    }
 
-        ((TestContextImpl)context).setEnableGroupingSets(false);
+    @Test
+    void testGroupingSetForMultipleMeasureAndSingleConstraintGroupingSetsDisabled(Context<?> context) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+            return;
+        }
+        Connection connection = context.getConnectionWithDefaultRole();
+        CellRequest request1 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request2 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request3 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, null, "", "");
+        CellRequest request4 = createRequest(connection,
+            cubeNameSales2,
+            measureStoreSales, tableCustomer, fieldGender, "M");
+        CellRequest request5 = createRequest(connection,
+            cubeNameSales2,
+            measureStoreSales, tableCustomer, fieldGender, "F");
+        CellRequest request6 = createRequest(connection,
+            cubeNameSales2,
+            measureStoreSales, null, "", "");
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -358,14 +381,12 @@ class GroupingSetQueryTest extends BatchTestCase{
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testGroupingSetForASummaryCanBeGroupedWith2DetailBatch(Context<?> context) {
-        pripareContext(context);
         if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
-        ((TestContextImpl)context).setEnableGroupingSets(true);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -409,8 +430,33 @@ class GroupingSetQueryTest extends BatchTestCase{
             new CellRequest[] {
                 request1, request2, request3, request4, request5, request6},
             patternWithGsets);
+    }
 
-        ((TestContextImpl)context).setEnableGroupingSets(false);
+    @Disabled //TODO need investigate
+    @Test
+    void testGroupingSetForASummaryCanBeGroupedWith2DetailBatchGroupingSetsDisabled(Context<?> context) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+            return;
+        }
+        Connection connection = context.getConnectionWithDefaultRole();
+        CellRequest request1 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request2 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request3 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, null, "", "");
+        CellRequest request4 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldNameMaritalStatus, "M");
+        CellRequest request5 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableCustomer, fieldNameMaritalStatus, "S");
+        CellRequest request6 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, null, "", "");
 
         SqlPattern[] patternWithoutGsets = {
             new SqlPattern(
@@ -431,14 +477,12 @@ class GroupingSetQueryTest extends BatchTestCase{
             patternWithoutGsets);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testGroupingSetForMultipleColumnConstraint(Context<?> context) {
-        pripareContext(context);
         if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
-        ((TestContextImpl)context).setEnableGroupingSets(true);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -480,8 +524,29 @@ class GroupingSetQueryTest extends BatchTestCase{
         assertRequestSql(connection,
             new CellRequest[] {request3, request1, request2},
             patternsWithGsets);
+    }
 
-        ((TestContextImpl)context).setEnableGroupingSets(false);
+    @Test
+    void testGroupingSetForMultipleColumnConstraintGroupingSetsDisabled(Context<?> context) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+            return;
+        }
+        Connection connection = context.getConnectionWithDefaultRole();
+        CellRequest request1 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, new String[]{tableCustomer, tableTime},
+            new String[]{fieldGender, fieldYear},
+            new String[]{"M", "1997"});
+
+        CellRequest request2 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, new String[]{tableCustomer, tableTime},
+            new String[]{fieldGender, fieldYear},
+            new String[]{"F", "1997"});
+
+        CellRequest request3 = createRequest(connection,
+            cubeNameSales2,
+            measureUnitSales, tableTime, fieldYear, "1997");
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -513,12 +578,62 @@ class GroupingSetQueryTest extends BatchTestCase{
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void
-        testGroupingSetForMultipleColumnConstraintAndCompoundConstraint(Context<?> context)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
+    void testGroupingSetForMultipleColumnConstraintAndCompoundConstraint(Context<?> context)
     {
-        pripareContext(context);
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
+            return;
+        }
+        List<String[]> compoundMembers = new ArrayList<>();
+        compoundMembers.add(new String[] {"USA", "OR"});
+        compoundMembers.add(new String[] {"CANADA", "BC"});
+        CellRequestConstraint constraint =
+            makeConstraintCountryState(compoundMembers);
+        Connection connection = context.getConnectionWithDefaultRole();
+        CellRequest request1 = createRequest(connection,
+            cubeNameSales2,
+            measureCustomerCount, new String[]{tableCustomer, tableTime},
+            new String[]{fieldGender, fieldYear},
+            new String[]{"M", "1997"}, constraint);
+
+        CellRequest request2 = createRequest(connection,
+            cubeNameSales2,
+            measureCustomerCount, new String[]{tableCustomer, tableTime},
+            new String[]{fieldGender, fieldYear},
+            new String[]{"F", "1997"}, constraint);
+
+        CellRequest request3 = createRequest(connection,
+            cubeNameSales2,
+            measureCustomerCount, tableTime, fieldYear, "1997", constraint);
+
+        String sqlWithoutGS =
+            "select \"time_by_day\".\"the_year\" as \"c0\", \"customer\".\"gender\" as \"c1\", "
+            + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" from \"time_by_day\" =as= \"time_by_day\", "
+            + "\"sales_fact_1997\" =as= \"sales_fact_1997\", \"customer\" =as= \"customer\", \"store\" =as= \"store\" "
+            + "where \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" and \"time_by_day\".\"the_year\" = 1997 "
+            + "and \"sales_fact_1997\".\"customer_id\" = \"customer\".\"customer_id\" and "
+            + "\"sales_fact_1997\".\"store_id\" = \"store\".\"store_id\" and "
+            + "((\"store\".\"store_country\" = 'USA' and \"store\".\"store_state\" = 'OR') or "
+            + "(\"store\".\"store_country\" = 'CANADA' and \"store\".\"store_state\" = 'BC')) "
+            + "group by \"time_by_day\".\"the_year\", \"customer\".\"gender\"";
+
+        // as of change 12310 GS has been removed from distinct count queries,
+        // since there is little or no performance benefit and there is a bug
+        // related to it (2207515)
+        SqlPattern[] patternsGSEnabled = {
+            new SqlPattern(ORACLE_TERADATA, sqlWithoutGS, sqlWithoutGS)
+        };
+
+        assertRequestSql(connection,
+            new CellRequest[] {request3, request1, request2},
+            patternsGSEnabled);
+    }
+
+    @Disabled //TODO need investigate
+    @Test
+    void testGroupingSetForMultipleColumnConstraintAndCompoundConstraintGroupingSetsDisabled(Context<?> context)
+    {
         if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
@@ -558,18 +673,6 @@ class GroupingSetQueryTest extends BatchTestCase{
         SqlPattern[] patternsGSDisabled = {
             new SqlPattern(ORACLE_TERADATA, sqlWithoutGS, sqlWithoutGS)
         };
-        // as of change 12310 GS has been removed from distinct count queries,
-        // since there is little or no performance benefit and there is a bug
-        // related to it (2207515)
-        SqlPattern[] patternsGSEnabled = patternsGSDisabled;
-
-        ((TestContextImpl)context).setEnableGroupingSets(true);
-
-        assertRequestSql(connection,
-            new CellRequest[] {request3, request1, request2},
-            patternsGSEnabled);
-
-        ((TestContextImpl)context).setEnableGroupingSets(false);
 
         assertRequestSql(connection,
             new CellRequest[]{request3, request1, request2},
@@ -579,11 +682,9 @@ class GroupingSetQueryTest extends BatchTestCase{
     /**
      * Testcase for bug 2004202, "Except not working with grouping sets".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBug2004202(Context<?> context) {
-        pripareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member store.allbutwallawalla as\n"
             + " 'aggregate(\n"
             + "    except(\n"
@@ -594,7 +695,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             + "         store.allbutwallawalla,\n"
             + "         store.[all stores]} on 0,\n"
             + "  {measures.[customer count]} on 1\n"
-            + "from sales",
+            + "from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

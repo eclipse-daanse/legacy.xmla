@@ -13,34 +13,34 @@
  */
 package org.eclipse.daanse.olap.function.def.string;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+import mondrian.olap.fun.FunctionTest;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class LenFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLenFunctionWithNullString(Context<?> context) {
         // SSAS2005 returns 0
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' NULL '\n"
                 + " member [Measures].[Bar] as ' len([Measures].[Foo]) '\n"
                 + "select [Measures].[Bar] on 0\n"
-                + "from [Warehouse and Sales]",
+                + "from [Warehouse and Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Bar]}\n"
                 + "Row #0: 0\n" );
         // same, but inline
-        assertExprReturns(context.getConnectionWithDefaultRole(), "len(null)", 0, 0 );
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(), "len(null)", 0, 0 );
     }
 
 }

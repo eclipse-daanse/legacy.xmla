@@ -13,53 +13,51 @@
  */
 package org.eclipse.daanse.olap.function.def.set.siblings;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class SiblingsFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSiblingsA(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{[Time].[1997].Siblings}",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "{[Time].[1997].Siblings}")
+            .returns(
             "[Time].[Time].[1997]\n"
                 + "[Time].[Time].[1998]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSiblingsB(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{[Store].Siblings}",
-            "[Store].[Store].[All Stores]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "{[Store].Siblings}")
+            .returns( "[Store].[Store].[All Stores]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSiblingsC(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{[Store].[USA].[CA].Siblings}",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "{[Store].[USA].[CA].Siblings}")
+            .returns(
             "[Store].[Store].[USA].[CA]\n"
                 + "[Store].[Store].[USA].[OR]\n"
                 + "[Store].[Store].[USA].[WA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSiblingsD(Context<?> context) {
         // The null member has no siblings -- not even itself
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "{[Gender].Parent.Siblings}", "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "{[Gender].Parent.Siblings}").returns( "" );
 
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "count ([Gender].parent.siblings, includeempty)", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "count ([Gender].parent.siblings, includeempty)")
+            .returns( "0" );
     }
 
 }

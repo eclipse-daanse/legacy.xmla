@@ -11,15 +11,14 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.assertExprReturns;
 import static org.opencube.junit5.TestUtil.assertExprThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.executeExprRaw;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -28,18 +27,20 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.SchemaModifiersEmf;
+import mondrian.test.PropertiesTest.FoodmartData;
 
 /**
  * Tests the expressions used for calculated members. Please keep in sync
@@ -48,6 +49,7 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author jhyde
  * @since 5 October, 2002
  */
+@RolapContextTest(FoodmartTestInstance.class)
  class TestCalculatedMembers extends BatchTestCase {
 
 
@@ -61,17 +63,16 @@ import mondrian.rolap.SchemaModifiersEmf;
     public void afterEach() {
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalculatedMemberInCube(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Profit]", "$339,610.90");
 
         // Testcase for bug 829012.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Avg Salary], [Measures].[Org Salary]} ON columns,\n"
             + "{([Time].[1997], [Store].[All Stores], [Employees].[All Employees])} ON rows\n"
             + "from [HR]\n"
-            + "where [Pay Type].[Hourly]",
+            + "where [Pay Type].[Hourly]").returnsGrid(
             "Axis #0:\n"
             + "{[Pay Type].[Pay Type].[Hourly]}\n"
             + "Axis #1:\n"
@@ -87,8 +88,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests a calculated member with spaces in its name against a virtual
      * cube with spaces in its name.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembersModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testCalculatedMemberInCubeWithSpace(Context<?> context) {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -98,22 +100,20 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "  dimension='Measures'"
             + "  formula='[Measures].[Store Sales]-[Measures].[Store Cost]'/>"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier1::new);
         Cell s = executeExprRaw(context.getConnectionWithDefaultRole(), "Warehouse and Sales", "[Measures].[Profit With Spaces]");
         assertEquals("339,610.90", s.getFormattedValue());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalculatedMemberInCubeAndQuery(Context<?> context) {
         // Profit is defined in the cube.
         // Profit Change is defined in the query.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Profit Change]\n"
             + " AS '[Measures].[Profit] - ([Measures].[Profit], [Time].[Time].PrevMember)'\n"
             + "SELECT {[Measures].[Profit], [Measures].[Profit Change]} ON COLUMNS,\n"
             + " {[Time].[1997].[Q2].children} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -131,18 +131,17 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #2: $588.03\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testQueryCalculatedMemberOverridesCube(Context<?> context) {
         // Profit is defined in the cube, and has a format string "$#,###".
         // We define it in a query to make sure that the format string in the
         // cube doesn't change.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Profit]\n"
             + " AS '(Measures.[Store Sales] - Measures.[Store Cost])', FORMAT_STRING='#,###' \n"
             + "SELECT {[Measures].[Profit]} ON COLUMNS,\n"
             + " {[Time].[1997].[Q2]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -153,10 +152,10 @@ import mondrian.rolap.SchemaModifiersEmf;
 
         // Note that the Profit measure defined against the cube has
         // a format string preceded by "$".
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Profit]} ON COLUMNS,\n"
             + " {[Time].[1997].[Q2]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -166,8 +165,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: $79,702.05\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testQueryCalcMemberOverridesShallowerStoredMember(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    // functionality requires new name resolver
@@ -178,20 +176,20 @@ import mondrian.rolap.SchemaModifiersEmf;
         // or the calculated member "[Time].[Time2].[1997].[1998]"?
         // In SSAS, the calc member gets chosen, even though it is not as
         // good a match.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Time].[Weekly].[1998].[1997] as 4\n"
             + " select [Time].[Weekly].[1998].[1997] on 0\n"
-            + " from [Sales]",
+            + " from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Time].[Weekly].[1998].[1997]}\n"
             + "Row #0: 4\n");
         // does not match if last segment is different
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Time].[Weekly].[1998].[1997xxx] as 4\n"
             + " select [Time].[Weekly].[1997] on 0\n"
-            + " from [Sales]",
+            + " from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -203,22 +201,21 @@ import mondrian.rolap.SchemaModifiersEmf;
      * If there are multiple calc members with the same name, the first is
      * chosen, even if it is not the best match.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testEarlierCalcMember(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    // functionality requires new name resolver
         //    return;
         //}
         // SSAS returns 2
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + " member [Time].[Time].[1997].[Q1].[1999] as 1\n"
             + " member [Time].[Time].[1997].[Q1].[1998] as 2\n"
             + " member [Time].[Time].[1997].[Q2].[1998] as 3\n"
             + " member [Time].[Time].[1997].[1998] as 4\n"
             + " select [Time].[Time].[1998] on 0\n"
-            + " from [Sales]",
+            + " from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -226,8 +223,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: 2\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void _testWhole(Context<?> context) {
         // "allmembers" tests compatibility with MSAS
 
@@ -339,8 +335,7 @@ import mondrian.rolap.SchemaModifiersEmf;
     }
 
     //TODO caption
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalculatedMemberCaption(Context<?> context) {
         String mdx =
             "select {[Measures].[Profit Growth]} on columns from Sales";
@@ -352,8 +347,7 @@ import mondrian.rolap.SchemaModifiersEmf;
         assertEquals("Profit Growth", caption );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberIsSetFails(Context<?> context) {
         // A member which is a set, and more important, cannot be converted to
         // a value, is an error.
@@ -424,14 +418,13 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests that calculated members can have brackets in their names.
      * (Bug 1251683.)
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testBracketInCalcMemberName(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[has a [bracket]] in it] as \n"
             + "' [Measures].CurrentMember.Name '\n"
             + "select {[Measures].[has a [bracket]] in it]} on columns\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -443,17 +436,16 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests that IIf works OK even if its argument returns the NULL
      * value. (Bug 1418689.)
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNpeInIif(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Foo] AS ' 1 / [Measures].[Unit Sales] ',\n"
             + "  FORMAT_STRING=IIf([Measures].[Foo] < .3, \"|0.0|style=red\",\"0.0\")\n"
             + "SELECT {[Store].[USA].[WA].children} on columns\n"
             + "FROM Sales\n"
             + "WHERE ([Time].[1997].[Q4].[12],\n"
             + " [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth Imported Beer],\n"
-            + " [Measures].[Foo])",
+            + " [Measures].[Foo])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q4].[12], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth Imported Beer], [Measures].[Foo]}\n"
             + "Axis #1:\n"
@@ -477,8 +469,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests that calculated members defined in the schema can have brackets in
      * their names. (Bug 1251683.)
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembers3.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testBracketInCubeCalcMemberName(Context<?> context) {
         final String cubeName = "Sales_BracketInCubeCalcMemberName";
         /*
@@ -507,17 +500,16 @@ import mondrian.rolap.SchemaModifiersEmf;
             null, s, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembers3::new);
         assertQueryThrows(context,
             "select {[Measures].[With a [bracket] inside it]} on columns,\n"
             + " {[Gender].Members} on rows\n"
             + "from [" + cubeName + "]",
             "Encountered an error at (or somewhere around) input:1:38");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[With a [bracket]] inside it]} on columns,\n"
             + " {[Gender].Members} on rows\n"
-            + "from [" + cubeName + "]",
+            + "from [" + cubeName + "]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -529,14 +521,13 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #1: $1,352,150.00\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testPropertyReferencesCalcMember(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',"
             + " FORMAT_STRING=IIf([Measures].[Foo] < 600000, \"|#,##0|style=red\",\"#,##0\")  "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
 
             "Axis #0:\n"
             + "{}\n"
@@ -545,29 +536,28 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: |533,546|style=red\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberWithQuote(Context<?> context) {
         // MSAS ignores single-quotes
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as '1 + 2'\n"
-            + "select from [Sales] where [Measures].[Foo]",
+            + "select from [Sales] where [Measures].[Foo]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Foo]}\n"
             + "3");
 
         // As above
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as 1 + 2\n"
-            + "select from [Sales] where [Measures].[Foo]",
+            + "select from [Sales] where [Measures].[Foo]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Foo]}\n"
             + "3");
 
         // MSAS treats doubles-quotes as strings
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as \"1 + 2\"\n"
-            + "select from [Sales] where [Measures].[Foo]",
+            + "select from [Sales] where [Measures].[Foo]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Foo]}\n"
             + "1 + 2");
@@ -582,10 +572,10 @@ import mondrian.rolap.SchemaModifiersEmf;
 
         // Escaped single quote in double-quoted string literal inside
         // single-quoted member declaration.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' \"quoted string with ''apostrophe'' in it\" ' "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -593,10 +583,10 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: quoted string with 'apostrophe' in it\n");
 
         // escaped double-quote inside double-quoted string literal
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' \"quoted string with \"\"double-quote\"\" in it\" ' "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -604,10 +594,10 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: quoted string with \"double-quote\" in it\n");
 
         // escaped double-quote inside double-quoted string literal
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as \"quoted string with 'apos' in it\" "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -618,10 +608,10 @@ import mondrian.rolap.SchemaModifiersEmf;
         // inside escaped single-quoted string literal
         // inside single-quoted formula.
         // MSAS does not allow this, but I think it should.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' ''quoted string and ''''apos''''.'' ' "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -631,10 +621,10 @@ import mondrian.rolap.SchemaModifiersEmf;
         // Escaped single-quote
         // inside double-quoted string literal
         // inside single-quoted formula.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' \"quoted string and ''apos''.\" ' "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -642,12 +632,12 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: quoted string and 'apos'.\n");
 
         // single quote in format expression
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Colored Profit] as  ' [Measures].[Store Sales] - [Measures].[Store Cost] ', "
             + "  FORMAT_STRING = Iif([Measures].[Colored Profit] < 0, '|($#,##0.00)|style=red', '|$#,##0.00|style=green') "
             + "select {[Measures].[Colored Profit]} on columns,"
             + " {[Product].Children} on rows "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -661,12 +651,12 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #2: |$64,487.05|style=green\n");
 
         // double quote in format expression
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Colored Profit] as  ' [Measures].[Store Sales] - [Measures].[Store Cost] ', "
             + "  FORMAT_STRING = Iif([Measures].[Colored Profit] < 0, \"|($#,##0.00)|style=red\", \"|$#,##0.00|style=green\") "
             + "select {[Measures].[Colored Profit]} on columns,"
             + " {[Product].Children} on rows "
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -685,8 +675,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * MONDRIAN-137, "error if calc member in schema file contains single
      * quotes"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembers1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testQuoteInCalcMember(Context<?> context) {
         final String cubeName = "Sales_Bug1410383";
         /*
@@ -737,11 +728,10 @@ import mondrian.rolap.SchemaModifiersEmf;
             null, s, null, null, null, null);
         withSchema(context, schema);
         */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembers1::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Apos in dq], [Measures].[Dq in dq], [Measures].[Apos in apos], [Measures].[Dq in apos], [Measures].[Colored Profit]} on columns,\n"
             + " {[Gender].Members} on rows\n"
-            + "from [" + cubeName + "]",
+            + "from [" + cubeName + "]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -765,14 +755,13 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #1: |$171,162.17|style=green\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testChildrenOfCalcMembers(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time].[# Months Product Sold] as 'Count(Descendants([Time].[Time].LastSibling, [Time].[Month]), EXCLUDEEMPTY)'\n"
             + "select Crossjoin([Time].[# Months Product Sold].Children,\n"
             + "     [Store].[All Stores].Children) ON COLUMNS,\n"
-            + "   [Product].[All Products].Children ON ROWS from [Sales] where [Measures].[Unit Sales]",
+            + "   [Product].[All Products].Children ON ROWS from [Sales] where [Measures].[Unit Sales]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #1:\n"
@@ -782,15 +771,14 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "{[Product].[Product].[Non-Consumable]}\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNonCharacterMembers(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Has Coffee Bar].[Maybe] as \n"
             + "'SUM([Has Coffee Bar].members)' \n"
             + "SELECT {[Has Coffee Bar].[Maybe]} on rows, \n"
             + "{[Measures].[Store Sqft]} on columns \n"
-            + "FROM [Store]",
+            + "FROM [Store]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -800,8 +788,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: 1,143,192\n");
      }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testFormatString(Context<?> context) {
         // Verify that
         // (a) a calculated member without a format string does not
@@ -815,14 +802,14 @@ import mondrian.rolap.SchemaModifiersEmf;
         // (c) the format string for conflicting calculated members
         //     is chosen according to solve order
         //     ([Plain States] overrides [Profit])
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Customers].[Highly Profitable States]\n"
             + "AS 'SUM(FILTER([Customers].[USA].children,([Measures].[Profit] > 90000)))'\n"
             + "MEMBER [Customers].[Plain States]\n"
             + " AS 'SUM([Customers].[USA].children)', SOLVE_ORDER = 5, FORMAT_STRING='#,###'\n"
             + "SELECT {[Measures].[Store Sales], [Measures].[Profit]} ON COLUMNS,\n"
             + "UNION([Customers].[USA].children,{[Customers].[Highly Profitable States],[Customers].[Plain States]}) ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -850,12 +837,11 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Testcase for <a href="http://jira.pentaho.com/browse/MONDRIAN-263">
      * bug MONDRIAN-263, Negative Solve Orders broken</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNegativeSolveOrder(Context<?> context) {
         // Negative solve orders are OK.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "with member measures.blah as 'measures.[unit sales]', SOLVE_ORDER = -6 select {measures.[unit sales], measures.blah} on 0 from sales",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "with member measures.blah as 'measures.[unit sales]', SOLVE_ORDER = -6 select {measures.[unit sales], measures.blah} on 0 from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -867,13 +853,13 @@ import mondrian.rolap.SchemaModifiersEmf;
         // Member with a negative solve order is trumped by a stored measure
         // (which has solve order 0), which in turn is trumped by a calc member
         // with a positive solve order.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Product].[Foo] as ' 1 ', SOLVE_ORDER = -6\n"
             + " member [Gender].[Bar] as ' 2 ', SOLVE_ORDER = 3\n"
             + "select {[Measures].[Unit Sales]} on 0,\n"
             + " {[Product].[Foo], [Product].[Drink]} *\n"
             + " {[Gender].[M], [Gender].[Bar]} on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -889,18 +875,17 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #3: 2\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberCustomFormatterInQuery(Context<?> context) {
         // calc measure defined in query
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',\n"
             + " CELL_FORMATTER='"
             + FormatterUtil.FooBarCellFormatter.class.getName()
             + "' \n"
             + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
             + " {[Store].Children} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -918,8 +903,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #2: foo533546.0bar\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberCustomFormatterInQueryNegative(Context<?> context) {
         assertQueryThrows(context,
             "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',\n"
@@ -930,8 +914,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             "Failed to load formatter class 'mondrian.test.NonExistentCellFormatter' for member '[Measures].[Foo]'.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberCustomFormatterInQueryNegative2(Context<?> context) {
         String query =
             "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',\n"
@@ -944,8 +927,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             "Failed to load formatter class 'java.lang.String' for member '[Measures].[Foo]'.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberCustomFormatterInNonMeasureInQuery(Context<?> context) {
         // CELL_FORMATTER is ignored for calc members which are not measures.
         //
@@ -953,11 +935,11 @@ import mondrian.rolap.SchemaModifiersEmf;
         // allow ALL properties to be inherited from the member with the
         // highest solve order. Need to check whether this is consistent with
         // the MDX spec. -- jhyde, 2007/9/5.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Store].[CA or OR] as ' Aggregate({[Store].[USA].[CA], [Store].[USA].[OR]}) ',\n"
             + " CELL_FORMATTER='mondrian.test.UdfTest.FooBarCellFormatter'\n"
             + "select {[Store].[USA], [Store].[CA or OR]} on columns\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -967,8 +949,9 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: 142,407\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembersModifier2.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testCalcMemberCustomFormatterInSchema(Context<?> context) {
         // calc member defined in schema
         /*
@@ -987,11 +970,10 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "\"/>\n"
             + "</CalculatedMember>\n"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier2::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales], [Measures].[Profit Formatted]} on 0,\n"
             + " {[Store].Children} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1009,8 +991,9 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #2: foo339610.89639999997bar\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembersModifier4.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testCalcMemberCustomFormatterInSchemaNegative(Context<?> context) {
         // calc member defined in schema
         /*
@@ -1027,7 +1010,6 @@ import mondrian.rolap.SchemaModifiersEmf;
                 + "  <CalculatedMemberProperty name=\"CELL_FORMATTER\" value=\"mondrian.test.NonExistentCellFormatter\"/>\n"
                 + "</CalculatedMember>\n"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier4::new);
         assertQueryThrows(context,
             "select {[Measures].[Unit Sales], [Measures].[Profit Formatted]} on 0,\n"
             + " {[Store].Children} on rows\n"
@@ -1038,8 +1020,9 @@ import mondrian.rolap.SchemaModifiersEmf;
     /**
      * Testcase for bug 1784617, "Using StrToTuple() in schema errors out".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembersModifier3.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testStrToSetInCubeCalcMember(Context<?> context) {
         // calc member defined in schema
         /*
@@ -1053,27 +1036,25 @@ import mondrian.rolap.SchemaModifiersEmf;
                 + "    visible=\"false\"\n"
                 + "    formula=\"StrToTuple('([Gender].[M], [Marital Status].[S])', [Gender], [Marital Status])\"/>\n"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembersModifier3::new);
         String desiredResult =
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[My Tuple]}\n"
             + "Row #0: 68,755\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures].[My Tuple]} on 0 from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Measures].[My Tuple]} on 0 from [Sales]").returnsGrid(
             desiredResult);
 
         // same result if calc member is defined in query
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[My Tuple] as\n"
             + " 'StrToTuple(\"([Gender].[M], [Marital Status].[S])\", [Gender], [Marital Status])'\n"
-            + "select {[Measures].[My Tuple]} on 0 from [Sales]",
+            + "select {[Measures].[My Tuple]} on 0 from [Sales]").returnsGrid(
             desiredResult);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCreateCalculatedMember(Context<?> context) {
         // REVIEW: What is the purpose of this test?
         String query =
@@ -1101,15 +1082,14 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests a calculated member which aggregates over a set which would seem
      * to include the calculated member (but does not).
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testSetIncludesSelf(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Top Products] as ' [Product].Children '\n"
             + "member [Product].[Top Product Total] as ' Aggregate([Top Products]) '\n"
             + "select {[Product].[Food], [Product].[Top Product Total]} on 0,"
             + " [Gender].Members on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1132,10 +1112,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * lower solve order; the filter computation uses the context that contains
      * the other cal members(those with higher solve order).
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNegativeSolveOrderForCalMemberWithFilter(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "With "
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Education Level],[*BASE_MEMBERS_Product])' "
             + "Set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET],[Measures].[*Unit Sales_SEL~SUM] > 10000.0)' "
@@ -1155,7 +1134,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Non Empty Union("
             + "NonEmptyCrossJoin({[Education Level].[*CTX_MEMBER_SEL~SUM]},{[Product].[*CTX_MEMBER_SEL~SUM]}),"
             + "Generate([*METRIC_CJ_SET], {([Education Level].CurrentMember,[Product].CurrentMember)})) on rows "
-            + "From [Sales]",
+            + "From [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1175,10 +1154,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests that if a filter is associated with input to a cal member with
      * higher solve order; the filter computation ignores the other cal members.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNegativeSolveOrderForCalMemberWithFilters2(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "With "
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Education Level],[*BASE_MEMBERS_Product])' "
             + "Set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET],[Measures].[*Unit Sales_SEL~SUM] > 10000.0)' "
@@ -1198,7 +1176,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Non Empty Union("
             + "NonEmptyCrossJoin({[Education Level].[*CTX_MEMBER_SEL~SUM]},{[Product].[*CTX_MEMBER_SEL~SUM]}),"
             + "Generate([*METRIC_CJ_SET], {([Education Level].CurrentMember,[Product].CurrentMember)})) on rows "
-            + "From [Sales]",
+            + "From [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1223,14 +1201,13 @@ import mondrian.rolap.SchemaModifiersEmf;
      * definition does not throw errors and returns expected
      * results.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNonTopLevelCalculatedMember(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Product].[Test] as '[Product].[Food]' "
             + "select {[Measures].[Unit Sales]} on columns, "
             + "{[Product].[Test]} on rows "
-            + "from Sales",
+            + "from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1239,11 +1216,11 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "{[Product].[Product].[Test]}\n"
             + "Row #0: 191,940\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Product].[Food].[Test] as '[Product].[Food]' "
             + "select {[Measures].[Unit Sales]} on columns, "
             + "{[Product].[Food].[Test]} on rows "
-            + "from Sales",
+            + "from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1261,24 +1238,23 @@ import mondrian.rolap.SchemaModifiersEmf;
      * returns an empty children list vs. invalid behavior
      * of returning [All Products].Children
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalculatedMemberChildren(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Product].[Test] as '[Product].[Food]' "
             + "select {[Measures].[Unit Sales]} on columns, "
             + "[Product].[Test].children on rows "
-            + "from Sales",
+            + "from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Product].[Food].[Test] as '[Product].[Food]' "
             + "select {[Measures].[Unit Sales]} on columns, "
             + "[Product].[Food].[Test].children on rows "
-            + "from Sales",
+            + "from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1287,11 +1263,10 @@ import mondrian.rolap.SchemaModifiersEmf;
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalculatedMemberMSASCompatibility(Context<?> context) {
         ((TestContextImpl) context).setCaseSensitive(false);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with "
             + "member gender.calculated as 'gender.m' "
             + "member  gender.[All Gender].calculated as 'gender.m' "
@@ -1310,7 +1285,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "  measures.definedOnAllLevelParentIsAll, " //   -- returns 1
             + "  measures.definedOnAllLevelChildren, " //   -- returns 0
             + "  measures.definedOnAllLevelSiblings " //   -- returns 2
-            + "} on 0 from sales",
+            + "} on 0 from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1334,10 +1309,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Query that simulates a compound slicer by creating a calculated member
      * that aggregates over a set and places it in the WHERE clause.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testSimulatedCompoundSlicer(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + "  member [Measures].[Price per Unit] as\n"
             + "    [Measures].[Store Sales] / [Measures].[Unit Sales]\n"
@@ -1353,7 +1327,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "  [Measures].[Price per Unit]} on 0,\n"
             + " [Gender].Children * [Marital Status].Children on 1\n"
             + "from [Sales]\n"
-            + "where ([Product].[Top], [Time].[1997].[Q3])",
+            + "where ([Product].[Top], [Time].[1997].[Q3])").returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Top], [Time].[Time].[1997].[Q3]}\n"
             + "Axis #1:\n"
@@ -1374,7 +1348,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #3: 2.25\n");
 
         // Now the equivalent query, using a set in the slicer.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + "  member [Measures].[Price per Unit] as\n"
             + "    [Measures].[Store Sales] / [Measures].[Unit Sales]\n"
@@ -1388,7 +1362,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "  [Measures].[Price per Unit]} on 0,\n"
             + " [Gender].Children * [Marital Status].Children on 1\n"
             + "from [Sales]\n"
-            + "where [Top Products] * [Time].[1997].[Q3]",
+            + "where [Top Products] * [Time].[1997].[Q3]").returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos], [Time].[Time].[1997].[Q3]}\n"
             + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Tell Tale], [Time].[Time].[1997].[Q3]}\n"
@@ -1411,18 +1385,17 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #3: 2.25\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCompoundSlicerOverTuples(Context<?> context) {
         // reference query
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "    TopCount(\n"
             + "      [Product].[Product Category].Members\n"
             + "      * [Customers].[City].Members,\n"
             + "      10) on 1\n"
             + "from [Sales]\n"
-            + "where [Time].[1997].[Q3]",
+            + "where [Time].[1997].[Q3]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q3]}\n"
             + "Axis #1:\n"
@@ -1452,7 +1425,7 @@ import mondrian.rolap.SchemaModifiersEmf;
         // The actual query. Note that the set in the slicer has two dimensions.
         // This could not be expressed using calculated members and the
         // Aggregate function.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + "  member [Measures].[Price per Unit] as\n"
             + "    [Measures].[Store Sales] / [Measures].[Unit Sales]\n"
@@ -1467,7 +1440,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "  [Measures].[Price per Unit]} on 0,\n"
             + " [Gender].Children * [Marital Status].Children on 1\n"
             + "from [Sales]\n"
-            + "where [Top Product Cities] * [Time].[1997].[Q3]",
+            + "where [Top Product Cities] * [Time].[1997].[Q3]").returnsGrid(
             "Axis #0:\n"
             + "{[Product].[Product].[Food].[Snack Foods].[Snack Foods], [Customers].[Customers].[USA].[WA].[Spokane], [Time].[Time].[1997].[Q3]}\n"
             + "{[Product].[Product].[Food].[Produce].[Vegetables], [Customers].[Customers].[USA].[WA].[Spokane], [Time].[Time].[1997].[Q3]}\n"
@@ -1494,8 +1467,7 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Testcase for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-608">
      * MONDRIAN-608, "Performance issue with large number of measures"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testExponentialPerformanceBugMondrian608(Context<?> context) {
         // Run variants of the same query with increasing expression complexity.
         // With MONDRIAN-608, running time triples each iteration (for
@@ -1537,8 +1509,8 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "select {[Measures].[M0]} on columns,\n"
             + " NON EMPTY Hierarchize({[#DataSet#]}) on rows\n"
             + "FROM [Sales]";
-        assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1572,8 +1544,9 @@ import mondrian.rolap.SchemaModifiersEmf;
      * RolapEvaluator.expandingMember from the parent evaluator, which made it
      * look like two evaluation contexts were expanding the same member.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestCalculatedMembers2.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testCycleFalsePositive(Context<?> context) {
         //if (SystemWideProperties.instance().SsasCompatibleNaming) {
         if (true) {
@@ -1623,8 +1596,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             null);
         withSchema(context, schema);
         */
-        withSchemaEmf(context, SchemaModifiersEmf.TestCalculatedMembers2::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "With \n"
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Country],[*BASE_MEMBERS_Store Type.Store Types Hierarchy])' \n"
             + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],[Country].CurrentMember.OrderKey,BASC,[Store Type.Store Types Hierarchy].CurrentMember.OrderKey,BASC)' \n"
@@ -1641,7 +1613,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Select \n"
             + "[*BASE_MEMBERS_Measures] on columns, \n"
             + "Non Empty Union(NonEmptyCrossJoin({[Country].[*TOTAL_MEMBER_SEL~SUM]},{[Store Type.Store Types Hierarchy].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS]) on rows \n"
-            + "From [Store5] ",
+            + "From [Store5] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1688,15 +1660,14 @@ import mondrian.rolap.SchemaModifiersEmf;
      * evaluation exception: the cell is in error, but the query as a whole
      * succeeds.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testBugMondrian852(Context<?> context) {
         // Simpler repro case.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Bar] as cast(123 as string)\n"
             + " member [Measures].[Foo] as [Measures].[Bar] / 2\n"
             + "select [Measures].[Foo] on 0\n"
-            + "from [Sales]\n",
+            + "from [Sales]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1714,7 +1685,7 @@ import mondrian.rolap.SchemaModifiersEmf;
 
         // Tom's original query should generate a cast error (not a
         // ClassCastException) because solve orders are wrong.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + "  member [Measures].[Tom1] as\n"
             + "    ([Measures].[Store Sales] / [Measures].[Unit Sales])\n"
@@ -1727,7 +1698,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "         \", \")\n"
             + "select {[Time].[Past 4 months]} ON COLUMNS,\n"
             + "  {[Measures].[Unit Sales], [Measures].[Tom1]} ON ROWS\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1739,7 +1710,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #1: #ERR: org.eclipse.daanse.olap.fun.DaanseEvaluationException: wrtong typed, was: 45539.69, 44058.79, 50029.87, 42878.25\n");
 
         // Solve orders to achieve what Tom intended.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + "  member [Measures].[Tom1] as\n"
             + "    ([Measures].[Store Sales] / [Measures].[Unit Sales]),\n"
@@ -1754,7 +1725,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "     solve_order = 2\n"
             + "select {[Time].[Past 4 months]} ON COLUMNS,\n"
             + "  {[Measures].[Unit Sales], [Measures].[Tom1]} ON ROWS\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1770,8 +1741,7 @@ import mondrian.rolap.SchemaModifiersEmf;
      * Tests referring to a calc member by a name other than its canonical
      * unique name.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testNonCanonical(Context<?> context) {
         // define without 'all', refer with 'all'
         final String expected =
@@ -1780,24 +1750,23 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Axis #1:\n"
             + "{[Store].[Store].[USA].[Foo]}\n"
             + "Row #0: 266,773\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Store].[USA].[Foo] as\n"
             + " [Store].[USA] + [Store].[Canada].[BC]\n"
             + "select [Store].[All Stores].[USA].[Foo] on 0\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             expected);
 
         // and vice versa: define without 'all', refer with 'all'
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Store].[All Stores].[USA].[Foo] as\n"
             + " [Store].[USA] + [Store].[Canada].[BC]\n"
             + "select [Store].[USA].[Foo] on 0\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             expected);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberParentOfCalcMember(Context<?> context) {
         // SSAS fails with "The X calculated member cannot be used as a parent
         // of another calculated member."
@@ -1810,15 +1779,14 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "of another calculated member.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberSameNameDifferentHierarchies(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Gender].[X] as 4\n"
             + " member [Marital Status].[X] as 5\n"
             + " member [Promotion Media].[X] as 6\n"
             + " select [Marital Status].[X] on 0\n"
-            + " from [Sales]",
+            + " from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1826,8 +1794,7 @@ import mondrian.rolap.SchemaModifiersEmf;
             + "Row #0: 5\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
      void testCalcMemberTooDeep(Context<?> context) {
         // SSAS fails with "The X calculated member cannot be created because
         // its parent is at the lowest level in the Gender hierarchy."

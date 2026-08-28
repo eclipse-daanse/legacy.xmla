@@ -13,35 +13,32 @@
  */
 package org.eclipse.daanse.olap.function.def.median;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class MedianFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMedian(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "MEDIAN({[Store].[All Stores].[USA].children},"
-                + "[Measures].[Store Sales])",
+                + "[Measures].[Store Sales])").returns(
             "159,167.84" );
         // single value
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "MEDIAN({[Store].[All Stores].[USA]}, [Measures].[Store Sales])",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "MEDIAN({[Store].[All Stores].[USA]}, [Measures].[Store Sales])").returns(
             "565,238.13" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMedian2(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "   Member [Time].[Time].[1st Half Sales] AS 'Sum({[Time].[1997].[Q1], [Time].[1997].[Q2]})'\n"
                 + "   Member [Time].[Time].[2nd Half Sales] AS 'Sum({[Time].[1997].[Q3], [Time].[1997].[Q4]})'\n"
@@ -50,8 +47,7 @@ class MedianFunDefTest {
                 + "   NON EMPTY { [Store].[Store Name].Members} ON COLUMNS,\n"
                 + "   { [Time].[1st Half Sales], [Time].[2nd Half Sales], [Time].[Median]} ON ROWS\n"
                 + "FROM Sales\n"
-                + "WHERE [Measures].[Store Sales]",
-
+                + "WHERE [Measures].[Store Sales]").returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #1:\n"

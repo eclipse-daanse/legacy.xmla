@@ -35,7 +35,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.CoreFactory;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -103,7 +102,6 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Hid
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
-import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Member;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberProperty;
 import org.eclipse.daanse.rolap.mapping.model.olap.format.CellFormatter;
 import org.eclipse.daanse.rolap.mapping.model.olap.format.FormatFactory;
@@ -5112,7 +5110,10 @@ public class SchemaModifiersEmf {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2442");
             catalog.getImportedElement().add(salesCube);
-            catalog.getImportedElement().addAll(Packages.available(catalogMapping, Schema.class));
+            // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+            EcoreUtil.Copier copier14 = EmfUtil.copier((CatalogImpl) catalogMapping);
+            Catalog catalogMappingCopy14 = (Catalog) copier14.get(catalogMapping);
+            catalog.getImportedElement().addAll(Packages.available(catalogMappingCopy14, Schema.class));
         }
 
         @Override
@@ -5266,7 +5267,10 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMart 2285");
             catalog.getImportedElement().add(salesCube);
             if (cat != null) {
-                catalog.getImportedElement().addAll(Packages.available(cat, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier15 = EmfUtil.copier((CatalogImpl) cat);
+                Catalog catCopy15 = (Catalog) copier15.get(cat);
+                catalog.getImportedElement().addAll(Packages.available(catCopy15, Schema.class));
             }
 
         }
@@ -5557,7 +5561,10 @@ public class SchemaModifiersEmf {
             catalog.getImportedElement().add(warehouseCube);
             catalog.getImportedElement().add(virtualCube);
             if (catalog2 != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier16 = EmfUtil.copier((CatalogImpl) catalog2);
+                Catalog catalog2Copy16 = (Catalog) copier16.get(catalog2);
+                catalog.getImportedElement().addAll(Packages.available(catalog2Copy16, Schema.class));
             }
         }
 
@@ -5733,7 +5740,10 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMart 2399 Rollup Type");
             catalog.getImportedElement().add(salesCube);
             if (catalogMapping != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalogMapping, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier17 = EmfUtil.copier((CatalogImpl) catalogMapping);
+                Catalog catalogMappingCopy17 = (Catalog) copier17.get(catalogMapping);
+                catalog.getImportedElement().addAll(Packages.available(catalogMappingCopy17, Schema.class));
             }
 
         }
@@ -5911,7 +5921,10 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMart 2399 Rollup Type");
             catalog.getImportedElement().add(salesCube);
             if (catalog2 != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier18 = EmfUtil.copier((CatalogImpl) catalog2);
+                Catalog catalog2Copy18 = (Catalog) copier18.get(catalog2);
+                catalog.getImportedElement().addAll(Packages.available(catalog2Copy18, Schema.class));
             }
 
         }
@@ -6089,7 +6102,10 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMart 2399 Rollup Type");
             catalog.getImportedElement().add(salesCube);
             if (catalog2 != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier19 = EmfUtil.copier((CatalogImpl) catalog2);
+                Catalog catalog2Copy19 = (Catalog) copier19.get(catalog2);
+                catalog.getImportedElement().addAll(Packages.available(catalog2Copy19, Schema.class));
             }
         }
 
@@ -6849,7 +6865,7 @@ public class SchemaModifiersEmf {
 
     }
 
-    public static class BasicQueryTestModifier27 implements CatalogMappingSupplier {
+    public abstract static class BasicQueryTestModifier27Base implements CatalogMappingSupplier {
 
         private SumMeasure defaultMeasure = null;
         private Catalog catalog;
@@ -6872,7 +6888,7 @@ public class SchemaModifiersEmf {
         private final SumMeasure mSupplyTime;
         private final SumMeasure mWarehouseCost;
 
-        public BasicQueryTestModifier27(Catalog catalogMapping, String defaultMeasure) {
+        public BasicQueryTestModifier27Base(Catalog catalogMapping, String defaultMeasure) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
 
@@ -6945,6 +6961,18 @@ public class SchemaModifiersEmf {
             return catalog;
         }
 
+    }
+
+    public static class BasicQueryTestModifier27SupplyTimeError extends BasicQueryTestModifier27Base {
+        public BasicQueryTestModifier27SupplyTimeError(Catalog catalogMapping) {
+            super(catalogMapping, "Supply Time Error");
+        }
+    }
+
+    public static class BasicQueryTestModifier27SupplyTime extends BasicQueryTestModifier27Base {
+        public BasicQueryTestModifier27SupplyTime(Catalog catalogMapping) {
+            super(catalogMapping, "SUPPLY TIME");
+        }
     }
 
     public static class BasicQueryTestModifier28 implements CatalogMappingSupplier {
@@ -7143,7 +7171,10 @@ public class SchemaModifiersEmf {
             catalog.setName("Foo");
             catalog.getImportedElement().add(barCube);
             if (catalog2 != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier30 = EmfUtil.copier((CatalogImpl) catalog2);
+                Catalog catalog2Copy30 = (Catalog) copier30.get(catalog2);
+                catalog.getImportedElement().addAll(Packages.available(catalog2Copy30, Schema.class));
             }
 
         }
@@ -7332,7 +7363,10 @@ public class SchemaModifiersEmf {
             catalog.getImportedElement().add(bugCube);
             catalog.getImportedElement().add(noBugCube);
             if (catalog2 != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier31 = EmfUtil.copier((CatalogImpl) catalog2);
+                Catalog catalog2Copy31 = (Catalog) copier31.get(catalog2);
+                catalog.getImportedElement().addAll(Packages.available(catalog2Copy31, Schema.class));
             }
 
         }
@@ -7427,7 +7461,10 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMart");
             catalog.getImportedElement().add(cube);
             if (catalog2 != null) {
-                catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+                // see SteelWheelsSchemaTestModifier1 for why we copy before extracting Schema
+                EcoreUtil.Copier copier32 = EmfUtil.copier((CatalogImpl) catalog2);
+                Catalog catalog2Copy32 = (Catalog) copier32.get(catalog2);
+                catalog.getImportedElement().addAll(Packages.available(catalog2Copy32, Schema.class));
             }
 
         }
@@ -7492,7 +7529,8 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1KE(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier1KE(Catalog catalogMapping) {
+            final String colName = "\"promotion_name\"";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -7573,7 +7611,8 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1OE(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier1OE(Catalog catalogMapping) {
+            final String colName = "\"promotion_name\"";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -7661,7 +7700,7 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1ME(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier1ME(Catalog catalogMapping) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -7732,7 +7771,8 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1CE(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier1CE(Catalog catalogMapping) {
+            final String colName = "\"promotion_name\"";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -7814,7 +7854,8 @@ public class SchemaModifiersEmf {
 
         private Catalog catalog;
 
-        public OrderByAliasTestModifier1NE(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier1NE(Catalog catalogMapping) {
+            final String colName = "\"promotion_name\"";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -7905,7 +7946,8 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public OrderByAliasTestModifier2(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier2(Catalog catalogMapping) {
+            final String colName = "\"supervisor_id\"";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -8025,10 +8067,10 @@ public class SchemaModifiersEmf {
          * "</Dimension>"));
          */
 
-        private StringBuilder colName;
         private Catalog catalog;
 
-        public OrderByAliasTestModifier3(Catalog catalogMapping, final String colName) {
+        public OrderByAliasTestModifier3(Catalog catalogMapping) {
+            final String colName = "\"promotion_name\"";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -8983,7 +9025,7 @@ public class SchemaModifiersEmf {
                 connector.setForeignKey(CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
                 connector.setDimension(dimension);
                 List connectors = cube.getDimensionConnectors();
-                connectors.add(connectors);
+                connectors.add(connector);
 
             }
 
@@ -12458,6 +12500,8 @@ public class SchemaModifiersEmf {
 
         public TestAggregationManagerModifier5(Catalog catalogMapping) {
 
+            EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalogMapping);
+            Catalog catalogMappingCopy = (Catalog) copier.get(catalogMapping);
 
             // Create aggregation excludes
             AggregationExclude aggExclude1 = AggregationFactory.eINSTANCE.createAggregationExclude();
@@ -12823,7 +12867,7 @@ public class SchemaModifiersEmf {
             // Create catalog
             this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             this.catalog.setName("FooSchema");
-            this.catalog.getImportedElement().addAll(Packages.available((org.eclipse.daanse.rolap.mapping.model.catalog.Catalog) catalogMapping, Schema.class));
+            this.catalog.getImportedElement().addAll(Packages.available(catalogMappingCopy, Schema.class));
             this.catalog.getImportedElement().add(salesFooCube);
         }
 
@@ -13548,6 +13592,9 @@ public class SchemaModifiersEmf {
 
         public TestAggregationManagerModifier9(Catalog catalog2) {
 
+            EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
+
             Column foo = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
             Column bar = org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
 
@@ -13854,7 +13901,7 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("custom");
-            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2Copy, Schema.class));
             catalog.getImportedElement().add(cubeSales1);
             catalog.getImportedElement().add(cubeSales2);
             catalog.getImportedElement().add(vcSuperSales);
@@ -19009,6 +19056,8 @@ public class SchemaModifiersEmf {
         private Catalog catalog;
 
         public OrderKeyOneToOneCheckTestModifier(Catalog catalog2) {
+            EcoreUtil.Copier copier = org.opencube.junit5.EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
             TimeDimension timeDimension = DimensionFactory.eINSTANCE.createTimeDimension();
             timeDimension.setName("Time");
 
@@ -19075,7 +19124,7 @@ public class SchemaModifiersEmf {
 
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart 2358");
-            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            catalog.getImportedElement().addAll(Packages.available(catalog2Copy, Schema.class));
             catalog.getImportedElement().add(salesCube);
         }
 
@@ -20304,7 +20353,13 @@ public class SchemaModifiersEmf {
             // Create the catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FoodMart");
-            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            // Import a copy of catalog2's schema, not the schema itself: catalog2's
+            // Schema is reachable from the shared static CatalogSupplier fields, and
+            // adding it directly here would move (not copy) it out of every other
+            // CatalogSupplier instance for the lifetime of the JVM.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
+            catalog.getImportedElement().addAll(Packages.available(catalog2Copy, Schema.class));
             catalog.getImportedElement().add(warehouseAndSalesCube);
         }
 
@@ -20414,7 +20469,13 @@ public class SchemaModifiersEmf {
             this.catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
 
-            catalog.getImportedElement().addAll(Packages.available((Catalog) catalogMapping, Schema.class));
+            // Import a copy of catalogMapping's schema, not the schema itself: it is
+            // reachable from the shared static CatalogSupplier singleton, and adding it
+            // directly here would move it out from under every other user of that
+            // singleton for the life of the JVM.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
+            Catalog catalogMappingCopy = (Catalog) copier.get(catalogMapping);
+            catalog.getImportedElement().addAll(Packages.available(catalogMappingCopy, Schema.class));
 
             // Create Markets dimension
             StandardDimension marketsDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20914,7 +20975,11 @@ public class SchemaModifiersEmf {
             catalog.setName("test_namecolumn");
 
 
-            catalog.getImportedElement().addAll(Packages.available((Catalog) catalogMapping, Schema.class));
+            // Import a copy of catalogMapping's schema, not the schema itself: see
+            // SteelWheelsSchemaTestModifier1 for why.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
+            Catalog catalogMappingCopy = (Catalog) copier.get(catalogMapping);
+            catalog.getImportedElement().addAll(Packages.available(catalogMappingCopy, Schema.class));
 
 
             // Create Markets dimension
@@ -21526,7 +21591,11 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("FooBar");
-            catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
+            // Import a copy of catalog2's schema, not the schema itself: see
+            // SteelWheelsSchemaTestModifier1 for why.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
+            catalog.getImportedElement().addAll(Packages.available(catalog2Copy, Schema.class));
             catalog.getImportedElement().add(fooCube);
 
         }
@@ -21859,7 +21928,11 @@ public class SchemaModifiersEmf {
             // Create catalog
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
-            catalog.getImportedElement().addAll( (Collection<? extends Schema>) Packages.available(catalog2, Schema.class));
+            // Import a copy of catalog2's schema, not the schema itself: see
+            // SteelWheelsSchemaTestModifier1 for why.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
+            catalog.getImportedElement().addAll( (Collection<? extends Schema>) Packages.available(catalog2Copy, Schema.class));
             catalog.getImportedElement().add(cube);
 
         }
@@ -22067,8 +22140,12 @@ public class SchemaModifiersEmf {
             // Create Customers Dimension
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
+            // Import a copy of catalog2's schema, not the schema itself: see
+            // SteelWheelsSchemaTestModifier1 for why.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
             catalog.getImportedElement()
-                    .addAll(Packages.available(catalog2, Schema.class));
+                    .addAll(Packages.available(catalog2Copy, Schema.class));
             org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -22250,8 +22327,12 @@ public class SchemaModifiersEmf {
         public SteelWheelsSchemaTestModifier9(Catalog catalog2) {
             catalog = CatalogFactory.eINSTANCE.createCatalog();
             catalog.setName("SteelWheels");
+            // Import a copy of catalog2's schema, not the schema itself: see
+            // SteelWheelsSchemaTestModifier1 for why.
+            EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog2);
+            Catalog catalog2Copy = (Catalog) copier.get(catalog2);
             catalog.getImportedElement()
-                    .addAll(Packages.available(catalog2, Schema.class));
+                    .addAll(Packages.available(catalog2Copy, Schema.class));
             org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             // Create Customers Dimension

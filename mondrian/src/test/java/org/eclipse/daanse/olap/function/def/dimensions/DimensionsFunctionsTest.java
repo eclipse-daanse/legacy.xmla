@@ -25,56 +25,54 @@
  */
 package org.eclipse.daanse.olap.function.def.dimensions;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.fun.FunctionTest;
 
+@RolapContextTest(FoodmartTestInstance.class)
 public class DimensionsFunctionsTest {
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testDimensionsNumeric(Context<?> context) {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(2).Name", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(3).CurrentMember",
 				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name", "Store Size in SQFT");
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name").returns("Store Size in SQFT");
 		// bug 1426134 -- Dimensions(0) throws 'Index '0' out of bounds'
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(0).Name", "Measures");
-		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(-1).Name", "Index '-1' out of bounds");
-		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(100).Name", "Index '100' out of bounds");
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(0).Name").returns("Measures");
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(-1).Name").throwsMessage("Index '-1' out of bounds");
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(100).Name").throwsMessage("Index '100' out of bounds");
 		// Since Dimensions returns a Hierarchy, can apply CurrentMember.
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember", "[Store Type].[Store Type].[All Store Types]");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember").returns("[Store Type].[Store Type].[All Store Types]");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testDimensionsString(Context<?> context) {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").UniqueName", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").CurrentMember",
 				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName", "[Store].[Store]");
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName").returns("[Store].[Store]");
 		// Since Dimensions returns a Hierarchy, can apply Children.
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").Children", """
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").Children").returns("""
 				[Store].[Store].[Canada]
 				[Store].[Store].[Mexico]
 				[Store].[Store].[USA]""");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testDimensionsDepends(Context<?> context) {
 		final String expression = """
 				Crossjoin(
 				{Dimensions("Measures").CurrentMember.Hierarchy.CurrentMember},
 				{Dimensions("Product")})""";
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", expression, "{[Measures].[Unit Sales], [Product].[Product].[All Products]}");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", expression).returns("{[Measures].[Unit Sales], [Product].[Product].[All Products]}");
 		TestUtil.assertSetExprDependsOn(context.getConnectionWithDefaultRole(), expression, FunctionTest.allHiers());
 	}
 

@@ -13,32 +13,32 @@
  */
 package org.eclipse.daanse.olap.function.def.drilldownmember;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class DrilldownMemberFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDrilldownMember(Context<?> context) {
         // Expect all children of USA
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownMember({[Store].[USA]}, {[Store].[USA]})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownMember({[Store].[USA]}, {[Store].[USA]})")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[CA]\n"
                 + "[Store].[Store].[USA].[OR]\n"
                 + "[Store].[Store].[USA].[WA]" );
 
         // Expect all children of USA.CA and USA.OR
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[USA].[CA], [Store].[USA].[OR]}, "
-                + "{[Store].[USA].[CA], [Store].[USA].[OR], [Store].[USA].[WA]})",
+                + "{[Store].[USA].[CA], [Store].[USA].[OR], [Store].[USA].[WA]})")
+            .returns(
             "[Store].[Store].[USA].[CA]\n"
                 + "[Store].[Store].[USA].[CA].[Alameda]\n"
                 + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
@@ -51,22 +51,23 @@ class DrilldownMemberFunDefTest {
 
 
         // Second set is empty
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownMember({[Store].[USA]}, {})",
-            "[Store].[Store].[USA]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownMember({[Store].[USA]}, {})")
+            .returns( "[Store].[Store].[USA]" );
 
         // Drill down a leaf member
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[All Stores].[USA].[CA].[San Francisco].[Store 14]}, "
-                + "{[Store].[USA].[CA].[San Francisco].[Store 14]})",
-            "[Store].[Store].[USA].[CA].[San Francisco].[Store 14]" );
+                + "{[Store].[USA].[CA].[San Francisco].[Store 14]})")
+            .returns( "[Store].[Store].[USA].[CA].[San Francisco].[Store 14]" );
 
         // Complex case with option recursive
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[All Stores].[USA]}, "
                 + "{[Store].[All Stores].[USA], [Store].[All Stores].[USA].[CA], "
                 + "[Store].[All Stores].[USA].[CA].[San Diego], [Store].[All Stores].[USA].[WA]}, "
-                + "RECURSIVE)",
+                + "RECURSIVE)")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[CA]\n"
                 + "[Store].[Store].[USA].[CA].[Alameda]\n"
@@ -86,8 +87,9 @@ class DrilldownMemberFunDefTest {
                 + "[Store].[Store].[USA].[WA].[Yakima]" );
 
         // Sets of tuples
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownMember({([Store Type].[Supermarket], [Store].[USA])}, {[Store].[USA]})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownMember({([Store Type].[Supermarket], [Store].[USA])}, {[Store].[USA]})")
+            .returns(
             "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA]}\n"
                 + "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA].[CA]}\n"
                 + "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA].[OR]}\n"

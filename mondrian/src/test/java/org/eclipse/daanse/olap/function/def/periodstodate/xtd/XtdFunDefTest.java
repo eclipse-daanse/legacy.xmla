@@ -25,42 +25,43 @@
  */
 package org.eclipse.daanse.olap.function.def.periodstodate.xtd;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.olap.fun.FunctionTest;
 
+@RolapContextTest(FoodmartTestInstance.class)
 public class XtdFunDefTest {
 
 	private static final String TimeWeekly = "[Time].[Weekly]";
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testYtd(Context<?> context) {
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd()", "[Time].[Time].[1997]");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ytd()")
+            .returns( "[Time].[Time].[1997]");
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q3])", """
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q3])")
+            .returns( """
 				[Time].[Time].[1997].[Q1]
 				[Time].[Time].[1997].[Q2]
 				[Time].[Time].[1997].[Q3]""");
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q2].[4])", """
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q2].[4])")
+            .returns( """
 				[Time].[Time].[1997].[Q1].[1]
 				[Time].[Time].[1997].[Q1].[2]
 				[Time].[Time].[1997].[Q1].[3]
 				[Time].[Time].[1997].[Q2].[4]""");
 
-		assertAxisThrows(context.getConnectionWithDefaultRole(), "Ytd([Store])",
-				"Argument to function 'Ytd' must belong to Time hierarchy", "Sales");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Store])")
+				.throwsMessage("Argument to function 'Ytd' must belong to Time hierarchy");
 
 		assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "Ytd()", "{[Time].[Time], " + TimeWeekly + "}");
 
@@ -72,14 +73,14 @@ public class XtdFunDefTest {
 	 * MONDRIAN-458, "error deducing type of Ytd/Qtd/Mtd functions within
 	 * Generate"</a>.
 	 */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testGeneratePlusXtd(Context<?> context) {
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", """
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", """
 				generate(
 				  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},
-				 {Ytd( [Time].[Time].currentMember)})""", """
+				 {Ytd( [Time].[Time].currentMember)})""")
+            .returns( """
 				[Time].[Time].[1997].[Q1].[1]
 				[Time].[Time].[1997].[Q1].[2]
 				[Time].[Time].[1997].[Q1].[3]
@@ -88,10 +89,11 @@ public class XtdFunDefTest {
 				[Time].[Time].[1997].[Q2].[6]
 				[Time].[Time].[1997].[Q3].[7]""");
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", """
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", """
 				generate(
 				  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},
-				 {Ytd( [Time].[Time].currentMember)}, ALL)""", """
+				 {Ytd( [Time].[Time].currentMember)}, ALL)""")
+            .returns( """
 				[Time].[Time].[1997].[Q1].[1]
 				[Time].[Time].[1997].[Q1].[2]
 				[Time].[Time].[1997].[Q1].[1]
@@ -109,15 +111,15 @@ public class XtdFunDefTest {
 				"count(generate({[Time].[1997].[Q4].[11]}, {Mtd( [Time].[Time].currentMember)}))", 1, 0);
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testQtd(Context<?> context) {
 		// zero args
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				with member [Measures].[Foo] as ' SetToStr(Qtd()) '
 				select {[Measures].[Foo]} on columns
 				from [Sales]
-				where [Time].[1997].[Q2].[5]""", """
+				where [Time].[1997].[Q2].[5]""")
+            .returnsGrid( """
 				Axis #0:
 				{[Time].[Time].[1997].[Q2].[5]}
 				Axis #1:
@@ -126,28 +128,31 @@ public class XtdFunDefTest {
 				""");
 
 		// one arg, a month
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997].[Q2].[5])",
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997].[Q2].[5])")
+            .returns(
 				"[Time].[Time].[1997].[Q2].[4]\n" + "[Time].[Time].[1997].[Q2].[5]");
 
 		// one arg, a quarter
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997].[Q2])", "[Time].[Time].[1997].[Q2]");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997].[Q2])")
+            .returns( "[Time].[Time].[1997].[Q2]");
 
 		// one arg, a year
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997])", "");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997])")
+            .returns( "");
 
-		assertAxisThrows(context.getConnectionWithDefaultRole(), "Qtd([Store])",
-				"Argument to function 'Qtd' must belong to Time hierarchy", "Sales");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Store])")
+				.throwsMessage("Argument to function 'Qtd' must belong to Time hierarchy");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testMtd(Context<?> context) {
 		// zero args
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				with member [Measures].[Foo] as ' SetToStr(Mtd()) '
 				select {[Measures].[Foo]} on columns
 				from [Sales]
-				where [Time].[1997].[Q2].[5]""", """
+				where [Time].[1997].[Q2].[5]""")
+            .returnsGrid( """
 				Axis #0:
 				{[Time].[Time].[1997].[Q2].[5]}
 				Axis #1:
@@ -156,16 +161,19 @@ public class XtdFunDefTest {
 				""");
 
 		// one arg, a month
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997].[Q2].[5])", "[Time].[Time].[1997].[Q2].[5]");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997].[Q2].[5])")
+            .returns( "[Time].[Time].[1997].[Q2].[5]");
 
 		// one arg, a quarter
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997].[Q2])", "");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997].[Q2])")
+            .returns( "");
 
 		// one arg, a year
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997])", "");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997])")
+            .returns( "");
 
-		assertAxisThrows(context.getConnectionWithDefaultRole(), "Mtd([Store])",
-				"Argument to function 'Mtd' must belong to Time hierarchy", "Sales");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Store])")
+				.throwsMessage("Argument to function 'Mtd' must belong to Time hierarchy");
 	}
 
 }

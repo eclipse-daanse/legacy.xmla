@@ -10,6 +10,7 @@
 */
 package mondrian.rolap.sql;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.POSTGRES;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.opencube.junit5.TestUtil.assertNoQuerySql;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQuerySql;
 import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.executeQuery;
@@ -737,8 +737,8 @@ class SqlQueryTest {
     void testAvgAggregator(Connection connection) {
         String mdx = "select measures.[avg sales] on 0 from sales"
                        + " where { time.[1997].q1, time.[1997].q2.[4] }";
-        assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1]}\n"
             + "{[Time].[Time].[1997].[Q2].[4]}\n"

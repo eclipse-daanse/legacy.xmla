@@ -10,8 +10,7 @@
 */
 package mondrian.rolap;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
@@ -20,10 +19,6 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTe
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.CellKeyTest.FoodmartData;
 
@@ -357,7 +352,7 @@ class SharedDimensionTest  {
         // Query from the first cube.
         //getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), queryCubeA, resultCubeA);
+        assertThatQuery(context.getConnectionWithDefaultRole(), queryCubeA).returnsGrid(resultCubeA);
     }
 
     @Test
@@ -370,7 +365,7 @@ class SharedDimensionTest  {
         // Query from the second cube.
         //getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), queryCubeB, resultCubeB);
+        assertThatQuery(context.getConnectionWithDefaultRole(), queryCubeB).returnsGrid(resultCubeB);
     }
 
     @Test
@@ -395,7 +390,7 @@ class SharedDimensionTest  {
         */
         //withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), queryVirtualCube, resultVirtualCube);
+        assertThatQuery(context.getConnectionWithDefaultRole(), queryVirtualCube).returnsGrid(resultVirtualCube);
     }
 
     @Test
@@ -408,8 +403,8 @@ class SharedDimensionTest  {
         // Query from the second cube.
         //getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            queryNECJMemberList,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            queryNECJMemberList).returnsGrid(
             resultNECJMemberList);
     }
 
@@ -425,8 +420,8 @@ class SharedDimensionTest  {
         // but also produces incorrect result.
         //getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            queryNECJMultiLevelMemberList,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            queryNECJMultiLevelMemberList).returnsGrid(
             resultNECJMultiLevelMemberList);
     }
 
@@ -440,7 +435,7 @@ class SharedDimensionTest  {
     void testBugMondrian286(Context<?> context) {
         // Test for sourceforge.net bug 1711865 (MONDRIAN-286).
         // Use the default FoodMart schema
-        assertQueryReturns(context.getConnectionWithDefaultRole(), querySF1711865, resultSF1711865);
+        assertThatQuery(context.getConnectionWithDefaultRole(), querySF1711865).returnsGrid(resultSF1711865);
     }
 
     @Test
@@ -448,7 +443,7 @@ class SharedDimensionTest  {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testStoreCube(Context<?> context) {
         // Use the default FoodMart schema
-        assertQueryReturns(context.getConnectionWithDefaultRole(), queryStoreCube, resultStoreCube);
+        assertThatQuery(context.getConnectionWithDefaultRole(), queryStoreCube).returnsGrid(resultStoreCube);
     }
 
     /**
@@ -461,8 +456,8 @@ class SharedDimensionTest  {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian1243WrongAlias(Context<?> context) {
         //getTestContextForSharedDimCubeAltSales(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            queryIssue1243,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            queryIssue1243).returnsGrid(
             resultIssue1243);
     }
 
@@ -471,10 +466,10 @@ class SharedDimensionTest  {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberUniqueNameForSharedWithChangedName(Context<?> context) {
         //getTestContextForSharedDimCubeAltSales(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with "
             + " member [BuyerTwo].[Mexico].[calc] as '[BuyerTwo].[Mexico]' "
-            + "select [BuyerTwo].[Mexico].[calc] on 0 from [Alternate Sales]",
+            + "select [BuyerTwo].[Mexico].[calc] on 0 from [Alternate Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

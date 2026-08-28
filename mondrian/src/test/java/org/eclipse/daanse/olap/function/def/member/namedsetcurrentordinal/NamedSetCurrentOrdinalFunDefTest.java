@@ -13,29 +13,27 @@
  */
 package org.eclipse.daanse.olap.function.def.member.namedsetcurrentordinal;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class NamedSetCurrentOrdinalFunDefTest {
     /**
      * Tests NamedSet.CurrentOrdinal combined with the Order function.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetCurrentOrdinalWithOrder(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Reversed] as"
                 + " Order([Time Regular], [Time Regular].CurrentOrdinal, BDESC)\n"
                 + "select [Time Reversed] on 0\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -112,10 +110,9 @@ class NamedSetCurrentOrdinalFunDefTest {
     /**
      * Tests NamedSet.CurrentOrdinal combined with the Generate function.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetCurrentOrdinalWithGenerate(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             " with set [Time Regular] as [Time].[Time].Members\n"
                 + "set [Every Other Time] as\n"
                 + "  Generate(\n"
@@ -123,7 +120,8 @@ class NamedSetCurrentOrdinalFunDefTest {
                 + "    {[Time].[Time].Members.Item(\n"
                 + "      [Time Regular].CurrentOrdinal * 2)})\n"
                 + "select [Every Other Time] on 0\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -163,16 +161,16 @@ class NamedSetCurrentOrdinalFunDefTest {
                 + "Row #0: \n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetCurrentOrdinalWithFilter(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Subset] as "
                 + "   Filter([Time Regular], [Time Regular].CurrentOrdinal = 3"
                 + "                       or [Time Regular].CurrentOrdinal = 5)\n"
                 + "select [Time Subset] on 0\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -182,51 +180,49 @@ class NamedSetCurrentOrdinalFunDefTest {
                 + "Row #0: 62,610\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetCurrentOrdinalWithCrossjoin(Context<?> context) {
         // TODO:
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNamedSetCurrentOrdinalWithNonNamedSetFails(Context<?> context) {
         // a named set wrapped in {...} is not a named set, so CurrentOrdinal
         // fails
-        assertQueryThrows(context,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Time Members] as [Time].Members\n"
                 + "member [Measures].[Foo] as ' {[Time Members]}.CurrentOrdinal '\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
                 + " {[Product].Children} on 1\n"
-                + "from [Sales]",
-            "Not a named set" );
+                + "from [Sales]")
+            .throwsMessage( "Not a named set" );
 
         // as above for Current function
-        assertQueryThrows(context,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Time Members] as [Time].Members\n"
                 + "member [Measures].[Foo] as ' {[Time Members]}.Current.Name '\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
                 + " {[Product].Children} on 1\n"
-                + "from [Sales]",
-            "Not a named set" );
+                + "from [Sales]")
+            .throwsMessage( "Not a named set" );
 
         // a set expression is not a named set, so CurrentOrdinal fails
-        assertQueryThrows(context,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as\n"
                 + " ' Head([Time].Members, 5).CurrentOrdinal '\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
                 + " {[Product].Children} on 1\n"
-                + "from [Sales]",
-            "Not a named set" );
+                + "from [Sales]")
+            .throwsMessage( "Not a named set" );
 
         // as above for Current function
-        assertQueryThrows(context,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as\n"
                 + " ' Crossjoin([Time].Members, [Gender].Members).Current.Name '\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
                 + " {[Product].Children} on 1\n"
-                + "from [Sales]",
-            "Not a named set" );
+                + "from [Sales]")
+            .throwsMessage( "Not a named set" );
     }
 
 }

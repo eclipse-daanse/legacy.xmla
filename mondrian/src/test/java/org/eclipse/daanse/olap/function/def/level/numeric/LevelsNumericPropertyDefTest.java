@@ -13,37 +13,35 @@
  */
 package org.eclipse.daanse.olap.function.def.level.numeric;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class LevelsNumericPropertyDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLevelsNumeric(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        TestUtil.assertExprReturns(connection, "Sales", "[Time].[Time].Levels(2).Name", "Month" );
-        TestUtil.assertExprReturns(connection, "Sales", "[Time].[Time].Levels(0).Name", "Year" );
-        TestUtil.assertExprReturns(connection, "Sales", "[Product].Levels(0).Name", "(All)" );
+        assertThatExpr(connection, "Sales", "[Time].[Time].Levels(2).Name").returns( "Month" );
+        assertThatExpr(connection, "Sales", "[Time].[Time].Levels(0).Name").returns( "Year" );
+        assertThatExpr(connection, "Sales", "[Product].Levels(0).Name").returns( "(All)" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLevelsTooSmall(Context<?> context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[Time].Levels(-1).Name", "Index '-1' out of bounds" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[Time].Levels(-1).Name").throwsMessage( "Index '-1' out of bounds" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLevelsTooLarge(Context<?> context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[Time].Levels(8).Name", "Index '8' out of bounds" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[Time].Levels(8).Name").throwsMessage( "Index '8' out of bounds" );
     }
 
 }

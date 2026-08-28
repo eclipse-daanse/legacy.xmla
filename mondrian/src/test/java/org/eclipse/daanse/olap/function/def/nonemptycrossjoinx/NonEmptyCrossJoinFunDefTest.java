@@ -14,21 +14,18 @@
 package org.eclipse.daanse.olap.function.def.nonemptycrossjoinx;
 
 import static mondrian.olap.fun.FunctionTest.allHiersExcept;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class NonEmptyCrossJoinFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNonEmptyCrossJoin(Context<?> context) {
         // NonEmptyCrossJoin needs to evaluate measures to find out whether
         // cells are empty, so it implicitly depends upon all dimensions.
@@ -36,10 +33,11 @@ class NonEmptyCrossJoinFunDefTest {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "NonEmptyCrossJoin([Store].[USA].Children, [Gender].Children)", s1 );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "NonEmptyCrossJoin("
                 + "[Customers].[All Customers].[USA].[CA].Children, "
-                + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].Children)",
+                + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].Children)")
+            .returns(
             "{[Customers].[Customers].[USA].[CA].[Bellflower], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Light Beer]}\n"
                 + "{[Customers].[Customers].[USA].[CA].[Downey], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
@@ -78,18 +76,18 @@ class NonEmptyCrossJoinFunDefTest {
                 + ".[Good].[Good Imported Beer]}" );
 
         // empty set
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "NonEmptyCrossJoin({Gender.Parent}, {Store.Parent})", "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "NonEmptyCrossJoin({Store.Parent}, Gender.Children)", "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "NonEmptyCrossJoin(Store.Members, {})", "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "NonEmptyCrossJoin({Gender.Parent}, {Store.Parent})").returns( "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "NonEmptyCrossJoin({Store.Parent}, Gender.Children)").returns( "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "NonEmptyCrossJoin(Store.Members, {})").returns( "" );
 
         // same dimension twice
         // todo: should throw
         if ( false ) {
-            assertAxisThrows(context.getConnectionWithDefaultRole(),
-                "NonEmptyCrossJoin({Store.[USA]}, {Store.[USA].[CA]})",
-                "xxx", "Sales" );
+            assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+                "NonEmptyCrossJoin({Store.[USA]}, {Store.[USA].[CA]})")
+                .throwsMessage( "xxx" );
         }
     }
 

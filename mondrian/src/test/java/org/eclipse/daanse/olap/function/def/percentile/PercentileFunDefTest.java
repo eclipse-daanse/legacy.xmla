@@ -13,43 +13,42 @@
  */
 package org.eclipse.daanse.olap.function.def.percentile;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class PercentileFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPercentile(Context<?> context) {
         // same result as median
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 50)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 50)").returns(
             "159,167.84" );
         // same result as min
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 0)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 0)").returns(
             "142,277.07" );
         // same result as max
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 100)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 100)").returns(
             "263,793.22" );
         // check some real percentile cases
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 50)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 50)").returns(
             "49,634.46" );
         // the next two results correspond to MS Excel 2013.
         // See MONDRIAN-2343 jira issue.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 100/7*2)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 100/7*2)").returns(
             "18,732.09" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 95)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 95)").returns(
             "68,259.66" );
     }
 
@@ -58,17 +57,16 @@ class PercentileFunDefTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-1045">MONDRIAN-1045,
      * "When I use the Percentile function it cracks when there's only 1 register"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPercentileBugMondrian1045(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 50)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 50)").returns(
             "565,238.13" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 40)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 40)").returns(
             "565,238.13" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 95)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 95)").returns(
             "565,238.13" );
     }
 

@@ -14,14 +14,16 @@ package org.eclipse.daanse.olap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
@@ -34,16 +36,27 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
+@Execution(ExecutionMode.SAME_THREAD)
+@RolapContextTest(FoodmartTestInstance.class)
 class HierarchyBugTest {
 
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
 	@BeforeEach
 	public void beforeEach() {
@@ -66,8 +79,7 @@ class HierarchyBugTest {
      * If the Time hierarchy is miss named in the query string, then
      * the parse ought to pick it up.
      **/
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNoHierarchy(Context<?> foodMartContext) {
         String queryString =
             "select NON EMPTY "
@@ -111,8 +123,7 @@ class HierarchyBugTest {
      * member getHierarchy vs. level.getHierarchy differences in Time Dimension
      * </a>
      */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
 	void testNamesIdentitySsasCompatibleTimeHierarchy(Context<?> foodMartContext) {
 
         String mdxTime = "SELECT\n"
@@ -130,8 +141,7 @@ class HierarchyBugTest {
 
 TestUtil.flushSchemaCache(conn);
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNamesIdentitySsasCompatibleWeeklyHierarchy(Context<?> foodMartContext) {
         String mdxWeekly = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
@@ -153,8 +163,7 @@ TestUtil.flushSchemaCache(conn);
             resultWeekly.getAxes()[1], "[Time].[Weekly]");
         TestUtil.flushSchemaCache(conn);
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNamesIdentitySsasInCompatibleTimeHierarchy(Context<?> foodMartContext) {
         // SsasCompatibleNaming defaults to false
         String mdxTime = "SELECT\n"
@@ -170,8 +179,7 @@ TestUtil.flushSchemaCache(conn);
             resultTime.getAxes()[1], "[Time].[Time]");
         TestUtil.flushSchemaCache(conn);
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNamesIdentitySsasInCompatibleWeeklyHierarchy(Context<?> foodMartContext) {
         String mdxWeekly = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
@@ -209,8 +217,7 @@ TestUtil.flushSchemaCache(conn);
         String yearHierarchyName = year.getHierarchy().getUniqueName();
         assertEquals(year1997HierarchyName, yearHierarchyName);
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNamesIdentitySsasCompatibleOlap4j(Context<?> foodMartContext) throws SQLException {
         verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(foodMartContext, "[Time].[Time]");
     }
@@ -226,8 +233,7 @@ TestUtil.flushSchemaCache(conn);
             + "FROM [Sales]";
         verifyLevelMemberNamesIdentityOlap4j(mdx, foodMartContext, expected);
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNamesIdentitySsasCompatibleOlap4jWeekly(Context<?> foodMartContext)
         throws SQLException
     {
@@ -238,8 +244,7 @@ TestUtil.flushSchemaCache(conn);
         verifyLevelMemberNamesIdentityOlap4j(
             mdx, foodMartContext, "[Time].[Weekly]");
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
     void testNamesIdentitySsasInCompatibleOlap4jWeekly(Context<?> foodMartContext)
         throws SQLException
     {
@@ -251,8 +256,9 @@ TestUtil.flushSchemaCache(conn);
         verifyLevelMemberNamesIdentityOlap4j(
             mdx, foodMartContext, "[Time].[Weekly]");
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
+	@RolapContextTest(catalog = { CatalogSupplier.class, VerifyMemberLevelNamesIdentityOlap4jDateDimModifier.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamesIdentitySsasCompatibleOlap4jDateDim(Context<?> foodMartContext)
         throws SQLException
     {
@@ -262,83 +268,19 @@ TestUtil.flushSchemaCache(conn);
     private void verifyMemberLevelNamesIdentityOlap4jDateDim(Context<?> context, String expected)
         throws SQLException
     {
+        // essential here, in time hierarchy, is hasAll="false"
+        // so that we expect "[Time]"
         String mdx =
             "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Date].[Date].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
 
-        /*
-        String dateDim  =
-            "<Dimension name=\"Date\" type=\"TimeDimension\" foreignKey=\"time_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\">\n"
-            + "      <Table name=\"time_by_day\"/>\n"
-            + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-            + "          levelType=\"TimeYears\"/>\n"
-            + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
-            + "          levelType=\"TimeQuarters\"/>\n"
-            + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
-            + "          levelType=\"TimeMonths\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>";
-        */
-        /*
-        class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier extends org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier {
-           public VerifyMemberLevelNamesIdentityOlap4jDateDimModifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-           protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-        	   List<DimensionConnectorMapping> result = new ArrayList<>();
-        	   result.addAll(super.cubeDimensionConnectors(cube));
-        	   if ("Sales".equals(cube.getName())) {
-        		   result.add(DimensionConnectorMappingImpl.builder()
-        				   .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-        				   .withOverrideDimensionName("Date")
-        				   .withDimension(TimeDimensionMappingImpl.builder()
-        						   .withName("Date")
-        						   .withHierarchies(List.of(ExplicitHierarchyMappingImpl.builder()
-        	                                .withHasAll(false)
-        	                                .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-        	                                .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-        	                                .withLevels(List.of(
-        	                                    LevelMappingImpl.builder()
-        	                                        .withName("Year")
-        	                                        .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-        	                                        .withType(InternalDataType.NUMERIC)
-        	                                        .withUniqueMembers(true)
-        	                                        .withLevelType(LevelType.TIME_YEARS)
-        	                                        .build(),
-        	                                    LevelMappingImpl.builder()
-        	                                        .withName("Quarter")
-        	                                        .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY)
-        	                                        .withUniqueMembers(false)
-        	                                        .withLevelType(LevelType.TIME_QUARTERS)
-        	                                        .build(),
-        	                                    LevelMappingImpl.builder()
-        	                                        .withName("Month")
-        	                                        .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-        	                                        .withUniqueMembers(false)
-        	                                        .withType(InternalDataType.NUMERIC)
-        	                                        .withLevelType(LevelType.TIME_MONTHS)
-        	                                        .build()
-        	                                ))
-        								   .build()))
-        						   .build())
-        				   .build());
-        	   }
-               return result;
-           }
-        }
-        */
-       /*
-       ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube("Sales", dateDim));
-        */
-        withSchemaEmf(context, VerifyMemberLevelNamesIdentityOlap4jDateDimModifier::new);
         verifyLevelMemberNamesIdentityOlap4j(mdx, context, expected);
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
+	@RolapContextTest(catalog = { CatalogSupplier.class, VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamesIdentitySsasCompatibleOlap4jDateWeekly(Context<?> context)
         throws SQLException
     {
@@ -348,8 +290,9 @@ TestUtil.flushSchemaCache(conn);
             + "FROM [Sales]";
         verifyMemberLevelNamesIdentityOlap4jWeekly(context,mdx,"[Date].[Weekly]");
     }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
+	@RolapContextTest(catalog = { CatalogSupplier.class, VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamesIdentitySsasInCompatibleOlap4jDateDim(Context<?> context)
         throws SQLException
     {
@@ -364,82 +307,6 @@ TestUtil.flushSchemaCache(conn);
     private void verifyMemberLevelNamesIdentityOlap4jWeekly(Context<?> context,
         String mdx, String expected) throws SQLException
     {
-
-        String dateDim =
-            "<Dimension name=\"Date\" type=\"TimeDimension\" foreignKey=\"time_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" name=\"Weekly\" primaryKey=\"time_id\">\n"
-            + "      <Table name=\"time_by_day\"/>\n"
-            + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-            + "          levelType=\"TimeYears\"/>\n"
-            + "      <Level name=\"Week\" column=\"week_of_year\" type=\"Numeric\" uniqueMembers=\"false\"\n"
-            + "          levelType=\"TimeWeeks\"/>\n"
-            + "      <Level name=\"Day\" column=\"day_of_month\" uniqueMembers=\"false\" type=\"Numeric\"\n"
-            + "          levelType=\"TimeDays\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>";
-
-
-        //((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube("Sales", dateDim));
-        /*
-        class VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier extends PojoMappingModifier {
-
-            public VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-                List<DimensionConnectorMapping> result = new ArrayList<>();
-                result.addAll(super.cubeDimensionConnectors(cube));
-                if ("Sales".equals(cube.getName())) {
-                	DimensionConnectorMappingImpl dimension = DimensionConnectorMappingImpl
-                        .builder()
-                        .withOverrideDimensionName("Date")
-                        .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-                        .withDimension(TimeDimensionMappingImpl.builder()
-                                .withName("Date")
-                                .withHierarchies(List.of(
-                                    ExplicitHierarchyMappingImpl.builder()
-                                        .withHasAll(true)
-                                        .withName("Weekly")
-                                        .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                                        .withLevels(List.of(
-                                            LevelMappingImpl.builder()
-                                                .withName("Year")
-                                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(InternalDataType.NUMERIC)
-                                                .withUniqueMembers(true)
-                                                .withLevelType(LevelType.TIME_YEARS)
-                                                .build(),
-                                            LevelMappingImpl.builder()
-                                            	.withName("Week")
-                                                .withColumn(FoodmartMappingSupplier.WEEK_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(InternalDataType.NUMERIC)
-                                                .withUniqueMembers(false)
-                                                .withLevelType(LevelType.TIME_WEEKS)
-                                                .build(),
-                                            LevelMappingImpl.builder()
-                                                .withName("Day")
-                                                .withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
-                                                .withUniqueMembers(false)
-                                                .withType(InternalDataType.NUMERIC)
-                                                .withLevelType(LevelType.TIME_DAYS)
-                                                .build()
-                                        ))
-                                        .build()
-                                ))
-                        		.build())
-                        .build();
-                    result.add(dimension);
-                }
-                return result;
-
-            }
-
-        }
-        */
-        withSchemaEmf(context, VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier::new);
         verifyLevelMemberNamesIdentityOlap4j(mdx, context, expected);
     }
 

@@ -19,8 +19,8 @@
 
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -88,7 +88,7 @@ class NonEmptyPropertyForAllAxisTest {
             + "Row #3: \n"
             + "Row #3: \n"
             + "Row #3: \n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(), MDX_QUERY, EXPECTED_RESULT);
+        assertThatQuery(context.getConnectionWithDefaultRole(),MDX_QUERY).returnsGrid(EXPECTED_RESULT);
     }
 
     @Test
@@ -214,7 +214,7 @@ class NonEmptyPropertyForAllAxisTest {
             + "Row #52: \n"
             + "Row #53: \n"
             + "Row #54: 2\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(), MDX_QUERY, EXPECTED_RESULT);
+        assertThatQuery(context.getConnectionWithDefaultRole(), MDX_QUERY).returnsGrid(EXPECTED_RESULT);
     }
 
     @Test

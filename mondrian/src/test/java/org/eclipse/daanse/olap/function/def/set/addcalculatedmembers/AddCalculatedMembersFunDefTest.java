@@ -13,32 +13,31 @@
  */
 package org.eclipse.daanse.olap.function.def.set.addcalculatedmembers;
 
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class AddCalculatedMembersFunDefTest {
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddCalculatedMembers(Context<?> context) {
         //----------------------------------------------------
         // AddCalculatedMembers: Calc member in dimension based on level
         // included
         //----------------------------------------------------
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,"
                 + "AddCalculatedMembers([Store].[USA].Children) ON ROWS "
                 + "FROM Sales "
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
@@ -61,12 +60,13 @@ class AddCalculatedMembersFunDefTest {
         // Calc member in dimension based on level included
         // Calc members in measures in schema included
         //----------------------------------------------------
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT AddCalculatedMembers({[Measures].[Unit Sales], [Measures].[Store Sales]}) ON COLUMNS,"
                 + "AddCalculatedMembers([Store].[USA].Children) ON ROWS "
                 + "FROM Sales "
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
@@ -103,11 +103,12 @@ class AddCalculatedMembersFunDefTest {
         //----------------------------------------------------
         // Two dimensions
         //----------------------------------------------------
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT AddCalculatedMembers({[Measures].[Unit Sales], [Measures].[Store Sales]}) ON COLUMNS,"
                 + "{([Store].[USA].[CA], [Gender].[F])} ON ROWS "
                 + "FROM Sales "
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
@@ -127,9 +128,9 @@ class AddCalculatedMembersFunDefTest {
         // Should throw more than one dimension error
         //----------------------------------------------------
 
-        assertAxisThrows(connection,
-            "AddCalculatedMembers({([Store].[Store].[USA].[CA], [Gender].[Gender].[F])})",
-            "Only single dimension members allowed in Set for AddCalculatedMembers", "Sales");
+        assertThatAxis(connection, "Sales",
+            "AddCalculatedMembers({([Store].[Store].[USA].[CA], [Gender].[Gender].[F])})")
+            .throwsMessage( "Only single dimension members allowed in Set for AddCalculatedMembers");
     }
 
 }

@@ -9,10 +9,11 @@
 package mondrian.test;
 
 
-import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,15 +26,18 @@ import static org.opencube.junit5.TestUtil.assertSimpleQuery;
 import static org.opencube.junit5.TestUtil.checkThrowable;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.CoreFactory;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue;
+import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.InstanceFactory;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -42,6 +46,7 @@ import org.eclipse.daanse.cwm.model.cwm.resource.relational.Row;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.util.SQLSimpleTypes;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
@@ -68,9 +73,8 @@ import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggTableManager;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
-import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.CoreFactory;
-import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.TaggedValue;
-import org.eclipse.daanse.rolap.mapping.model.RolapMappingFactory;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -127,22 +131,19 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Mem
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.impl.DimensionConnectorImpl;
 import org.eclipse.daanse.rolap.mapping.model.olap.format.FormatFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opencube.junit5.EmfUtil;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 /**
  * Unit tests for various schema features.
  *
@@ -150,10 +151,25 @@ import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
  * @author jhyde
  * @since August 7, 2006
  */
+@RolapContextTest(FoodmartTestInstance.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class SchemaTest {
 
     @AfterEach
     public void afterEach() {
+    }
+
+    private static final String schemaName = "Description schema";
+    private static final String salesCubeName = "DescSales";
+    private static final String virtualCubeName = "DescWarehouseAndSales";
+    private static final String warehouseCubeName = "Warehouse";
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 
     private static final String CUBES_AB =
@@ -210,8 +226,8 @@ class SchemaTest {
     }
 
     // Tests follow...
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSolveOrderInCalculatedMemberModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSolveOrderInCalculatedMember(Context<?> context) {
         /*POJO modifier
         class TestSolveOrderInCalculatedMemberModifier extends PojoMappingModifier{
@@ -267,7 +283,19 @@ class SchemaTest {
 
         }*/
         // EMF version of TestSolveOrderInCalculatedMemberModifier
-        class TestSolveOrderInCalculatedMemberModifierEmf implements CatalogMappingSupplier {
+
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Measures].[QuantumProfit]} on 0, {(Gender.foo)} on 1 from sales",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Measures].[QuantumProfit]}\n"
+            + "Axis #2:\n"
+            + "{[Gender].[Gender].[foo]}\n"
+            + "Row #0: $7.52\n");
+    }
+
+    public static class TestSolveOrderInCalculatedMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestSolveOrderInCalculatedMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
@@ -315,21 +343,9 @@ class SchemaTest {
 
         }
 
-        withSchemaEmf(context, TestSolveOrderInCalculatedMemberModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures].[QuantumProfit]} on 0, {(Gender.foo)} on 1 from sales",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Measures].[QuantumProfit]}\n"
-            + "Axis #2:\n"
-            + "{[Gender].[Gender].[foo]}\n"
-            + "Row #0: $7.52\n");
-    }
 
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyDefaultMemberModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyDefaultMember(Context<?> context) {
         /*
         class TestHierarchyDefaultMemberModifier extends PojoMappingModifier {
@@ -369,7 +385,31 @@ class SchemaTest {
             }
         }*/
         // EMF version of TestHierarchyDefaultMemberModifier
-        class TestHierarchyDefaultMemberModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name=\"Gender with default\" foreignKey=\"customer_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" "
+            + "primaryKey=\"customer_id\" "
+            // Define a default member's whose unique name includes the
+            // 'all' member.
+            + "defaultMember=\"[Gender with default].[All Gender with defaults].[M]\" >\n"
+            + "      <Table name=\"customer\"/>\n"
+            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" />\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>"));
+        */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Gender with default]} on columns from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Gender with default].[Gender with default].[M]}\n"
+            + "Row #0: 135,215\n");
+    }
+
+    public static class TestHierarchyDefaultMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestHierarchyDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
@@ -418,38 +458,14 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name=\"Gender with default\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" "
-            + "primaryKey=\"customer_id\" "
-            // Define a default member's whose unique name includes the
-            // 'all' member.
-            + "defaultMember=\"[Gender with default].[All Gender with defaults].[M]\" >\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"));
-        */
-        withSchemaEmf(context, TestHierarchyDefaultMemberModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Gender with default]} on columns from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Gender with default].[Gender with default].[M]}\n"
-            + "Row #0: 135,215\n");
-    }
-
 
     /**
      * Test case for the issue described in
      * <a href="http://forums.pentaho.com/showthread.php?p=190737">Pentaho
      * forum post 'wrong unique name for default member when hasAll=false'</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDefaultMemberNameModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDefaultMemberName(Context<?> context) {
         /*
         class TestDefaultMemberNameModifier extends PojoMappingModifier {
@@ -510,7 +526,34 @@ class SchemaTest {
             }
         };*/
         // EMF version of TestDefaultMemberNameModifier
-        class TestDefaultMemberNameModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name=\"Product with no all\" foreignKey=\"product_id\">\n"
+            + "    <Hierarchy hasAll=\"false\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
+            + "      <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
+            + "        <Table name=\"product\"/>\n"
+            + "        <Table name=\"product_class\"/>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Product Class\" table=\"product_class\" nameColumn=\"product_subcategory\"\n"
+            + "          column=\"product_class_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
+            + "      <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
+            + "          uniqueMembers=\"true\"/>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"));
+        */
+        // note that default member name has no 'all' and has a name not an id
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Product with no all]} on columns from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Product with no all].[Product with no all].[Nuts]}\n"
+            + "Row #0: 4,400\n");
+    }
+
+    public static class TestDefaultMemberNameModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestDefaultMemberNameModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -590,37 +633,10 @@ class SchemaTest {
                 return catalog;
             }
         };
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name=\"Product with no all\" foreignKey=\"product_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
-            + "      <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
-            + "        <Table name=\"product\"/>\n"
-            + "        <Table name=\"product_class\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Product Class\" table=\"product_class\" nameColumn=\"product_subcategory\"\n"
-            + "          column=\"product_class_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
-            + "          uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"));
-        */
-        // note that default member name has no 'all' and has a name not an id
-        withSchemaEmf(context, TestDefaultMemberNameModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Product with no all]} on columns from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Product with no all].[Product with no all].[Nuts]}\n"
-            + "Row #0: 4,400\n");
-    }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyAbbreviatedDefaultMemberModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyAbbreviatedDefaultMember(Context<?> context) {
         /*
         class TestHierarchyAbbreviatedDefaultMemberModifier extends PojoMappingModifier {
@@ -661,7 +677,31 @@ class SchemaTest {
             }
         };*/
         // EMF version of TestHierarchyAbbreviatedDefaultMemberModifier
-        class TestHierarchyAbbreviatedDefaultMemberModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name=\"Gender with default\" foreignKey=\"customer_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" "
+            + "primaryKey=\"customer_id\" "
+            // Default member unique name does not include 'All'.
+            + "defaultMember=\"[Gender with default].[F]\" >\n"
+            + "      <Table name=\"customer\"/>\n"
+            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" />\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>"));
+        */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Gender with default]} on columns from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            // Note that the 'all' member is named according to the rule
+            // '[<hierarchy>].[All <hierarchy>s]'.
+            + "{[Gender with default].[Gender with default].[F]}\n"
+            + "Row #0: 131,558\n");
+    }
+
+    public static class TestHierarchyAbbreviatedDefaultMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestHierarchyAbbreviatedDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -710,34 +750,10 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name=\"Gender with default\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" "
-            + "primaryKey=\"customer_id\" "
-            // Default member unique name does not include 'All'.
-            + "defaultMember=\"[Gender with default].[F]\" >\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"));
-        */
-        withSchemaEmf(context, TestHierarchyAbbreviatedDefaultMemberModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Gender with default]} on columns from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            // Note that the 'all' member is named according to the rule
-            // '[<hierarchy>].[All <hierarchy>s]'.
-            + "{[Gender with default].[Gender with default].[F]}\n"
-            + "Row #0: 131,558\n");
-    }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyNoLevelsFailsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyNoLevelsFails(Context<?> context) {
         /*
         class TestHierarchyNoLevelsFailsModifier extends PojoMappingModifier {
@@ -771,7 +787,22 @@ class SchemaTest {
             }
         };*/
         // EMF version of TestHierarchyNoLevelsFailsModifier
-        class TestHierarchyNoLevelsFailsModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name='Gender no levels' foreignKey='customer_id'>\n"
+            + "    <Hierarchy hasAll='true' primaryKey='customer_id'>\n"
+            + "      <Table name='customer'/>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>"));
+        */
+        assertQueryThrows(context,
+            "select {[Gender no levels]} on columns from [Sales]",
+            "Hierarchy '[Gender no levels].[Gender no levels]' must have at least one level.");
+    }
+
+    public static class TestHierarchyNoLevelsFailsModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestHierarchyNoLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -814,24 +845,9 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name='Gender no levels' foreignKey='customer_id'>\n"
-            + "    <Hierarchy hasAll='true' primaryKey='customer_id'>\n"
-            + "      <Table name='customer'/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"));
-        */
-        withSchemaEmf(context, TestHierarchyNoLevelsFailsModifierEmf::new);
-        assertQueryThrows(context,
-            "select {[Gender no levels]} on columns from [Sales]",
-            "Hierarchy '[Gender no levels].[Gender no levels]' must have at least one level.");
-    }
 
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyNonUniqueLevelsFailsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyNonUniqueLevelsFails(Context<?> context) {
         /*
         class TestHierarchyNonUniqueLevelsFailsModifier extends PojoMappingModifier {
@@ -879,7 +895,23 @@ class SchemaTest {
             }
         };*/
         // EMF version of TestHierarchyNonUniqueLevelsFailsModifier
-        class TestHierarchyNonUniqueLevelsFailsModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name='Gender dup levels' foreignKey='customer_id'>\n"
+            + "    <Hierarchy hasAll='true' primaryKey='customer_id'>\n"
+            + "      <Table name='customer'/>\n"
+            + "      <Level name='Gender' column='gender' uniqueMembers='true' />\n"
+            + "      <Level name='Gender' column='gender' uniqueMembers='true' />\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>"));
+        */
+        assertQueryThrows(context,
+            "select {[Gender dup levels]} on columns from [Sales]",
+            "Level names within hierarchy '[Gender dup levels].[Gender dup levels]' are not unique; there is more than one level with name 'Gender'.");
+    }
+
+    public static class TestHierarchyNonUniqueLevelsFailsModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestHierarchyNonUniqueLevelsFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -934,29 +966,13 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name='Gender dup levels' foreignKey='customer_id'>\n"
-            + "    <Hierarchy hasAll='true' primaryKey='customer_id'>\n"
-            + "      <Table name='customer'/>\n"
-            + "      <Level name='Gender' column='gender' uniqueMembers='true' />\n"
-            + "      <Level name='Gender' column='gender' uniqueMembers='true' />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"));
-        */
-        withSchemaEmf(context, TestHierarchyNonUniqueLevelsFailsModifierEmf::new);
-        assertQueryThrows(context,
-            "select {[Gender dup levels]} on columns from [Sales]",
-            "Level names within hierarchy '[Gender dup levels].[Gender dup levels]' are not unique; there is more than one level with name 'Gender'.");
-    }
 
 
     /**
      * Tests a measure based on 'count'.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCountMeasureModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCountMeasure(Context<?> context) {
         /*
         class TestCountMeasureModifier extends PojoMappingModifier {
@@ -981,7 +997,35 @@ class SchemaTest {
             }
         }*/
         // EMF version of TestCountMeasureModifier
-        class TestCountMeasureModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            null,
+            "<Measure name=\"Fact Count\" aggregator=\"count\"/>\n"));
+        */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Measures].[Fact Count], [Measures].[Unit Sales]} on 0,\n"
+            + "[Gender].members on 1\n"
+            + "from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Measures].[Fact Count]}\n"
+            + "{[Measures].[Unit Sales]}\n"
+            + "Axis #2:\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
+            + "Row #0: 86,837\n"
+            + "Row #0: 266,773\n"
+            + "Row #1: 42,831\n"
+            + "Row #1: 131,558\n"
+            + "Row #2: 44,006\n"
+            + "Row #2: 135,215\n");
+    }
+
+    public static class TestCountMeasureModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestCountMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1009,40 +1053,12 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            null,
-            "<Measure name=\"Fact Count\" aggregator=\"count\"/>\n"));
-        */
-        withSchemaEmf(context, TestCountMeasureModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures].[Fact Count], [Measures].[Unit Sales]} on 0,\n"
-            + "[Gender].members on 1\n"
-            + "from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Measures].[Fact Count]}\n"
-            + "{[Measures].[Unit Sales]}\n"
-            + "Axis #2:\n"
-            + "{[Gender].[Gender].[All Gender]}\n"
-            + "{[Gender].[Gender].[F]}\n"
-            + "{[Gender].[Gender].[M]}\n"
-            + "Row #0: 86,837\n"
-            + "Row #0: 266,773\n"
-            + "Row #1: 42,831\n"
-            + "Row #1: 131,558\n"
-            + "Row #2: 44,006\n"
-            + "Row #2: 135,215\n");
-    }
-
     /**
      * Tests that an error occurs if a hierarchy is based on a non-existent
      * table.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyTableNotFoundModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyTableNotFound(Context<?> context) {
         /*
          class TestHierarchyTableNotFoundModifier extends PojoMappingModifier {
@@ -1090,7 +1106,26 @@ class SchemaTest {
         }
         */
         // EMF version of TestHierarchyTableNotFoundModifier
-        class TestHierarchyTableNotFoundModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income3\" foreignKey=\"product_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+            + "    <Table name=\"customer_not_found\"/>\n"
+            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+        */
+        // FIXME: This should validate the schema, and fail.
+        assertSimpleQuery(context.getConnectionWithDefaultRole());
+        // FIXME: Should give better error.
+        assertQueryThrows(context,
+            "select [Yearly Income3].Children on 0 from [Sales]",
+            "Internal error: while building member cache");
+    }
+
+    public static class TestHierarchyTableNotFoundModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestHierarchyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1154,28 +1189,9 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income3\" foreignKey=\"product_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer_not_found\"/>\n"
-            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-        */
-        // FIXME: This should validate the schema, and fail.
-        withSchemaEmf(context, TestHierarchyTableNotFoundModifierEmf::new);
-        assertSimpleQuery(context.getConnectionWithDefaultRole());
-        // FIXME: Should give better error.
-        assertQueryThrows(context,
-            "select [Yearly Income3].Children on 0 from [Sales]",
-            "Internal error: while building member cache");
-    }
 
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestPrimaryKeyTableNotFoundModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testPrimaryKeyTableNotFound(Context<?> context) {
         /*
         class TestPrimaryKeyTableNotFoundModifier extends PojoMappingModifier {
@@ -1222,7 +1238,22 @@ class SchemaTest {
         }
         */
         // EMF version of TestPrimaryKeyTableNotFoundModifier
-        class TestPrimaryKeyTableNotFoundModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income4\" foreignKey=\"product_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\" primaryKeyTable=\"customer_not_found\">\n"
+            + "    <Table name=\"customer\"/>\n"
+            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+        */
+        assertQueryThrows(context,
+            "select from [Sales]",
+            "no table 'customer_not_found' found in hierarchy [Yearly Income4]");
+    }
+
+    public static class TestPrimaryKeyTableNotFoundModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestPrimaryKeyTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1282,24 +1313,9 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income4\" foreignKey=\"product_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\" primaryKeyTable=\"customer_not_found\">\n"
-            + "    <Table name=\"customer\"/>\n"
-            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-        */
-        withSchemaEmf(context, TestPrimaryKeyTableNotFoundModifierEmf::new);
-        assertQueryThrows(context,
-            "select from [Sales]",
-            "no table 'customer_not_found' found in hierarchy [Yearly Income4]");
-    }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLevelTableNotFoundModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLevelTableNotFound(Context<?> context) {
         /*
         class TestLevelTableNotFoundModifier extends PojoMappingModifier {
@@ -1344,7 +1360,23 @@ class SchemaTest {
         }
         */
         // EMF version of TestLevelTableNotFoundModifier
-        class TestLevelTableNotFoundModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income5\" foreignKey=\"product_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+            + "    <Table name=\"customer\"/>\n"
+            + "    <Level name=\"Yearly Income\" table=\"customer_not_found\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+
+         */
+        assertQueryThrows(context,
+            "select from [Sales]",
+            "Table 'customer_not_found' not found");
+    }
+
+    public static class TestLevelTableNotFoundModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestLevelTableNotFoundModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1402,26 +1434,10 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income5\" foreignKey=\"product_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer\"/>\n"
-            + "    <Level name=\"Yearly Income\" table=\"customer_not_found\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-
-         */
-        withSchemaEmf(context, TestLevelTableNotFoundModifierEmf::new);
-        assertQueryThrows(context,
-            "select from [Sales]",
-            "Table 'customer_not_found' not found");
-    }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyBadDefaultMemberModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyBadDefaultMember(Context<?> context) {
         /*
         class TestHierarchyBadDefaultMemberModifier extends PojoMappingModifier {
@@ -1462,7 +1478,25 @@ class SchemaTest {
         }
         */
         // EMF version of TestHierarchyBadDefaultMemberModifier
-        class TestHierarchyBadDefaultMemberModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name=\"Gender with default\" foreignKey=\"customer_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" "
+            + "primaryKey=\"customer_id\" "
+            // Default member unique name does not include 'All'.
+            + "defaultMember=\"[Gender with default].[Non].[Existent]\" >\n"
+            + "      <Table name=\"customer\"/>\n"
+            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" />\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>"));
+         */
+        assertQueryThrows(context,
+            "select {[Gender with default]} on columns from [Sales]",
+            "Can not find Default Member with name \"[Gender with default].[Non].[Existent]\" in Hierarchy \"Gender with default\"");
+    }
+
+    public static class TestHierarchyBadDefaultMemberModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestHierarchyBadDefaultMemberModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1509,24 +1543,6 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name=\"Gender with default\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" "
-            + "primaryKey=\"customer_id\" "
-            // Default member unique name does not include 'All'.
-            + "defaultMember=\"[Gender with default].[Non].[Existent]\" >\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"));
-         */
-        withSchemaEmf(context, TestHierarchyBadDefaultMemberModifierEmf::new);
-        assertQueryThrows(context,
-            "select {[Gender with default]} on columns from [Sales]",
-            "Can not find Default Member with name \"[Gender with default].[Non].[Existent]\" in Hierarchy \"Gender with default\"");
-    }
 
 
     /**
@@ -1539,8 +1555,8 @@ class SchemaTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-236">
      * Bug MONDRIAN-236, "Mondrian generates invalid SQL"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDuplicateTableAliasModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDuplicateTableAlias(Context<?> context) {
         /*
         class TestDuplicateTableAliasModifier extends PojoMappingModifier {
@@ -1581,7 +1597,28 @@ class SchemaTest {
         }
         */
         // EMF version of TestDuplicateTableAliasModifier
-        class TestDuplicateTableAliasModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income2\" foreignKey=\"product_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+            + "    <Table name=\"customer\"/>\n"
+            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+        */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Yearly Income2]} on columns, {[Measures].[Unit Sales]} on rows from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Yearly Income2].[Yearly Income2].[All Yearly Income2s]}\n"
+            + "Axis #2:\n"
+            + "{[Measures].[Unit Sales]}\n"
+            + "Row #0: 266,773\n");
+    }
+
+    public static class TestDuplicateTableAliasModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestDuplicateTableAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1627,27 +1664,6 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income2\" foreignKey=\"product_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer\"/>\n"
-            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-        */
-        withSchemaEmf(context, TestDuplicateTableAliasModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Yearly Income2]} on columns, {[Measures].[Unit Sales]} on rows from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Yearly Income2].[Yearly Income2].[All Yearly Income2s]}\n"
-            + "Axis #2:\n"
-            + "{[Measures].[Unit Sales]}\n"
-            + "Row #0: 266,773\n");
-    }
 
 
     /**
@@ -1655,8 +1671,8 @@ class SchemaTest {
      * what is the expected result?  Also, in this case, they share the same
      * table without an alias, and the system doesn't complain.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDuplicateTableAliasSameForeignKeyModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDuplicateTableAliasSameForeignKey(Context<?> context) {
         /*
         class TestDuplicateTableAliasSameForeignKeyModifier extends PojoMappingModifier {
@@ -1698,7 +1714,34 @@ class SchemaTest {
         }
         */
         // EMF version of TestDuplicateTableAliasSameForeignKeyModifier
-        class TestDuplicateTableAliasSameForeignKeyModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income2\" foreignKey=\"customer_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+            + "    <Table name=\"customer\"/>\n"
+            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>")); */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "266,773");
+
+        // NonEmptyCrossJoin Fails
+        if (false) {
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
+                "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
+                + "NON EMPTY {[Measures].[Unit Sales]} on columns"
+                + " from [Sales]",
+                "Axis #0:\n"
+                + "{}\n"
+                + "266,773");
+        }
+    }
+
+    public static class TestDuplicateTableAliasSameForeignKeyModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestDuplicateTableAliasSameForeignKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -1745,41 +1788,14 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income2\" foreignKey=\"customer_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer\"/>\n"
-            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>")); */
-        withSchemaEmf(context, TestDuplicateTableAliasSameForeignKeyModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "266,773");
-
-        // NonEmptyCrossJoin Fails
-        if (false) {
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
-                + "NON EMPTY {[Measures].[Unit Sales]} on columns"
-                + " from [Sales]",
-                "Axis #0:\n"
-                + "{}\n"
-                + "266,773");
-        }
-    }
 
 
     /**
      * Tests two dimensions using same table (via different join paths).
      * Without the table alias, generates SQL which is missing a join condition.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionsShareTableModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionsShareTable(Context<?> context) {
         /*
         class TestDimensionsShareTableModifier extends PojoMappingModifier {
@@ -1821,54 +1837,6 @@ class SchemaTest {
         }
         */
         // EMF version of TestDimensionsShareTableModifier
-        class TestDimensionsShareTableModifierEmf implements CatalogMappingSupplier {
-            private CatalogImpl catalog;
-            public TestDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
-                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
-                this.catalog = (CatalogImpl) copier.get(catalog);
-                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
-                        .filter(c -> "Sales".equals(c.getName())).findAny();
-                if (oCube.isPresent()) {
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
-                    // Create level using RolapMappingFactory
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
-                    level.setName("Yearly Income");
-                    level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
-                    level.setUniqueMembers(true);
-
-                    // Create TableSource with alias using RolapMappingFactory
-                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
-                    tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
-                    tableQuery.setAlias("customerx");  // Important: table alias to avoid conflict
-
-                    // Create hierarchy using RolapMappingFactory
-                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                    hierarchy.setHasAll(true);
-                    hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
-                    hierarchy.setSource(tableQuery);
-                    hierarchy.getLevels().add(level);
-
-                    // Create standard dimension using RolapMappingFactory
-                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
-                    standardDimension.setName("Yearly Income2");
-                    standardDimension.getHierarchies().add(hierarchy);
-
-                    // Create dimension connector using RolapMappingFactory
-                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
-                    dimensionConnector.setOverrideDimensionName("Yearly Income2");
-                    dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-                    dimensionConnector.setDimension(standardDimension);
-
-                    List connectors = cube.getDimensionConnectors();
-                    connectors.add(dimensionConnector);
-                }
-            }
-
-            @Override
-            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                return catalog;
-            }
-        }
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
             "Sales",
@@ -1880,7 +1848,6 @@ class SchemaTest {
             + "</Dimension>"));
         */
 
-        withSchemaEmf(context, TestDimensionsShareTableModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Yearly Income].[$10K - $30K]} on columns,"
             + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
@@ -2032,13 +1999,62 @@ class SchemaTest {
             + "Row #63: 523\n");
     }
 
+    public static class TestDimensionsShareTableModifierEmf implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
+            public TestDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
+                this.catalog = (CatalogImpl) copier.get(catalog);
+                Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> oCube = Packages.available(this.catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream()
+                        .filter(c -> "Sales".equals(c.getName())).findAny();
+                if (oCube.isPresent()) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube cube = (PhysicalCube) oCube.get();
+                    // Create level using RolapMappingFactory
+                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
+                    level.setName("Yearly Income");
+                    level.setColumn(CatalogSupplier.COLUMN_YEARLY_INCOME_CUSTOMER);
+                    level.setUniqueMembers(true);
+
+                    // Create TableSource with alias using RolapMappingFactory
+                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
+                    tableQuery.setTable(CatalogSupplier.TABLE_CUSTOMER);
+                    tableQuery.setAlias("customerx");  // Important: table alias to avoid conflict
+
+                    // Create hierarchy using RolapMappingFactory
+                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                    hierarchy.setHasAll(true);
+                    hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_CUSTOMER_ID_CUSTOMER);
+                    hierarchy.setSource(tableQuery);
+                    hierarchy.getLevels().add(level);
+
+                    // Create standard dimension using RolapMappingFactory
+                    StandardDimension standardDimension = DimensionFactory.eINSTANCE.createStandardDimension();
+                    standardDimension.setName("Yearly Income2");
+                    standardDimension.getHierarchies().add(hierarchy);
+
+                    // Create dimension connector using RolapMappingFactory
+                    DimensionConnector dimensionConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                    dimensionConnector.setOverrideDimensionName("Yearly Income2");
+                    dimensionConnector.setForeignKey(CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
+                    dimensionConnector.setDimension(standardDimension);
+
+                    List connectors = cube.getDimensionConnectors();
+                    connectors.add(dimensionConnector);
+                }
+            }
+
+            @Override
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
+            }
+        }
+
     /**
      * Tests two dimensions using same table (via different join paths).
      * native non empty cross join sql generation returns empty query.
      * note that this works when native cross join is disabled
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionsShareTableNativeNonEmptyCrossJoin(Context<?> context) {
         /*
         class TestDimensionsShareTableNativeNonEmptyCrossJoinModifier extends PojoMappingModifier {
@@ -2079,7 +2095,30 @@ class SchemaTest {
         }
         */
         // EMF version of TestDimensionsShareTableNativeNonEmptyCrossJoinModifier
-        class TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income2\" foreignKey=\"product_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+            + "    <Table name=\"customer\" alias=\"customerx\" />\n"
+            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+        */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
+            + "NON EMPTY {[Measures].[Unit Sales]} on columns"
+            + " from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Measures].[Unit Sales]}\n"
+            + "Axis #2:\n"
+            + "{[Yearly Income2].[Yearly Income2].[All Yearly Income2s], [Customers].[Customers].[All Customers]}\n"
+            + "Row #0: 266,773\n");
+    }
+
+    public static class TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -2129,36 +2168,13 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income2\" foreignKey=\"product_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer\" alias=\"customerx\" />\n"
-            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-        */
-        withSchemaEmf(context, TestDimensionsShareTableNativeNonEmptyCrossJoinModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
-            + "NON EMPTY {[Measures].[Unit Sales]} on columns"
-            + " from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Measures].[Unit Sales]}\n"
-            + "Axis #2:\n"
-            + "{[Yearly Income2].[Yearly Income2].[All Yearly Income2s], [Customers].[Customers].[All Customers]}\n"
-            + "Row #0: 266,773\n");
-    }
 
     /**
      * Tests two dimensions using same table with same foreign key
      * one table uses an alias.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionsShareTableSameForeignKeysModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionsShareTableSameForeignKeys(Context<?> context) {
         /*
         class TestDimensionsShareTableSameForeignKeysModifier extends PojoMappingModifier {
@@ -2200,7 +2216,56 @@ class SchemaTest {
         }
         */
         // EMF version of TestDimensionsShareTableSameForeignKeysModifier
-        class TestDimensionsShareTableSameForeignKeysModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name=\"Yearly Income2\" foreignKey=\"customer_id\">\n"
+            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+            + "    <Table name=\"customer\" alias=\"customerx\" />\n"
+            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+        */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Yearly Income].[$10K - $30K]} on columns,"
+            + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K]}\n"
+            + "Axis #2:\n"
+            + "{[Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "Row #0: \n");
+
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n"
+            + "NON EMPTY Crossjoin({[Yearly Income].[All Yearly Incomes].Children},\n"
+            + "                     [Yearly Income2].[All Yearly Income2s].Children) ON ROWS\n"
+            + "from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Measures].[Unit Sales]}\n"
+            + "Axis #2:\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "Row #0: 57,950\n"
+            + "Row #1: 11,561\n"
+            + "Row #2: 14,392\n"
+            + "Row #3: 5,629\n"
+            + "Row #4: 87,310\n"
+            + "Row #5: 44,967\n"
+            + "Row #6: 33,045\n"
+            + "Row #7: 11,919\n");
+    }
+
+    public static class TestDimensionsShareTableSameForeignKeysModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -2249,63 +2314,14 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Yearly Income2\" foreignKey=\"customer_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer\" alias=\"customerx\" />\n"
-            + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-        */
-        withSchemaEmf(context, TestDimensionsShareTableSameForeignKeysModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Yearly Income].[$10K - $30K]} on columns,"
-            + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Yearly Income].[Yearly Income].[$10K - $30K]}\n"
-            + "Axis #2:\n"
-            + "{[Yearly Income2].[Yearly Income2].[$150K +]}\n"
-            + "Row #0: \n");
-
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n"
-            + "NON EMPTY Crossjoin({[Yearly Income].[All Yearly Incomes].Children},\n"
-            + "                     [Yearly Income2].[All Yearly Income2s].Children) ON ROWS\n"
-            + "from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Measures].[Unit Sales]}\n"
-            + "Axis #2:\n"
-            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
-            + "Row #0: 57,950\n"
-            + "Row #1: 11,561\n"
-            + "Row #2: 14,392\n"
-            + "Row #3: 5,629\n"
-            + "Row #4: 87,310\n"
-            + "Row #5: 44,967\n"
-            + "Row #6: 33,045\n"
-            + "Row #7: 11,919\n");
-    }
 
     /**
      * test hierarchy with completely different join path to fact table than
      * first hierarchy. tables are auto-aliased as necessary to guarantee
      * unique joins to the fact table.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSnowflakeHierarchyValidationNotNeededModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSnowflakeHierarchyValidationNotNeeded(Context<?> context) {
         // this test breaks when using aggregates at the moment
         // due to a known limitation
@@ -2502,7 +2518,72 @@ class SchemaTest {
         */
         // EMF version of TestSnowflakeHierarchyValidationNotNeededModifier
         // Note: This is a complex snowflake schema test with multiple JOINs
-        class TestSnowflakeHierarchyValidationNotNeededModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        String baseSchema = TestUtil.getRawSchema(context);
+        String schema = SchemaUtil.getSchema(baseSchema,
+            null,
+            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
+            + "  <Table name=\"sales_fact_1997\"/>\n"
+            + "  <Dimension name=\"Store\" foreignKey=\"store_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
+            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
+            + "        <Table name=\"store\"/>\n"
+            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
+            + "          <Table name=\"region\"/>\n"
+            + "          <Table name=\"promotion\"/>\n"
+            + "        </Join>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
+            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
+            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
+            + "    </Hierarchy>\n"
+            + "    <Hierarchy name=\"MyHierarchy\" hasAll=\"true\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
+            + "      <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
+            + "        <Table name=\"customer\"/>\n"
+            + "        <Table name=\"region\"/>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
+            + "      <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
+            + "      <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
+            + "        <Table name=\"customer\"/>\n"
+            + "        <Table name=\"region\"/>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
+            + "      <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+            + "</Cube>",
+            null,
+            null,
+            null,
+            null);
+        withSchema(context, schema);
+         */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select  {[Store].[MyHierarchy].[Mexico]} on rows,"
+            + "{[Customers].[Customers].[USA].[South West]} on columns"
+            + " from "
+            + "AliasedDimensionsTesting",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
+            + "Axis #2:\n"
+            + "{[Store].[MyHierarchy].[Mexico]}\n"
+            + "Row #0: 51,298\n");
+    }
+
+    public static class TestSnowflakeHierarchyValidationNotNeededModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestSnowflakeHierarchyValidationNotNeededModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -2739,79 +2820,14 @@ class SchemaTest {
             }
         }
 
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
-            + "          <Table name=\"region\"/>\n"
-            + "          <Table name=\"promotion\"/>\n"
-            + "        </Join>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "    <Hierarchy name=\"MyHierarchy\" hasAll=\"true\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "      <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"customer\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "      <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"customer\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestSnowflakeHierarchyValidationNotNeededModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select  {[Store].[MyHierarchy].[Mexico]} on rows,"
-            + "{[Customers].[Customers].[USA].[South West]} on columns"
-            + " from "
-            + "AliasedDimensionsTesting",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Customers].[Customers].[USA].[South West]}\n"
-            + "Axis #2:\n"
-            + "{[Store].[MyHierarchy].[Mexico]}\n"
-            + "Row #0: 51,298\n");
-    }
-
 
     /**
      * test hierarchy with slightly different join path to fact table than
      * first hierarchy. tables from first and second hierarchy should contain
      * the same join aliases to the fact table.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testSnowflakeHierarchyValidationNotNeeded2(Context<?> context) {
         /*
         class TestSnowflakeHierarchyValidationNotNeeded2Modifier extends PojoMappingModifier {
@@ -2996,7 +3012,72 @@ class SchemaTest {
         */
         // EMF version of TestSnowflakeHierarchyValidationNotNeeded2Modifier
         // Note: Similar to previous but with slightly different join paths
-        class TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf implements CatalogMappingSupplier {
+        /*
+        String baseSchema = TestUtil.getRawSchema(context);
+        String schema = SchemaUtil.getSchema(baseSchema,
+            null,
+            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
+            + "  <Table name=\"sales_fact_1997\">\n"
+            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
+            + "  </Table>"
+            + "  <Dimension name=\"Store\" foreignKey=\"store_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
+            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
+            + "        <Table name=\"store\"/>\n"
+            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
+            + "          <Table name=\"region\"/>\n"
+            + "          <Table name=\"promotion\"/>\n"
+            + "        </Join>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
+            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
+            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
+            + "    </Hierarchy>\n"
+            + "    <Hierarchy name=\"MyHierarchy\" hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
+            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
+            + "        <Table name=\"store\"/>\n"
+            + "        <Table name=\"region\"/>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
+            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
+            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
+            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
+            + "      <Table name=\"customer\"/>\n"
+            + "      <Table name=\"region\"/>\n"
+            + "    </Join>\n"
+            + "    <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
+            + "    <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
+            + "    <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
+            + "    <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>\n"
+            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+            + "</Cube>",
+            null,
+            null,
+            null,
+            null);
+        withSchema(context, schema);
+         */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select  {[Store].[MyHierarchy].[USA].[South West]} on rows,"
+            + "{[Customers].[Customers].[USA].[South West]} on columns"
+            + " from "
+            + "AliasedDimensionsTesting",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
+            + "Axis #2:\n"
+            + "{[Store].[MyHierarchy].[USA].[South West]}\n"
+            + "Row #0: 72,631\n");
+    }
+
+    public static class TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -3228,71 +3309,6 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-            + "  </Table>"
-            + "  <Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
-            + "          <Table name=\"region\"/>\n"
-            + "          <Table name=\"promotion\"/>\n"
-            + "        </Join>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "    <Hierarchy name=\"MyHierarchy\" hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + "    <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "    <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
-            + "    <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "    <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestSnowflakeHierarchyValidationNotNeeded2ModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select  {[Store].[MyHierarchy].[USA].[South West]} on rows,"
-            + "{[Customers].[Customers].[USA].[South West]} on columns"
-            + " from "
-            + "AliasedDimensionsTesting",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Customers].[Customers].[USA].[South West]}\n"
-            + "Axis #2:\n"
-            + "{[Store].[MyHierarchy].[USA].[South West]}\n"
-            + "Row #0: 72,631\n");
-    }
 
 
     /**
@@ -3301,8 +3317,8 @@ class SchemaTest {
      * Tests two dimensions using same table (via different join paths).
      * both using a table alias.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionsShareJoinTableModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionsShareJoinTable(Context<?> context) {
         /*
         class TestDimensionsShareJoinTableModifier extends PojoMappingModifier {
@@ -3448,7 +3464,62 @@ class SchemaTest {
         }
         */
         // EMF version of TestDimensionsShareJoinTableModifier
-        class TestDimensionsShareJoinTableModifierEmf implements CatalogMappingSupplier {
+        /*
+        String baseSchema = TestUtil.getRawSchema(context);
+        String schema = SchemaUtil.getSchema(baseSchema,
+            null,
+            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
+            + "  <Table name=\"sales_fact_1997\">\n"
+            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
+            + "  </Table>"
+            + "<Dimension name=\"Store\" foreignKey=\"store_id\">\n"
+
+            + "<Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
+            + "    <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
+            + "      <Table name=\"store\"/>\n"
+            + "      <Table name=\"region\"/>\n"
+            + "    </Join>\n"
+            + " <Level name=\"Store Country\" table=\"store\"  column=\"store_country\" uniqueMembers=\"true\"/>\n"
+            + " <Level name=\"Store Region\"  table=\"region\" column=\"sales_region\"  uniqueMembers=\"true\"/>\n"
+            + " <Level name=\"Store Name\"    table=\"store\"  column=\"store_name\"    uniqueMembers=\"true\"/>\n"
+            + "</Hierarchy>\n"
+            + "</Dimension>\n"
+            + "<Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
+            + "<Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
+            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
+            + "      <Table name=\"customer\"/>\n"
+            + "      <Table name=\"region\"/>\n"
+            + "    </Join>\n"
+            + "  <Level name=\"Country\" table=\"customer\" column=\"country\"                      uniqueMembers=\"true\"/>\n"
+            + "  <Level name=\"Region\"  table=\"region\"   column=\"sales_region\"                 uniqueMembers=\"true\"/>\n"
+            + "  <Level name=\"City\"    table=\"customer\" column=\"city\"                         uniqueMembers=\"false\"/>\n"
+            + "  <Level name=\"Name\"    table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
+            + "</Hierarchy>\n"
+            + "</Dimension>\n"
+            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+            + "<Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\" formatString=\"#,###.00\"/>\n"
+            + "</Cube>",
+            null,
+            null,
+            null,
+            null);
+        withSchema(context, schema);
+         */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select  {[Store].[USA].[South West]} on rows,"
+            + "{[Customers].[USA].[South West]} on columns"
+            + " from "
+            + "AliasedDimensionsTesting",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
+            + "Axis #2:\n"
+            + "{[Store].[Store].[USA].[South West]}\n"
+            + "Row #0: 72,631\n");
+    }
+
+    public static class TestDimensionsShareJoinTableModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestDimensionsShareJoinTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -3629,69 +3700,14 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-            + "  </Table>"
-            + "<Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-
-            + "<Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "    <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"store\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + " <Level name=\"Store Country\" table=\"store\"  column=\"store_country\" uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Region\"  table=\"region\" column=\"sales_region\"  uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Name\"    table=\"store\"  column=\"store_name\"    uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "<Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + "  <Level name=\"Country\" table=\"customer\" column=\"country\"                      uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Region\"  table=\"region\"   column=\"sales_region\"                 uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"City\"    table=\"customer\" column=\"city\"                         uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Name\"    table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "<Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\" formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestDimensionsShareJoinTableModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select  {[Store].[USA].[South West]} on rows,"
-            + "{[Customers].[USA].[South West]} on columns"
-            + " from "
-            + "AliasedDimensionsTesting",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Customers].[Customers].[USA].[South West]}\n"
-            + "Axis #2:\n"
-            + "{[Store].[Store].[USA].[South West]}\n"
-            + "Row #0: 72,631\n");
-    }
 
 
     /**
      * Tests two dimensions using same table (via different join paths).
      * both using a table alias.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionsShareJoinTableOneAliasModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
     //Left join have alias with "customer_region" . Level of  hierarchy use table (reference) without alias with table name "region".
@@ -3882,7 +3898,6 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestDimensionsShareJoinTableOneAliasModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
@@ -3898,7 +3913,7 @@ class SchemaTest {
     }
 
     // EMF version of TestDimensionsShareJoinTableOneAliasModifier
-    class TestDimensionsShareJoinTableOneAliasModifierEmf implements CatalogMappingSupplier {
+    public static class TestDimensionsShareJoinTableOneAliasModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestDimensionsShareJoinTableOneAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -4090,8 +4105,8 @@ class SchemaTest {
      * Tests two dimensions using same table (via different join paths).
      * both using a table alias.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionsShareJoinTableTwoAliasesModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
     //Left join have alias with "store_region" . Level of  hierarchy use table (reference) without alias with table name "region".
@@ -4282,7 +4297,6 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestDimensionsShareJoinTableTwoAliasesModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
@@ -4297,7 +4311,7 @@ class SchemaTest {
             + "Row #0: 72,631\n");
     }
 
-    private static class TestDimensionsShareJoinTableTwoAliasesModifierEmf implements CatalogMappingSupplier {
+    public static class TestDimensionsShareJoinTableTwoAliasesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestDimensionsShareJoinTableTwoAliasesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -4492,8 +4506,8 @@ class SchemaTest {
      * Tests two dimensions using same table (via different join paths).
      * both using a table alias.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestTwoAliasesDimensionsShareTableModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTwoAliasesDimensionsShareTable(Context<?> context) {
         /*
         class TestTwoAliasesDimensionsShareTableModifier extends PojoMappingModifier {
@@ -4650,7 +4664,6 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestTwoAliasesDimensionsShareTableModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
@@ -4665,7 +4678,7 @@ class SchemaTest {
             + "Row #0: 10,425\n");
     }
 
-    private static class TestTwoAliasesDimensionsShareTableModifierEmf implements CatalogMappingSupplier {
+    public static class TestTwoAliasesDimensionsShareTableModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestTwoAliasesDimensionsShareTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -4803,8 +4816,8 @@ class SchemaTest {
      * Tests two dimensions using same table with same foreign key.
      * both using a table alias.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTwoAliasesDimensionsShareTableSameForeignKeys(Context<?> context) {
         /*
         class TestTwoAliasesDimensionsShareTableSameForeignKeysModifier extends PojoMappingModifier {
@@ -4947,7 +4960,6 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
@@ -4962,7 +4974,7 @@ class SchemaTest {
             + "Row #0: 10,425\n");
     }
 
-    private static class TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf implements CatalogMappingSupplier {
+    public static class TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestTwoAliasesDimensionsShareTableSameForeignKeysModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -5075,8 +5087,8 @@ class SchemaTest {
     /**
      * Test Multiple DimensionUsages on same Dimension.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMultipleDimensionUsagesModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMultipleDimensionUsages(Context<?> context) {
         /*
         class TestMultipleDimensionUsagesModifier extends PojoMappingModifier {
@@ -5162,7 +5174,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestMultipleDimensionUsagesModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time2].[1997]} on columns,\n"
@@ -5177,7 +5188,7 @@ class SchemaTest {
             + "Row #0: 16,266\n");
     }
 
-    private static class TestMultipleDimensionUsagesModifierEmf implements CatalogMappingSupplier {
+    public static class TestMultipleDimensionUsagesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestMultipleDimensionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -5249,8 +5260,8 @@ class SchemaTest {
      * Test Multiple DimensionUsages on same Dimension.
      */
     @Disabled // Disabled caption: caption doesn't support now. this test will delete in future
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMultipleDimensionHierarchyCaptionUsagesModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMultipleDimensionHierarchyCaptionUsages(Context<?> context) {
         /*
         class TestMultipleDimensionHierarchyCaptionUsagesModifier extends PojoMappingModifier {
@@ -5337,7 +5348,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestMultipleDimensionHierarchyCaptionUsagesModifierEmf::new);
         String query =
             "select\n"
             + " {[Time2].[1997]} on columns,\n"
@@ -5360,7 +5370,7 @@ class SchemaTest {
         assertEquals("TimeOne", member2.getLevel().getDimension().getCaption());
     }
 
-    private static class TestMultipleDimensionHierarchyCaptionUsagesModifierEmf implements CatalogMappingSupplier {
+    public static class TestMultipleDimensionHierarchyCaptionUsagesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestMultipleDimensionHierarchyCaptionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -5434,8 +5444,8 @@ class SchemaTest {
      * This test verifies that the createDimension() API call is working
      * correctly.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionCreationModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionCreation(Context<?> context) {
         /*
         class TestDimensionCreationModifier extends PojoMappingModifier {
@@ -5492,7 +5502,6 @@ class SchemaTest {
 
         }
         */
-        withSchemaEmf(context, TestDimensionCreationModifierEmf::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
@@ -5518,7 +5527,7 @@ class SchemaTest {
             + "Row #0: 66,291\n");
     }
 
-    private static class TestDimensionCreationModifierEmf implements CatalogMappingSupplier {
+    public static class TestDimensionCreationModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestDimensionCreationModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -5573,8 +5582,8 @@ class SchemaTest {
     /**
      * Test DimensionUsage level attribute
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionUsageLevelModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionUsageLevel(Context<?> context) {
         /*
         class TestDimensionUsageLevelModifier extends PojoMappingModifier {
@@ -5636,7 +5645,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestDimensionUsageLevelModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store State].members} on columns \n"
@@ -5678,7 +5686,7 @@ class SchemaTest {
         }
     }
 
-    private static class TestDimensionUsageLevelModifierEmf implements CatalogMappingSupplier {
+    public static class TestDimensionUsageLevelModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestDimensionUsageLevelModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -5727,8 +5735,8 @@ class SchemaTest {
      * dimension usage name is different then source name
      */
     @Disabled // Disabled caption: caption doesn't support now. this test will delete in future
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestAllMemberMultipleDimensionUsagesModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAllMemberMultipleDimensionUsages(Context<?> context) {
         /*
         class TestAllMemberMultipleDimensionUsagesModifier extends PojoMappingModifier {
@@ -5828,7 +5836,6 @@ class SchemaTest {
         //
         // Under the old behavior, the member is called [Store2].[All Store2s].
         final String store2AllMember = "[Store2].[All Stores]";
-        withSchemaEmf(context, TestAllMemberMultipleDimensionUsagesModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store].[All Stores]} on columns,\n"
@@ -5853,7 +5860,7 @@ class SchemaTest {
             "Second Store", position.get(1).getDimension().getCaption());
     }
 
-    private static class TestAllMemberMultipleDimensionUsagesModifierEmf implements CatalogMappingSupplier {
+    public static class TestAllMemberMultipleDimensionUsagesModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestAllMemberMultipleDimensionUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -5874,10 +5881,10 @@ class SchemaTest {
             hierarchy.setAllMemberName("All Stores");
             hierarchy.setPrimaryKey(CatalogSupplier.COLUMN_STORE_ID_STORE_RAGGED);
             hierarchy.setSource(hierarchyTableQuery);
-            hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_COUNTRY);
-            hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_STATE);
-            hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_CITY);
-            hierarchy.getLevels().add(CatalogSupplier.LEVEL_STORE_NAME);
+            hierarchy.getLevels().add((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level) copier.get(CatalogSupplier.LEVEL_STORE_COUNTRY));
+            hierarchy.getLevels().add((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level) copier.get(CatalogSupplier.LEVEL_STORE_STATE));
+            hierarchy.getLevels().add((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level) copier.get(CatalogSupplier.LEVEL_STORE_CITY));
+            hierarchy.getLevels().add((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level) copier.get(CatalogSupplier.LEVEL_STORE_NAME));
 
             // Create Store2 dimension
             StandardDimension store2Dimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -5929,8 +5936,8 @@ class SchemaTest {
      * This test displays an informative error message if someone uses
      * an unaliased name instead of an aliased name
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestNonAliasedDimensionUsageModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNonAliasedDimensionUsage(Context<?> context) {
         /*
         class TestNonAliasedDimensionUsageModifier extends PojoMappingModifier {
@@ -6002,7 +6009,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestNonAliasedDimensionUsageModifierEmf::new);
         final String query = "select\n"
                              + " {[Time2].[Time].[1997]} on columns \n"
                              + "From [Sales Two Dimensions]";
@@ -6015,7 +6021,7 @@ class SchemaTest {
                 + "Row #0: 266,773\n");
     }
 
-    private static class TestNonAliasedDimensionUsageModifierEmf implements CatalogMappingSupplier {
+    public static class TestNonAliasedDimensionUsageModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestNonAliasedDimensionUsageModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -6070,8 +6076,8 @@ class SchemaTest {
      * Tests a cube whose fact table is a &lt;View&gt; element as well as a
      * degenerate dimension.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestViewDegenerateDimsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testViewDegenerateDims(Context<?> context) {
         /*
         class TestViewDegenerateDimsModifier extends PojoMappingModifier {
@@ -6234,7 +6240,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestViewDegenerateDimsModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " NON EMPTY {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
@@ -6250,7 +6255,7 @@ class SchemaTest {
             + "Row #0: 917.554\n");
     }
 
-    private static class TestViewDegenerateDimsModifierEmf implements CatalogMappingSupplier {
+    public static class TestViewDegenerateDimsModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestViewDegenerateDimsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -6407,8 +6412,8 @@ class SchemaTest {
     /**
      * Tests a cube whose fact table is a &lt;View&gt; element.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestViewFactTableModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testViewFactTable(Context<?> context) {
         /*
         class TestViewFactTableModifier extends PojoMappingModifier {
@@ -6563,7 +6568,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestViewFactTableModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
@@ -6587,7 +6591,7 @@ class SchemaTest {
             + "Row #2: 12,664.162\n");
     }
 
-    private static class TestViewFactTableModifierEmf implements CatalogMappingSupplier {
+    public static class TestViewFactTableModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestViewFactTableModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -6740,8 +6744,8 @@ class SchemaTest {
      * Tests a cube whose fact table is a &lt;View&gt; element, and which
      * has dimensions based on the fact table.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestViewFactTable2ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testViewFactTable2(Context<?> context) {
         /*
         class TestViewFactTable2Modifier extends PojoMappingModifier {
@@ -6859,7 +6863,6 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestViewFactTable2ModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Store Type].Children} on columns from [Store2]",
             "Axis #0:\n"
@@ -6879,7 +6882,7 @@ class SchemaTest {
             + "Row #0: 193,480\n");
     }
 
-    private static class TestViewFactTable2ModifierEmf implements CatalogMappingSupplier {
+    public static class TestViewFactTable2ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestViewFactTable2ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -6979,8 +6982,8 @@ class SchemaTest {
      * Measure@aggregator attribute still works. The preferred value these days
      * is "distinct-count".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDeprecatedDistinctCountAggregatorModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDeprecatedDistinctCountAggregator(Context<?> context) {
         /*
         class TestDeprecatedDistinctCountAggregatorModifier extends PojoMappingModifier{
@@ -7025,7 +7028,6 @@ class SchemaTest {
             }
         }
         */
-        withSchemaEmf(context, TestDeprecatedDistinctCountAggregatorModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],"
             + "    [Measures].[Customer Count], "
@@ -7060,7 +7062,7 @@ class SchemaTest {
         context.getCatalogCache().clear();
     }
 
-    private static class TestDeprecatedDistinctCountAggregatorModifierEmf implements CatalogMappingSupplier {
+    public static class TestDeprecatedDistinctCountAggregatorModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestDeprecatedDistinctCountAggregatorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -7103,8 +7105,8 @@ class SchemaTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-291">
      * Bug MONDRIAN-291, "'unknown usage' messages"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestUnknownUsagesModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnknownUsages(Context<?> context) {
         /*
         class TestUnknownUsagesModifier extends PojoMappingModifier {
@@ -7241,7 +7243,74 @@ class SchemaTest {
             return;
         }
 
-        class TestUnknownUsagesModifierEmf implements CatalogMappingSupplier {
+
+        final StringWriter sw = new StringWriter();
+
+
+        /*
+            withSchema(context,
+                "<?xml version=\"1.0\"?>\n"
+                + "<Schema name=\"FoodMart\">\n"
+                + "<Cube name=\"Sales Degen\">\n"
+                + "  <Table name=\"sales_fact_1997\">\n"
+                + "    <AggExclude pattern=\"agg_c_14_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_l_05_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_ll_01_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_c_special_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_l_03_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_l_04_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_pl_01_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_lc_100_sales_fact_1997\"/>\n"
+                + "    <AggName name=\"agg_c_10_sales_fact_1997\">\n"
+                + "      <AggFactCount column=\"fact_count\"/>\n"
+                + "      <AggMeasure name=\"[Measures].[Store Cost]\" column=\"store_cost\" />\n"
+                + "      <AggMeasure name=\"[Measures].[Store Sales]\" column=\"store_sales\" />\n"
+                + "     </AggName>\n"
+                + "  </Table>\n"
+                + "  <Dimension name=\"Time\" type=\"TimeDimension\" foreignKey=\"time_id\">\n"
+                + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\">\n"
+                + "      <Table name=\"time_by_day\"/>\n"
+                + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
+                + "          levelType=\"TimeYears\"/>\n"
+                + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
+                + "          levelType=\"TimeQuarters\"/>\n"
+                + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
+                + "          levelType=\"TimeMonths\"/>\n"
+                + "    </Hierarchy>\n"
+                + "  </Dimension>\n"
+                + "  <Dimension name=\"Time Degenerate\">\n"
+                + "    <Hierarchy hasAll=\"true\" primaryKey=\"time_id\">\n"
+                + "      <Level name=\"day\" column=\"time_id\"/>\n"
+                + "      <Level name=\"month\" column=\"product_id\" type=\"Numeric\"/>\n"
+                + "    </Hierarchy>"
+                + "  </Dimension>"
+                + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
+                + "      formatString=\"#,###.00\"/>\n"
+                + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
+                + "      formatString=\"#,###.00\"/>\n"
+                + "</Cube>\n"
+                + "</Schema>");
+         */
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
+                "select from [Sales Degen]",
+                "Axis #0:\n"
+                + "{}\n"
+                + "225,627.23");
+
+        // Note that 'product_id' is NOT one of the columns with unknown usage.
+        // It is used as a level in the degenerate dimension [Time Degenerate].
+        assertEqualsVerbose(
+            "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'customer_count' with unknown usage.\n"
+            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'month_of_year' with unknown usage.\n"
+            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'quarter' with unknown usage.\n"
+            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'the_year' with unknown usage.\n"
+            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'unit_sales' with unknown usage.\n",
+            sw.toString());
+    }
+
+    public static class TestUnknownUsagesModifierEmf implements CatalogMappingSupplier {
             private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
             public TestUnknownUsagesModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 // Create aggregation excludes
@@ -7411,75 +7480,8 @@ class SchemaTest {
             }
         }
 
-        final StringWriter sw = new StringWriter();
-
-
-        /*
-            withSchema(context,
-                "<?xml version=\"1.0\"?>\n"
-                + "<Schema name=\"FoodMart\">\n"
-                + "<Cube name=\"Sales Degen\">\n"
-                + "  <Table name=\"sales_fact_1997\">\n"
-                + "    <AggExclude pattern=\"agg_c_14_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_l_05_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_ll_01_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_c_special_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_l_03_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_l_04_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_pl_01_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_lc_100_sales_fact_1997\"/>\n"
-                + "    <AggName name=\"agg_c_10_sales_fact_1997\">\n"
-                + "      <AggFactCount column=\"fact_count\"/>\n"
-                + "      <AggMeasure name=\"[Measures].[Store Cost]\" column=\"store_cost\" />\n"
-                + "      <AggMeasure name=\"[Measures].[Store Sales]\" column=\"store_sales\" />\n"
-                + "     </AggName>\n"
-                + "  </Table>\n"
-                + "  <Dimension name=\"Time\" type=\"TimeDimension\" foreignKey=\"time_id\">\n"
-                + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\">\n"
-                + "      <Table name=\"time_by_day\"/>\n"
-                + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-                + "          levelType=\"TimeYears\"/>\n"
-                + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
-                + "          levelType=\"TimeQuarters\"/>\n"
-                + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
-                + "          levelType=\"TimeMonths\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Dimension name=\"Time Degenerate\">\n"
-                + "    <Hierarchy hasAll=\"true\" primaryKey=\"time_id\">\n"
-                + "      <Level name=\"day\" column=\"time_id\"/>\n"
-                + "      <Level name=\"month\" column=\"product_id\" type=\"Numeric\"/>\n"
-                + "    </Hierarchy>"
-                + "  </Dimension>"
-                + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###.00\"/>\n"
-                + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###.00\"/>\n"
-                + "</Cube>\n"
-                + "</Schema>");
-         */
-            withSchemaEmf(context, TestUnknownUsagesModifierEmf::new);
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select from [Sales Degen]",
-                "Axis #0:\n"
-                + "{}\n"
-                + "225,627.23");
-
-        // Note that 'product_id' is NOT one of the columns with unknown usage.
-        // It is used as a level in the degenerate dimension [Time Degenerate].
-        assertEqualsVerbose(
-            "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'customer_count' with unknown usage.\n"
-            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'month_of_year' with unknown usage.\n"
-            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'quarter' with unknown usage.\n"
-            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'the_year' with unknown usage.\n"
-            + "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_c_10_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'unit_sales' with unknown usage.\n",
-            sw.toString());
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestUnknownUsages1ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnknownUsages1(Context<?> context) {
         /*
         class TestUnknownUsages1Modifier extends PojoMappingModifier {
@@ -7649,7 +7651,95 @@ class SchemaTest {
             return;
         }
 
-        class TestUnknownUsages1ModifierEmf implements CatalogMappingSupplier {
+
+        final Logger logger = LoggerFactory.getLogger(AggTableManager.class);
+        //propSaver.setAtLeast(logger, org.apache.logging.log4j.Level.WARN);
+
+        final StringWriter sw = new StringWriter();
+        //final LevelRangeFilter filter = LevelRangeFilter.createFilter(org.apache.logging.log4j.Level.WARN, null, null, null);
+        //final Appender appender =
+        //    WriterAppender.newBuilder()
+        //        .setFilter(filter)
+        //        .setLayout(PatternLayout.createDefaultLayout())
+        //        .setTarget(sw)
+        //        .build();
+
+//        LoggerContext<?> ctx = (LoggerContext) LogManager.getContext( false );
+        //Configuration config = ctx.getConfiguration();
+        //LoggerConfig loggerConfig = config.getLoggerConfig( logger.getName() );
+        //loggerConfig.addAppender( appender, org.apache.logging.log4j.Level.ALL, null );
+        //ctx.updateLoggers();
+
+        try {
+            /*
+            withSchema(context,
+                "<?xml version=\"1.0\"?>\n"
+                + "<Schema name=\"FoodMart\">\n"
+                + "<Cube name=\"Denormalized Sales\">\n"
+                + "  <Table name=\"sales_fact_1997\">\n"
+                + "    <AggExclude pattern=\"agg_c_14_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_l_05_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_ll_01_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_c_special_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_l_04_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_pl_01_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_c_10_sales_fact_1997\"/>\n"
+                + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
+                + "    <AggName name=\"agg_l_03_sales_fact_1997\">\n"
+                + "      <AggFactCount column=\"fact_count\"/>\n"
+                + "      <AggMeasure name=\"[Measures].[Store Cost]\" column=\"store_cost\" />\n"
+                + "      <AggMeasure name=\"[Measures].[Store Sales]\" column=\"store_sales\" />\n"
+                + "      <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
+                + "      <AggLevel name=\"[Customer].[Customer ID]\" column=\"customer_id\" />\n"
+                + "      <AggForeignKey factColumn=\"time_id\" aggColumn=\"time_id\" />\n"
+                + "     </AggName>\n"
+                + "  </Table>\n"
+                + "  <Dimension name=\"Time\" type=\"TimeDimension\" foreignKey=\"time_id\">\n"
+                + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\">\n"
+                + "      <Table name=\"time_by_day\"/>\n"
+                + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
+                + "          levelType=\"TimeYears\"/>\n"
+                + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
+                + "          levelType=\"TimeQuarters\"/>\n"
+                + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
+                + "          levelType=\"TimeMonths\"/>\n"
+                + "    </Hierarchy>\n"
+                + "  </Dimension>\n"
+                + "  <Dimension name=\"Customer\">\n"
+                + "    <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
+                + "      <Level name=\"Customer ID\" column=\"customer_id\"/>\n"
+                + "    </Hierarchy>"
+                + "  </Dimension>"
+                + "  <Dimension name=\"Product\">\n"
+                + "    <Hierarchy hasAll=\"true\" primaryKey=\"product_id\">\n"
+                + "      <Level name=\"Product ID\" column=\"product_id\"/>\n"
+                + "    </Hierarchy>"
+                + "  </Dimension>"
+                + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
+                + "      formatString=\"#,###.00\"/>\n"
+                + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
+                + "      formatString=\"#,###.00\"/>\n"
+                + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
+                + "      formatString=\"#,###\"/>\n"
+                + "</Cube>\n"
+                + "</Schema>");
+             */
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
+                "select from [Denormalized Sales]",
+                "Axis #0:\n"
+                + "{}\n"
+                + "225,627.23");
+        } finally {
+            //loggerConfig.removeAppender( appender.getName() );
+            //ctx.updateLoggers();
+        }
+        assertEqualsVerbose(
+            "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_l_03_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'time_id' with unknown usage.\n",
+            sw.toString());
+    }
+
+    public static class TestUnknownUsages1ModifierEmf implements CatalogMappingSupplier {
             private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
             public TestUnknownUsages1ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 // Create aggregation excludes
@@ -7843,96 +7933,8 @@ class SchemaTest {
             }
         }
 
-        final Logger logger = LoggerFactory.getLogger(AggTableManager.class);
-        //propSaver.setAtLeast(logger, org.apache.logging.log4j.Level.WARN);
-
-        final StringWriter sw = new StringWriter();
-        //final LevelRangeFilter filter = LevelRangeFilter.createFilter(org.apache.logging.log4j.Level.WARN, null, null, null);
-        //final Appender appender =
-        //    WriterAppender.newBuilder()
-        //        .setFilter(filter)
-        //        .setLayout(PatternLayout.createDefaultLayout())
-        //        .setTarget(sw)
-        //        .build();
-
-//        LoggerContext<?> ctx = (LoggerContext) LogManager.getContext( false );
-        //Configuration config = ctx.getConfiguration();
-        //LoggerConfig loggerConfig = config.getLoggerConfig( logger.getName() );
-        //loggerConfig.addAppender( appender, org.apache.logging.log4j.Level.ALL, null );
-        //ctx.updateLoggers();
-
-        try {
-            /*
-            withSchema(context,
-                "<?xml version=\"1.0\"?>\n"
-                + "<Schema name=\"FoodMart\">\n"
-                + "<Cube name=\"Denormalized Sales\">\n"
-                + "  <Table name=\"sales_fact_1997\">\n"
-                + "    <AggExclude pattern=\"agg_c_14_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_l_05_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_ll_01_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_c_special_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_l_04_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_pl_01_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_c_10_sales_fact_1997\"/>\n"
-                + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-                + "    <AggName name=\"agg_l_03_sales_fact_1997\">\n"
-                + "      <AggFactCount column=\"fact_count\"/>\n"
-                + "      <AggMeasure name=\"[Measures].[Store Cost]\" column=\"store_cost\" />\n"
-                + "      <AggMeasure name=\"[Measures].[Store Sales]\" column=\"store_sales\" />\n"
-                + "      <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
-                + "      <AggLevel name=\"[Customer].[Customer ID]\" column=\"customer_id\" />\n"
-                + "      <AggForeignKey factColumn=\"time_id\" aggColumn=\"time_id\" />\n"
-                + "     </AggName>\n"
-                + "  </Table>\n"
-                + "  <Dimension name=\"Time\" type=\"TimeDimension\" foreignKey=\"time_id\">\n"
-                + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\">\n"
-                + "      <Table name=\"time_by_day\"/>\n"
-                + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-                + "          levelType=\"TimeYears\"/>\n"
-                + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
-                + "          levelType=\"TimeQuarters\"/>\n"
-                + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
-                + "          levelType=\"TimeMonths\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Dimension name=\"Customer\">\n"
-                + "    <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-                + "      <Level name=\"Customer ID\" column=\"customer_id\"/>\n"
-                + "    </Hierarchy>"
-                + "  </Dimension>"
-                + "  <Dimension name=\"Product\">\n"
-                + "    <Hierarchy hasAll=\"true\" primaryKey=\"product_id\">\n"
-                + "      <Level name=\"Product ID\" column=\"product_id\"/>\n"
-                + "    </Hierarchy>"
-                + "  </Dimension>"
-                + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###.00\"/>\n"
-                + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###.00\"/>\n"
-                + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###\"/>\n"
-                + "</Cube>\n"
-                + "</Schema>");
-             */
-            withSchemaEmf(context, TestUnknownUsages1ModifierEmf::new);
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select from [Denormalized Sales]",
-                "Axis #0:\n"
-                + "{}\n"
-                + "225,627.23");
-        } finally {
-            //loggerConfig.removeAppender( appender.getName() );
-            //ctx.updateLoggers();
-        }
-        assertEqualsVerbose(
-            "WARN - Recognizer.checkUnusedColumns: Candidate aggregate table 'agg_l_03_sales_fact_1997' for fact table 'sales_fact_1997' has a column 'time_id' with unknown usage.\n",
-            sw.toString());
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestPropertyFormatterModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testPropertyFormatter(Context<?> context) {
         /*
         class TestPropertyFormatterModifier extends PojoMappingModifier {
@@ -7987,7 +7989,32 @@ class SchemaTest {
                     return result;
                 }
         }*/
-        class TestPropertyFormatterModifierEmf implements CatalogMappingSupplier {
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+                "Sales",
+                "  <Dimension name=\"Store2\" foreignKey=\"store_id\">\n"
+                + "    <Hierarchy name=\"Store2\" hasAll=\"true\" allMemberName=\"All Stores\" primaryKey=\"store_id\">\n"
+                + "      <Table name=\"store_ragged\"/>\n"
+                + "      <Level name=\"Store2\" table=\"store_ragged\" column=\"store_id\" captionColumn=\"store_name\" uniqueMembers=\"true\">\n"
+                + "           <Property name=\"Store Type\" column=\"store_type\" formatter=\""
+                + DummyPropertyFormatter.class.getName()
+                + "\"/>"
+                + "           <Property name=\"Store Manager\" column=\"store_manager\"/>"
+                + "     </Level>"
+                + "    </Hierarchy>\n"
+                + "  </Dimension>\n"));
+         */
+        try {
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
+            fail("expected exception");
+        } catch (RuntimeException e) {
+            checkThrowable(
+                e,
+                "Failed to load formatter class 'mondrian.test.SchemaTest$DummyPropertyFormatter' for property 'Store Type'.");
+        }
+    }
+
+    public static class TestPropertyFormatterModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
             public TestPropertyFormatterModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalog);
@@ -8060,31 +8087,6 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-                "Sales",
-                "  <Dimension name=\"Store2\" foreignKey=\"store_id\">\n"
-                + "    <Hierarchy name=\"Store2\" hasAll=\"true\" allMemberName=\"All Stores\" primaryKey=\"store_id\">\n"
-                + "      <Table name=\"store_ragged\"/>\n"
-                + "      <Level name=\"Store2\" table=\"store_ragged\" column=\"store_id\" captionColumn=\"store_name\" uniqueMembers=\"true\">\n"
-                + "           <Property name=\"Store Type\" column=\"store_type\" formatter=\""
-                + DummyPropertyFormatter.class.getName()
-                + "\"/>"
-                + "           <Property name=\"Store Manager\" column=\"store_manager\"/>"
-                + "     </Level>"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"));
-         */
-        try {
-            withSchemaEmf(context, TestPropertyFormatterModifierEmf::new);
-            assertSimpleQuery(context.getConnectionWithDefaultRole());
-            fail("expected exception");
-        } catch (RuntimeException e) {
-            checkThrowable(
-                e,
-                "Failed to load formatter class 'mondrian.test.SchemaTest$DummyPropertyFormatter' for property 'Store Type'.");
-        }
-    }
 
     /**
      * Bug <a href="http://jira.pentaho.com/browse/MONDRIAN-233">MONDRIAN-233,
@@ -8098,8 +8100,8 @@ class SchemaTest {
      * probably the same: when measures are registered in a star, they should
      * be qualified by cube name.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian233ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian233(Context<?> context) {
         /*
         class TestBugMondrian233Modifier extends PojoMappingModifier {
@@ -8158,7 +8160,6 @@ class SchemaTest {
             }
         }
         */
-        withSchemaEmf(context, TestBugMondrian233ModifierEmf::new);
         // With bug, and with aggregates enabled, query against Sales returns
         // 565,238, which is actually the total for [Store Sales]. I think the
         // aggregate tables are getting crossed.
@@ -8176,7 +8177,7 @@ class SchemaTest {
             expected);
     }
 
-    class TestBugMondrian233ModifierEmf implements CatalogMappingSupplier {
+    public static class TestBugMondrian233ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
         public TestBugMondrian233ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog) {
@@ -8246,8 +8247,8 @@ class SchemaTest {
      * Test case for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-303">
      * MONDRIAN-303, "Property column shifting when use captionColumn"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian303ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian303(Context<?> context) {
         /*
         class TestBugMondrian303Modifier extends PojoMappingModifier {
@@ -8320,7 +8321,6 @@ class SchemaTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>\n"));
          */
-        withSchemaEmf(context, TestBugMondrian303ModifierEmf::new);
         // In the query below Mondrian (prior to the fix) would
         // return the store name instead of the store type.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -8378,7 +8378,7 @@ class SchemaTest {
             + "Row #12: Supermarket\n");
     }
 
-    class TestBugMondrian303ModifierEmf implements CatalogMappingSupplier {
+    public static class TestBugMondrian303ModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
 
         public TestBugMondrian303ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -8446,8 +8446,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeWithOneDimensionOneMeasureModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeWithOneDimensionOneMeasure(Context<?> context) {
         /*
         class TestCubeWithOneDimensionOneMeasureModifier extends PojoMappingModifier {
@@ -8528,7 +8528,6 @@ class SchemaTest {
             null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestCubeWithOneDimensionOneMeasureModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Promotion Media]} on columns from [OneDim]",
             "Axis #0:\n"
@@ -8538,7 +8537,7 @@ class SchemaTest {
             + "Row #0: 266,773\n");
     }
 
-    class TestCubeWithOneDimensionOneMeasureModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeWithOneDimensionOneMeasureModifierEmf implements CatalogMappingSupplier {
         private CatalogImpl catalog;
         public TestCubeWithOneDimensionOneMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
             catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
@@ -8606,8 +8605,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeWithOneDimensionUsageOneMeasureModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeWithOneDimensionUsageOneMeasure(Context<?> context) {
         /*
         class TestCubeWithOneDimensionUsageOneMeasureModifier extends PojoMappingModifier {
@@ -8665,7 +8664,6 @@ class SchemaTest {
             null, null, null, null);
         withSchema(context, schema);
         */
-        withSchemaEmf(context, TestCubeWithOneDimensionUsageOneMeasureModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Product].Children} on columns from [OneDimUsage]",
             "Axis #0:\n"
@@ -8679,7 +8677,7 @@ class SchemaTest {
             + "Row #0: 50,236\n");
     }
 
-    class TestCubeWithOneDimensionUsageOneMeasureModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeWithOneDimensionUsageOneMeasureModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCubeWithOneDimensionUsageOneMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -8727,8 +8725,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeHasFactModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeHasFact(Context<?> context) {
         /*
         class TestCubeHasFactModifier extends PojoMappingModifier {
@@ -8757,7 +8755,6 @@ class SchemaTest {
             null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestCubeHasFactModifierEmf::new);
         Throwable throwable = null;
         try {
             assertSimpleQuery(context.getConnectionWithDefaultRole());
@@ -8769,7 +8766,7 @@ class SchemaTest {
             "Must specify fact table of cube 'Cube with caption'");
     }
 
-    class TestCubeHasFactModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeHasFactModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCubeHasFactModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -8789,8 +8786,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeCaptionModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeCaption(Context<?> context) throws SQLException {
         /*
         class TestCubeCaptionModifier extends PojoMappingModifier {
@@ -8843,7 +8840,6 @@ class SchemaTest {
             null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestCubeCaptionModifierEmf::new);
         final List<Cube> cubes =
             context.getConnectionWithDefaultRole().getCatalog().getCubes();
         Optional<Cube> optionalCube1 = cubes.stream().filter(c -> "Cube with caption".equals(c.getName())).findFirst();
@@ -8855,7 +8851,7 @@ class SchemaTest {
         assertEquals("Warehouse and Sales with caption", cube2.getCaption());
     }
 
-    class TestCubeCaptionModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeCaptionModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCubeCaptionModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -8888,7 +8884,8 @@ class SchemaTest {
             vc.setName("Warehouse and Sales with caption");
             vc.setDefaultMeasure((org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.MemberLike) copier.get(
                 org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.MEASURE_STORE_SALES));
-            vc.getDimensionConnectors().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.CONNECTOR_CUSTOMER);
+            vc.getDimensionConnectors().add((org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector) copier.get(
+                org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.CONNECTOR_CUSTOMER));
 
             catalog.getImportedElement().add(c);
             catalog.getImportedElement().add(vc);
@@ -8899,8 +8896,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeWithNoDimensionsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeWithNoDimensions(Context<?> context) {
         /*
         class TestCubeWithNoDimensionsModifier extends PojoMappingModifier {
@@ -8933,7 +8930,6 @@ class SchemaTest {
             }
         }
         */
-        withSchemaEmf(context, TestCubeWithNoDimensionsModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns from [NoDim]",
             "Axis #0:\n"
@@ -8943,7 +8939,7 @@ class SchemaTest {
             + "Row #0: 266,773\n");
     }
 
-    class TestCubeWithNoDimensionsModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeWithNoDimensionsModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCubeWithNoDimensionsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -8982,8 +8978,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeWithNoMeasuresFailsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeWithNoMeasuresFails(Context<?> context) {
         /*
         class TestCubeWithNoMeasuresFailsModifier extends PojoMappingModifier {
@@ -9058,14 +9054,13 @@ class SchemaTest {
             null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestCubeWithNoMeasuresFailsModifierEmf::new);
         // Does not fail with
         //    "Hierarchy '[Measures]' is invalid (has no members)"
         // because of the implicit [Fact Count] measure.
         assertSimpleQuery(context.getConnectionWithDefaultRole());
     }
 
-    class TestCubeWithNoMeasuresFailsModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeWithNoMeasuresFailsModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCubeWithNoMeasuresFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9138,8 +9133,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubeWithOneCalcMeasureModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCubeWithOneCalcMeasure(Context<?> context) {
         /*
         class TestCubeWithOneCalcMeasureModifier extends PojoMappingModifier {
@@ -9215,7 +9210,6 @@ class SchemaTest {
         withSchema(context, schema);
         */
 
-        withSchemaEmf(context, TestCubeWithOneCalcMeasureModifierEmf::new);
         // Because there are no explicit stored measures, the default measure is
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
@@ -9229,7 +9223,7 @@ class SchemaTest {
             + "Row #0: 1,171\n");
     }
 
-    class TestCubeWithOneCalcMeasureModifierEmf implements CatalogMappingSupplier {
+    public static class TestCubeWithOneCalcMeasureModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCubeWithOneCalcMeasureModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9302,8 +9296,9 @@ class SchemaTest {
      * "Ability to define non-measure calculated members in a cube under a
      * specifc parent"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier1Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCalcMemberInCube(Context<?> context) {
         /*
         class TestCalcMemberInCubeModifier1 extends PojoMappingModifier {
@@ -9345,7 +9340,6 @@ class SchemaTest {
                 + "</CalculatedMember>",
                 null, false));
         */
-        withSchemaEmf(context, TestCalcMemberInCubeModifier1Emf::new);
         // Because there are no explicit stored measures, the default measure is
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
@@ -9367,7 +9361,12 @@ class SchemaTest {
                 + "Axis #1:\n"
                 + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier2Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCalcMemberInCubeHierarchyAndDimensionBothSpecified(Context<?> context) {
         // Test where hierarchy & dimension both specified. should fail
         try {
             /*
@@ -9412,8 +9411,6 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCalcMemberInCubeModifier2Emf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
@@ -9429,7 +9426,12 @@ class SchemaTest {
             //        "Cannot specify both a dimension and hierarchy"
             //        + " for calculated member 'SF and LA' in cube 'Sales'"));
         }
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier3Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCalcMemberInCubeInvalidHierarchyName(Context<?> context) {
         // test where hierarchy is not uname of valid hierarchy. should fail
         try {
             /*
@@ -9472,8 +9474,6 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCalcMemberInCubeModifier3Emf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
@@ -9487,7 +9487,12 @@ class SchemaTest {
                 e.getMessage().contains(
                     "The calculated member 'SF and LA' in cube 'Sales' is defined for hierarchy '[Store Type].[Store Type]' but its parent member is not part of that hierarchy"));
         }
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier4Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCalcMemberInCubeInvalidFormula(Context<?> context) {
         // test where formula is invalid. should fail
         try {
             /*
@@ -9529,8 +9534,6 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCalcMemberInCubeModifier4Emf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
@@ -9544,7 +9547,12 @@ class SchemaTest {
                 e.getMessage().contains(
                     "Named set in cube 'Sales' has bad formula"));
         }
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier5Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCalcMemberInCubeInvalidParent(Context<?> context) {
         // Test where parent is invalid. should fail
         try {
             /*
@@ -9587,8 +9595,6 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCalcMemberInCubeModifier5Emf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
@@ -9604,7 +9610,12 @@ class SchemaTest {
                     + ".[Baconville]' for calculated member 'SF and LA'"
                     + " in cube 'Sales'"));
         }
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier6Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCalcMemberInCubeParentNotInSameHierarchy(Context<?> context) {
         // test where parent is not in same hierarchy as hierarchy. should fail
         try {
             /*
@@ -9648,8 +9659,6 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCalcMemberInCubeModifier6Emf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
@@ -9665,7 +9674,12 @@ class SchemaTest {
                     + " is defined for hierarchy '[Store Type].[Store Type]' but its"
                     + " parent member is not part of that hierarchy"));
         }
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCalcMemberInCubeModifier7Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCalcMemberInCubeNoFormula(Context<?> context) {
         // test where calc member has no formula (formula attribute or
         //   embedded element); should fail
         try {
@@ -9708,8 +9722,6 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCalcMemberInCubeModifier7Emf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
@@ -9725,7 +9737,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier1Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier1Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier1Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9760,7 +9772,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier2Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier2Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier2Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9799,7 +9811,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier3Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier3Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier3Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9837,7 +9849,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier4Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier4Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier4Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9875,7 +9887,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier5Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier5Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier5Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9913,7 +9925,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier6Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier6Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier6Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9951,7 +9963,7 @@ class SchemaTest {
         }
     }
 
-    class TestCalcMemberInCubeModifier7Emf implements CatalogMappingSupplier {
+    public static class TestCalcMemberInCubeModifier7Emf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestCalcMemberInCubeModifier7Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -9989,7 +10001,7 @@ class SchemaTest {
         }
     }
 
-    class TestAggTableSupportOfSharedDimsModifierEmf implements CatalogMappingSupplier {
+    public static class TestAggTableSupportOfSharedDimsModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestAggTableSupportOfSharedDimsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -10065,8 +10077,8 @@ class SchemaTest {
     /**
      * this test triggers an exception out of the aggregate table manager
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestAggTableSupportOfSharedDimsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAggTableSupportOfSharedDims(Context<?> context) {
         /*
         class TestAggTableSupportOfSharedDimsModifier extends PojoMappingModifier {
@@ -10142,7 +10154,6 @@ class SchemaTest {
 
             withSchema(context, schema);
              */
-            withSchemaEmf(context, TestAggTableSupportOfSharedDimsModifierEmf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select\n"
                 + " {[Time2].[1997]} on columns,\n"
@@ -10155,20 +10166,10 @@ class SchemaTest {
                 + "Axis #2:\n"
                 + "{[Time].[1997].[Q3]}\n"
                 + "Row #0: 16,266\n");
-            // turn off caching
-            ((TestContextImpl)context).setDisableCaching(true);
-
-            // re-read aggregates
-            ((TestContextImpl)context).setUseAggregates(true);
-            ((TestContextImpl)context).setReadAggregates(false);
-            ((TestContextImpl)context).setReadAggregates(true);
-
-            // force reloading of aggregates, which currently throws an
-            // exception
         }
     }
 
-    class TestLevelTableAttributeAsViewModifierEmf implements CatalogMappingSupplier {
+    public static class TestLevelTableAttributeAsViewModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestLevelTableAttributeAsViewModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -10296,8 +10297,8 @@ class SchemaTest {
     /**
      * Verifies that RolapHierarchy.tableExists() supports views.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLevelTableAttributeAsViewModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLevelTableAttributeAsView(Context<?> context) {
         /*
         class TestLevelTableAttributeAsViewModifier extends PojoMappingModifier {
@@ -10426,7 +10427,6 @@ class SchemaTest {
         withSchema(context, schema);
          */
 
-        withSchemaEmf(context, TestLevelTableAttributeAsViewModifierEmf::new);
         if (!getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery()) {
             return;
         }
@@ -10442,8 +10442,8 @@ class SchemaTest {
                 result.getAxes()[0].getPositions()));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestInvalidSchemaAccessEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testInvalidSchemaAccess(Context<?> context) {
         /*
         class TestInvalidSchemaAccess extends PojoMappingModifier {
@@ -10466,7 +10466,21 @@ class SchemaTest {
          * EMF version of TestInvalidSchemaAccess
          * Creates access role 'Role1' with catalog grant that has null access (invalid)
          */
-        class TestInvalidSchemaAccessEmf implements CatalogMappingSupplier {
+        /*
+        String baseSchema = TestUtil.getRawSchema(context);
+        String schema = SchemaUtil.getSchema(baseSchema,
+            null, null, null, null, null,
+            "<Role name=\"Role1\">\n"
+            + "  <SchemaGrant access=\"invalid\"/>\n"
+            + "</Role>");
+        withSchema(context, schema);
+         */
+        assertQueryThrows(context, List.of("Role1"),
+            "select from [Sales]",
+            "MDX cube 'Sales' not found");
+    }
+
+    public static class TestInvalidSchemaAccessEmf implements CatalogMappingSupplier {
 
             private CatalogImpl catalog;
 
@@ -10496,22 +10510,8 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, null, null, null, null,
-            "<Role name=\"Role1\">\n"
-            + "  <SchemaGrant access=\"invalid\"/>\n"
-            + "</Role>");
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestInvalidSchemaAccessEmf::new);
-        assertQueryThrows(context, List.of("Role1"),
-            "select from [Sales]",
-            "MDX cube 'Sales' not found");
-    }
 
-    class TestAllMemberNoStringReplaceModifierEmf implements CatalogMappingSupplier {
+    public static class TestAllMemberNoStringReplaceModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestAllMemberNoStringReplaceModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -10620,8 +10620,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestAllMemberNoStringReplaceModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAllMemberNoStringReplace(Context<?> context) {
         /*
         class TestAllMemberNoStringReplaceModifier extends PojoMappingModifier {
@@ -10688,7 +10688,6 @@ class SchemaTest {
             }
         }
         */
-        withSchemaEmf(context, TestAllMemberNoStringReplaceModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [TIME].[CALENDAR].[All TIME(CALENDAR)] on columns\n"
             + "from [Sales Special Time]",
@@ -10699,7 +10698,7 @@ class SchemaTest {
             + "Row #0: 266,773\n");
     }
 
-    class TestUnionRoleModifierEmf implements CatalogMappingSupplier {
+    public static class TestUnionRoleModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestUnionRoleModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -10754,8 +10753,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestUnionRoleModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnionRole(Context<?> context) {
         /*
         class TestUnionRoleModifier extends PojoMappingModifier {
@@ -10817,15 +10816,14 @@ class SchemaTest {
             + "</Role>\n");
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestUnionRoleModifierEmf::new);
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1Plus2Plus1"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Role1Plus2Plus1"))),
             "select from [Sales]",
             "Axis #0:\n"
             + "{}\n"
             + "266,773");
     }
 
-    class TestUnionRoleContainsGrantsModifierEmf implements CatalogMappingSupplier {
+    public static class TestUnionRoleContainsGrantsModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestUnionRoleContainsGrantsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -10866,8 +10864,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestUnionRoleContainsGrantsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnionRoleContainsGrants(Context<?> context) {
         /*
         class TestUnionRoleContainsGrantsModifier extends PojoMappingModifier {
@@ -10908,12 +10906,11 @@ class SchemaTest {
             + "</Role>\n");
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestUnionRoleContainsGrantsModifierEmf::new);
         assertQueryThrows(context, List.of("Role1Plus2"),
             "select from [Sales]", "Union role must not contain grants");
     }
 
-    class TestUnionRoleIllegalForwardRefModifierEmf implements CatalogMappingSupplier {
+    public static class TestUnionRoleIllegalForwardRefModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestUnionRoleIllegalForwardRefModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -10967,8 +10964,8 @@ class SchemaTest {
     }
 
     @Disabled // Disabled role now as reference to role not a string. we not aable set wrong string role. this test will delete in future
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestUnionRoleIllegalForwardRefModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnionRoleIllegalForwardRef(Context<?> context) {
         /*
         class TestUnionRoleIllegalForwardRefModifier extends PojoMappingModifier {
@@ -11015,12 +11012,11 @@ class SchemaTest {
             + "</Role>");
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestUnionRoleIllegalForwardRefModifierEmf::new);
         assertQueryThrows(context, List.of("Role1Plus2"),
             "select from [Sales]", "Unknown role 'Role2'");
     }
 
-    class TestVirtualCubeNamedSetSupportInSchemaModifierEmf implements CatalogMappingSupplier {
+    public static class TestVirtualCubeNamedSetSupportInSchemaModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestVirtualCubeNamedSetSupportInSchemaModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -11052,8 +11048,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestVirtualCubeNamedSetSupportInSchemaModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testVirtualCubeNamedSetSupportInSchema(Context<?> context) {
         /*
         class TestVirtualCubeNamedSetSupportInSchemaModifier extends PojoMappingModifier {
@@ -11080,7 +11076,6 @@ class SchemaTest {
             "<NamedSet name=\"Non CA State Stores\" "
             + "formula=\"EXCEPT({[Store].[Store Country].[USA].children},{[Store].[Store Country].[USA].[CA]})\"/>"));
          */
-        withSchemaEmf(context, TestVirtualCubeNamedSetSupportInSchemaModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
             + "SET [Non CA State Stores] AS 'EXCEPT({[Store].[Store Country].[USA].children},"
@@ -11117,7 +11112,7 @@ class SchemaTest {
             + "Row #0: 192,025\n");
     }
 
-    class TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf implements CatalogMappingSupplier {
+    public static class TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -11151,8 +11146,8 @@ class SchemaTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testVirtualCubeNamedSetSupportInSchemaError(Context<?> context) {
         /*
         class TestVirtualCubeNamedSetSupportInSchemaErrorModifier extends PojoMappingModifier {
@@ -11180,7 +11175,6 @@ class SchemaTest {
          */
 
         try {
-            withSchemaEmf(context, TestVirtualCubeNamedSetSupportInSchemaErrorModifierEmf::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH "
                 + "SET [Non CA State Stores] AS 'EXCEPT({[Store].[Store Country].[USA].children},"
@@ -11205,7 +11199,7 @@ class SchemaTest {
         }
     }
 
-    class TestValidatorFindsNumericLevelModifierEmf implements CatalogMappingSupplier {
+    public static class TestValidatorFindsNumericLevelModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestValidatorFindsNumericLevelModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -11266,8 +11260,8 @@ class SchemaTest {
     }
 
     @Disabled //not implemented yet
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestValidatorFindsNumericLevelModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void _testValidatorFindsNumericLevel(Context<?> context) {
         /*
         class TestValidatorFindsNumericLevelModifier extends PojoMappingModifier {
@@ -11317,12 +11311,11 @@ class SchemaTest {
                 + "    </Hierarchy>\n"
                 + "  </Dimension>"));
          */
-        withSchemaEmf(context, TestValidatorFindsNumericLevelModifierEmf::new);
         final List<Exception> exceptionList = TestUtil.getSchemaWarnings(context);
         assertContains(exceptionList, "todo xxxxx");
     }
 
-    class TestInvalidRoleErrorModifierEmf implements CatalogMappingSupplier {
+    public static class TestInvalidRoleErrorModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestInvalidRoleErrorModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -11344,8 +11337,8 @@ class SchemaTest {
     }
 
     @Disabled // Disabled role now as reference to role not a string. we not aable set wrong string role. this test will delete in future
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestInvalidRoleErrorModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testInvalidRoleError(Context<?> context) {
         /*
         class TestInvalidRoleErrorModifier extends PojoMappingModifier {
@@ -11370,7 +11363,6 @@ class SchemaTest {
                 "<Schema name=\"FoodMart\" defaultRole=\"Unknown\"");
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestInvalidRoleErrorModifierEmf::new);
         try {
         	TestUtil.getSchemaWarnings(context);
         	fail("should be exception with \"Role 'Unknown'\" ");
@@ -11380,7 +11372,7 @@ class SchemaTest {
         }
     }
 
-    class TestBinaryLevelKeyModifierEmf implements CatalogMappingSupplier {
+    public static class TestBinaryLevelKeyModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestBinaryLevelKeyModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -11549,8 +11541,8 @@ class SchemaTest {
      * MONDRIAN-413, "RolapMember causes ClassCastException in compare()"</a>,
      * caused by binary column value.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBinaryLevelKeyModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBinaryLevelKey(Context<?> context) {
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case DERBY:
@@ -11666,7 +11658,6 @@ class SchemaTest {
             + "  </Dimension>\n"));
          */
 
-        withSchemaEmf(context, TestBinaryLevelKeyModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Binary].members} on 0 from [Sales]",
             "Axis #0:\n"
@@ -11699,7 +11690,7 @@ class SchemaTest {
             + "Row #0: \n");
     }
 
-    class TestLevelInternalTypeModifierEmf implements CatalogMappingSupplier {
+    public static class TestLevelInternalTypeModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestLevelInternalTypeModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -11842,8 +11833,8 @@ class SchemaTest {
      * <p>See bug <a href="http://jira.pentaho.com/browse/MONDRIAN-896">
      * MONDRIAN-896, "Oracle integer columns overflow if value &gt;>2^31"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLevelInternalTypeModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLevelInternalType(Context<?> context) {
         // One of the keys is larger than Integer.MAX_VALUE (2 billion), so
         // will only work if we use long values.
@@ -11940,7 +11931,6 @@ class SchemaTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>\n"));
          */
-        withSchemaEmf(context, TestLevelInternalTypeModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Big numbers].members} on 0 from [Sales]",
             "Axis #0:\n"
@@ -11956,7 +11946,7 @@ class SchemaTest {
             + "Row #0: 739\n");
     }
 
-    class TestLevelInternalTypeErrModifierEmf implements CatalogMappingSupplier {
+    public static class TestLevelInternalTypeErrModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestLevelInternalTypeErrModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -12074,9 +12064,9 @@ class SchemaTest {
      * Negative test for Level@internalType attribute.
      */
     @Disabled // level internalTypedoesn't support now
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLevelInternalTypeErrModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelInternalTypeErr(Context<?> context) {
         /*
         class TestLevelInternalTypeErrModifier extends PojoMappingModifier {
@@ -12163,7 +12153,6 @@ class SchemaTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>\n"));
          */
-        withSchemaEmf(context, TestLevelInternalTypeErrModifierEmf::new);
         assertQueryThrows(context,
             "select {[Big numbers].members} on 0 from [Sales]",
         		"Illegal value 'char'.  Legal values: {int, long, Object, String}");
@@ -12171,8 +12160,7 @@ class SchemaTest {
     }
 
     @Disabled // Adventure Works schema not found
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void _testAttributeHierarchy(Context<?> context) {
         // from email from peter tran dated 2008/9/8
         // TODO: schema syntax to create attribute hierarchy
@@ -12209,7 +12197,7 @@ class SchemaTest {
             "x");
     }
 
-    class TestScdJoinModifierEmf implements CatalogMappingSupplier {
+    public static class TestScdJoinModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestScdJoinModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -12301,8 +12289,8 @@ class SchemaTest {
      * table snowflake, and the table nearer to the fact table is not used by
      * any level.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestScdJoinModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testScdJoin(Context<?> context) {
         /*
         class TestScdJoinModifier extends PojoMappingModifier {
@@ -12355,7 +12343,6 @@ class SchemaTest {
                 }
         }
         */
-        withSchemaEmf(context, TestScdJoinModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[Unit Sales]} on 0,\n"
             + " non empty Filter({[Product truncated].Members}, [Measures].[Unit Sales] > 10000) on 1\n"
@@ -12373,7 +12360,7 @@ class SchemaTest {
             + "Row #2: 11,767\n");
     }
 
-    class TestNonUniqueAliasModifierEmf implements CatalogMappingSupplier {
+    public static class TestNonUniqueAliasModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestNonUniqueAliasModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -12462,8 +12449,8 @@ class SchemaTest {
     // TODO: also add a test that Table.alias, Join.leftAlias and
     // Join.rightAlias cannot be the empty string.
     @Disabled //not implemented yet
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestNonUniqueAliasModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void _testNonUniqueAlias(Context<?> context) {
         /*
         class TestNonUniqueAliasModifier extends PojoMappingModifier {
@@ -12530,7 +12517,6 @@ class SchemaTest {
                 + "  </Dimension>\n",
                 null, null, null));
          */
-        withSchemaEmf(context, TestNonUniqueAliasModifierEmf::new);
         Throwable throwable = null;
         try {
             assertSimpleQuery(context.getConnectionWithDefaultRole());
@@ -12547,7 +12533,7 @@ class SchemaTest {
      * Test case for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-482">
      * MONDRIAN-482, "ClassCastException when obtaining RolapCubeLevel"</a>.
      */
-    class TestBugMondrian482ModifierEmf implements CatalogMappingSupplier {
+    public static class TestBugMondrian482ModifierEmf implements CatalogMappingSupplier {
         private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
         public TestBugMondrian482ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -12619,8 +12605,8 @@ class SchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian482ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian482(Context<?> context) {
         // until bug MONDRIAN-495, "Table filter concept does not support
         // dialects." is fixed, this test case only works on MySQL
@@ -12718,7 +12704,6 @@ class SchemaTest {
         withSchema(context, schema);
          */
 
-        withSchemaEmf(context, TestBugMondrian482ModifierEmf::new);
         // First query all children of the USA. This should only return CA since
         // all the other states were filtered out. CA will be put in the member
         // cache
@@ -12768,63 +12753,59 @@ class SchemaTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-355">Bug MONDRIAN-355,
      * "adding hours/mins as levelType for level of type Dimension"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian355Modifier1Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian355(Context<?> context) {
-    	context.getCatalogCache().clear();
-        checkBugMondrian355(context, "TIME_HALF_YEARS");
-        ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-        // make sure that the deprecated name still works
-        checkBugMondrian355(context, "TIME_HALF_YEARS");
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select Head([Time2].[Quarter hours].Members, 3) on columns\n"
+            + "from [Sales]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Time2].[Time2].[1997].[Q1].[1].[367]}\n"
+            + "{[Time2].[Time2].[1997].[Q1].[1].[368]}\n"
+            + "{[Time2].[Time2].[1997].[Q1].[1].[369]}\n"
+            + "Row #0: 348\n"
+            + "Row #0: 635\n"
+            + "Row #0: 589\n");
+
+        // Check that can apply ParallelPeriod to a TimeUndefined level.
+        Connection connection = context.getConnectionWithDefaultRole();
+        assertAxisReturns(connection, "Sales",
+            "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])",
+            "[Time2].[Time2].[1997].[Q1].[1].[368]");
+
+        assertAxisReturns(connection, "Sales",
+            "PeriodsToDate([Time2].[Half year], [Time2].[1997].[Q1].[1].[368])",
+            "[Time2].[Time2].[1997].[Q1].[1].[367]\n"
+            + "[Time2].[Time2].[1997].[Q1].[1].[368]");
     }
 
-    public void checkBugMondrian355(Context<?> context, String timeHalfYear) {
-    	context.getCatalogCache().clear();
-    	/*
-        class CheckBugMondrian355Modifier1 extends PojoMappingModifier {
-            public CheckBugMondrian355Modifier1(CatalogMapping catalog) {
-                super(catalog);
-            }
-            @Override
-            protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-                List<DimensionConnectorMapping> result = new ArrayList<>();
-                result.addAll(super.cubeDimensionConnectors(cube).stream().filter(dc -> !dc.getOverrideDimensionName().equals("Time2")).toList());
-                if ("Sales".equals(cube.getName())) {
-                        LevelMappingImpl l1 = LevelMappingImpl.builder()
-                            .withName("Years").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(true)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withLevelType(LevelType.TIME_YEARS).build();
-                        LevelMappingImpl l2 = LevelMappingImpl.builder()
-                            .withName("Half year").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withLevelType(LevelType.fromValue(timeHalfYear)).build();
-                        LevelMappingImpl l3 = LevelMappingImpl.builder()
-                            .withName("Hours").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withLevelType(LevelType.TIME_HOURS).build();
-                        LevelMappingImpl l4 = LevelMappingImpl.builder()
-                            .withName("Quarter hours").withColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withLevelType(LevelType.TIME_UNDEFINED).build();
-                        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
-                            .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                            .withLevels(List.of(l1, l2, l3, l4))
-                            .build();
-                        DimensionConnectorMappingImpl d = DimensionConnectorMappingImpl.builder()
-                                .withOverrideDimensionName("Time2")
-                                .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withDimension(TimeDimensionMappingImpl.builder()
-                                		.withName("Time2")
-                                		.withHierarchies(List.of(h))
-                                		.build())
-                                .build();
-                        result.add(d);
-               }
-               return result;
-            }
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian355Modifier2Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian355InvalidLevelType(Context<?> context) {
+        // Check that get an error if give invalid level type
+        try {
+            /*
+            ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+                    "Sales",
+                xml.replace("TimeUndefined", "TimeUnspecified"), false));
+             */
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
+            fail("expected error");
+        } catch (Throwable e) {
+            //((TestContext)context).setDatabaseMappingSchemaProviders(
+        	//		List.of(provider));
+            checkThrowable(
+                e,
+           		"level-type must be  'Regular', 'TimeYears', 'TimeHalfYears', 'TimeHalfYear', 'TimeQuarters', 'TimeMonths', 'TimeWeeks', 'TimeDays', 'TimeHours', 'TimeMinutes', 'TimeSeconds', 'TimeUndefined'.");
+                //"Mondrian Error:Level '[Time2].[Quarter hours]' belongs to a time hierarchy, so its level-type must be  'Regular', 'TimeYears', 'TimeHalfYears', 'TimeHalfYear', 'TimeQuarters', 'TimeMonths', 'TimeWeeks', 'TimeDays', 'TimeHours', 'TimeMinutes', 'TimeSeconds', 'TimeUndefined'.");
         }
-        */
-        class CheckBugMondrian355Modifier1Emf implements CatalogMappingSupplier {
+    }
+
+    public static class CheckBugMondrian355Modifier1Emf implements CatalogMappingSupplier {
             private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
             public CheckBugMondrian355Modifier1Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -12857,7 +12838,7 @@ class SchemaTest {
                     level2.setName("Half year");
                     level2.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY));
                     level2.setUniqueMembers(false);
-                    level2.setType(LevelDefinition.getByName(timeHalfYear));
+                    level2.setType(LevelDefinition.getByName("TIME_HALF_YEARS"));
 
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level3 =
                         LevelFactory.eINSTANCE.createLevel();
@@ -12915,7 +12896,8 @@ class SchemaTest {
                 return catalog;
             }
         }
-        class CheckBugMondrian355Modifier2Emf implements CatalogMappingSupplier {
+
+    public static class CheckBugMondrian355Modifier2Emf implements CatalogMappingSupplier {
             private org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl catalog;
 
             public CheckBugMondrian355Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -12940,13 +12922,13 @@ class SchemaTest {
                     l2.setName("Half year");
                     l2.setColumn(CatalogSupplier.COLUMN_QUARTER_TIME_BY_DAY);
                     l2.setUniqueMembers(false);
-                    l2.setType(LevelDefinition.getByName(timeHalfYear));
+                    l2.setType(LevelDefinition.getByName("TIME_HALF_YEARS"));
 
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l3 = LevelFactory.eINSTANCE.createLevel();
                     l3.setName("Hours");
                     l3.setColumnType(ColumnInternalDataType.NUMERIC);
                     l3.setColumn(CatalogSupplier.COLUMN_MONTH_OF_YEAR_TIME_BY_DAY);
-                    l3.setType(LevelDefinition.getByName(timeHalfYear));
+                    l3.setType(LevelDefinition.getByName("TIME_HALF_YEARS"));
 
                     org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level l4 = LevelFactory.eINSTANCE.createLevel();
                     l4.setName("Quarter hours");
@@ -12984,123 +12966,14 @@ class SchemaTest {
             }
 
         }
-        /*
-        class CheckBugMondrian355Modifier2 extends PojoMappingModifier {
-            public CheckBugMondrian355Modifier2(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-                List<DimensionConnectorMapping> result = new ArrayList<>();
-                result.addAll(super.cubeDimensionConnectors(cube).stream().filter(dc -> !dc.getOverrideDimensionName().equals("Time2")).toList());
-                if ("Sales".equals(cube.getName())) {
-                		String type = timeHalfYear.equals("TimeUndefined") ? "TimeUnspecified" : timeHalfYear;
-                        LevelMappingImpl l1 = LevelMappingImpl.builder()
-                            .withName("Years").withColumn(FoodmartMappingSupplier.THE_DATE_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(true)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withLevelType(LevelType.TIME_YEARS).build();
-                        LevelMappingImpl l2 = LevelMappingImpl.builder()
-                            .withName("Half year").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withLevelType(LevelType.fromValue(timeHalfYear)).build();
-                        LevelMappingImpl l3 = LevelMappingImpl.builder()
-                            .withName("Hours").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withLevelType(LevelType.TIME_HOURS).build();
-                        LevelMappingImpl l4 = LevelMappingImpl.builder()
-                            .withName("Quarter hours").withColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withLevelType(LevelType.fromValue("TimeUnspecified")).build();
-                        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
-                            .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                            .withLevels(List.of(l1, l2, l3, l4))
-                            .build();
-                        DimensionConnectorMappingImpl d = DimensionConnectorMappingImpl.builder()
-                                .withOverrideDimensionName("Time2")
-                                .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withDimension(TimeDimensionMappingImpl.builder()
-                                		.withName("Time2")
-                                		.withHierarchies(List.of(h))
-                                		.build())
-                                .build();
-                        result.add(d);
-               }
-               return result;
-            }
-        }
-        */
-        /*
-        final String xml =
-            "<Dimension name=\"Time2\" foreignKey=\"time_id\" type=\"TimeDimension\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKey=\"time_id\">\n"
-            + "  <Table name=\"time_by_day\"/>\n"
-            + "  <Level name=\"Years\" column=\"the_year\" uniqueMembers=\"true\" type=\"Numeric\" levelType=\"TimeYears\"/>\n"
-            + "  <Level name=\"Half year\" column=\"quarter\" uniqueMembers=\"false\" levelType=\""
-            + timeHalfYear
-            + "\"/>\n"
-            + "  <Level name=\"Hours\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\" levelType=\"TimeHours\"/>\n"
-            + "  <Level name=\"Quarter hours\" column=\"time_id\" uniqueMembers=\"false\" type=\"Numeric\" levelType=\"TimeUnspecified\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>";
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales", xml, false));
-         */
-        withSchemaEmf(context, CheckBugMondrian355Modifier1Emf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select Head([Time2].[Quarter hours].Members, 3) on columns\n"
-            + "from [Sales]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Time2].[Time2].[1997].[Q1].[1].[367]}\n"
-            + "{[Time2].[Time2].[1997].[Q1].[1].[368]}\n"
-            + "{[Time2].[Time2].[1997].[Q1].[1].[369]}\n"
-            + "Row #0: 348\n"
-            + "Row #0: 635\n"
-            + "Row #0: 589\n");
-
-        // Check that can apply ParallelPeriod to a TimeUndefined level.
-        Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "Sales",
-            "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])",
-            "[Time2].[Time2].[1997].[Q1].[1].[368]");
-
-        assertAxisReturns(connection, "Sales",
-            "PeriodsToDate([Time2].[Half year], [Time2].[1997].[Q1].[1].[368])",
-            "[Time2].[Time2].[1997].[Q1].[1].[367]\n"
-            + "[Time2].[Time2].[1997].[Q1].[1].[368]");
-        // Check that get an error if give invalid level type
-        try {
-            /*
-            ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-                    "Sales",
-                xml.replace("TimeUndefined", "TimeUnspecified"), false));
-            */
-        	withSchemaEmf(context, CheckBugMondrian355Modifier2Emf::new);
-            assertSimpleQuery(context.getConnectionWithDefaultRole());
-            fail("expected error");
-        } catch (Throwable e) {
-            //((TestContext)context).setDatabaseMappingSchemaProviders(
-        	//		List.of(provider));
-            checkThrowable(
-                e,
-           		"level-type must be  'Regular', 'TimeYears', 'TimeHalfYears', 'TimeHalfYear', 'TimeQuarters', 'TimeMonths', 'TimeWeeks', 'TimeDays', 'TimeHours', 'TimeMinutes', 'TimeSeconds', 'TimeUndefined'.");
-                //"Mondrian Error:Level '[Time2].[Quarter hours]' belongs to a time hierarchy, so its level-type must be  'Regular', 'TimeYears', 'TimeHalfYears', 'TimeHalfYear', 'TimeQuarters', 'TimeMonths', 'TimeWeeks', 'TimeDays', 'TimeHours', 'TimeMinutes', 'TimeSeconds', 'TimeUndefined'.");
-        }
-    }
 
     /**
      * Test for descriptions, captions and annotations of various schema
      * elements.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCaptionDescriptionAndAnnotationModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCaptionDescriptionAndAnnotation(Context<?> context) {
-        final String schemaName = "Description schema";
-        final String salesCubeName = "DescSales";
-        final String virtualCubeName = "DescWarehouseAndSales";
-        final String warehouseCubeName = "Warehouse";
         /*
         class TestCaptionDescriptionAndAnnotationModifier extends PojoMappingModifier {
             public TestCaptionDescriptionAndAnnotationModifier(CatalogMapping catalog) {
@@ -13433,7 +13306,317 @@ class SchemaTest {
             }
         }
         */
-        class TestCaptionDescriptionAndAnnotationModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        withSchema(context,
+            "<Schema name=\"" + schemaName + "\"\n"
+            + " description=\"Schema to test descriptions and captions\">\n"
+            + "  <Annotations>\n"
+            + "    <Annotation name=\"a\">Schema</Annotation>\n"
+            + "    <Annotation name=\"b\">Xyz</Annotation>\n"
+            + "  </Annotations>\n"
+            + "  <Dimension name=\"Time\" type=\"TimeDimension\"\n"
+            + "      caption=\"Time shared caption\"\n"
+            + "      description=\"Time shared description\">\n"
+            + "    <Annotations><Annotation name=\"a\">Time shared</Annotation></Annotations>\n"
+            + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\"\n"
+            + "        caption=\"Time shared hierarchy caption\"\n"
+            + "        description=\"Time shared hierarchy description\">\n"
+            + "      <Table name=\"time_by_day\"/>\n"
+            + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
+            + "          levelType=\"TimeYears\"/>\n"
+            + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
+            + "          levelType=\"TimeQuarters\"/>\n"
+            + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
+            + "          levelType=\"TimeMonths\"/>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "  <Dimension name=\"Warehouse\">\n"
+            + "    <Hierarchy hasAll=\"true\" primaryKey=\"warehouse_id\">\n"
+            + "      <Table name=\"warehouse\"/>\n"
+            + "      <Level name=\"Country\" column=\"warehouse_country\" uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"State Province\" column=\"warehouse_state_province\"\n"
+            + "          uniqueMembers=\"true\"/>\n"
+            + "      <Level name=\"City\" column=\"warehouse_city\" uniqueMembers=\"false\"/>\n"
+            + "      <Level name=\"Warehouse Name\" column=\"warehouse_name\" uniqueMembers=\"true\"/>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "  <Cube name=\"" + salesCubeName + "\"\n"
+            + "    description=\"Cube description\">\n"
+            + "  <Annotations><Annotation name=\"a\">Cube</Annotation></Annotations>\n"
+            + "  <Table name=\"sales_fact_1997\"/>\n"
+            + "  <Dimension name=\"Store\" foreignKey=\"store_id\"\n"
+            + "      caption=\"Dimension caption\"\n"
+            + "      description=\"Dimension description\">\n"
+            + "    <Annotations><Annotation name=\"a\">Dimension</Annotation></Annotations>\n"
+            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\"\n"
+            + "        caption=\"Hierarchy caption\"\n"
+            + "        description=\"Hierarchy description\">\n"
+            + "      <Annotations><Annotation name=\"a\">Hierarchy</Annotation></Annotations>\n"
+            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
+            + "        <Table name=\"store\"/>\n"
+            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
+            + "          <Table name=\"region\"/>\n"
+            + "          <Table name=\"promotion\"/>\n"
+            + "        </Join>\n"
+            + "      </Join>\n"
+            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"\n"
+            + "          description=\"Level description\""
+            + "          caption=\"Level caption\">\n"
+            + "        <Annotations><Annotation name=\"a\">Level</Annotation></Annotations>\n"
+            + "      </Level>\n"
+            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
+            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "  <DimensionUsage name=\"Time1\"\n"
+            + "    caption=\"Time usage caption\"\n"
+            + "    description=\"Time usage description\"\n"
+            + "    source=\"Time\" foreignKey=\"time_id\">\n"
+            + "    <Annotations><Annotation name=\"a\">Time usage</Annotation></Annotations>\n"
+            + "  </DimensionUsage>\n"
+            + "  <DimensionUsage name=\"Time2\"\n"
+            + "    source=\"Time\" foreignKey=\"time_id\"/>\n"
+            + "<Measure name=\"Unit Sales\" column=\"unit_sales\"\n"
+            + "    aggregator=\"sum\" formatString=\"Standard\"\n"
+            + "    caption=\"Measure caption\"\n"
+            + "    description=\"Measure description\">\n"
+            + "  <Annotations><Annotation name=\"a\">Measure</Annotation></Annotations>\n"
+            + "</Measure>\n"
+            + "<CalculatedMember name=\"Foo\" dimension=\"Measures\" \n"
+            + "    caption=\"Calc member caption\"\n"
+            + "    description=\"Calc member description\">\n"
+            + "    <Annotations><Annotation name=\"a\">Calc member</Annotation></Annotations>\n"
+            + "    <Formula>[Measures].[Unit Sales] + 1</Formula>\n"
+            + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"$#,##0.00\"/>\n"
+            + "  </CalculatedMember>\n"
+            + "  <NamedSet name=\"Top Periods\"\n"
+            + "      caption=\"Named set caption\"\n"
+            + "      description=\"Named set description\">\n"
+            + "    <Annotations><Annotation name=\"a\">Named set</Annotation></Annotations>\n"
+            + "    <Formula>TopCount([Time1].MEMBERS, 5, [Measures].[Foo])</Formula>\n"
+            + "  </NamedSet>\n"
+            + "</Cube>\n"
+            + "<Cube name=\"" + warehouseCubeName + "\">\n"
+            + "  <Table name=\"inventory_fact_1997\"/>\n"
+            + "\n"
+            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
+            + "  <DimensionUsage name=\"Warehouse\" source=\"Warehouse\" foreignKey=\"warehouse_id\"/>\n"
+            + "\n"
+            + "  <Measure name=\"Units Shipped\" column=\"units_shipped\" aggregator=\"sum\" formatString=\"#.0\"/>\n"
+            + "</Cube>\n"
+            + "<VirtualCube name=\"" + virtualCubeName + "\"\n"
+            + "    caption=\"Virtual cube caption\"\n"
+            + "    description=\"Virtual cube description\">\n"
+            + "  <Annotations><Annotation name=\"a\">Virtual cube</Annotation></Annotations>\n"
+            + "  <VirtualCubeDimension name=\"Time\"/>\n"
+            + "  <VirtualCubeDimension cubeName=\"" + warehouseCubeName
+            + "\" name=\"Warehouse\"/>\n"
+            + "  <VirtualCubeMeasure cubeName=\"" + salesCubeName
+            + "\" name=\"[Measures].[Unit Sales]\">\n"
+            + "    <Annotations><Annotation name=\"a\">Virtual cube measure</Annotation></Annotations>\n"
+            + "  </VirtualCubeMeasure>\n"
+            + "  <VirtualCubeMeasure cubeName=\"" + warehouseCubeName
+            + "\" name=\"[Measures].[Units Shipped]\"/>\n"
+            + "  <CalculatedMember name=\"Profit Per Unit Shipped\" dimension=\"Measures\">\n"
+            + "    <Formula>1 / [Measures].[Units Shipped]</Formula>\n"
+            + "  </CalculatedMember>\n"
+            + "</VirtualCube>"
+            + "</Schema>");
+         */
+        final Result result =
+            executeQuery(context.getConnectionWithDefaultRole(), "select from [" + salesCubeName + "]");
+        final Cube cube = result.getQuery().getCube();
+        assertEquals("Cube description", cube.getDescription());
+        checkAnnotations(cube.getMetaData(), "a", "Cube");
+
+        final Catalog schema = cube.getCatalog();
+        checkAnnotations(schema.getMetaData(), "a", "Schema", "b", "Xyz");
+
+        final Dimension dimension = cube.getDimensions().get(1);
+        assertEquals("Dimension description", dimension.getDescription());
+        assertEquals("Store", dimension.getCaption());
+        checkAnnotations(dimension.getMetaData(), "a", "Dimension");
+
+        final Hierarchy hierarchy = dimension.getHierarchies().getFirst();
+        assertEquals("Hierarchy description", hierarchy.getDescription());
+        assertEquals("Store", hierarchy.getCaption());
+        checkAnnotations(hierarchy.getMetaData(), "a", "Hierarchy");
+
+        final Level level = hierarchy.getLevels().get(1);
+        assertEquals("Level description", level.getDescription());
+        assertEquals("Store Country", level.getCaption());
+        checkAnnotations(level.getMetaData(), "a", "Level");
+
+        // Caption comes from the CAPTION member property, defaults to name.
+        // Description comes from the DESCRIPTION member property.
+        // Annotations are always empty for regular members.
+        final List<Member> memberList =
+            cube.getCatalogReader(null).withLocus()
+                .getLevelMembers(level, false);
+        final Member member = memberList.getFirst();
+        assertEquals("Canada", member.getName());
+        assertEquals("Canada", member.getCaption());
+        assertNull(member.getDescription());
+        checkAnnotations(member.getMetaData());
+
+        // All member. Caption defaults to name; description is null.
+        final Member allMember = member.getParentMember();
+        assertEquals("All Stores", allMember.getName());
+        assertEquals("All Stores", allMember.getCaption());
+        assertNull(allMember.getDescription());
+
+        // All level.
+        final Level allLevel = hierarchy.getLevels().getFirst();
+        assertEquals("(All)", allLevel.getName());
+        assertNull(allLevel.getDescription());
+        assertEquals(allLevel.getName(), allLevel.getCaption());
+        checkAnnotations(allLevel.getMetaData());
+
+        // the first time dimension overrides the caption and description of the
+        // shared time dimension
+        final Dimension timeDimension = cube.getDimensions().get(2);
+        assertEquals("Time1", timeDimension.getName());
+        assertEquals("Time shared description", timeDimension.getDescription());
+        assertEquals("Time1", timeDimension.getCaption());
+        checkAnnotations(timeDimension.getMetaData(), "a", "Time shared");
+
+        // Time1 is a usage of a shared dimension Time.
+        // Now look at the hierarchy usage within that dimension usage.
+        // Because the dimension usage has a name, use that as a prefix for
+        // name, caption and description of the hierarchy usage.
+        final Hierarchy timeHierarchy = timeDimension.getHierarchies().getFirst();
+        // The hierarchy in the shared dimension does not have a name, so the
+        // hierarchy usage inherits the name of the dimension usage, Time1.
+        //final boolean ssasCompatibleNaming =
+        //    SystemWideProperties.instance().SsasCompatibleNaming;
+        assertEquals("Time1", timeHierarchy.getName());
+        assertEquals("Time1", timeHierarchy.getDimension().getName());
+        // The description is prefixed by the dimension usage name.
+        assertEquals(
+            "Time shared hierarchy description",
+            timeHierarchy.getDescription());
+        // The hierarchy caption is prefixed by the caption of the dimension
+        // usage.
+        assertEquals(
+            "Time1",
+            timeHierarchy.getCaption());
+        // No annotations.
+        checkAnnotations(timeHierarchy.getMetaData());
+
+        // the second time dimension does not overrides caption and description
+        final Dimension time2Dimension = cube.getDimensions().get(3);
+        assertEquals("Time2", time2Dimension.getName());
+        assertEquals(
+            "Time shared description", time2Dimension.getDescription());
+        assertEquals("Time2", time2Dimension.getCaption());
+        checkAnnotations(time2Dimension.getMetaData(), "a", "Time shared");
+
+        final Hierarchy time2Hierarchy = time2Dimension.getHierarchies().get(0);
+        // The hierarchy in the shared dimension does not have a name, so the
+        // hierarchy usage inherits the name of the dimension usage, Time2.
+
+        assertEquals("Time2", time2Hierarchy.getName());
+        assertEquals("Time2", time2Hierarchy.getDimension().getName());
+        // The description is prefixed by the dimension usage name (because
+        // dimension usage has no caption).
+        assertEquals(
+            "Time shared hierarchy description",
+            time2Hierarchy.getDescription());
+        // The hierarchy caption is prefixed by the dimension usage name
+        // (because the dimension usage has no caption.
+        assertEquals(
+            "Time2",
+            time2Hierarchy.getCaption());
+        // No annotations.
+        checkAnnotations(time2Hierarchy.getMetaData());
+
+        final Dimension measuresDimension = cube.getDimensions().getFirst();
+        final Hierarchy measuresHierarchy =
+            measuresDimension.getHierarchies().getFirst();
+        final Level measuresLevel =
+            measuresHierarchy.getLevels().getFirst();
+        final CatalogReader schemaReader = cube.getCatalogReader(null);
+        final List<Member> measures =
+            schemaReader.getLevelMembers(measuresLevel, true);
+        final Member measure = measures.getFirst();
+        assertEquals("Unit Sales", measure.getName());
+        assertEquals("Unit Sales", measure.getCaption());
+        assertEquals("Measure description", measure.getDescription());
+        assertEquals(
+            measure.getDescription(),
+            measure.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
+        assertEquals(
+            measure.getCaption(),
+            measure.getPropertyValue(StandardProperty.CAPTION.getName()));
+        assertEquals(
+            measure.getCaption(),
+            measure.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
+        checkAnnotations(measure.getMetaData(), "a", "Measure");
+
+        // The implicitly created [Fact Count] measure
+        final Member factCountMeasure = measures.get(1);
+        assertEquals("Fact Count", factCountMeasure.getName());
+        assertEquals(
+            false,
+            factCountMeasure.getPropertyValue(StandardProperty.VISIBLE.getName()));
+        checkAnnotations(
+            factCountMeasure.getMetaData(), "Internal Use",
+            "For internal use");
+
+        final Member calcMeasure = measures.get(2);
+        assertEquals("Foo", calcMeasure.getName());
+        assertEquals("Foo", calcMeasure.getCaption());
+        assertEquals("Calc member description", calcMeasure.getDescription());
+        assertEquals(
+            calcMeasure.getDescription(),
+            calcMeasure.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
+        assertEquals(
+            calcMeasure.getCaption(),
+            calcMeasure.getPropertyValue(StandardProperty.CAPTION.getName()));
+        assertEquals(
+            calcMeasure.getCaption(),
+            calcMeasure.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
+        checkAnnotations(calcMeasure.getMetaData(), "a", "Calc member");
+
+        final NamedSet namedSet = cube.getNamedSets()[0];
+        assertEquals("Top Periods", namedSet.getName());
+        assertEquals("Top Periods", namedSet.getCaption());
+        assertEquals("Named set description", namedSet.getDescription());
+        checkAnnotations(namedSet.getMetaData(), "a", "Named set");
+
+        final Result result2 =
+            executeQuery(context.getConnectionWithDefaultRole(), "select from [" + virtualCubeName + "]");
+        final Cube cube2 = result2.getQuery().getCube();
+        assertEquals("Virtual cube description", cube2.getDescription());
+        checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
+
+        final CatalogReader schemaReader2 = cube2.getCatalogReader(null);
+        final Dimension measuresDimension2 = cube2.getDimensions().getFirst();
+        final Hierarchy measuresHierarchy2 =
+            measuresDimension2.getHierarchies().getFirst();
+        final Level measuresLevel2 =
+            measuresHierarchy2.getLevels().getFirst();
+        final List<Member> measures2 =
+            schemaReader2.getLevelMembers(measuresLevel2, true);
+        final Member measure2 = measures2.get(0);
+        assertEquals("Unit Sales", measure2.getName());
+        assertEquals("Unit Sales", measure2.getCaption());
+        assertEquals("Measure description", measure2.getDescription());
+        assertEquals(
+            measure2.getDescription(),
+            measure2.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
+        assertEquals(
+            measure2.getCaption(),
+            measure2.getPropertyValue(StandardProperty.CAPTION.getName()));
+        assertEquals(
+            measure2.getCaption(),
+            measure2.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
+        checkAnnotations(
+            measure2.getMetaData(), "a", "Measure");
+    }
+
+    public static class TestCaptionDescriptionAndAnnotationModifierEmf implements CatalogMappingSupplier {
             private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
 
             public TestCaptionDescriptionAndAnnotationModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -13839,316 +14022,6 @@ class SchemaTest {
             }
         }
 
-        /*
-        withSchema(context,
-            "<Schema name=\"" + schemaName + "\"\n"
-            + " description=\"Schema to test descriptions and captions\">\n"
-            + "  <Annotations>\n"
-            + "    <Annotation name=\"a\">Schema</Annotation>\n"
-            + "    <Annotation name=\"b\">Xyz</Annotation>\n"
-            + "  </Annotations>\n"
-            + "  <Dimension name=\"Time\" type=\"TimeDimension\"\n"
-            + "      caption=\"Time shared caption\"\n"
-            + "      description=\"Time shared description\">\n"
-            + "    <Annotations><Annotation name=\"a\">Time shared</Annotation></Annotations>\n"
-            + "    <Hierarchy hasAll=\"false\" primaryKey=\"time_id\"\n"
-            + "        caption=\"Time shared hierarchy caption\"\n"
-            + "        description=\"Time shared hierarchy description\">\n"
-            + "      <Table name=\"time_by_day\"/>\n"
-            + "      <Level name=\"Year\" column=\"the_year\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-            + "          levelType=\"TimeYears\"/>\n"
-            + "      <Level name=\"Quarter\" column=\"quarter\" uniqueMembers=\"false\"\n"
-            + "          levelType=\"TimeQuarters\"/>\n"
-            + "      <Level name=\"Month\" column=\"month_of_year\" uniqueMembers=\"false\" type=\"Numeric\"\n"
-            + "          levelType=\"TimeMonths\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Dimension name=\"Warehouse\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"warehouse_id\">\n"
-            + "      <Table name=\"warehouse\"/>\n"
-            + "      <Level name=\"Country\" column=\"warehouse_country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"State Province\" column=\"warehouse_state_province\"\n"
-            + "          uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" column=\"warehouse_city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Warehouse Name\" column=\"warehouse_name\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Cube name=\"" + salesCubeName + "\"\n"
-            + "    description=\"Cube description\">\n"
-            + "  <Annotations><Annotation name=\"a\">Cube</Annotation></Annotations>\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Store\" foreignKey=\"store_id\"\n"
-            + "      caption=\"Dimension caption\"\n"
-            + "      description=\"Dimension description\">\n"
-            + "    <Annotations><Annotation name=\"a\">Dimension</Annotation></Annotations>\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\"\n"
-            + "        caption=\"Hierarchy caption\"\n"
-            + "        description=\"Hierarchy description\">\n"
-            + "      <Annotations><Annotation name=\"a\">Hierarchy</Annotation></Annotations>\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
-            + "          <Table name=\"region\"/>\n"
-            + "          <Table name=\"promotion\"/>\n"
-            + "        </Join>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"\n"
-            + "          description=\"Level description\""
-            + "          caption=\"Level caption\">\n"
-            + "        <Annotations><Annotation name=\"a\">Level</Annotation></Annotations>\n"
-            + "      </Level>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <DimensionUsage name=\"Time1\"\n"
-            + "    caption=\"Time usage caption\"\n"
-            + "    description=\"Time usage description\"\n"
-            + "    source=\"Time\" foreignKey=\"time_id\">\n"
-            + "    <Annotations><Annotation name=\"a\">Time usage</Annotation></Annotations>\n"
-            + "  </DimensionUsage>\n"
-            + "  <DimensionUsage name=\"Time2\"\n"
-            + "    source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\"\n"
-            + "    aggregator=\"sum\" formatString=\"Standard\"\n"
-            + "    caption=\"Measure caption\"\n"
-            + "    description=\"Measure description\">\n"
-            + "  <Annotations><Annotation name=\"a\">Measure</Annotation></Annotations>\n"
-            + "</Measure>\n"
-            + "<CalculatedMember name=\"Foo\" dimension=\"Measures\" \n"
-            + "    caption=\"Calc member caption\"\n"
-            + "    description=\"Calc member description\">\n"
-            + "    <Annotations><Annotation name=\"a\">Calc member</Annotation></Annotations>\n"
-            + "    <Formula>[Measures].[Unit Sales] + 1</Formula>\n"
-            + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"$#,##0.00\"/>\n"
-            + "  </CalculatedMember>\n"
-            + "  <NamedSet name=\"Top Periods\"\n"
-            + "      caption=\"Named set caption\"\n"
-            + "      description=\"Named set description\">\n"
-            + "    <Annotations><Annotation name=\"a\">Named set</Annotation></Annotations>\n"
-            + "    <Formula>TopCount([Time1].MEMBERS, 5, [Measures].[Foo])</Formula>\n"
-            + "  </NamedSet>\n"
-            + "</Cube>\n"
-            + "<Cube name=\"" + warehouseCubeName + "\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n"
-            + "\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Warehouse\" source=\"Warehouse\" foreignKey=\"warehouse_id\"/>\n"
-            + "\n"
-            + "  <Measure name=\"Units Shipped\" column=\"units_shipped\" aggregator=\"sum\" formatString=\"#.0\"/>\n"
-            + "</Cube>\n"
-            + "<VirtualCube name=\"" + virtualCubeName + "\"\n"
-            + "    caption=\"Virtual cube caption\"\n"
-            + "    description=\"Virtual cube description\">\n"
-            + "  <Annotations><Annotation name=\"a\">Virtual cube</Annotation></Annotations>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"" + warehouseCubeName
-            + "\" name=\"Warehouse\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"" + salesCubeName
-            + "\" name=\"[Measures].[Unit Sales]\">\n"
-            + "    <Annotations><Annotation name=\"a\">Virtual cube measure</Annotation></Annotations>\n"
-            + "  </VirtualCubeMeasure>\n"
-            + "  <VirtualCubeMeasure cubeName=\"" + warehouseCubeName
-            + "\" name=\"[Measures].[Units Shipped]\"/>\n"
-            + "  <CalculatedMember name=\"Profit Per Unit Shipped\" dimension=\"Measures\">\n"
-            + "    <Formula>1 / [Measures].[Units Shipped]</Formula>\n"
-            + "  </CalculatedMember>\n"
-            + "</VirtualCube>"
-            + "</Schema>");
-         */
-        withSchemaEmf(context, TestCaptionDescriptionAndAnnotationModifierEmf::new);
-        final Result result =
-            executeQuery(context.getConnectionWithDefaultRole(), "select from [" + salesCubeName + "]");
-        final Cube cube = result.getQuery().getCube();
-        assertEquals("Cube description", cube.getDescription());
-        checkAnnotations(cube.getMetaData(), "a", "Cube");
-
-        final Catalog schema = cube.getCatalog();
-        checkAnnotations(schema.getMetaData(), "a", "Schema", "b", "Xyz");
-
-        final Dimension dimension = cube.getDimensions().get(1);
-        assertEquals("Dimension description", dimension.getDescription());
-        assertEquals("Store", dimension.getCaption());
-        checkAnnotations(dimension.getMetaData(), "a", "Dimension");
-
-        final Hierarchy hierarchy = dimension.getHierarchies().getFirst();
-        assertEquals("Hierarchy description", hierarchy.getDescription());
-        assertEquals("Store", hierarchy.getCaption());
-        checkAnnotations(hierarchy.getMetaData(), "a", "Hierarchy");
-
-        final Level level = hierarchy.getLevels().get(1);
-        assertEquals("Level description", level.getDescription());
-        assertEquals("Store Country", level.getCaption());
-        checkAnnotations(level.getMetaData(), "a", "Level");
-
-        // Caption comes from the CAPTION member property, defaults to name.
-        // Description comes from the DESCRIPTION member property.
-        // Annotations are always empty for regular members.
-        final List<Member> memberList =
-            cube.getCatalogReader(null).withLocus()
-                .getLevelMembers(level, false);
-        final Member member = memberList.getFirst();
-        assertEquals("Canada", member.getName());
-        assertEquals("Canada", member.getCaption());
-        assertNull(member.getDescription());
-        checkAnnotations(member.getMetaData());
-
-        // All member. Caption defaults to name; description is null.
-        final Member allMember = member.getParentMember();
-        assertEquals("All Stores", allMember.getName());
-        assertEquals("All Stores", allMember.getCaption());
-        assertNull(allMember.getDescription());
-
-        // All level.
-        final Level allLevel = hierarchy.getLevels().getFirst();
-        assertEquals("(All)", allLevel.getName());
-        assertNull(allLevel.getDescription());
-        assertEquals(allLevel.getName(), allLevel.getCaption());
-        checkAnnotations(allLevel.getMetaData());
-
-        // the first time dimension overrides the caption and description of the
-        // shared time dimension
-        final Dimension timeDimension = cube.getDimensions().get(2);
-        assertEquals("Time1", timeDimension.getName());
-        assertEquals("Time shared description", timeDimension.getDescription());
-        assertEquals("Time1", timeDimension.getCaption());
-        checkAnnotations(timeDimension.getMetaData(), "a", "Time shared");
-
-        // Time1 is a usage of a shared dimension Time.
-        // Now look at the hierarchy usage within that dimension usage.
-        // Because the dimension usage has a name, use that as a prefix for
-        // name, caption and description of the hierarchy usage.
-        final Hierarchy timeHierarchy = timeDimension.getHierarchies().getFirst();
-        // The hierarchy in the shared dimension does not have a name, so the
-        // hierarchy usage inherits the name of the dimension usage, Time1.
-        //final boolean ssasCompatibleNaming =
-        //    SystemWideProperties.instance().SsasCompatibleNaming;
-        assertEquals("Time1", timeHierarchy.getName());
-        assertEquals("Time1", timeHierarchy.getDimension().getName());
-        // The description is prefixed by the dimension usage name.
-        assertEquals(
-            "Time shared hierarchy description",
-            timeHierarchy.getDescription());
-        // The hierarchy caption is prefixed by the caption of the dimension
-        // usage.
-        assertEquals(
-            "Time1",
-            timeHierarchy.getCaption());
-        // No annotations.
-        checkAnnotations(timeHierarchy.getMetaData());
-
-        // the second time dimension does not overrides caption and description
-        final Dimension time2Dimension = cube.getDimensions().get(3);
-        assertEquals("Time2", time2Dimension.getName());
-        assertEquals(
-            "Time shared description", time2Dimension.getDescription());
-        assertEquals("Time2", time2Dimension.getCaption());
-        checkAnnotations(time2Dimension.getMetaData(), "a", "Time shared");
-
-        final Hierarchy time2Hierarchy = time2Dimension.getHierarchies().get(0);
-        // The hierarchy in the shared dimension does not have a name, so the
-        // hierarchy usage inherits the name of the dimension usage, Time2.
-
-        assertEquals("Time2", time2Hierarchy.getName());
-        assertEquals("Time2", time2Hierarchy.getDimension().getName());
-        // The description is prefixed by the dimension usage name (because
-        // dimension usage has no caption).
-        assertEquals(
-            "Time shared hierarchy description",
-            time2Hierarchy.getDescription());
-        // The hierarchy caption is prefixed by the dimension usage name
-        // (because the dimension usage has no caption.
-        assertEquals(
-            "Time2",
-            time2Hierarchy.getCaption());
-        // No annotations.
-        checkAnnotations(time2Hierarchy.getMetaData());
-
-        final Dimension measuresDimension = cube.getDimensions().getFirst();
-        final Hierarchy measuresHierarchy =
-            measuresDimension.getHierarchies().getFirst();
-        final Level measuresLevel =
-            measuresHierarchy.getLevels().getFirst();
-        final CatalogReader schemaReader = cube.getCatalogReader(null);
-        final List<Member> measures =
-            schemaReader.getLevelMembers(measuresLevel, true);
-        final Member measure = measures.getFirst();
-        assertEquals("Unit Sales", measure.getName());
-        assertEquals("Unit Sales", measure.getCaption());
-        assertEquals("Measure description", measure.getDescription());
-        assertEquals(
-            measure.getDescription(),
-            measure.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
-        assertEquals(
-            measure.getCaption(),
-            measure.getPropertyValue(StandardProperty.CAPTION.getName()));
-        assertEquals(
-            measure.getCaption(),
-            measure.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
-        checkAnnotations(measure.getMetaData(), "a", "Measure");
-
-        // The implicitly created [Fact Count] measure
-        final Member factCountMeasure = measures.get(1);
-        assertEquals("Fact Count", factCountMeasure.getName());
-        assertEquals(
-            false,
-            factCountMeasure.getPropertyValue(StandardProperty.VISIBLE.getName()));
-        checkAnnotations(
-            factCountMeasure.getMetaData(), "Internal Use",
-            "For internal use");
-
-        final Member calcMeasure = measures.get(2);
-        assertEquals("Foo", calcMeasure.getName());
-        assertEquals("Foo", calcMeasure.getCaption());
-        assertEquals("Calc member description", calcMeasure.getDescription());
-        assertEquals(
-            calcMeasure.getDescription(),
-            calcMeasure.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
-        assertEquals(
-            calcMeasure.getCaption(),
-            calcMeasure.getPropertyValue(StandardProperty.CAPTION.getName()));
-        assertEquals(
-            calcMeasure.getCaption(),
-            calcMeasure.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
-        checkAnnotations(calcMeasure.getMetaData(), "a", "Calc member");
-
-        final NamedSet namedSet = cube.getNamedSets()[0];
-        assertEquals("Top Periods", namedSet.getName());
-        assertEquals("Top Periods", namedSet.getCaption());
-        assertEquals("Named set description", namedSet.getDescription());
-        checkAnnotations(namedSet.getMetaData(), "a", "Named set");
-
-        final Result result2 =
-            executeQuery(context.getConnectionWithDefaultRole(), "select from [" + virtualCubeName + "]");
-        final Cube cube2 = result2.getQuery().getCube();
-        assertEquals("Virtual cube description", cube2.getDescription());
-        checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
-
-        final CatalogReader schemaReader2 = cube2.getCatalogReader(null);
-        final Dimension measuresDimension2 = cube2.getDimensions().getFirst();
-        final Hierarchy measuresHierarchy2 =
-            measuresDimension2.getHierarchies().getFirst();
-        final Level measuresLevel2 =
-            measuresHierarchy2.getLevels().getFirst();
-        final List<Member> measures2 =
-            schemaReader2.getLevelMembers(measuresLevel2, true);
-        final Member measure2 = measures2.get(0);
-        assertEquals("Unit Sales", measure2.getName());
-        assertEquals("Unit Sales", measure2.getCaption());
-        assertEquals("Measure description", measure2.getDescription());
-        assertEquals(
-            measure2.getDescription(),
-            measure2.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
-        assertEquals(
-            measure2.getCaption(),
-            measure2.getPropertyValue(StandardProperty.CAPTION.getName()));
-        assertEquals(
-            measure2.getCaption(),
-            measure2.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
-        checkAnnotations(
-            measure2.getMetaData(), "a", "Measure");
-    }
-
     private static void checkAnnotations(
         MetaData metaData,
         String... nameVal)
@@ -14164,8 +14037,8 @@ class SchemaTest {
          }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCaptionModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCaption(Context<?> context) {
         /*
         class TestCaptionModifier extends PojoMappingModifier {
@@ -14205,7 +14078,47 @@ class SchemaTest {
             }
         }
         */
-        class TestCaptionModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "  <Dimension name=\"Gender2\" foreignKey=\"customer_id\">\n"
+            + "    <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\" >\n"
+            + "      <Table name=\"customer\"/>\n"
+            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" >\n"
+            + "        <CaptionExpression>\n"
+            + "          <SQL dialect='generic'>'foobar'</SQL>\n"
+            + "        </CaptionExpression>\n"
+            + "      </Level>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>"));
+         */
+
+
+
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
+        case POSTGRES:
+            // Postgres fails with:
+            //   Internal error: while building member cache; sql=[select
+            //     "customer"."gender" as "c0", 'foobar' as "c1" from "customer"
+            //     as "customer" group by "customer"."gender", 'foobar' order by
+            //     "customer"."\ gender" ASC NULLS LAST]
+            //   Caused by: org.postgresql.util.PSQLException: ERROR:
+            //     non-integer constant in GROUP BY
+            //
+            // It's difficult for mondrian to spot that it's been given a
+            // constant expression. We can live with this bug. Postgres
+            // shouldn't be so picky, and people shouldn't be so daft.
+            return;
+        }
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
+            "select {[Gender2].Children} on columns from [Sales]");
+        assertEquals(
+            "foobar",
+            result.getAxes()[0].getPositions().get(0).get(0).getCaption());
+    }
+
+    public static class TestCaptionModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestCaptionModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -14275,46 +14188,6 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "  <Dimension name=\"Gender2\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\" >\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\" >\n"
-            + "        <CaptionExpression>\n"
-            + "          <SQL dialect='generic'>'foobar'</SQL>\n"
-            + "        </CaptionExpression>\n"
-            + "      </Level>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>"));
-         */
-
-        withSchemaEmf(context, TestCaptionModifierEmf::new);
-
-
-        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
-        case POSTGRES:
-            // Postgres fails with:
-            //   Internal error: while building member cache; sql=[select
-            //     "customer"."gender" as "c0", 'foobar' as "c1" from "customer"
-            //     as "customer" group by "customer"."gender", 'foobar' order by
-            //     "customer"."\ gender" ASC NULLS LAST]
-            //   Caused by: org.postgresql.util.PSQLException: ERROR:
-            //     non-integer constant in GROUP BY
-            //
-            // It's difficult for mondrian to spot that it's been given a
-            // constant expression. We can live with this bug. Postgres
-            // shouldn't be so picky, and people shouldn't be so daft.
-            return;
-        }
-        Result result = executeQuery(context.getConnectionWithDefaultRole(),
-            "select {[Gender2].Children} on columns from [Sales]");
-        assertEquals(
-            "foobar",
-            result.getAxes()[0].getPositions().get(0).get(0).getCaption());
-    }
-
     /**
      * Implementation of {@link MemberPropertyFormatter} that throws.
      */
@@ -14337,8 +14210,8 @@ class SchemaTest {
      * MONDRIAN-747, "When joining a shared dimension into a cube at a level
      * other than its leaf level, Mondrian gives wrong results"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian747ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian747(Context<?> context) {
         // Test case requires a pecular inline view, and it works on dialects
         // that scalar subqery, viz oracle. I believe that the mondrian code
@@ -14532,223 +14405,6 @@ class SchemaTest {
             }
         }
         */
-        class TestBugMondrian747ModifierEmf implements CatalogMappingSupplier {
-            private CatalogImpl catalog;
-
-            public TestBugMondrian747ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                this.catalog = (CatalogImpl) copier.get(cat);
-
-
-                // Create Store dimension
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd1 =
-                    DimensionFactory.eINSTANCE.createStandardDimension();
-                sd1.setName("Store");
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy storeHierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                storeHierarchy.setHasAll(true);
-                storeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
-
-                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-                storeHierarchy.setSource(storeTableQuery);
-
-                // Create Store levels
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level countryLevel =
-                    LevelFactory.eINSTANCE.createLevel();
-                countryLevel.setName("country");
-                countryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
-                countryLevel.setColumnType(ColumnInternalDataType.STRING);
-                countryLevel.setUniqueMembers(false);
-                countryLevel.setType(LevelDefinition.REGULAR);
-                countryLevel.setHideMemberIf(HideMemberIf.NEVER);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level stateLevel =
-                    LevelFactory.eINSTANCE.createLevel();
-                stateLevel.setName("state");
-                stateLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_STATE_STORE);
-                stateLevel.setColumnType(ColumnInternalDataType.STRING);
-                stateLevel.setUniqueMembers(false);
-                stateLevel.setType(LevelDefinition.REGULAR);
-                stateLevel.setHideMemberIf(HideMemberIf.NEVER);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level cityLevel =
-                    LevelFactory.eINSTANCE.createLevel();
-                cityLevel.setName("city");
-                cityLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_CITY_STORE);
-                cityLevel.setColumnType(ColumnInternalDataType.STRING);
-                cityLevel.setUniqueMembers(false);
-                cityLevel.setType(LevelDefinition.REGULAR);
-                cityLevel.setHideMemberIf(HideMemberIf.NEVER);
-
-                storeHierarchy.getLevels().add(countryLevel);
-                storeHierarchy.getLevels().add(stateLevel);
-                storeHierarchy.getLevels().add(cityLevel);
-                sd1.getHierarchies().add(storeHierarchy);
-
-                // Create Product dimension
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd2 =
-                    DimensionFactory.eINSTANCE.createStandardDimension();
-                sd2.setName("Product");
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy productHierarchy =
-                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                productHierarchy.setName("New Hierarchy 0");
-                productHierarchy.setHasAll(true);
-                productHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
-
-                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
-                productHierarchy.setSource(productTableQuery);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productNameLevel =
-                    LevelFactory.eINSTANCE.createLevel();
-                productNameLevel.setName("product_name");
-                productNameLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
-                productNameLevel.setColumnType(ColumnInternalDataType.STRING);
-                productNameLevel.setUniqueMembers(false);
-                productNameLevel.setType(LevelDefinition.REGULAR);
-                productNameLevel.setHideMemberIf(HideMemberIf.NEVER);
-
-                productHierarchy.getLevels().add(productNameLevel);
-                sd2.getHierarchies().add(productHierarchy);
-
-                // Create cube1
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsales1Measure =
-                    MeasureFactory.eINSTANCE.createSumMeasure();
-                unitsales1Measure.setName("unitsales1");
-                unitsales1Measure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
-                unitsales1Measure.setDataType(ColumnInternalDataType.NUMERIC);
-                unitsales1Measure.setVisible(true);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup1 =
-                    CubeFactory.eINSTANCE.createMeasureGroup();
-                measureGroup1.getMeasures().add(unitsales1Measure);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc1Store =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                dc1Store.setDimension(sd1);
-                dc1Store.setOverrideDimensionName("Store");
-                dc1Store.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc1Product =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                dc1Product.setDimension(sd2);
-                dc1Product.setOverrideDimensionName("Product");
-                dc1Product.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-
-                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource cube1TableQuery =
-                    SourceFactory.eINSTANCE.createTableSource();
-                cube1TableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c1 =
-                    CubeFactory.eINSTANCE.createPhysicalCube();
-                c1.setName("cube1");
-                c1.setCache(true);
-                c1.setEnabled(true);
-                c1.setSource(cube1TableQuery);
-                c1.getDimensionConnectors().add(dc1Store);
-                c1.getDimensionConnectors().add(dc1Product);
-                c1.getMeasureGroups().add(measureGroup1);
-
-                // Create cube2 with SQL view
-                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column salesStateProvince =
-                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
-                salesStateProvince.setName("sales_state_province");
-
-                org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlView =
-                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SALES_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT);
-                sqlView.getFeature().add(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
-                sqlView.getFeature().add(salesStateProvince);
-
-                org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
-                    SourceFactory.eINSTANCE.createSqlStatement();
-                sqlStatement.setBody("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
-                    "\"store_id\", \"store_sales\", \"store_cost\", \"unit_sales\", (select \"store_state\" " +
-                    "from \"store\" where \"store_id\" = \"sales_fact_1997\".\"store_id\") as " +
-                    "\"sales_state_province\" from \"sales_fact_1997\"");
-                sqlStatement.getDialects().add("generic");
-                sqlView.getDialectStatements().add(sqlStatement);
-
-                org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource vv =
-                    SourceFactory.eINSTANCE.createSqlSelectSource();
-                vv.setAlias("sales_fact_1997_test");
-                vv.setSql(sqlView);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsales2Measure =
-                    MeasureFactory.eINSTANCE.createSumMeasure();
-                unitsales2Measure.setName("unitsales2");
-                unitsales2Measure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
-                unitsales2Measure.setDataType(ColumnInternalDataType.NUMERIC);
-                unitsales2Measure.setVisible(true);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup2 =
-                    CubeFactory.eINSTANCE.createMeasureGroup();
-                measureGroup2.getMeasures().add(unitsales2Measure);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc2Store =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                dc2Store.setDimension(sd1);
-                dc2Store.setOverrideDimensionName("Store");
-                dc2Store.setForeignKey(salesStateProvince);
-                dc2Store.setLevel(stateLevel);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc2Product =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                dc2Product.setDimension(sd2);
-                dc2Product.setOverrideDimensionName("Product");
-                dc2Product.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
-
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c2 =
-                    CubeFactory.eINSTANCE.createPhysicalCube();
-                c2.setName("cube2");
-                c2.setCache(true);
-                c2.setEnabled(true);
-                c2.setSource(vv);
-                c2.getDimensionConnectors().add(dc2Store);
-                c2.getDimensionConnectors().add(dc2Product);
-                c2.getMeasureGroups().add(measureGroup2);
-
-                // Create virtual cube
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcStoreConnector =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                vcStoreConnector.setOverrideDimensionName("Store");
-
-                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcProductConnector =
-                    DimensionFactory.eINSTANCE.createDimensionConnector();
-                vcProductConnector.setOverrideDimensionName("Product");
-
-                org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc =
-                    CubeFactory.eINSTANCE.createVirtualCube();
-                vc.setEnabled(true);
-                vc.setName("virtual_cube");
-                vc.getDimensionConnectors().add(vcStoreConnector);
-                vc.getDimensionConnectors().add(vcProductConnector);
-                vc.getReferencedMeasures().add(unitsales1Measure);
-                vc.getReferencedMeasures().add(unitsales2Measure);
-
-                // Update catalog
-                catalog.setName("Test_DimensionUsage");
-                catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
-        catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
-                catalog.getImportedElement().add(c1);
-                catalog.getImportedElement().add(c2);
-                catalog.getImportedElement().add(vc);
-            }
-
-            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                return catalog;
-            }
-        }
 
         /*
         withSchema(context,
@@ -14815,7 +14471,6 @@ class SchemaTest {
             return;
         }
 
-        withSchemaEmf(context, TestBugMondrian747ModifierEmf::new);
 
         // [Store].[All Stores] and [Store].[USA] should be 266,773. A higher
         // value would indicate that there is a cartesian product going on --
@@ -14955,103 +14610,271 @@ class SchemaTest {
             + "Row #17: 11,491\n");
     }
 
+    public static class TestBugMondrian747ModifierEmf implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
+
+            public TestBugMondrian747ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
+
+
+                // Create Store dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd1 =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
+                sd1.setName("Store");
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy storeHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                storeHierarchy.setHasAll(true);
+                storeHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_STORE);
+
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource storeTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                storeTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
+                storeHierarchy.setSource(storeTableQuery);
+
+                // Create Store levels
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level countryLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                countryLevel.setName("country");
+                countryLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COUNTRY_STORE);
+                countryLevel.setColumnType(ColumnInternalDataType.STRING);
+                countryLevel.setUniqueMembers(false);
+                countryLevel.setType(LevelDefinition.REGULAR);
+                countryLevel.setHideMemberIf(HideMemberIf.NEVER);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level stateLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                stateLevel.setName("state");
+                stateLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_STATE_STORE);
+                stateLevel.setColumnType(ColumnInternalDataType.STRING);
+                stateLevel.setUniqueMembers(false);
+                stateLevel.setType(LevelDefinition.REGULAR);
+                stateLevel.setHideMemberIf(HideMemberIf.NEVER);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level cityLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                cityLevel.setName("city");
+                cityLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_CITY_STORE);
+                cityLevel.setColumnType(ColumnInternalDataType.STRING);
+                cityLevel.setUniqueMembers(false);
+                cityLevel.setType(LevelDefinition.REGULAR);
+                cityLevel.setHideMemberIf(HideMemberIf.NEVER);
+
+                storeHierarchy.getLevels().add(countryLevel);
+                storeHierarchy.getLevels().add(stateLevel);
+                storeHierarchy.getLevels().add(cityLevel);
+                sd1.getHierarchies().add(storeHierarchy);
+
+                // Create Product dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension sd2 =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
+                sd2.setName("Product");
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy productHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                productHierarchy.setName("New Hierarchy 0");
+                productHierarchy.setHasAll(true);
+                productHierarchy.setPrimaryKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_PRODUCT);
+
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource productTableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                productTableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_PRODUCT);
+                productHierarchy.setSource(productTableQuery);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level productNameLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                productNameLevel.setName("product_name");
+                productNameLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_NAME_PRODUCT);
+                productNameLevel.setColumnType(ColumnInternalDataType.STRING);
+                productNameLevel.setUniqueMembers(false);
+                productNameLevel.setType(LevelDefinition.REGULAR);
+                productNameLevel.setHideMemberIf(HideMemberIf.NEVER);
+
+                productHierarchy.getLevels().add(productNameLevel);
+                sd2.getHierarchies().add(productHierarchy);
+
+                // Create cube1
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsales1Measure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
+                unitsales1Measure.setName("unitsales1");
+                unitsales1Measure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+                unitsales1Measure.setDataType(ColumnInternalDataType.NUMERIC);
+                unitsales1Measure.setVisible(true);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup1 =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
+                measureGroup1.getMeasures().add(unitsales1Measure);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc1Store =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dc1Store.setDimension(sd1);
+                dc1Store.setOverrideDimensionName("Store");
+                dc1Store.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc1Product =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dc1Product.setDimension(sd2);
+                dc1Product.setOverrideDimensionName("Product");
+                dc1Product.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
+
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource cube1TableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                cube1TableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_SALES_FACT);
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c1 =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
+                c1.setName("cube1");
+                c1.setCache(true);
+                c1.setEnabled(true);
+                c1.setSource(cube1TableQuery);
+                c1.getDimensionConnectors().add(dc1Store);
+                c1.getDimensionConnectors().add(dc1Product);
+                c1.getMeasureGroups().add(measureGroup1);
+
+                // Create cube2 with SQL view
+                org.eclipse.daanse.cwm.model.cwm.resource.relational.Column salesStateProvince =
+                    org.eclipse.daanse.cwm.model.cwm.resource.relational.RelationalFactory.eINSTANCE.createColumn();
+                salesStateProvince.setName("sales_state_province");
+
+                org.eclipse.daanse.rolap.mapping.model.database.relational.DialectSqlView sqlView =
+                    org.eclipse.daanse.rolap.mapping.model.database.relational.RelationalFactory.eINSTANCE.createDialectSqlView();
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_TIME_ID_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_CUSTOMER_ID_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PROMOTION_ID_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_ID_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SALES_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_COST_SALESFACT));
+                sqlView.getFeature().add((org.eclipse.daanse.cwm.model.cwm.resource.relational.Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT));
+                sqlView.getFeature().add(salesStateProvince);
+
+                org.eclipse.daanse.rolap.mapping.model.database.source.SqlStatement sqlStatement =
+                    SourceFactory.eINSTANCE.createSqlStatement();
+                sqlStatement.setBody("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
+                    "\"store_id\", \"store_sales\", \"store_cost\", \"unit_sales\", (select \"store_state\" " +
+                    "from \"store\" where \"store_id\" = \"sales_fact_1997\".\"store_id\") as " +
+                    "\"sales_state_province\" from \"sales_fact_1997\"");
+                sqlStatement.getDialects().add("generic");
+                sqlView.getDialectStatements().add(sqlStatement);
+
+                org.eclipse.daanse.rolap.mapping.model.database.source.SqlSelectSource vv =
+                    SourceFactory.eINSTANCE.createSqlSelectSource();
+                vv.setAlias("sales_fact_1997_test");
+                vv.setSql(sqlView);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure unitsales2Measure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
+                unitsales2Measure.setName("unitsales2");
+                unitsales2Measure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_UNIT_SALES_SALESFACT);
+                unitsales2Measure.setDataType(ColumnInternalDataType.NUMERIC);
+                unitsales2Measure.setVisible(true);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup2 =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
+                measureGroup2.getMeasures().add(unitsales2Measure);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc2Store =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dc2Store.setDimension(sd1);
+                dc2Store.setOverrideDimensionName("Store");
+                dc2Store.setForeignKey(salesStateProvince);
+                dc2Store.setLevel(stateLevel);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc2Product =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dc2Product.setDimension(sd2);
+                dc2Product.setOverrideDimensionName("Product");
+                dc2Product.setForeignKey(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_PRODUCT_ID_SALESFACT);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube c2 =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
+                c2.setName("cube2");
+                c2.setCache(true);
+                c2.setEnabled(true);
+                c2.setSource(vv);
+                c2.getDimensionConnectors().add(dc2Store);
+                c2.getDimensionConnectors().add(dc2Product);
+                c2.getMeasureGroups().add(measureGroup2);
+
+                // Create virtual cube
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcStoreConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                vcStoreConnector.setOverrideDimensionName("Store");
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcProductConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                vcProductConnector.setOverrideDimensionName("Product");
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube vc =
+                    CubeFactory.eINSTANCE.createVirtualCube();
+                vc.setEnabled(true);
+                vc.setName("virtual_cube");
+                vc.getDimensionConnectors().add(vcStoreConnector);
+                vc.getDimensionConnectors().add(vcProductConnector);
+                vc.getReferencedMeasures().add(unitsales1Measure);
+                vc.getReferencedMeasures().add(unitsales2Measure);
+
+                // Update catalog
+                catalog.setName("Test_DimensionUsage");
+                catalog.getOwnedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+        catalog.getImportedElement().removeIf(org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class::isInstance);
+                // Access roles from the base catalog grant/deny access to cubes (e.g. "HR")
+                // that no longer exist in this minimal catalog; drop them too.
+                catalog.getOwnedElement().removeIf(AccessRole.class::isInstance);
+                catalog.getImportedElement().removeIf(AccessRole.class::isInstance);
+                catalog.getImportedElement().add(c1);
+                catalog.getImportedElement().add(c2);
+                catalog.getImportedElement().add(vc);
+            }
+
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
+            }
+        }
+
     /**
      * Unit test for bug
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-463">
      * MONDRIAN-463, "Snowflake dimension with 3-way join."</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian463Modifier1Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian463(Context<?> context) {
-        if (!((TestContextImpl) context).isFilterChildlessSnowflakeMembers())
+        if (!context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS,
+                ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class))
         {
             // Similar to aggregates. If we turn off filtering,
             // we get wild stuff because of referential integrity.
             return;
         }
-        /*
-        class TestBugMondrian463Modifier1 extends PojoMappingModifier {
+        checkBugMondrian463(context);
+    }
 
-            public TestBugMondrian463Modifier1(CatalogMapping catalog) {
-                super(catalog);
-            }
-            @Override
-            protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-                List<DimensionConnectorMapping> result = new ArrayList<>();
-                if ("Sales".equals(cube.getName())) {
-                    LevelMappingImpl l1 = LevelMappingImpl.builder()
-                            .withName("Product Family")
-                            .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
-                            .withUniqueMembers(true)
-                            .build();
-                    LevelMappingImpl l2 = LevelMappingImpl.builder()
-                            .withName("Product Department")
-                            .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
-                            .withUniqueMembers(false)
-                            .build();
-                    LevelMappingImpl l3 = LevelMappingImpl.builder()
-                            .withName("Product Category")
-                            .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
-                            .withUniqueMembers(false)
-                            .build();
-                    LevelMappingImpl l4 = LevelMappingImpl.builder()
-                            .withName("Product Subcategory")
-                            .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
-                            .withUniqueMembers(false)
-                            .build();
-                    LevelMappingImpl l5 = LevelMappingImpl.builder()
-                            .withName("Product Class")
-                            .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                            .withUniqueMembers(true)
-                            .build();
-                    LevelMappingImpl l6 = LevelMappingImpl.builder()
-                            .withName("Brand Name")
-                            .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
-                            .withUniqueMembers(false)
-                            .build();
-                    LevelMappingImpl l7 = LevelMappingImpl.builder()
-                            .withName("Product Name")
-                            .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
-                            .withUniqueMembers(true)
-                            .build();
-
-                        JoinQueryMappingImpl j1 = JoinQueryMappingImpl.builder()
-                        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.REGION_ID_COLUMN_IN_STORE)
-                        				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build()).build())
-                        		.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
-                        				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build()).build())
-                        		.build();
-
-                        JoinQueryMappingImpl j = JoinQueryMappingImpl.builder()
-                        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
-                        				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build()).build())
-                        		.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                        				.withQuery(j1).build())
-                        		.build();
-
-                        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
-                            .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                            .withQuery(j)
-                            .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
-                            .build();
-
-                        DimensionConnectorMappingImpl d = DimensionConnectorMappingImpl.builder()
-                                .withOverrideDimensionName("Product3")
-                                .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withDimension(StandardDimensionMappingImpl.builder()
-                                	.withName("Product3")
-                                	.withHierarchies(List.of(h)).build())
-                            .build();
-                        result.add(d);
-
-                    }
-                	result.addAll(super.cubeDimensionConnectors(cube));
-                    return result;
-                }
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian463Modifier2Emf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian463SharedDimension(Context<?> context) {
+        if (!context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS,
+                ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class))
+        {
+            // Similar to aggregates. If we turn off filtering,
+            // we get wild stuff because of referential integrity.
+            return;
         }
-        */
-        class TestBugMondrian463Modifier1Emf implements CatalogMappingSupplier {
+        // As above, but using shared dimension.
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+            && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class))
+        {
+            // With aggregates enabled, query gives different answer. This is
+            // expected because some of the foreign keys have referential
+            // integrity problems.
+            return;
+        }
+        checkBugMondrian463(context);
+    }
+
+    public static class TestBugMondrian463Modifier1Emf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestBugMondrian463Modifier1Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -15189,188 +15012,7 @@ class SchemaTest {
             }
         }
 
-        // To build a dimension that is a 3-way snowflake, take the 2-way
-        // product -> product_class join and convert to product -> store ->
-        // product_class.
-        //
-        // It works because product_class_id covers the range 1 .. 110;
-        // store_id covers every value in 0 .. 24;
-        // region_id has 24 distinct values in the range 0 .. 106 (region_id 25
-        // occurs twice).
-        // Therefore in store, store_id -> region_id is a 25 to 24 mapping.
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-                "Sales",
-                "<Dimension name='Product3' foreignKey='product_id'>\n"
-                + "  <Hierarchy hasAll='true' primaryKey='product_id' primaryKeyTable='product'>\n"
-                + "    <Join leftKey='product_class_id' rightKey='store_id'>\n"
-                + "      <Table name='product'/>\n"
-                + "      <Join leftKey='region_id' rightKey='product_class_id'>\n"
-                + "        <Table name='store'/>\n"
-                + "        <Table name='product_class'/>\n"
-                + "      </Join>\n"
-                + "    </Join>\n"
-                + "    <Level name='Product Family' table='product_class' column='product_family' uniqueMembers='true'/>\n"
-                + "    <Level name='Product Department' table='product_class' column='product_department' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Category' table='product_class' column='product_category' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Subcategory' table='product_class' column='product_subcategory' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Class' table='store' column='store_id' type='Numeric' uniqueMembers='true'/>\n"
-                + "    <Level name='Brand Name' table='product' column='brand_name' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Name' table='product' column='product_name' uniqueMembers='true'/>\n"
-                + "  </Hierarchy>\n"
-                + "</Dimension>"));
-         */
-        withSchemaEmf(context, TestBugMondrian463Modifier1Emf::new);
-        checkBugMondrian463(context);
-        // As above, but using shared dimension.
-        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
-            && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class))
-        {
-            // With aggregates enabled, query gives different answer. This is
-            // expected because some of the foreign keys have referential
-            // integrity problems.
-            return;
-        }
-        /*
-        class TestBugMondrian463Modifier2 extends PojoMappingModifier {
-
-            public TestBugMondrian463Modifier2(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-                LevelMappingImpl l1 = LevelMappingImpl.builder()
-                        .withName("Product Family")
-                        .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
-                        .withUniqueMembers(true)
-                        .build();
-                    LevelMappingImpl l2 = LevelMappingImpl.builder()
-                        .withName("Product Department")
-                        .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
-                        .withUniqueMembers(false)
-                        .build();
-                    LevelMappingImpl l3 = LevelMappingImpl.builder()
-                        .withName("Product Category")
-                        .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
-                        .withUniqueMembers(false)
-                        .build();
-                    LevelMappingImpl l4 = LevelMappingImpl.builder()
-                        .withName("Product Subcategory")
-                        .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
-                        .withUniqueMembers(false)
-                        .build();
-                    LevelMappingImpl l5 = LevelMappingImpl.builder()
-                        .withName("Product Class")
-                        .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                        .withUniqueMembers(true)
-                        .build();
-                    LevelMappingImpl l6 = LevelMappingImpl.builder()
-                        .withName("Brand Name")
-                        .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
-                        .withUniqueMembers(false)
-                        .build();
-                    LevelMappingImpl l7 = LevelMappingImpl.builder()
-                        .withName("Product Name")
-                        .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
-                        .withUniqueMembers(true)
-                        .build();
-
-                	JoinQueryMappingImpl j1 = JoinQueryMappingImpl.builder()
-                    		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.REGION_ID_COLUMN_IN_STORE)
-                    				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
-                    				.build())
-                    		.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
-                    				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build())
-                    				.build()).build();
-
-                	JoinQueryMappingImpl j = JoinQueryMappingImpl.builder()
-                    		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
-                    				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
-                    				.build())
-                    		.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                    				.withQuery(j1)
-                    				.build()).build();
-
-                    HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
-                        .withHasAll(true)
-                        .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                        .withQuery(j)
-                        .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
-                        .build();
-
-                    DimensionMappingImpl product3Dimension = StandardDimensionMappingImpl.builder()
-                    	.withName("Product3")
-                    	.withHierarchies(List.of(h1)).build();
-
-                    PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl.builder()
-                        .withName("Sales")
-                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
-                        .withDimensionConnectors(List.of(
-                        	DimensionConnectorMappingImpl.builder()
-                        		.withOverrideDimensionName("Time")
-                        		.withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-                        		.withDimension(TimeDimensionMappingImpl.builder()
-                        			.withName("Time")
-                        			.withHierarchies(List.of(
-                        				ExplicitHierarchyMappingImpl.builder()
-                                        .withHasAll(false)
-                                        .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
-                                        .withLevels(List.of(
-                                        	LevelMappingImpl.builder()
-                                                .withName("Year")
-                                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                                                .withUniqueMembers(true)
-                                                .withLevelType(LevelType.TIME_YEARS)
-                                                .build(),
-                                            LevelMappingImpl.builder()
-                                                .withName("Quarter")
-                                                .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY)
-                                                .withUniqueMembers(false)
-                                                .withLevelType(LevelType.TIME_QUARTERS)
-                                                .build(),
-                                            LevelMappingImpl.builder()
-                                                .withName("Month")
-                                                .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withUniqueMembers(false)
-                                                .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                                                .withLevelType(LevelType.TIME_MONTHS)
-                                                .build()
-                                        ))
-                                        .build()
-                                )).build())
-                                .build(),
-                            DimensionConnectorMappingImpl.builder()
-                            	.withOverrideDimensionName("Product3")
-                            	.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
-                            	.withDimension(product3Dimension)
-                                .build()
-                        ))
-                        .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
-                        		.withMeasures(List.of(
-                                    SumMeasureMappingImpl.builder()
-                                        .withName("Unit Sales")
-                                        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-
-                                        .withFormatString("#,###")
-                                        .build()
-                                ))
-                        		.build()))
-                        .build();
-           	 	return CatalogMappingImpl.builder()
-        			 .withName("FoodMart")
-                     .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
-                     .withCubes(List.of(c))
-                     .build();
-
-            }
-
-        }*/
-
-        class TestBugMondrian463Modifier2Emf implements CatalogMappingSupplier {
+    public static class TestBugMondrian463Modifier2Emf implements CatalogMappingSupplier {
             private org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog;
 
             public TestBugMondrian463Modifier2Emf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -15569,51 +15211,6 @@ class SchemaTest {
             }
         }
 
-        /*
-        withSchema(context,
-                "<?xml version='1.0'?>\n"
-                + "<Schema name='FoodMart'>\n"
-                + "<Dimension name='Product3'>\n"
-                + "  <Hierarchy hasAll='true' primaryKey='product_id' primaryKeyTable='product'>\n"
-                + "    <Join leftKey='product_class_id' rightKey='store_id'>\n"
-                + "      <Table name='product'/>\n"
-                + "      <Join leftKey='region_id' rightKey='product_class_id'>\n"
-                + "        <Table name='store'/>\n"
-                + "        <Table name='product_class'/>\n"
-                + "      </Join>\n"
-                + "    </Join>\n"
-                + "    <Level name='Product Family' table='product_class' column='product_family' uniqueMembers='true'/>\n"
-                + "    <Level name='Product Department' table='product_class' column='product_department' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Category' table='product_class' column='product_category' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Subcategory' table='product_class' column='product_subcategory' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Class' table='store' column='store_id' type='Numeric' uniqueMembers='true'/>\n"
-                + "    <Level name='Brand Name' table='product' column='brand_name' uniqueMembers='false'/>\n"
-                + "    <Level name='Product Name' table='product' column='product_name' uniqueMembers='true'/>\n"
-                + "  </Hierarchy>\n"
-                + "</Dimension>\n"
-                + "<Cube name='Sales'>\n"
-                + "  <Table name='sales_fact_1997'/>\n"
-                + "  <Dimension name='Time' type='TimeDimension' foreignKey='time_id'>\n"
-                + "    <Hierarchy hasAll='false' primaryKey='time_id'>\n"
-                + "      <Table name='time_by_day'/>\n"
-                + "      <Level name='Year' column='the_year' type='Numeric' uniqueMembers='true'\n"
-                + "          levelType='TimeYears'/>\n"
-                + "      <Level name='Quarter' column='quarter' uniqueMembers='false'\n"
-                + "          levelType='TimeQuarters'/>\n"
-                + "      <Level name='Month' column='month_of_year' uniqueMembers='false' type='Numeric'\n"
-                + "          levelType='TimeMonths'/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <DimensionUsage source='Product3' name='Product3' foreignKey='product_id'/>\n"
-                + "  <Measure name='Unit Sales' column='unit_sales' aggregator='sum'\n"
-                + "      formatString='#,###'/>\n"
-                + "</Cube>\n"
-                + "</Schema>");
-         */
-        withSchemaEmf(context, TestBugMondrian463Modifier2Emf::new);
-        checkBugMondrian463(context);
-    }
-
     private void checkBugMondrian463(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Measures] on 0,\n"
@@ -15651,8 +15248,8 @@ class SchemaTest {
      * The correct way to use a join is right-deep, that is (Join A (Join B C)).
      * Same schema as {@link #testBugMondrian463}, except left-deep.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLeftDeepJoinFailsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLeftDeepJoinFails(Context<?> context) {
         /*
         class TestLeftDeepJoinFailsModifier extends PojoMappingModifier {
@@ -15737,7 +15334,40 @@ class SchemaTest {
                 }
         }
         */
-        class TestLeftDeepJoinFailsModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+            "Sales",
+            "<Dimension name='Product3' foreignKey='product_id'>\n"
+            + "  <Hierarchy hasAll='true' primaryKey='product_id' primaryKeyTable='product'>\n"
+            + "    <Join leftKey='store_id' rightKey='product_class_id'>\n"
+            + "      <Join leftKey='product_class_id' rightKey='region_id'>\n"
+            + "        <Table name='product'/>\n"
+            + "        <Table name='store'/>\n"
+            + "      </Join>\n"
+            + "      <Table name='product_class'/>\n"
+            + "    </Join>\n"
+            + "    <Level name='Product Family' table='product_class' column='product_family' uniqueMembers='true'/>\n"
+            + "    <Level name='Product Department' table='product_class' column='product_department' uniqueMembers='false'/>\n"
+            + "    <Level name='Product Category' table='product_class' column='product_category' uniqueMembers='false'/>\n"
+            + "    <Level name='Product Subcategory' table='product_class' column='product_subcategory' uniqueMembers='false'/>\n"
+            + "    <Level name='Product Class' table='store' column='store_id' uniqueMembers='true'/>\n"
+            + "    <Level name='Brand Name' table='product' column='brand_name' uniqueMembers='false'/>\n"
+            + "    <Level name='Product Name' table='product' column='product_name' uniqueMembers='true'/>\n"
+            + "  </Hierarchy>\n"
+            + "</Dimension>"));
+         */
+        try {
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
+            fail("expected error");
+        } catch (OlapRuntimeException e) {
+            assertEquals(
+                "Left side of join must not be a join; daanse only supports right-deep joins.",
+                e.getMessage());
+        }
+    }
+
+    public static class TestLeftDeepJoinFailsModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestLeftDeepJoinFailsModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -15877,44 +15507,11 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name='Product3' foreignKey='product_id'>\n"
-            + "  <Hierarchy hasAll='true' primaryKey='product_id' primaryKeyTable='product'>\n"
-            + "    <Join leftKey='store_id' rightKey='product_class_id'>\n"
-            + "      <Join leftKey='product_class_id' rightKey='region_id'>\n"
-            + "        <Table name='product'/>\n"
-            + "        <Table name='store'/>\n"
-            + "      </Join>\n"
-            + "      <Table name='product_class'/>\n"
-            + "    </Join>\n"
-            + "    <Level name='Product Family' table='product_class' column='product_family' uniqueMembers='true'/>\n"
-            + "    <Level name='Product Department' table='product_class' column='product_department' uniqueMembers='false'/>\n"
-            + "    <Level name='Product Category' table='product_class' column='product_category' uniqueMembers='false'/>\n"
-            + "    <Level name='Product Subcategory' table='product_class' column='product_subcategory' uniqueMembers='false'/>\n"
-            + "    <Level name='Product Class' table='store' column='store_id' uniqueMembers='true'/>\n"
-            + "    <Level name='Brand Name' table='product' column='brand_name' uniqueMembers='false'/>\n"
-            + "    <Level name='Product Name' table='product' column='product_name' uniqueMembers='true'/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"));
-         */
-        try {
-            withSchemaEmf(context, TestLeftDeepJoinFailsModifierEmf::new);
-            assertSimpleQuery(context.getConnectionWithDefaultRole());
-            fail("expected error");
-        } catch (OlapRuntimeException e) {
-            assertEquals(
-                "Left side of join must not be a join; daanse only supports right-deep joins.",
-                e.getMessage());
-        }
-    }
-
     /**
      * Test for MONDRIAN-943 and MONDRIAN-465.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCaptionWithOrdinalColumnModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCaptionWithOrdinalColumn(Context<?> context) {
     	context.getCatalogCache().clear();
     	/*
@@ -15962,7 +15559,40 @@ class SchemaTest {
             }
         }
         */
-        class TestCaptionWithOrdinalColumnModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+                "HR",
+                "<Dimension name=\"Position\" foreignKey=\"employee_id\">\n"
+                + "  <Hierarchy hasAll=\"true\" allMemberName=\"All Position\" primaryKey=\"employee_id\">\n"
+                + "    <Table name=\"employee\"/>\n"
+                + "    <Level name=\"Management Role\" uniqueMembers=\"true\" column=\"management_role\"/>\n"
+                + "    <Level name=\"Position Title\" uniqueMembers=\"false\" column=\"position_title\" ordinalColumn=\"position_id\" captionColumn=\"position_title\"/>\n"
+                + "  </Hierarchy>\n"
+                + "</Dimension>\n"));
+         */
+
+        String mdxQuery =
+            "WITH SET [#DataSet#] as '{Descendants([Position].[All Position], 2)}' "
+            + "SELECT {[Measures].[Org Salary]} on columns, "
+            + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [HR]";
+        Result result = executeQuery(context.getConnectionWithDefaultRole(), mdxQuery);
+        Axis[] axes = result.getAxes();
+        List<Position> positions = axes[1].getPositions();
+        Member mall = positions.get(0).get(0);
+        String caption = mall.getHierarchy().getCaption();
+        assertEquals("Position", caption);
+        String captionValue = mall.getCaption();
+        assertEquals("HQ Information Systems", captionValue);
+        mall = positions.get(14).get(0);
+        captionValue = mall.getCaption();
+        assertEquals("Store Manager", captionValue);
+        mall = positions.get(15).get(0);
+        captionValue = mall.getCaption();
+        assertEquals("Store Assistant Manager", captionValue);
+    }
+
+    public static class TestCaptionWithOrdinalColumnModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestCaptionWithOrdinalColumnModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -16035,39 +15665,6 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-                "HR",
-                "<Dimension name=\"Position\" foreignKey=\"employee_id\">\n"
-                + "  <Hierarchy hasAll=\"true\" allMemberName=\"All Position\" primaryKey=\"employee_id\">\n"
-                + "    <Table name=\"employee\"/>\n"
-                + "    <Level name=\"Management Role\" uniqueMembers=\"true\" column=\"management_role\"/>\n"
-                + "    <Level name=\"Position Title\" uniqueMembers=\"false\" column=\"position_title\" ordinalColumn=\"position_id\" captionColumn=\"position_title\"/>\n"
-                + "  </Hierarchy>\n"
-                + "</Dimension>\n"));
-         */
-        withSchemaEmf(context, TestCaptionWithOrdinalColumnModifierEmf::new);
-
-        String mdxQuery =
-            "WITH SET [#DataSet#] as '{Descendants([Position].[All Position], 2)}' "
-            + "SELECT {[Measures].[Org Salary]} on columns, "
-            + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [HR]";
-        Result result = executeQuery(context.getConnectionWithDefaultRole(), mdxQuery);
-        Axis[] axes = result.getAxes();
-        List<Position> positions = axes[1].getPositions();
-        Member mall = positions.get(0).get(0);
-        String caption = mall.getHierarchy().getCaption();
-        assertEquals("Position", caption);
-        String captionValue = mall.getCaption();
-        assertEquals("HQ Information Systems", captionValue);
-        mall = positions.get(14).get(0);
-        captionValue = mall.getCaption();
-        assertEquals("Store Manager", captionValue);
-        mall = positions.get(15).get(0);
-        captionValue = mall.getCaption();
-        assertEquals("Store Assistant Manager", captionValue);
-    }
-
     /**
      * This is a test case for bug Mondrian-923. When a virtual cube included
      * calculated members in its schema, they were not included in the list of
@@ -16075,8 +15672,8 @@ class SchemaTest {
      * which was done at cube init time when resolving the calculated members
      * of the base cubes.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian923ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian923(Context<?> context) throws Exception {
         /*
         class TestBugMondrian923Modifier extends PojoMappingModifier {
@@ -16131,7 +15728,52 @@ class SchemaTest {
             }
         }
         */
-        class TestBugMondrian923ModifierEmf implements CatalogMappingSupplier {
+
+        /*
+        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
+                "Warehouse and Sales",
+                null,
+                null,
+                "<CalculatedMember name=\"Image Unit Sales\" dimension=\"Measures\"><Formula>[Measures].[Unit Sales]</Formula><CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"|$#,###.00|image=icon_chart\\.gif|link=http://www\\.pentaho\\.com\"/></CalculatedMember>"
+                + "<CalculatedMember name=\"Arrow Unit Sales\" dimension=\"Measures\"><Formula>[Measures].[Unit Sales]</Formula><CalculatedMemberProperty name=\"FORMAT_STRING\" expression=\"IIf([Measures].[Unit Sales] > 10000,'|#,###|arrow=up',IIf([Measures].[Unit Sales] > 5000,'|#,###|arrow=down','|#,###|arrow=none'))\"/></CalculatedMember>"
+                + "<CalculatedMember name=\"Style Unit Sales\" dimension=\"Measures\"><Formula>[Measures].[Unit Sales]</Formula><CalculatedMemberProperty name=\"FORMAT_STRING\" expression=\"IIf([Measures].[Unit Sales] > 100000,'|#,###|style=green',IIf([Measures].[Unit Sales] > 50000,'|#,###|style=yellow','|#,###|style=red'))\"/></CalculatedMember>",
+                null));
+         */
+        for (Cube cube
+                : context.getConnectionWithDefaultRole().getCatalogReader().getCubes())
+        {
+            if (cube.getName().equals("Warehouse and Sales")) {
+                for (Dimension dim : cube.getDimensions()) {
+                    if (dim.isMeasures()) {
+                        List<Member> members =
+                            context.getConnectionWithDefaultRole()
+                                .getCatalogReader().getLevelMembers(
+                                    dim.getHierarchy().getLevels().getFirst(),
+                                    true);
+                        assertTrue(
+                            members.toString().contains(
+                                "[Measures].[Profit Per Unit Shipped]"));
+                        assertTrue(
+                            members.toString().contains(
+                                "[Measures].[Image Unit Sales]"));
+                        assertTrue(
+                            members.toString().contains(
+                                "[Measures].[Arrow Unit Sales]"));
+                        assertTrue(
+                            members.toString().contains(
+                                "[Measures].[Style Unit Sales]"));
+                        assertTrue(
+                            members.toString().contains(
+                                "[Measures].[Average Warehouse Sale]"));
+                        return;
+                    }
+                }
+            }
+        }
+        fail("Didn't find measures in sales cube.");
+    }
+
+    public static class TestBugMondrian923ModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestBugMondrian923ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -16196,1129 +15838,804 @@ class SchemaTest {
             }
         }
 
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-                "Warehouse and Sales",
-                null,
-                null,
-                "<CalculatedMember name=\"Image Unit Sales\" dimension=\"Measures\"><Formula>[Measures].[Unit Sales]</Formula><CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"|$#,###.00|image=icon_chart\\.gif|link=http://www\\.pentaho\\.com\"/></CalculatedMember>"
-                + "<CalculatedMember name=\"Arrow Unit Sales\" dimension=\"Measures\"><Formula>[Measures].[Unit Sales]</Formula><CalculatedMemberProperty name=\"FORMAT_STRING\" expression=\"IIf([Measures].[Unit Sales] > 10000,'|#,###|arrow=up',IIf([Measures].[Unit Sales] > 5000,'|#,###|arrow=down','|#,###|arrow=none'))\"/></CalculatedMember>"
-                + "<CalculatedMember name=\"Style Unit Sales\" dimension=\"Measures\"><Formula>[Measures].[Unit Sales]</Formula><CalculatedMemberProperty name=\"FORMAT_STRING\" expression=\"IIf([Measures].[Unit Sales] > 100000,'|#,###|style=green',IIf([Measures].[Unit Sales] > 50000,'|#,###|style=yellow','|#,###|style=red'))\"/></CalculatedMember>",
-                null));
-         */
-        withSchemaEmf(context, TestBugMondrian923ModifierEmf::new);
-        for (Cube cube
-                : context.getConnectionWithDefaultRole().getCatalogReader().getCubes())
-        {
-            if (cube.getName().equals("Warehouse and Sales")) {
-                for (Dimension dim : cube.getDimensions()) {
-                    if (dim.isMeasures()) {
-                        List<Member> members =
-                            context.getConnectionWithDefaultRole()
-                                .getCatalogReader().getLevelMembers(
-                                    dim.getHierarchy().getLevels().getFirst(),
-                                    true);
-                        assertTrue(
-                            members.toString().contains(
-                                "[Measures].[Profit Per Unit Shipped]"));
-                        assertTrue(
-                            members.toString().contains(
-                                "[Measures].[Image Unit Sales]"));
-                        assertTrue(
-                            members.toString().contains(
-                                "[Measures].[Arrow Unit Sales]"));
-                        assertTrue(
-                            members.toString().contains(
-                                "[Measures].[Style Unit Sales]"));
-                        assertTrue(
-                            members.toString().contains(
-                                "[Measures].[Average Warehouse Sale]"));
-                        return;
-                    }
-                }
-            }
-        }
-        fail("Didn't find measures in sales cube.");
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubesVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCubesVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        assertTrue(cube.isVisible());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubesVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-            /*
-            class TestCubesVisibilityModifier extends PojoMappingModifier {
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCubesVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testCubesVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        assertFalse(cube.isVisible());
+    }
 
-                public TestCubesVisibilityModifier(CatalogMapping catalogMapping) {
-                    super(catalogMapping);
-                }
-
-                @Override
-                protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.add(PhysicalCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withVisible(testValue)
-                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
-                        .withDimensionConnectors(List.of(
-                            DimensionConnectorMappingImpl.builder()
-                            	.withOverrideDimensionName("Store Type")
-                            	.withDimension(StandardDimensionMappingImpl.builder()
-                            		.withName("Store Type")
-                            		.withHierarchies(List.of(
-                            			ExplicitHierarchyMappingImpl.builder()
-                                        .withHasAll(true)
-                                        .withLevels(List.of(
-                                            LevelMappingImpl.builder()
-                                                .withName("Store Type")
-                                                .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                                                .withUniqueMembers(true)
-                                                .build()
-                                        ))
-                                        .build()
-                                )).build())
-                                .build()
-                        ))
-                        .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
-                        	.withMeasures(List.of(
-                            SumMeasureMappingImpl.builder()
-                                .withName("Store Sqft")
-                                .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-
-                                .withFormatString("#,###")
-                                .build()
-                        )).build()))
-                        .build());
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    return result;
-                }
-            }
-            */
-            class TestCubesVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
-
-                public TestCubesVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
-
-
-                    // Remove existing "Foo" cube if present
-                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-
-                    // Create Store Type level
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
-                        LevelFactory.eINSTANCE.createLevel();
-                    storeTypeLevel.setName("Store Type");
-                    storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
-                    storeTypeLevel.setUniqueMembers(true);
-
-                    // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
-                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                    hierarchy.setHasAll(true);
-                    hierarchy.getLevels().add(storeTypeLevel);
-
-                    // Create dimension
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
-                        DimensionFactory.eINSTANCE.createStandardDimension();
-                    dimension.setName("Store Type");
-                    dimension.getHierarchies().add(hierarchy);
-
-                    // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
-                        DimensionFactory.eINSTANCE.createDimensionConnector();
-                    dimensionConnector.setOverrideDimensionName("Store Type");
-                    dimensionConnector.setDimension(dimension);
-
-                    // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
-                        MeasureFactory.eINSTANCE.createSumMeasure();
-                    storeSqftMeasure.setName("Store Sqft");
-                    storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
-                    storeSqftMeasure.setFormatString("#,###");
-
-                    // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
-                        CubeFactory.eINSTANCE.createMeasureGroup();
-                    measureGroup.getMeasures().add(storeSqftMeasure);
-
-                    // Create Foo cube with visibility
-                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
-                        SourceFactory.eINSTANCE.createTableSource();
-                    tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
-
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
-                        CubeFactory.eINSTANCE.createPhysicalCube();
-                    fooCube.setName("Foo");
-                    fooCube.setVisible(testValue);
-                    fooCube.setSource(tableQuery);
-                    fooCube.getDimensionConnectors().add(dimensionConnector);
-                    fooCube.getMeasureGroups().add(measureGroup);
-
-                    // Add Foo cube at the beginning
-                    catalog.getImportedElement().add(0, fooCube);
-                }
-
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
-                }
-            }
-
-            /*
-            String cubeDef =
-                "<Cube name=\"Foo\" visible=\"@REPLACE_ME@\">\n"
-                + "  <Table name=\"store\"/>\n"
-                + "  <Dimension name=\"Store Type\">\n"
-                + "    <Hierarchy hasAll=\"true\">\n"
-                + "      <Level name=\"Store Type\" column=\"store_type\" uniqueMembers=\"true\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###\"/>\n"
-                + "</Cube>\n";
-            cubeDef = cubeDef.replace(
-                "@REPLACE_ME@",
-                String.valueOf(testValue));
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, cubeDef, null, null, null, null);
-            withSchema(context, schema);
-             */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestCubesVisibilityModifierEmf::new);
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-            assertTrue(testValue.equals(cube.isVisible()));
+    public static class TestCubesVisibilityModifierEmfTrue extends TestCubesVisibilityModifierEmfBase {
+        public TestCubesVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualCubesVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-            /*
-            class TestVirtualCubesVisibilityModifier extends PojoMappingModifier {
+    public static class TestCubesVisibilityModifierEmfFalse extends TestCubesVisibilityModifierEmfBase {
+        public TestCubesVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
+        }
+    }
 
-                public TestVirtualCubesVisibilityModifier(CatalogMapping catalogMapping) {
-                    super(catalogMapping);
-                }
-                @Override
-                protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    result.add(VirtualCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
-                        .withVisible(testValue)
-                        .withDimensionConnectors(List.of(
-                        	DimensionConnectorMappingImpl.builder()
-                        		.withOverrideDimensionName("Customers")
-                        		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_CUSTOMERS))
-                        		.withPhysicalCube((PhysicalCubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
-                                .build()
-                        ))
-                        .withReferencedMeasures(List.of(
-                        	look(FoodmartMappingSupplier.MEASURE_STORE_SALES)
-                        ))
-                        .build());
-                    return result;
-                }
+    public abstract static class TestCubesVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
+
+            public TestCubesVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean testValue) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
+
+
+                // Remove existing "Foo" cube if present
+                catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+
+                // Create Store Type level
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                storeTypeLevel.setName("Store Type");
+                storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
+                storeTypeLevel.setUniqueMembers(true);
+
+                // Create hierarchy
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy.setHasAll(true);
+                hierarchy.getLevels().add(storeTypeLevel);
+
+                // Create dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension dimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
+                dimension.setName("Store Type");
+                dimension.getHierarchies().add(hierarchy);
+
+                // Create dimension connector
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dimensionConnector.setOverrideDimensionName("Store Type");
+                dimensionConnector.setDimension(dimension);
+
+                // Create measure
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
+                storeSqftMeasure.setName("Store Sqft");
+                storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
+                storeSqftMeasure.setFormatString("#,###");
+
+                // Create measure group
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(storeSqftMeasure);
+
+                // Create Foo cube with visibility
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
+                fooCube.setName("Foo");
+                fooCube.setVisible(testValue);
+                fooCube.setSource(tableQuery);
+                fooCube.getDimensionConnectors().add(dimensionConnector);
+                fooCube.getMeasureGroups().add(measureGroup);
+
+                // Add Foo cube at the beginning
+                catalog.getImportedElement().add(0, fooCube);
             }
-            */
-            class TestVirtualCubesVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
 
-                public TestVirtualCubesVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
+            }
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestVirtualCubesVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testVirtualCubesVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        assertTrue(cube.isVisible());
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestVirtualCubesVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testVirtualCubesVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        assertFalse(cube.isVisible());
+    }
+
+    public static class TestVirtualCubesVisibilityModifierEmfTrue extends TestVirtualCubesVisibilityModifierEmfBase {
+        public TestVirtualCubesVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
+        }
+    }
+
+    public static class TestVirtualCubesVisibilityModifierEmfFalse extends TestVirtualCubesVisibilityModifierEmfBase {
+        public TestVirtualCubesVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
+        }
+    }
+
+    public abstract static class TestVirtualCubesVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
+
+            public TestVirtualCubesVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean testValue) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
 
 
-                    // Remove existing "Foo" cube if present
-                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                // Remove existing "Foo" cube if present
+                catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
-                    // Find Sales cube for reference
-                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
-                        Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                // Find Sales cube for reference
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                    if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
-                        org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
-                            (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) salesCubeOpt.get();
+                if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) salesCubeOpt.get();
 
-                        // Find Customers dimension in Sales cube
-                        java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector> customersDimConnOpt =
-                            salesCube.getDimensionConnectors().stream()
-                                .filter(dc -> "Customers".equals(dc.getOverrideDimensionName()))
-                                .findAny();
+                    // Find Customers dimension in Sales cube
+                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector> customersDimConnOpt =
+                        salesCube.getDimensionConnectors().stream()
+                            .filter(dc -> "Customers".equals(dc.getOverrideDimensionName()))
+                            .findAny();
 
-                        // Find Store Sales measure in Sales cube
-                        BaseMeasure storeSalesMeasure = null;
-                        for (org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup mg : salesCube.getMeasureGroups()) {
-                            for (BaseMeasure m : mg.getMeasures()) {
-                                if ("Store Sales".equals(m.getName())) {
-                                    storeSalesMeasure = m;
-                                    break;
-                                }
+                    // Find Store Sales measure in Sales cube
+                    BaseMeasure storeSalesMeasure = null;
+                    for (org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup mg : salesCube.getMeasureGroups()) {
+                        for (BaseMeasure m : mg.getMeasures()) {
+                            if ("Store Sales".equals(m.getName())) {
+                                storeSalesMeasure = m;
+                                break;
                             }
-                            if (storeSalesMeasure != null) break;
                         }
+                        if (storeSalesMeasure != null) break;
+                    }
 
-                        if (customersDimConnOpt.isPresent() && storeSalesMeasure != null) {
-                            // Create dimension connector for virtual cube
-                            //org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector =
-                            //    DimensionFactory.eINSTANCE.createDimensionConnector();
-                            //vcDimensionConnector.setOverrideDimensionName("Customers");
-                            //vcDimensionConnector.setDimension(customersDimConnOpt.get().getDimension());
-                            //vcDimensionConnector.setPhysicalCube(salesCube);
+                    if (customersDimConnOpt.isPresent() && storeSalesMeasure != null) {
+                        // Create virtual cube "Foo" with visibility
+                        org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube fooVirtualCube =
+                            CubeFactory.eINSTANCE.createVirtualCube();
+                        fooVirtualCube.setName("Foo");
+                        fooVirtualCube.setVisible(testValue);
+                        fooVirtualCube.getDimensionConnectors().add(customersDimConnOpt.get());
+                        fooVirtualCube.getReferencedMeasures().add(storeSalesMeasure);
 
-                            // Create virtual cube "Foo" with visibility
-                            org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube fooVirtualCube =
-                                CubeFactory.eINSTANCE.createVirtualCube();
-                            fooVirtualCube.setName("Foo");
-                            fooVirtualCube.setVisible(testValue);
-                            fooVirtualCube.getDimensionConnectors().add(customersDimConnOpt.get());
-                            fooVirtualCube.getReferencedMeasures().add(storeSalesMeasure);
-
-                            // Add Foo virtual cube to catalog
-                            catalog.getImportedElement().add(fooVirtualCube);
-                        }
+                        // Add Foo virtual cube to catalog
+                        catalog.getImportedElement().add(fooVirtualCube);
                     }
                 }
-
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
-                }
             }
 
-            /*
-            String cubeDef =
-                "<VirtualCube name=\"Foo\" defaultMeasure=\"Store Sales\" visible=\"@REPLACE_ME@\">\n"
-                + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-                + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-                + "</VirtualCube>\n";
-            cubeDef = cubeDef.replace(
-                "@REPLACE_ME@",
-                String.valueOf(testValue));
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, null, cubeDef, null, null, null);
-            withSchema(context, schema);
-             */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestVirtualCubesVisibilityModifierEmf::new);
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-            assertTrue(testValue.equals(cube.isVisible()));
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
+            }
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testDimensionVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        assertTrue(dim.isVisible());
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testDimensionVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        assertFalse(dim.isVisible());
+    }
+
+    public static class TestDimensionVisibilityModifierEmfTrue extends TestDimensionVisibilityModifierEmfBase {
+        public TestDimensionVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-            /*
-            class TestDimensionVisibilityModifier extends PojoMappingModifier {
-
-                public TestDimensionVisibilityModifier(CatalogMapping catalogMapping) {
-                    super(catalogMapping);
-                }
-                @Override
-                protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.add(PhysicalCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
-                        .withDimensionConnectors(List.of(
-                            DimensionConnectorMappingImpl.builder()
-                            	.withOverrideDimensionName("Bar")
-                                .withVisible(testValue)
-                                .withDimension(StandardDimensionMappingImpl.builder()
-                                	.withName("Bar")
-                                	.withHierarchies(List.of(
-                                    ExplicitHierarchyMappingImpl.builder()
-                                        .withHasAll(true)
-                                        .withLevels(List.of(
-                                            LevelMappingImpl.builder()
-                                                .withName("Store Type")
-                                                .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                                                .withUniqueMembers(true)
-                                                .build()
-                                        ))
-                                        .build()
-                                ))
-                                .build()).build()
-                        ))
-                        .withMeasureGroups(List.of(
-                        	MeasureGroupMappingImpl.builder()
-                        	.withMeasures(List.of(
-                                SumMeasureMappingImpl.builder()
-                                    .withName("Store Sqft")
-                                    .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-
-                                    .withFormatString("#,###")
-                                    .build()
-                            ))
-                        	.build()
-                        ))
-                        .build());
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    return result;
-                }
-            }
-            */
-            class TestDimensionVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
-
-                public TestDimensionVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
-
-
-                    // Remove existing "Foo" cube if present
-                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-
-                    // Create Store Type level
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
-                        LevelFactory.eINSTANCE.createLevel();
-                    storeTypeLevel.setName("Store Type");
-                    storeTypeLevel.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE);
-                    storeTypeLevel.setUniqueMembers(true);
-
-                    // Create hierarchy
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
-                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                    hierarchy.setHasAll(true);
-                    hierarchy.getLevels().add(storeTypeLevel);
-
-                    // Create Bar dimension
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension barDimension =
-                        DimensionFactory.eINSTANCE.createStandardDimension();
-                    barDimension.setName("Bar");
-                    barDimension.getHierarchies().add(hierarchy);
-
-                    // Create dimension connector with visibility
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
-                        DimensionFactory.eINSTANCE.createDimensionConnector();
-                    dimensionConnector.setOverrideDimensionName("Bar");
-                    dimensionConnector.setVisible(testValue);
-                    dimensionConnector.setDimension(barDimension);
-
-                    // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
-                        MeasureFactory.eINSTANCE.createSumMeasure();
-                    storeSqftMeasure.setName("Store Sqft");
-                    storeSqftMeasure.setColumn(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE);
-                    storeSqftMeasure.setFormatString("#,###");
-
-                    // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
-                        CubeFactory.eINSTANCE.createMeasureGroup();
-                    measureGroup.getMeasures().add(storeSqftMeasure);
-
-                    // Create Foo cube
-                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
-                        SourceFactory.eINSTANCE.createTableSource();
-                    tableQuery.setTable(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE);
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
-                        CubeFactory.eINSTANCE.createPhysicalCube();
-                    fooCube.setName("Foo");
-                    fooCube.setSource(tableQuery);
-                    fooCube.getDimensionConnectors().add(dimensionConnector);
-                    fooCube.getMeasureGroups().add(measureGroup);
-
-                    // Add Foo cube at the beginning
-                    catalog.getImportedElement().add(0, fooCube);
-                }
-
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
-                }
-            }
-
-            /*
-            String cubeDef =
-                "<Cube name=\"Foo\">\n"
-                + "  <Table name=\"store\"/>\n"
-                + "  <Dimension name=\"Bar\" visible=\"@REPLACE_ME@\">\n"
-                + "    <Hierarchy hasAll=\"true\">\n"
-                + "      <Level name=\"Store Type\" column=\"store_type\" uniqueMembers=\"true\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###\"/>\n"
-                + "</Cube>\n";
-            cubeDef = cubeDef.replace(
-                "@REPLACE_ME@",
-                String.valueOf(testValue));
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, cubeDef, null, null, null, null);
-            withSchema(context, schema);
-             */
-            withSchemaEmf(context, TestDimensionVisibilityModifierEmf::new);
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-            Dimension dim = null;
-            for (Dimension dimCheck : cube.getDimensions()) {
-                if (dimCheck.getName().equals("Bar")) {
-                    dim = dimCheck;
-                }
-            }
-            assertNotNull(dim);
-            assertTrue(testValue.equals(dim.isVisible()));
+    public static class TestDimensionVisibilityModifierEmfFalse extends TestDimensionVisibilityModifierEmfBase {
+        public TestDimensionVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualDimensionVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-            /*
-            class TestVirtualDimensionVisibilityModifier extends PojoMappingModifier {
+    public abstract static class TestDimensionVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
 
-                public TestVirtualDimensionVisibilityModifier(CatalogMapping catalogMapping) {
-                    super(catalogMapping);
-                }
-                @Override
-                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    result.add(VirtualCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
-                        .withDimensionConnectors(List.of(
-                        	DimensionConnectorMappingImpl.builder()
-                        		.withPhysicalCube((PhysicalCubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
-                        		.withOverrideDimensionName("Customers")
-                                .withVisible(testValue)
-                                .build()
-                        ))
-                        .withReferencedMeasures(List.of(
-                        		look(FoodmartMappingSupplier.MEASURE_STORE_SALES)
-                        ))
-                        .build());
-                    return result;
-                }
+            public TestDimensionVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean testValue) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
+
+
+                // Remove existing "Foo" cube if present
+                catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+
+                // Create Store Type level
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                storeTypeLevel.setName("Store Type");
+                storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
+                storeTypeLevel.setUniqueMembers(true);
+
+                // Create hierarchy
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy hierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy.setHasAll(true);
+                hierarchy.getLevels().add(storeTypeLevel);
+
+                // Create Bar dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension barDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
+                barDimension.setName("Bar");
+                barDimension.getHierarchies().add(hierarchy);
+
+                // Create dimension connector with visibility
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dimensionConnector.setOverrideDimensionName("Bar");
+                dimensionConnector.setVisible(testValue);
+                dimensionConnector.setDimension(barDimension);
+
+                // Create measure
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
+                storeSqftMeasure.setName("Store Sqft");
+                storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
+                storeSqftMeasure.setFormatString("#,###");
+
+                // Create measure group
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(storeSqftMeasure);
+
+                // Create Foo cube
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
+                fooCube.setName("Foo");
+                fooCube.setSource(tableQuery);
+                fooCube.getDimensionConnectors().add(dimensionConnector);
+                fooCube.getMeasureGroups().add(measureGroup);
+
+                // Add Foo cube at the beginning
+                catalog.getImportedElement().add(0, fooCube);
             }
-            */
-            class TestVirtualDimensionVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
 
-                public TestVirtualDimensionVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
+            }
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestVirtualDimensionVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testVirtualDimensionVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Customers")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        assertTrue(dim.isVisible());
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestVirtualDimensionVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testVirtualDimensionVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Customers")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        assertFalse(dim.isVisible());
+    }
+
+    public static class TestVirtualDimensionVisibilityModifierEmfTrue extends TestVirtualDimensionVisibilityModifierEmfBase {
+        public TestVirtualDimensionVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
+        }
+    }
+
+    public static class TestVirtualDimensionVisibilityModifierEmfFalse extends TestVirtualDimensionVisibilityModifierEmfBase {
+        public TestVirtualDimensionVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
+        }
+    }
+
+    public abstract static class TestVirtualDimensionVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
+
+            public TestVirtualDimensionVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean testValue) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
 
 
-                    // Remove existing "Foo" cube if present
-                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                // Remove existing "Foo" cube if present
+                catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
-                    // Find Sales cube for reference
-                    java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
-                        Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
+                // Find Sales cube for reference
+                java.util.Optional<org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube> salesCubeOpt =
+                    Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class).stream().filter(c -> "Sales".equals(c.getName())).findAny();
 
-                    if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
-                        org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
-                            (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) salesCubeOpt.get();
+                if (salesCubeOpt.isPresent() && salesCubeOpt.get() instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube salesCube =
+                        (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) salesCubeOpt.get();
 
-                        // Find Store Sales measure in Sales cube
-                        BaseMeasure storeSalesMeasure = null;
-                        for (org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup mg : salesCube.getMeasureGroups()) {
-                            for (BaseMeasure m : mg.getMeasures()) {
-                                if ("Store Sales".equals(m.getName())) {
-                                    storeSalesMeasure = m;
-                                    break;
-                                }
+                    // Find Store Sales measure in Sales cube
+                    BaseMeasure storeSalesMeasure = null;
+                    for (org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup mg : salesCube.getMeasureGroups()) {
+                        for (BaseMeasure m : mg.getMeasures()) {
+                            if ("Store Sales".equals(m.getName())) {
+                                storeSalesMeasure = m;
+                                break;
                             }
-                            if (storeSalesMeasure != null) break;
                         }
+                        if (storeSalesMeasure != null) break;
+                    }
 
-                        if (storeSalesMeasure != null) {
-                            // Create dimension connector for virtual cube with visibility
-                            //org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector =
-                            //    DimensionFactory.eINSTANCE.createDimensionConnector();
-                            //vcDimensionConnector.setPhysicalCube(salesCube);
-                            //vcDimensionConnector.setOverrideDimensionName("Customers");
-                            //vcDimensionConnector.setVisible(testValue);
+                    if (storeSalesMeasure != null) {
+                        // Create virtual cube "Foo"
+                        org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector = (DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER);
+                        vcDimensionConnector.setVisible(testValue);
+                        org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube fooVirtualCube =
+                            CubeFactory.eINSTANCE.createVirtualCube();
+                        fooVirtualCube.setName("Foo");
+                        fooVirtualCube.getDimensionConnectors().add(vcDimensionConnector);
+                        fooVirtualCube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
 
-                            // Create virtual cube "Foo"
-                            org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector vcDimensionConnector = (DimensionConnector) copier.get(CatalogSupplier.CONNECTOR_CUSTOMER);
-                            vcDimensionConnector.setVisible(testValue);
-                            org.eclipse.daanse.rolap.mapping.model.olap.cube.VirtualCube fooVirtualCube =
-                                CubeFactory.eINSTANCE.createVirtualCube();
-                            fooVirtualCube.setName("Foo");
-                            fooVirtualCube.getDimensionConnectors().add(vcDimensionConnector);
-                            fooVirtualCube.getReferencedMeasures().add((BaseMeasure) copier.get(CatalogSupplier.MEASURE_STORE_SALES));
-
-                            // Add Foo virtual cube to catalog
-                            catalog.getImportedElement().add(fooVirtualCube);
-                        }
+                        // Add Foo virtual cube to catalog
+                        catalog.getImportedElement().add(fooVirtualCube);
                     }
                 }
-
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
-                }
             }
 
-            /*
-            String cubeDef =
-                "<VirtualCube name=\"Foo\" defaultMeasure=\"Store Sales\">\n"
-                + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\" visible=\"@REPLACE_ME@\"/>\n"
-                + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-                + "</VirtualCube>\n";
-            cubeDef = cubeDef.replace(
-                "@REPLACE_ME@",
-                String.valueOf(testValue));
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, null, cubeDef, null, null, null);
-            withSchema(context, schema);
-             */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestVirtualDimensionVisibilityModifierEmf::new);
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-            Dimension dim = null;
-            for (Dimension dimCheck : cube.getDimensions()) {
-                if (dimCheck.getName().equals("Customers")) {
-                    dim = dimCheck;
-                }
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
             }
-            assertNotNull(dim);
-            assertTrue(testValue.equals(dim.isVisible()));
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionUsageVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testDimensionUsageVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        assertTrue(dim.isVisible());
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDimensionUsageVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testDimensionUsageVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        assertFalse(dim.isVisible());
+    }
+
+    public static class TestDimensionUsageVisibilityModifierEmfTrue extends TestDimensionUsageVisibilityModifierEmfBase {
+        public TestDimensionUsageVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionUsageVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-            /*
-            class TestDimensionUsageVisibilityModifier extends PojoMappingModifier {
-                private Boolean value;
-                public TestDimensionUsageVisibilityModifier(CatalogMapping catalogMapping, Boolean value) {
-                    super(catalogMapping);
-                    this.value = value;
-                }
+    public static class TestDimensionUsageVisibilityModifierEmfFalse extends TestDimensionUsageVisibilityModifierEmfBase {
+        public TestDimensionUsageVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
+        }
+    }
 
-                @Override
-                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.add(PhysicalCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
-                        .withDimensionConnectors(List.of(
-                            DimensionConnectorMappingImpl.builder()
-                            	.withOverrideDimensionName("Bacon")
-                            	.withDimension(StandardDimensionMappingImpl.builder()
-                            		.withName("Bacon")
-                            		.withHierarchies(List.of(
-                                    ExplicitHierarchyMappingImpl.builder()
-                                        .withHasAll(true)
-                                        .withLevels(List.of(
-                                            LevelMappingImpl.builder()
-                                                .withName("Store Type")
-                                                .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                                                .withUniqueMembers(true)
-                                                .build()
-                                        ))
-                                        .build()
-                            		))
-                            	.build())
-                            .build(),
-                            DimensionConnectorMappingImpl.builder()
-                            	.withOverrideDimensionName("Bar")
-                                .withDimension(FoodmartMappingSupplier.DIMENSION_TIME)
-                                .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                .withVisible(this.value)
-                                .build()
-                        ))
-                        .withMeasureGroups(List.of(
-                        	MeasureGroupMappingImpl.builder()
-                        	.withMeasures(List.of(
-                                    SumMeasureMappingImpl.builder()
-                                    .withName("Store Sqft")
-                                    .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
+    public abstract static class TestDimensionUsageVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
 
-                                    .withFormatString("#,###")
-                                    .build()
-                        	))
-                        	.build()
-                        ))
-                        .build());
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    return result;
-                }
-            }*/
+            public TestDimensionUsageVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean value) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
 
-            class TestDimensionUsageVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
-                private Boolean value;
+                // Remove existing "Foo" cube if present
+                catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
 
-                public TestDimensionUsageVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, Boolean value) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
-                    this.value = value;
-
-                    // Remove existing "Foo" cube if present
-                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-
-                    // Find Time dimension for shared usage
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension timeDimension = null;
-                    for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class)) {
-                        if (cube instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
-                            org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube physCube =
-                                (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) cube;
-                            for (org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc : physCube.getDimensionConnectors()) {
-                                if (dc.getDimension() instanceof org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension) {
-                                    timeDimension = dc.getDimension();
-                                    break;
-                                }
+                // Find Time dimension for shared usage
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.Dimension timeDimension = null;
+                for (org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube cube : Packages.available(catalog, org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube.class)) {
+                    if (cube instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) {
+                        org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube physCube =
+                            (org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube) cube;
+                        for (org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dc : physCube.getDimensionConnectors()) {
+                            if (dc.getDimension() instanceof org.eclipse.daanse.rolap.mapping.model.olap.dimension.TimeDimension) {
+                                timeDimension = dc.getDimension();
+                                break;
                             }
-                            if (timeDimension != null) break;
                         }
+                        if (timeDimension != null) break;
                     }
-
-                    // Create Store Type level for Bacon dimension
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
-                        LevelFactory.eINSTANCE.createLevel();
-                    storeTypeLevel.setName("Store Type");
-                    storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
-                    storeTypeLevel.setUniqueMembers(true);
-
-                    // Create hierarchy for Bacon dimension
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy baconHierarchy =
-                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                    baconHierarchy.setHasAll(true);
-                    baconHierarchy.getLevels().add(storeTypeLevel);
-
-                    // Create Bacon dimension
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension baconDimension =
-                        DimensionFactory.eINSTANCE.createStandardDimension();
-                    baconDimension.setName("Bacon");
-                    baconDimension.getHierarchies().add(baconHierarchy);
-
-                    // Create dimension connector for Bacon
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector baconDimensionConnector =
-                        DimensionFactory.eINSTANCE.createDimensionConnector();
-                    baconDimensionConnector.setOverrideDimensionName("Bacon");
-                    baconDimensionConnector.setDimension(baconDimension);
-
-                    // Create dimension connector for Bar (shared Time dimension) with visibility
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector barDimensionConnector =
-                        DimensionFactory.eINSTANCE.createDimensionConnector();
-                    barDimensionConnector.setOverrideDimensionName("Bar");
-                    if (timeDimension != null) {
-                        barDimensionConnector.setDimension(timeDimension);
-                    }
-                    // The COLUMN_TIME_ID_TIME static is not the same instance as the time_id column
-                    // in the copied catalog, so copier.get(...) returns null. Take the foreign key from
-                    // the copied Time hierarchy's primary key, which is the valid in-model time_id.
-                    Column barForeignKey = (timeDimension != null && !timeDimension.getHierarchies().isEmpty())
-                        ? timeDimension.getHierarchies().get(0).getPrimaryKey()
-                        : null;
-                    barDimensionConnector.setForeignKey(barForeignKey);
-                    barDimensionConnector.setVisible(this.value);
-
-                    // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
-                        MeasureFactory.eINSTANCE.createSumMeasure();
-                    storeSqftMeasure.setName("Store Sqft");
-                    storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
-                    storeSqftMeasure.setFormatString("#,###");
-
-                    // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
-                        CubeFactory.eINSTANCE.createMeasureGroup();
-                    measureGroup.getMeasures().add(storeSqftMeasure);
-
-                    // Create Foo cube
-                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
-                        SourceFactory.eINSTANCE.createTableSource();
-                    tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
-
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
-                        CubeFactory.eINSTANCE.createPhysicalCube();
-                    fooCube.setName("Foo");
-                    fooCube.setSource(tableQuery);
-                    fooCube.getDimensionConnectors().add(baconDimensionConnector);
-                    fooCube.getDimensionConnectors().add(barDimensionConnector);
-                    fooCube.getMeasureGroups().add(measureGroup);
-
-                    // Add Foo cube at the beginning
-                    catalog.getImportedElement().add(fooCube);
                 }
 
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
+                // Create Store Type level for Bacon dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                storeTypeLevel.setName("Store Type");
+                storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
+                storeTypeLevel.setUniqueMembers(true);
+
+                // Create hierarchy for Bacon dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy baconHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                baconHierarchy.setHasAll(true);
+                baconHierarchy.getLevels().add(storeTypeLevel);
+
+                // Create Bacon dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension baconDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
+                baconDimension.setName("Bacon");
+                baconDimension.getHierarchies().add(baconHierarchy);
+
+                // Create dimension connector for Bacon
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector baconDimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                baconDimensionConnector.setOverrideDimensionName("Bacon");
+                baconDimensionConnector.setDimension(baconDimension);
+
+                // Create dimension connector for Bar (shared Time dimension) with visibility
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector barDimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                barDimensionConnector.setOverrideDimensionName("Bar");
+                if (timeDimension != null) {
+                    barDimensionConnector.setDimension(timeDimension);
                 }
+                // The COLUMN_TIME_ID_TIME static is not the same instance as the time_id column
+                // in the copied catalog, so copier.get(...) returns null. Take the foreign key from
+                // the copied Time hierarchy's primary key, which is the valid in-model time_id.
+                Column barForeignKey = (timeDimension != null && !timeDimension.getHierarchies().isEmpty())
+                    ? timeDimension.getHierarchies().get(0).getPrimaryKey()
+                    : null;
+                barDimensionConnector.setForeignKey(barForeignKey);
+                barDimensionConnector.setVisible(value);
+
+                // Create measure
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
+                storeSqftMeasure.setName("Store Sqft");
+                storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
+                storeSqftMeasure.setFormatString("#,###");
+
+                // Create measure group
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(storeSqftMeasure);
+
+                // Create Foo cube
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
+                fooCube.setName("Foo");
+                fooCube.setSource(tableQuery);
+                fooCube.getDimensionConnectors().add(baconDimensionConnector);
+                fooCube.getDimensionConnectors().add(barDimensionConnector);
+                fooCube.getMeasureGroups().add(measureGroup);
+
+                // Add Foo cube at the beginning
+                catalog.getImportedElement().add(fooCube);
             }
 
-            /*
-            String cubeDef =
-                "<Cube name=\"Foo\">\n"
-                + "  <Table name=\"store\"/>\n"
-                + "  <Dimension name=\"Bacon\">\n"
-                + "    <Hierarchy hasAll=\"true\">\n"
-                + "      <Level name=\"Store Type\" column=\"store_type\" uniqueMembers=\"true\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###\"/>\n"
-                + "</Cube>\n";
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, cubeDef, null, null, null, null);
-            withSchema(context, schema);
-             */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            context.getCatalogCache().clear();
-            org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalogMapping = ((RolapContext) context).getCatalogMapping();
-            TestDimensionUsageVisibilityModifierEmf testDimensionUsageVisibilityModifier =
-            		new TestDimensionUsageVisibilityModifierEmf(catalogMapping, testValue);
-            ((TestContext)context).setCatalogMappingSupplier(testDimensionUsageVisibilityModifier);
-
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-
-            Dimension dim = null;
-            for (Dimension dimCheck : cube.getDimensions()) {
-                if (dimCheck.getName().equals("Bar")) {
-                    dim = dimCheck;
-                }
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
             }
-            assertNotNull(dim);
-            assertTrue(testValue.equals(dim.isVisible()));
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testHierarchyVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        final Hierarchy hier = dim.getHierarchy();
+        assertNotNull(hier);
+        assertEquals("Bacon",
+            hier.getName());
+        assertTrue(hier.isVisible());
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestHierarchyVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testHierarchyVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        final Hierarchy hier = dim.getHierarchy();
+        assertNotNull(hier);
+        assertEquals("Bacon",
+            hier.getName());
+        assertFalse(hier.isVisible());
+    }
+
+    public static class TestHierarchyVisibilityModifierEmfTrue extends TestHierarchyVisibilityModifierEmfBase {
+        public TestHierarchyVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-        	context.getCatalogCache().clear();
-        	/*
-            class TestHierarchyVisibilityModifier extends PojoMappingModifier {
-
-                public TestHierarchyVisibilityModifier(CatalogMapping catalogMapping) {
-                    super(catalogMapping);
-                }
-
-                @Override
-                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.add(PhysicalCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
-                        .withDimensionConnectors(List.of(
-                        	DimensionConnectorMappingImpl.builder()
-                        		.withOverrideDimensionName("Bar")
-                        		.withDimension(StandardDimensionMappingImpl.builder()
-                        			.withName("Bar")
-                        			.withHierarchies(List.of(
-                                       ExplicitHierarchyMappingImpl.builder()
-                                        .withName("Bacon")
-                                        .withHasAll(true)
-                                        .withVisible(testValue)
-                                        .withLevels(List.of(
-                                            LevelMappingImpl.builder()
-                                                .withName("Store Type")
-                                                .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                                                .withUniqueMembers(true)
-                                                .build()
-                                        ))
-                                        .build()
-                                    ))
-                                    .build()
-                               ).build()
-                        ))
-                        .withMeasureGroups(List.of(
-                           	MeasureGroupMappingImpl.builder()
-                            	.withMeasures(List.of(
-                            		SumMeasureMappingImpl.builder()
-                            		.withName("Store Sqft")
-                            		.withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-
-                            		.withFormatString("#,###")
-                            		.build()
-                            	))
-                            	.build()
-                        ))
-                        .build());
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    return result;
-                }
-            }
-            */
-            class TestHierarchyVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
-
-                public TestHierarchyVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
-
-
-                    // Remove existing "Foo" cube if present
-                    catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-                    catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
-
-                    // Create Store Type level
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
-                        LevelFactory.eINSTANCE.createLevel();
-                    storeTypeLevel.setName("Store Type");
-                    storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
-                    storeTypeLevel.setUniqueMembers(true);
-
-                    // Create hierarchy "Bacon" with visibility
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy baconHierarchy =
-                        HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                    baconHierarchy.setName("Bacon");
-                    baconHierarchy.setHasAll(true);
-                    baconHierarchy.setVisible(testValue);
-                    baconHierarchy.getLevels().add(storeTypeLevel);
-
-                    // Create Bar dimension
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension barDimension =
-                        DimensionFactory.eINSTANCE.createStandardDimension();
-                    barDimension.setName("Bar");
-                    barDimension.getHierarchies().add(baconHierarchy);
-
-                    // Create dimension connector
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
-                        DimensionFactory.eINSTANCE.createDimensionConnector();
-                    dimensionConnector.setOverrideDimensionName("Bar");
-                    dimensionConnector.setDimension(barDimension);
-
-                    // Create measure
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
-                        MeasureFactory.eINSTANCE.createSumMeasure();
-                    storeSqftMeasure.setName("Store Sqft");
-                    storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
-                    storeSqftMeasure.setFormatString("#,###");
-
-                    // Create measure group
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
-                        CubeFactory.eINSTANCE.createMeasureGroup();
-                    measureGroup.getMeasures().add(storeSqftMeasure);
-
-                    // Create Foo cube
-                    org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
-                        SourceFactory.eINSTANCE.createTableSource();
-                    tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
-
-                    org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
-                        CubeFactory.eINSTANCE.createPhysicalCube();
-                    fooCube.setName("Foo");
-                    fooCube.setSource(tableQuery);
-                    fooCube.getDimensionConnectors().add(dimensionConnector);
-                    fooCube.getMeasureGroups().add(measureGroup);
-
-                    // Add Foo cube at the beginning
-                    catalog.getImportedElement().add(fooCube);
-                }
-
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
-                }
-            }
-
-            /*
-            String cubeDef =
-                "<Cube name=\"Foo\">\n"
-                + "  <Table name=\"store\"/>\n"
-                + "  <Dimension name=\"Bar\">\n"
-                + "    <Hierarchy name=\"Bacon\" hasAll=\"true\" visible=\"@REPLACE_ME@\">\n"
-                + "      <Level name=\"Store Type\" column=\"store_type\" uniqueMembers=\"true\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###\"/>\n"
-                + "</Cube>\n";
-            cubeDef = cubeDef.replace(
-                "@REPLACE_ME@",
-                String.valueOf(testValue));
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, cubeDef, null, null, null, null);
-            withSchema(context, schema);
-             */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestHierarchyVisibilityModifierEmf::new);
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-            Dimension dim = null;
-            for (Dimension dimCheck : cube.getDimensions()) {
-                if (dimCheck.getName().equals("Bar")) {
-                    dim = dimCheck;
-                }
-            }
-            assertNotNull(dim);
-            final Hierarchy hier = dim.getHierarchy();
-            assertNotNull(hier);
-            assertEquals("Bacon",
-                hier.getName());
-            assertTrue(testValue.equals(hier.isVisible()));
+    public static class TestHierarchyVisibilityModifierEmfFalse extends TestHierarchyVisibilityModifierEmfBase {
+        public TestHierarchyVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelVisibility(Context<?> context) throws Exception {
-        for (Boolean testValue : new Boolean[] {true, false}) {
-            /*
-            class TestLevelVisibilityModifier extends PojoMappingModifier {
+    public abstract static class TestHierarchyVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
 
-                public TestLevelVisibilityModifier(CatalogMapping catalogMapping) {
-                    super(catalogMapping);
-                }
+            public TestHierarchyVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean testValue) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
 
-                @Override
-                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
-                    List<CubeMapping> result = new ArrayList<>();
-                    result.add(PhysicalCubeMappingImpl.builder()
-                        .withName("Foo")
-                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
-                        .withDimensionConnectors(List.of(
-                        	DimensionConnectorMappingImpl.builder()
-                        		.withOverrideDimensionName("Bar")
-                        		.withDimension(StandardDimensionMappingImpl.builder()
-                                .withHierarchies(List.of(
-                                    ExplicitHierarchyMappingImpl.builder()
-                                        .withName("Bacon")
-                                        .withHasAll(false)
-                                        .withLevels(List.of(
-                                            LevelMappingImpl.builder()
-                                                .withName("Samosa")
-                                                .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                                                .withUniqueMembers(true)
-                                                .withVisible(testValue)
-                                                .build()
-                                        ))
-                                        .build()
-                                )).build())
-                                .build()
-                        ))
-                        .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
-                        		.withMeasures(List.of(
-                                    SumMeasureMappingImpl.builder()
-                                        .withName("Store Sqft")
-                                        .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
 
-                                        .withFormatString("#,###")
-                                        .build()
-                                )).build()))
-                        .build());
-                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
-                    return result;
-                }
+                // Remove existing "Foo" cube if present
+                catalog.getOwnedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+                catalog.getImportedElement().removeIf(e -> e instanceof org.eclipse.daanse.rolap.mapping.model.olap.cube.Cube c && "Foo".equals(c.getName()));
+
+                // Create Store Type level
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level storeTypeLevel =
+                    LevelFactory.eINSTANCE.createLevel();
+                storeTypeLevel.setName("Store Type");
+                storeTypeLevel.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_TYPE_STORE));
+                storeTypeLevel.setUniqueMembers(true);
+
+                // Create hierarchy "Bacon" with visibility
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.ExplicitHierarchy baconHierarchy =
+                    HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                baconHierarchy.setName("Bacon");
+                baconHierarchy.setHasAll(true);
+                baconHierarchy.setVisible(testValue);
+                baconHierarchy.getLevels().add(storeTypeLevel);
+
+                // Create Bar dimension
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.StandardDimension barDimension =
+                    DimensionFactory.eINSTANCE.createStandardDimension();
+                barDimension.setName("Bar");
+                barDimension.getHierarchies().add(baconHierarchy);
+
+                // Create dimension connector
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector dimensionConnector =
+                    DimensionFactory.eINSTANCE.createDimensionConnector();
+                dimensionConnector.setOverrideDimensionName("Bar");
+                dimensionConnector.setDimension(barDimension);
+
+                // Create measure
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.measure.SumMeasure storeSqftMeasure =
+                    MeasureFactory.eINSTANCE.createSumMeasure();
+                storeSqftMeasure.setName("Store Sqft");
+                storeSqftMeasure.setColumn((Column) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.COLUMN_STORE_SQFT_STORE));
+                storeSqftMeasure.setFormatString("#,###");
+
+                // Create measure group
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.MeasureGroup measureGroup =
+                    CubeFactory.eINSTANCE.createMeasureGroup();
+                measureGroup.getMeasures().add(storeSqftMeasure);
+
+                // Create Foo cube
+                org.eclipse.daanse.rolap.mapping.model.database.source.TableSource tableQuery =
+                    SourceFactory.eINSTANCE.createTableSource();
+                tableQuery.setTable((Table) copier.get(org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier.TABLE_STORE));
+
+                org.eclipse.daanse.rolap.mapping.model.olap.cube.PhysicalCube fooCube =
+                    CubeFactory.eINSTANCE.createPhysicalCube();
+                fooCube.setName("Foo");
+                fooCube.setSource(tableQuery);
+                fooCube.getDimensionConnectors().add(dimensionConnector);
+                fooCube.getMeasureGroups().add(measureGroup);
+
+                // Add Foo cube at the beginning
+                catalog.getImportedElement().add(fooCube);
             }
-            */
-            class TestLevelVisibilityModifierEmf implements CatalogMappingSupplier {
-                private CatalogImpl catalog;
 
-                public TestLevelVisibilityModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
-                    EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
-                    this.catalog = (CatalogImpl) copier.get(cat);
-
-
-                    PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
-                    fooCube.setName("Foo");
-
-                    TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
-                    tableQuery.setTable(CatalogSupplier.TABLE_STORE);
-                    fooCube.setSource(tableQuery);
-
-                    DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
-                    dimConnector.setOverrideDimensionName("Bar");
-
-                    StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
-
-                    ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
-                    hierarchy.setName("Bacon");
-                    hierarchy.setHasAll(false);
-
-                    org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
-                    level.setName("Samosa");
-                    level.setColumn(CatalogSupplier.COLUMN_STORE_TYPE_STORE);
-                    level.setUniqueMembers(true);
-                    level.setVisible(testValue);
-
-                    hierarchy.getLevels().add(level);
-                    dimension.getHierarchies().add(hierarchy);
-                    dimConnector.setDimension(dimension);
-                    fooCube.getDimensionConnectors().add(dimConnector);
-
-                    MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
-
-                    SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
-                    measure.setName("Store Sqft");
-                    measure.setColumn(CatalogSupplier.COLUMN_STORE_SQFT_STORE);
-                    measure.setFormatString("#,###");
-
-                    measureGroup.getMeasures().add(measure);
-                    fooCube.getMeasureGroups().add(measureGroup);
-
-                    catalog.getImportedElement().add(fooCube);
-                }
-
-                @Override
-                public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
-                    return catalog;
-                }
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
             }
-            /*
-            String cubeDef =
-                "<Cube name=\"Foo\">\n"
-                + "  <Table name=\"store\"/>\n"
-                + "  <Dimension name=\"Bar\">\n"
-                + "    <Hierarchy name=\"Bacon\" hasAll=\"false\">\n"
-                + "      <Level name=\"Samosa\" column=\"store_type\" uniqueMembers=\"true\" visible=\"@REPLACE_ME@\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\"\n"
-                + "      formatString=\"#,###\"/>\n"
-                + "</Cube>\n";
-            cubeDef = cubeDef.replace(
-                "@REPLACE_ME@",
-                String.valueOf(testValue));
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                    null, cubeDef, null, null, null, null);
-            withSchema(context, schema);
-             */
-            ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-            withSchemaEmf(context, TestLevelVisibilityModifierEmf::new);
-            final Cube cube =
-                context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo").orElseThrow();
-            Dimension dim = null;
-            for (Dimension dimCheck : cube.getDimensions()) {
-                if (dimCheck.getName().equals("Bar")) {
-                    dim = dimCheck;
-                }
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLevelVisibilityModifierEmfTrue.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testLevelVisibilityWhenVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
             }
-            assertNotNull(dim);
-            final Hierarchy hier = dim.getHierarchy();
-            assertNotNull(hier);
-            assertEquals("Bacon",
-                hier.getName());
-            final Level level = hier.getLevels().getFirst();
-            assertEquals("Samosa", level.getName());
-            assertTrue(testValue.equals(level.isVisible()));
+        }
+        assertNotNull(dim);
+        final Hierarchy hier = dim.getHierarchy();
+        assertNotNull(hier);
+        assertEquals("Bacon",
+            hier.getName());
+        final Level level = hier.getLevels().getFirst();
+        assertEquals("Samosa", level.getName());
+        assertTrue(level.isVisible());
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestLevelVisibilityModifierEmfFalse.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testLevelVisibilityWhenNotVisible(Context<?> context) {
+        final Cube cube =
+            context.getConnectionWithDefaultRole().getCatalog()
+                .lookupCube("Foo").orElseThrow();
+        Dimension dim = null;
+        for (Dimension dimCheck : cube.getDimensions()) {
+            if (dimCheck.getName().equals("Bar")) {
+                dim = dimCheck;
+            }
+        }
+        assertNotNull(dim);
+        final Hierarchy hier = dim.getHierarchy();
+        assertNotNull(hier);
+        assertEquals("Bacon",
+            hier.getName());
+        final Level level = hier.getLevels().getFirst();
+        assertEquals("Samosa", level.getName());
+        assertFalse(level.isVisible());
+    }
+
+    public static class TestLevelVisibilityModifierEmfTrue extends TestLevelVisibilityModifierEmfBase {
+        public TestLevelVisibilityModifierEmfTrue(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, true);
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    public static class TestLevelVisibilityModifierEmfFalse extends TestLevelVisibilityModifierEmfBase {
+        public TestLevelVisibilityModifierEmfFalse(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, false);
+        }
+    }
+
+    public abstract static class TestLevelVisibilityModifierEmfBase implements CatalogMappingSupplier {
+            private CatalogImpl catalog;
+
+            public TestLevelVisibilityModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, boolean testValue) {
+                EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
+                this.catalog = (CatalogImpl) copier.get(cat);
+
+
+                PhysicalCube fooCube = CubeFactory.eINSTANCE.createPhysicalCube();
+                fooCube.setName("Foo");
+
+                TableSource tableQuery = SourceFactory.eINSTANCE.createTableSource();
+                tableQuery.setTable((Table) copier.get(CatalogSupplier.TABLE_STORE));
+                fooCube.setSource(tableQuery);
+
+                DimensionConnector dimConnector = DimensionFactory.eINSTANCE.createDimensionConnector();
+                dimConnector.setOverrideDimensionName("Bar");
+
+                StandardDimension dimension = DimensionFactory.eINSTANCE.createStandardDimension();
+
+                ExplicitHierarchy hierarchy = HierarchyFactory.eINSTANCE.createExplicitHierarchy();
+                hierarchy.setName("Bacon");
+                hierarchy.setHasAll(false);
+
+                org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Level level = LevelFactory.eINSTANCE.createLevel();
+                level.setName("Samosa");
+                level.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_TYPE_STORE));
+                level.setUniqueMembers(true);
+                level.setVisible(testValue);
+
+                hierarchy.getLevels().add(level);
+                dimension.getHierarchies().add(hierarchy);
+                dimConnector.setDimension(dimension);
+                fooCube.getDimensionConnectors().add(dimConnector);
+
+                MeasureGroup measureGroup = CubeFactory.eINSTANCE.createMeasureGroup();
+
+                SumMeasure measure = MeasureFactory.eINSTANCE.createSumMeasure();
+                measure.setName("Store Sqft");
+                measure.setColumn((Column) copier.get(CatalogSupplier.COLUMN_STORE_SQFT_STORE));
+                measure.setFormatString("#,###");
+
+                measureGroup.getMeasures().add(measure);
+                fooCube.getMeasureGroups().add(measureGroup);
+
+                catalog.getImportedElement().add(fooCube);
+            }
+
+            @Override
+            public org.eclipse.daanse.rolap.mapping.model.catalog.Catalog get() {
+                return catalog;
+            }
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestNonCollapsedAggregateModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNonCollapsedAggregate(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
             && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
@@ -17451,7 +16768,70 @@ class SchemaTest {
             }
         }
         */
-        class TestNonCollapsedAggregateModifierEmf implements CatalogMappingSupplier {
+        /*
+        final String cube =
+            "<Cube name=\"Foo\" defaultMeasure=\"Unit Sales\">\n"
+            + "  <Table name=\"sales_fact_1997\">\n"
+            + "    <AggExclude name=\"agg_g_ms_pcat_sales_fact_1997\"/>"
+            + "    <AggExclude name=\"agg_c_14_sales_fact_1997\"/>"
+            + "    <AggExclude name=\"agg_pl_01_sales_fact_1997\"/>"
+            + "    <AggExclude name=\"agg_ll_01_sales_fact_1997\"/>"
+            + "    <AggName name=\"agg_l_05_sales_fact_1997\">"
+            + "        <AggFactCount column=\"fact_count\"/>\n"
+            + "        <AggIgnoreColumn column=\"customer_id\"/>\n"
+            + "        <AggIgnoreColumn column=\"store_id\"/>\n"
+            + "        <AggIgnoreColumn column=\"promotion_id\"/>\n"
+            + "        <AggIgnoreColumn column=\"store_sales\"/>\n"
+            + "        <AggIgnoreColumn column=\"store_cost\"/>\n"
+            + "        <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
+            + "        <AggLevel name=\"[Product].[Product Id]\" column=\"product_id\" collapsed=\"false\"/>\n"
+            + "    </AggName>\n"
+            + "</Table>\n"
+            + "<Dimension foreignKey=\"product_id\" name=\"Product\">\n"
+            + "<Hierarchy hasAll=\"true\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
+            + "  <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
+            + " <Table name=\"product\"/>\n"
+            + " <Table name=\"product_class\"/>\n"
+            + "  </Join>\n"
+            + "  <Level name=\"Product Family\" table=\"product_class\" column=\"product_family\"\n"
+            + "   uniqueMembers=\"true\"/>\n"
+            + "  <Level name=\"Product Department\" table=\"product_class\" column=\"product_department\"\n"
+            + "   uniqueMembers=\"false\"/>\n"
+            + "  <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
+            + "   uniqueMembers=\"false\"/>\n"
+            + "  <Level name=\"Product Subcategory\" table=\"product_class\" column=\"product_subcategory\"\n"
+            + "   uniqueMembers=\"false\"/>\n"
+            + "  <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
+            + "  <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
+            + "   uniqueMembers=\"true\"/>\n"
+            + "  <Level name=\"Product Id\" table=\"product\" column=\"product_id\"\n"
+            + "   uniqueMembers=\"true\"/>\n"
+            + "</Hierarchy>\n"
+            + "</Dimension>\n"
+            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
+            + "      formatString=\"Standard\"/>\n"
+            + "</Cube>\n";
+        String baseSchema = TestUtil.getRawSchema(context);
+        String schema = SchemaUtil.getSchema(baseSchema,
+                null, cube, null, null, null, null);
+        withSchema(context, schema);
+         */
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "Axis #1:\n"
+            + "{[Measures].[Unit Sales]}\n"
+            + "Axis #2:\n"
+            + "{[Product].[Drink]}\n"
+            + "{[Product].[Food]}\n"
+            + "{[Product].[Non-Consumable]}\n"
+            + "Row #0: 24,597\n"
+            + "Row #1: 191,940\n"
+            + "Row #2: 50,236\n");
+    }
+
+    public static class TestNonCollapsedAggregateModifierEmf implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
             public TestNonCollapsedAggregateModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
@@ -17614,69 +16994,6 @@ class SchemaTest {
                 return catalog;
             }
         }
-        /*
-        final String cube =
-            "<Cube name=\"Foo\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude name=\"agg_g_ms_pcat_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_c_14_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_pl_01_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_ll_01_sales_fact_1997\"/>"
-            + "    <AggName name=\"agg_l_05_sales_fact_1997\">"
-            + "        <AggFactCount column=\"fact_count\"/>\n"
-            + "        <AggIgnoreColumn column=\"customer_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"promotion_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_sales\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_cost\"/>\n"
-            + "        <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
-            + "        <AggLevel name=\"[Product].[Product Id]\" column=\"product_id\" collapsed=\"false\"/>\n"
-            + "    </AggName>\n"
-            + "</Table>\n"
-            + "<Dimension foreignKey=\"product_id\" name=\"Product\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
-            + "  <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
-            + " <Table name=\"product\"/>\n"
-            + " <Table name=\"product_class\"/>\n"
-            + "  </Join>\n"
-            + "  <Level name=\"Product Family\" table=\"product_class\" column=\"product_family\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Department\" table=\"product_class\" column=\"product_department\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Subcategory\" table=\"product_class\" column=\"product_subcategory\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Id\" table=\"product\" column=\"product_id\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>\n";
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
-        withSchemaEmf(context, TestNonCollapsedAggregateModifierEmf::new);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "Axis #1:\n"
-            + "{[Measures].[Unit Sales]}\n"
-            + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
-            + "Row #0: 24,597\n"
-            + "Row #1: 191,940\n"
-            + "Row #2: 50,236\n");
-    }
 
 
 
@@ -19156,8 +18473,8 @@ class SchemaTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestNonCollapsedAggregateOnNonUniqueLevelFailsModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNonCollapsedAggregateOnNonUniqueLevelFails(Context<?> context)
         throws Exception
     {
@@ -19341,14 +18658,13 @@ class SchemaTest {
                 null, cube, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestNonCollapsedAggregateOnNonUniqueLevelFailsModifierEmf::new);
         assertQueryThrows(context,
             "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "mondrian.olap.MondrianException: Mondrian Error:Too many errors, '1', while loading/reloading aggregates.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestTwoNonCollapsedAggregateModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTwoNonCollapsedAggregate(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
             && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
@@ -19590,7 +18906,6 @@ class SchemaTest {
                 null, cube, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestTwoNonCollapsedAggregateModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {Crossjoin([Product].[Product Family].Members, [Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "Axis #0:\n"
@@ -19750,8 +19065,8 @@ class SchemaTest {
             + "Row #74: 2,140\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestCollapsedErrorModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCollapsedError(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
             && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
@@ -19933,7 +19248,6 @@ class SchemaTest {
                 null, cube, null, null, null, null);
         withSchema(context, schema);
          */
-        withSchemaEmf(context, TestCollapsedErrorModifierEmf::new);
         assertQueryThrows(context,
             "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "Too many errors, '1', while loading/reloading aggregates.");
@@ -19945,9 +19259,10 @@ class SchemaTest {
      * "IllegalArgumentException when cube has closure tables and many
      * levels"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian1047(Context<?> context) {
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian1047ModifierEmf100.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian1047_100(Context<?> context) { // 115 bits
         // Test case only works under MySQL, due to how columns are quoted.
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
         case MARIADB:
@@ -19956,59 +19271,145 @@ class SchemaTest {
         default:
             return;
         }
-        checkBugMondrian1047(context, 100); // 115 bits
-        checkBugMondrian1047(context, 50); // 65 bits
-        checkBugMondrian1047(context, 49); // 64 bits
-        checkBugMondrian1047(context, 48); // 63 bits
-        checkBugMondrian1047(context, 113); // 128 bits
-        checkBugMondrian1047(context, 114); // 129 bits
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [HR]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "$39,431.67");
     }
 
-
-    public void checkBugMondrian1047(Context<?> context, int n) {
-        /*
-        class CheckBugMondrian1047Modifier extends PojoMappingModifier{
-            public CheckBugMondrian1047Modifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-                List<DimensionConnectorMapping> result = new ArrayList<>();
-                result.addAll(super.cubeDimensionConnectors(cube));
-                if ("HR".equals(cube.getName())) {
-                        SqlStatementMappingImpl sql = SqlStatementMappingImpl.builder().withSql("`position_title` + " + n).withDialects(
-                            List.of("generic")).build();
-                        SQLExpressionMappingColumnImpl ex = SQLExpressionMappingColumnImpl.builder().withSqls(List.of(sql)).withDataType(ColumnDataType.VARCHAR).build();
-                        LevelMappingImpl level = LevelMappingImpl.builder()
-                        	.withName("Position Title")
-                        	.withUniqueMembers(false)
-                        	.withOrdinalColumn(FoodmartMappingSupplier.POSITION_ID_COLUMN_IN_EMPLOYEE)
-                            .withColumn(ex).build();
-                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
-                            .builder()
-                            .withHasAll(true)
-                            .withAllMemberName("All Position")
-                            .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                            .withLevels (List.of(level))
-                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                            .build();
-                        result.add(
-                        	DimensionConnectorMappingImpl
-                                .builder()
-                                .withOverrideDimensionName("Position" + n)
-                                .withForeignKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_SALARY)
-                                .withDimension(StandardDimensionMappingImpl.builder()
-                                	.withName("Position" + n)
-                                	.withHierarchies(List.of(hierarchy))
-                                	.build()).build()
-                        );
-                }
-                return result;
-            }
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian1047ModifierEmf50.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian1047_50(Context<?> context) { // 65 bits
+        // Test case only works under MySQL, due to how columns are quoted.
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
+        case MARIADB:
+        case MYSQL:
+            break;
+        default:
+            return;
         }
-        */
-        class CheckBugMondrian1047ModifierEmf implements CatalogMappingSupplier {
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [HR]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "$39,431.67");
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian1047ModifierEmf49.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian1047_49(Context<?> context) { // 64 bits
+        // Test case only works under MySQL, due to how columns are quoted.
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
+        case MARIADB:
+        case MYSQL:
+            break;
+        default:
+            return;
+        }
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [HR]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "$39,431.67");
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian1047ModifierEmf48.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian1047_48(Context<?> context) { // 63 bits
+        // Test case only works under MySQL, due to how columns are quoted.
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
+        case MARIADB:
+        case MYSQL:
+            break;
+        default:
+            return;
+        }
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [HR]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "$39,431.67");
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian1047ModifierEmf113.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian1047_113(Context<?> context) { // 128 bits
+        // Test case only works under MySQL, due to how columns are quoted.
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
+        case MARIADB:
+        case MYSQL:
+            break;
+        default:
+            return;
+        }
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [HR]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "$39,431.67");
+    }
+
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian1047ModifierEmf114.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testBugMondrian1047_114(Context<?> context) { // 129 bits
+        // Test case only works under MySQL, due to how columns are quoted.
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
+        case MARIADB:
+        case MYSQL:
+            break;
+        default:
+            return;
+        }
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
+            "select from [HR]",
+            "Axis #0:\n"
+            + "{}\n"
+            + "$39,431.67");
+    }
+
+    public static class CheckBugMondrian1047ModifierEmf100 extends CheckBugMondrian1047ModifierEmfBase {
+        public CheckBugMondrian1047ModifierEmf100(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, 100);
+        }
+    }
+
+    public static class CheckBugMondrian1047ModifierEmf50 extends CheckBugMondrian1047ModifierEmfBase {
+        public CheckBugMondrian1047ModifierEmf50(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, 50);
+        }
+    }
+
+    public static class CheckBugMondrian1047ModifierEmf49 extends CheckBugMondrian1047ModifierEmfBase {
+        public CheckBugMondrian1047ModifierEmf49(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, 49);
+        }
+    }
+
+    public static class CheckBugMondrian1047ModifierEmf48 extends CheckBugMondrian1047ModifierEmfBase {
+        public CheckBugMondrian1047ModifierEmf48(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, 48);
+        }
+    }
+
+    public static class CheckBugMondrian1047ModifierEmf113 extends CheckBugMondrian1047ModifierEmfBase {
+        public CheckBugMondrian1047ModifierEmf113(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, 113);
+        }
+    }
+
+    public static class CheckBugMondrian1047ModifierEmf114 extends CheckBugMondrian1047ModifierEmfBase {
+        public CheckBugMondrian1047ModifierEmf114(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            super(cat, 114);
+        }
+    }
+
+        public abstract static class CheckBugMondrian1047ModifierEmfBase implements CatalogMappingSupplier {
             private CatalogImpl catalog;
 
 
@@ -20019,7 +19420,7 @@ class SchemaTest {
             private final StandardDimension dimension;
             private final DimensionConnector dimensionConnector;
 
-            public CheckBugMondrian1047ModifierEmf(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat) {
+            public CheckBugMondrian1047ModifierEmfBase(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog cat, int n) {
                 EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) cat);
                 this.catalog = (CatalogImpl) copier.get(cat);
 
@@ -20077,38 +19478,14 @@ class SchemaTest {
             }
         }
 
-        ((TestContext)context).setCatalogMappingSupplier(new CatalogSupplier());
-        withSchemaEmf(context, CheckBugMondrian1047ModifierEmf::new);
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-                "HR",
-                TestUtil.repeatString(
-                    n,
-                    "<Dimension name='Position %1$d' foreignKey='employee_id'>\n"
-                    + "  <Hierarchy hasAll='true' allMemberName='All Position' primaryKey='employee_id'>\n"
-                    + "    <Table name='employee'/>\n"
-                    + "    <Level name='Position Title' uniqueMembers='false' ordinalColumn='position_id'>\n"
-                    + "      <KeyExpression><SQL dialect='generic'>`position_title` + %1$d</SQL></KeyExpression>\n"
-                    + "    </Level>\n"
-                    + "  </Hierarchy>\n"
-                    + "</Dimension>"),
-                null, false));
-         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
-            "Axis #0:\n"
-            + "{}\n"
-            + "$39,431.67");
-    }
-
     /**
      * Test case for bug
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-1065">MONDRIAN-1065,
      * Incorrect data column is used in the WHERE clause of the SQL when
      * using Oracle DB</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMondrian1065ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian1065(Context<?> context) {
         // Test case only works under Oracle
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())) {
@@ -20235,7 +19612,6 @@ class SchemaTest {
             + "  </Dimension>\n"));
          */
 
-        withSchemaEmf(context, TestBugMondrian1065ModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty crossjoin({[PandaSteak].[Level3].[level 3 - 1], [PandaSteak].[Level3].[level 3 - 2]}, {[Measures].[Unit Sales], [Measures].[Store Cost]}) on columns, {[Product].[Product Family].Members} on rows from [Sales]",
             "Axis #0:\n"
@@ -20271,8 +19647,7 @@ class SchemaTest {
      * directly would return the null members at the end, since it was
      * using TupleReader#readTuples instead of TupleReader#readMembers.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMondrian1390(Context<?> context) throws Exception {
         Catalog schema = context.getConnectionWithDefaultRole().getCatalog();
         Cube salesCube = schema.lookupCube("Sales").orElseThrow();
@@ -20311,11 +19686,11 @@ class SchemaTest {
             members.toString());
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMondrian1499ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "false", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "false", type = Boolean.class)
     void testMondrian1499(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(false);
-        ((TestContextImpl)context).setReadAggregates(false);
         /*
         class TestMondrian1499Modifier extends PojoMappingModifier {
 
@@ -20688,7 +20063,6 @@ class SchemaTest {
                 + "</Cube>\n"
                 + "</Schema>");
          */
-        withSchemaEmf(context, TestMondrian1499ModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Org Salary]} on columns,\n"
             + "{[Store].[Store Country].Members} on rows from [HR]",
@@ -20710,8 +20084,8 @@ class SchemaTest {
     * <a href="http://jira.pentaho.com/browse/MONDRIAN-1073">MONDRIAN-1073,
     * "Two cubes operating on same fact table gives wrong WHERE clause"</a>.
     */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMondrian1073ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian1073(Context<?> context) throws Exception {
         /*
         class TestMondrian1073Modifier extends PojoMappingModifier {
@@ -20810,7 +20184,6 @@ class SchemaTest {
                     null, null, null, null);
         withSchema(context, schema);
         */
-        withSchemaEmf(context, TestMondrian1073ModifierEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(), "CubeB",
             "SELECT [Measures].[Fantastic Count for Different Types of Promotion] ON COLUMNS\n"
             + "FROM [CubeB]",
@@ -20821,8 +20194,8 @@ class SchemaTest {
             + "Row #0: 22\n");
   }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMultiByteSchemaReadFromFileEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMultiByteSchemaReadFromFile(Context<?> context) throws IOException {
         //String rawSchema = TestContext.getRawFoodMartSchema().replace(
         /*
@@ -20861,7 +20234,6 @@ class SchemaTest {
         context.setProperty(RolapConnectionProperties.Catalog.name(),
                 schemaFile.getAbsolutePath());
          */
-        withSchemaEmf(context, TestMultiByteSchemaReadFromFileEmf::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Gender].members on 0 from sales",
             "Axis #0:\n"
@@ -20875,8 +20247,8 @@ class SchemaTest {
             + "Row #0: 135,215\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestBugMonrian2528ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMonrian2528(Context<?> context) {
         /*
         class TestBugMonrian2528Modifier extends PojoMappingModifier {
@@ -20974,9 +20346,8 @@ class SchemaTest {
           + "</Role>\n");
         withSchema(context, schema);
        */
-        withSchemaEmf(context, TestBugMonrian2528ModifierEmf::new);
 
-      assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("dev"))),
+      assertQueryReturns(context.getConnection(new ConnectionProps(List.of("dev"))),
           "SELECT\n"
           + "[Product].[All Products] ON 0,\n"
           + "[Measures].[Store Sales] ON 1\n"
@@ -20995,8 +20366,8 @@ class SchemaTest {
 );
   }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestMondrian1275ModifierEmf.class }, database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian1275(Context<?> context) throws Exception {
         /*
         class TestMondrian1275Modifier extends PojoMappingModifier {
@@ -21096,7 +20467,6 @@ class SchemaTest {
                                         + "</Cube>\n"
                                         + "</Schema>\n");
         */
-        withSchemaEmf(context, TestMondrian1275ModifierEmf::new);
         final Connection rolapConn = (Connection) context.getConnectionWithDefaultRole();
         final CatalogReader schemaReader = rolapConn.getCatalogReader();
         final Catalog schema = schemaReader.getCatalog();

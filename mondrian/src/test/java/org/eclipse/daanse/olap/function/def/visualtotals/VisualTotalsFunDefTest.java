@@ -14,9 +14,8 @@
 package org.eclipse.daanse.olap.function.def.visualtotals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import java.util.List;
@@ -26,26 +25,26 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 
 
+@RolapContextTest(FoodmartTestInstance.class)
 class VisualTotalsFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsBasic(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    {[Product].[All Products].[Food].[Baked Goods].[Bread],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Bagels],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},"
                 + "     \"**Subtotal - *\")} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             // note that Subtotal - Bread only includes 2 displayed children
             // in member with visual totals name is the same but caption is changed
@@ -63,10 +62,9 @@ class VisualTotalsFunDefTest {
     }
 
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsConsecutively(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    {[Product].[All Products].[Food].[Baked Goods].[Bread],"
@@ -76,7 +74,8 @@ class VisualTotalsFunDefTest {
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Bagels],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},"
                 + "     \"**Subtotal - *\")} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             // Note that [Bagels] occurs 3 times, but only once does it
             // become a subtotal. Note that the subtotal does not include
@@ -103,14 +102,14 @@ class VisualTotalsFunDefTest {
         // We should use only [Product].[Food].[Baked Goods].[Bread].[Bagels].[Colony] for  [Food].[Baked Goods].[Bread].[Bagels]
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsNoPattern(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "VisualTotals("
                 + "    {[Product].[All Products].[Food].[Baked Goods].[Bread],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Bagels],"
-                + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]})",
+                + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]})")
+            .returns(
 
             // Note that the [Bread] visual member is just called [Bread].
             "[Product].[Product].[Food].[Baked Goods].[Bread]\n"
@@ -118,10 +117,9 @@ class VisualTotalsFunDefTest {
                 + "[Product].[Product].[Food].[Baked Goods].[Bread].[Muffins]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsWithFilter(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{Filter("
                 + "    VisualTotals("
@@ -130,7 +128,8 @@ class VisualTotalsFunDefTest {
                 + "         [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},"
                 + "        \"**Subtotal - *\"),"
                 + "[Measures].[Unit Sales] > 3400)} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             // Note that [*Subtotal - Bread] still contains the
             // contribution of [Bagels] 815, which was filtered out.
@@ -147,10 +146,9 @@ class VisualTotalsFunDefTest {
     }
 
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsNested(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    Filter("
@@ -161,7 +159,8 @@ class VisualTotalsFunDefTest {
                 + "            \"**Subtotal - *\"),"
                 + "    [Measures].[Unit Sales] > 3400),"
                 + "    \"Second total - *\")} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             // Yields the same -- no extra total.
             // in member with visual totals name is the same but caption is changed
@@ -176,10 +175,9 @@ class VisualTotalsFunDefTest {
                 + "Row #1: 3,497\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsFilterInside(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    Filter("
@@ -188,7 +186,8 @@ class VisualTotalsFunDefTest {
                 + "         [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},"
                 + "        [Measures].[Unit Sales] > 3400),"
                 + "    \"**Subtotal - *\")} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             "Axis #0:\n"
                 + "{}\n"
@@ -201,17 +200,17 @@ class VisualTotalsFunDefTest {
                 + "Row #1: 3,497\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsOutOfOrder(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    {[Product].[All Products].[Food].[Baked Goods].[Bread].[Bagels],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},"
                 + "    \"**Subtotal - *\")} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             // Note that [*Subtotal - Bread] 3497 does not include 815 for
             // bagels.
@@ -228,10 +227,9 @@ class VisualTotalsFunDefTest {
                 + "Row #2: 3,497\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsGrandparentsAndOutOfOrder(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    {[Product].[All Products].[Food],"
@@ -242,7 +240,8 @@ class VisualTotalsFunDefTest {
                 + "     [Product].[All Products].[Food].[Frozen Foods].[Breakfast Foods].[Pancake Mix].[Big Time],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},"
                 + "    \"**Subtotal - *\")} on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
 
             // Note:
             // [*Subtotal - Food]  = 4513 = 815 + 311 + 3497
@@ -270,12 +269,11 @@ class VisualTotalsFunDefTest {
                 + "Row #6: 3,497\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsCrossjoin(Context<?> context) {
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "VisualTotals(Crossjoin([Gender].Members, [Store].children))",
-            "Argument to 'VisualTotals' function must be a set of members; got set of tuples.", "Sales" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "VisualTotals(Crossjoin([Gender].Members, [Store].children))")
+            .throwsMessage( "Argument to 'VisualTotals' function must be a set of members; got set of tuples." );
     }
 
     /**
@@ -283,8 +281,7 @@ class VisualTotalsFunDefTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-615">MONDRIAN-615</a>,
      * "VisualTotals doesn't work for the all member".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsAll(Context<?> context) {
         final String query =
             "SELECT \n"
@@ -295,8 +292,9 @@ class VisualTotalsFunDefTest {
                 + "     [Customers].[USA].[CA],\n"
                 + "     [Customers].[USA].[OR]}) ON 1\n"
                 + "FROM [Sales]";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            query,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            query)
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -324,10 +322,9 @@ class VisualTotalsFunDefTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-615">MONDRIAN-615</a>,
      * "VisualTotals doesn't work for the all member".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsWithNamedSetAndPivot(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [CA_OR] AS\n"
                 + "    VisualTotals(\n"
                 + "        {[Customers].[All Customers],\n"
@@ -337,7 +334,8 @@ class VisualTotalsFunDefTest {
                 + "SELECT \n"
                 + "    Drilldownlevel({[Time].[1997]}) ON 0, \n"
                 + "    [CA_OR] ON 1 \n"
-                + "FROM [Sales] ",
+                + "FROM [Sales] ")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -373,7 +371,7 @@ class VisualTotalsFunDefTest {
                 + "Row #3: 16,353\n" );
 
         // same query, swap axes
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [CA_OR] AS\n"
                 + "    VisualTotals(\n"
                 + "        {[Customers].[All Customers],\n"
@@ -383,7 +381,8 @@ class VisualTotalsFunDefTest {
                 + "SELECT \n"
                 + "    [CA_OR] ON 0,\n"
                 + "    Drilldownlevel({[Time].[1997]}) ON 1\n"
-                + "FROM [Sales] ",
+                + "FROM [Sales] ")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -425,10 +424,9 @@ class VisualTotalsFunDefTest {
      * <p>Testcase for <a href="http://jira.pentaho.com/browse/MONDRIAN-295">
      * bug MONDRIAN-295, "Query generated by Excel 2007 gives incorrect results"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsIntersect(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "SET [XL_Row_Dim_0] AS 'VisualTotals(Distinct(Hierarchize({Ascendants([Customers].[All Customers].[USA]), "
                 + "Descendants([Customers].[All Customers].[USA])})))' \n"
@@ -437,7 +435,8 @@ class VisualTotalsFunDefTest {
                 + "NON EMPTY Hierarchize(Intersect({DrilldownLevel({[Customers].[All Customers]})}, [XL_Row_Dim_0])) ON "
                 + "ROWS \n"
                 + "FROM [Sales] \n"
-                + "WHERE ([Measures].[Store Sales])",
+                + "WHERE ([Measures].[Store Sales])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #1:\n"
@@ -453,10 +452,9 @@ class VisualTotalsFunDefTest {
      * <p>Testcase for <a href="http://jira.pentaho.com/browse/MONDRIAN-668">
      * bug MONDRIAN-668, "Intersect should return any VisualTotals members in right-hand set"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsWithNamedSetAndPivotSameAxis(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -469,7 +467,8 @@ class VisualTotalsFunDefTest {
                 + "      {DrilldownLevel({[Store].[USA]})},\n"
                 + "      [XL_Row_Dim_0])) ON COLUMNS\n"
                 + "from [Sales] "
-                + "where [Measures].[Sales count]\n",
+                + "where [Measures].[Sales count]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Sales Count]}\n"
                 + "Axis #1:\n"
@@ -479,7 +478,7 @@ class VisualTotalsFunDefTest {
                 + "Row #0: 24,442\n" );
 
         // now with tuples
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -496,7 +495,8 @@ class VisualTotalsFunDefTest {
                 + "     * [XL_Row_Dim_0]\n"
                 + "     * [Gender].[F])) ON COLUMNS\n"
                 + "from [Sales] "
-                + "where [Measures].[Sales count]\n",
+                + "where [Measures].[Sales count]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Sales Count]}\n"
                 + "Axis #1:\n"
@@ -510,11 +510,10 @@ class VisualTotalsFunDefTest {
      * <p>Testcase for <a href="http://jira.pentaho.com/browse/MONDRIAN-682">
      * bug MONDRIAN-682, "VisualTotals + Distinct-count measure gives wrong results"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsDistinctCountMeasure(Context<?> context) {
         // distinct measure
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -527,7 +526,8 @@ class VisualTotalsFunDefTest {
                 + "      {DrilldownLevel({[Store].[All Stores]})},\n"
                 + "      [XL_Row_Dim_0])) ON COLUMNS\n"
                 + "from [HR] "
-                + "where [Measures].[Number of Employees]\n",
+                + "where [Measures].[Number of Employees]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Number of Employees]}\n"
                 + "Axis #1:\n"
@@ -537,7 +537,7 @@ class VisualTotalsFunDefTest {
                 + "Row #0: 193\n" );
 
         // distinct measure
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -552,7 +552,8 @@ class VisualTotalsFunDefTest {
                 + "      {DrilldownLevel({[Store].[All Stores]})},\n"
                 + "      [XL_Row_Dim_0])) ON COLUMNS\n"
                 + "from [HR] "
-                + "where [Measures].[Number of Employees]\n",
+                + "where [Measures].[Number of Employees]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Number of Employees]}\n"
                 + "Axis #1:\n"
@@ -562,7 +563,7 @@ class VisualTotalsFunDefTest {
                 + "Row #0: 110\n" );
 
         // distinct measure on columns
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -575,7 +576,8 @@ class VisualTotalsFunDefTest {
                 + "    Intersect(\n"
                 + "      {DrilldownLevel({[Store].[All Stores]})},\n"
                 + "      [XL_Row_Dim_0])) ON ROWS\n"
-                + "from [HR] ",
+                + "from [HR] ")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -590,7 +592,7 @@ class VisualTotalsFunDefTest {
                 + "Row #1: 193\n" );
 
         // distinct measure with tuples
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -607,7 +609,8 @@ class VisualTotalsFunDefTest {
                 + "     * [XL_Row_Dim_0]\n"
                 + "     * [Gender].[F])) ON COLUMNS\n"
                 + "from [Sales] "
-                + "where [Measures].[Customer count]\n",
+                + "where [Measures].[Customer count]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Customer Count]}\n"
                 + "Axis #1:\n"
@@ -621,10 +624,9 @@ class VisualTotalsFunDefTest {
      * <p>Testcase for <a href="http://jira.pentaho.com/browse/MONDRIAN-761">
      * bug MONDRIAN-761, "VisualTotalMember cannot be cast to RolapCubeMember"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsClassCast(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH  SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -674,7 +676,8 @@ class VisualTotalsFunDefTest {
                 + "  LANGUAGE,\n"
                 + "  BACK_COLOR,\n"
                 + "  FORE_COLOR,\n"
-                + "  FONT_FLAGS",
+                + "  FONT_FLAGS")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Number of Employees]}\n"
                 + "Axis #1:\n"
@@ -707,10 +710,9 @@ class VisualTotalsFunDefTest {
      * bug MONDRIAN-678, "VisualTotals gives UnsupportedOperationException calling getOrdinal"</a>. Key difference from
      * previous test is that there are multiple hierarchies in Named set.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsWithNamedSetOfTuples(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
                 + "   Distinct(\n"
@@ -730,7 +732,8 @@ class VisualTotalsFunDefTest {
                 + "        {[Customers].[All Customers].[USA].[CA]})),\n"
                 + "        [XL_Row_Dim_0])) ON COLUMNS\n"
                 + "from [Sales]\n"
-                + "where [Measures].[Sales count]\n",
+                + "where [Measures].[Sales count]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Sales Count]}\n"
                 + "Axis #1:\n"
@@ -744,8 +747,7 @@ class VisualTotalsFunDefTest {
                 + "Row #0: 4\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsLevel(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
@@ -783,10 +785,9 @@ class VisualTotalsFunDefTest {
      * <p>The bug is not currently fixed, so it is a negative test case. Row #2
      * cell #1 contains an exception, but should be "**Subtotal - Bread : Product Subcategory".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testVisualTotalsMemberInCalculation(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as\n"
                 + " [Product].CurrentMember.Name || ' : ' || [Product].Level.Name\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Foo]} on columns,\n"
@@ -797,7 +798,8 @@ class VisualTotalsFunDefTest {
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Bagels],\n"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Muffins]},\n"
                 + "     \"**Subtotal - *\")} on rows\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

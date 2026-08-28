@@ -13,20 +13,32 @@ package mondrian.rolap;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
+import java.util.Map;
+
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 //Disabled by reason log4j. log4j is not using any more
 @Disabled
+@RolapContextTest(FoodmartTestInstance.class)
 class OrderKeyOneToOneCheckTest {
+
+  public static class FoodmartData implements DataSupplier {
+    @Override
+    public Map<String, URL> csvResources() {
+      return new FoodmartTestInstance().dataSupplier().csvResources();
+    }
+  }
 
   //private TestAppender memberSourceAppender;
   //private TestAppender sqlReaderAppender;
@@ -50,8 +62,6 @@ class OrderKeyOneToOneCheckTest {
     //sqlReaderLogger.removeAppender(sqlReaderAppender);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   public void prepareContext(Context<?> context) {
     //TestContext<?> testContext<?> = super.getTestContext()
     //        .withFreshConnection();
@@ -79,11 +89,11 @@ class OrderKeyOneToOneCheckTest {
                     + "</Cube>\n"
                     + "</Schema>");
      */
-    withSchemaEmf(context, SchemaModifiersEmf.OrderKeyOneToOneCheckTestModifier::new);
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderKeyOneToOneCheckTestModifier.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMemberSource(Context<?> context) {
     String mdx =
             "with member [Measures].[Count Month] as 'Count(Descendants(Time.CurrentMember, [Time].[Month]))' \n"
@@ -104,8 +114,9 @@ class OrderKeyOneToOneCheckTest {
     //        "Running with modified schema should log 8 error");
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderKeyOneToOneCheckTestModifier.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testSqlReader(Context<?> context) {
     String mdx = ""
             + "select [Time].[Quarter].Members on 0"

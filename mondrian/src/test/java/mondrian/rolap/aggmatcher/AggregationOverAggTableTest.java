@@ -9,7 +9,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
 
@@ -37,8 +37,8 @@ class AggregationOverAggTableTest {
             + "non empty CrossJoin({[TimeExtra].[1997].[Q1].Children},{[Gender].[M]}) on rows "
             + "from [ExtraCol]";
 
-        assertQueryReturns(connection,
-            query,
+        assertThatQuery(connection,
+            query).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

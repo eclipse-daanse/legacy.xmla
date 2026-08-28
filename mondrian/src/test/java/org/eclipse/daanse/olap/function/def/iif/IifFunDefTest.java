@@ -13,76 +13,71 @@
  */
 package org.eclipse.daanse.olap.function.def.iif;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class IifFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfMember(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "IIf(1 > 2,[Store].[USA],[Store].[Canada].[BC])",
-            "[Store].[Store].[Canada].[BC]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(1 > 2,[Store].[USA],[Store].[Canada].[BC])")
+            .returns( "[Store].[Store].[Canada].[BC]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfLevel(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(1 > 2, [Store].[Store Country],[Store].[Store City]).Name",
-            "Store City" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(1 > 2, [Store].[Store Country],[Store].[Store City]).Name")
+            .returns( "Store City" );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfHierarchy(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(1 > 2, [Time], [Store]).Name",
-            "Store" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(1 > 2, [Time], [Store]).Name")
+            .returns( "Store" );
 
         // Call Iif(<Logical>, <Dimension>, <Hierarchy>). Argument #3, the
         // hierarchy [Time.Weekly] is implicitly converted to
         // the dimension [Time] to match argument #2 which is a dimension.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(1 > 2, [Time], [Time].[Weekly]).Name",
-            "Time" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(1 > 2, [Time], [Time].[Weekly]).Name")
+            .returns( "Time" );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfDimension(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(1 > 2, [Store], [Time]).Name",
-            "Time" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(1 > 2, [Store], [Time]).Name")
+            .returns( "Time" );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfSet(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "IIf(1 > 2, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico], [Store].[USA].[OR]})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(1 > 2, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico], [Store].[USA].[OR]})")
+            .returns(
             "[Store].[Store].[Mexico]\n"
                 + "[Store].[Store].[USA].[OR]" );
     }
 
     // MONDRIAN-2408 - Consumer wants ITERABLE or ANY in CrossJoinFunDef.compileCall(ResolvedFunCall, ExpCompiler)
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfSetType_InCrossJoin(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "CROSSJOIN([Store Type].[Deluxe Supermarket],IIf(1 = 1, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico],"
-                + " [Store].[USA].[OR]}))",
+                + " [Store].[USA].[OR]}))")
+            .returns(
             "{[Store Type].[Store Type].[Deluxe Supermarket], [Store].[Store].[USA]}\n"
                 + "{[Store Type].[Store Type].[Deluxe Supermarket], [Store].[Store].[USA].[CA]}" );
     }

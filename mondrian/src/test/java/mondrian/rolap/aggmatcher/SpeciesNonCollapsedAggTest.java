@@ -9,13 +9,14 @@
 
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * Test case for non-collapsed levels in agg tables, based on the "Species"
@@ -34,11 +35,11 @@ class SpeciesNonCollapsedAggTest {
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testBugMondrian1105(Connection connection) {
         // If agg table is not used, cell values will be very different.
-        TestUtil.assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT \n"
             + " { [Measures].[Population] } ON COLUMNS,\n"
             + " { [Animal].[Animals].[Family].Members } ON ROWS\n"
-            + "FROM [Test]\n",
+            + "FROM [Test]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

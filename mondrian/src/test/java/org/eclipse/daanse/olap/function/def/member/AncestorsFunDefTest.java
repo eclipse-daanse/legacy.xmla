@@ -13,32 +13,31 @@
  */
 package org.eclipse.daanse.olap.function.def.member;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class AncestorsFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAncestors(Context<?> context) {
         // Test that we can execute Ancestors by passing a level as
         // the depth argument (PC hierarchy)
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with\n"
                 + "set [*ancestors] as\n"
                 + "  'Ancestors([Employees].[All Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Eric Long]"
                 + ".[Adam Reynolds].[Joshua Huff].[Teanna Cobb], [Employees].[All Employees].Level)'\n"
                 + "select\n"
                 + "  [*ancestors] on columns\n"
-                + "from [HR]\n",
+                + "from [HR]\n").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -58,13 +57,13 @@ class AncestorsFunDefTest {
                 + "Row #0: $39,431.67\n" );
         // Test that we can execute Ancestors by passing a level as
         // the depth argument (non PC hierarchy)
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with\n"
                 + "set [*ancestors] as\n"
                 + "  'Ancestors([Store].[USA].[CA].[Los Angeles], [Store].[Store Country])'\n"
                 + "select\n"
                 + "  [*ancestors] on columns\n"
-                + "from [Sales]\n",
+                + "from [Sales]\n").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -74,14 +73,14 @@ class AncestorsFunDefTest {
                 + "Row #0: 266,773\n" );
         // Test that we can execute Ancestors by passing an integer as
         // the depth argument (PC hierarchy)
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with\n"
                 + "set [*ancestors] as\n"
                 + "  'Ancestors([Employees].[All Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Eric Long]"
                 + ".[Adam Reynolds].[Joshua Huff].[Teanna Cobb], 3)'\n"
                 + "select\n"
                 + "  [*ancestors] on columns\n"
-                + "from [HR]\n",
+                + "from [HR]\n").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -93,13 +92,13 @@ class AncestorsFunDefTest {
                 + "Row #0: $3,610.14\n" );
         // Test that we can execute Ancestors by passing an integer as
         // the depth argument (non PC hierarchy)
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with\n"
                 + "set [*ancestors] as\n"
                 + "  'Ancestors([Store].[USA].[CA].[Los Angeles], 2)'\n"
                 + "select\n"
                 + "  [*ancestors] on columns\n"
-                + "from [Sales]\n",
+                + "from [Sales]\n").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -108,7 +107,7 @@ class AncestorsFunDefTest {
                 + "Row #0: 74,748\n"
                 + "Row #0: 266,773\n" );
         // Test that we can count the number of ancestors.
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with\n"
                 + "set [*ancestors] as\n"
                 + "  'Ancestors([Employees].[All Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Eric Long]"
@@ -117,7 +116,7 @@ class AncestorsFunDefTest {
                 + "  'Count([*ancestors])'\n"
                 + "select\n"
                 + "  [Measures].[Depth] on columns\n"
-                + "from [HR]\n",
+                + "from [HR]\n").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

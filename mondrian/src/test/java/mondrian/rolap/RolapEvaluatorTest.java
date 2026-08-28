@@ -55,7 +55,7 @@ class RolapEvaluatorTest {
 
     /*
     void testSlicerPredicateUnsatisfiable() {
-        assertQueryReturns(
+        assertThatQuery(
             "select measures.[Customer Count] on 0 from [warehouse and sales] "
             + "WHERE {[Time].[1997].Q1, [Time].[1997].Q2} "
             + "*{[Warehouse].[USA].[CA], Warehouse.[USA].[WA]}", "");

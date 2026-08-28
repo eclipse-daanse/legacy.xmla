@@ -234,7 +234,7 @@ public class TestUtil {
     public static void assertQueryThrows(Context<?> context, List<String> roles, String queryString, String pattern) {
         Throwable throwable;
         try {
-            Result result = executeQuery(((TestContext)context).getConnection(new ConnectionProps(roles)), queryString);
+            Result result = executeQuery(context.getConnection(new ConnectionProps(roles)), queryString);
 //            discard(result);
             throwable = null;
         } catch (Throwable e) {

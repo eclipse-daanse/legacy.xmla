@@ -21,19 +21,19 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.exceptions.MemoryLimitExceededException;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.util.MemoryMonitor;
 import org.eclipse.daanse.rolap.util.NotificationMemoryMonitor;
 import org.eclipse.daanse.rolap.util.ObjectPool;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link ObjectPool}.
  *
  * @author Richard Emberson
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class MemoryMonitorTest {
     static final int PERCENT_100 = 100;
 
@@ -185,8 +185,7 @@ Does not work without the notify on add feature.
      *
      * @throws Exception
      */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Test
     public void _testQuery(Context<?> context) throws Exception {
         if (!enabled) {
             return;

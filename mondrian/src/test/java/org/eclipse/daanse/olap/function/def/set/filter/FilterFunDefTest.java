@@ -15,39 +15,78 @@ package org.eclipse.daanse.olap.function.def.set.filter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.exceptions.QueryTimeoutException;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class FilterFunDefTest {
+
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
+
+    /**
+     * EMF version of TestFilterWillTimeoutModifier
+     * Simple modifier for timeout testing - currently does not add UserDefinedFunction
+     */
+    public static class TestFilterWillTimeoutModifierEmf implements CatalogMappingSupplier {
+
+        private CatalogImpl catalog;
+
+        public TestFilterWillTimeoutModifierEmf(Catalog cat) {
+            // Copy catalog using EcoreUtil
+            catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
+
+            /* TODO: UserDefinedFunction
+             * When UserDefinedFunction support is added to EMF mapping, implement:
+             *
+             * org.eclipse.daanse.rolap.mapping.emf.rolapmapping.UserDefinedFunction udf =
+             *     org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory.eINSTANCE.createUserDefinedFunction();
+             * udf.setName("SleepUdf");
+             * udf.setClassName(BasicQueryTest.SleepUdf.class.getName());
+             * catalog.getUserDefinedFunctions().add(udf);
+             */
+        }
+
+        @Override
+        public Catalog get() {
+            return catalog;
+        }
+    }
 
     /**
      * Make sure that slicer is in force when expression is applied on axis, E.g. select filter([Customers].members, [Unit
      * Sales] > 100) from sales where ([Time].[1998])
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFilterWithSlicer(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
@@ -62,8 +101,7 @@ class FilterFunDefTest {
         assertEquals( "30,114", cell.getFormattedValue() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFilterCompound(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
@@ -86,71 +124,13 @@ class FilterFunDefTest {
 
     //TODO: reanable
     @Disabled //UserDefinedFunction
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.QUERY_TIMEOUT, value = "3", type = Integer.class)
+    @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "false", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestFilterWillTimeoutModifierEmf.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testFilterWillTimeout(Context<?> context) {
-        ((TestContextImpl)context).setQueryTimeout(3);
-        ((TestContextImpl)context).setEnableNativeNonEmpty(false);
         try {
-            /*
-            class TestFilterWillTimeoutModifier extends PojoMappingModifier {
-
-                public TestFilterWillTimeoutModifier(CatalogMapping catalog) {
-                    super(catalog);
-                }
-            */
-            /* TODO: UserDefinedFunction
-            @Override
-            protected List<MappingUserDefinedFunction> schemaUserDefinedFunctions(MappingSchema schema) {
-                List<MappingUserDefinedFunction> result = new ArrayList<>();
-                result.addAll(super.schemaUserDefinedFunctions(schema));
-                result.add(UserDefinedFunctionRBuilder.builder()
-                    .name("SleepUdf")
-                    .className(BasicQueryTest.SleepUdf.class.getName())
-                    .build());
-                return result;
-            }*/
-            /*
-            }
-            */
-            /**
-             * EMF version of TestFilterWillTimeoutModifier
-             * Simple modifier for timeout testing - currently does not add UserDefinedFunction
-             */
-            class TestFilterWillTimeoutModifierEmf implements CatalogMappingSupplier {
-
-                private CatalogImpl catalog;
-
-                public TestFilterWillTimeoutModifierEmf(Catalog cat) {
-                    // Copy catalog using EcoreUtil
-                    catalog = org.opencube.junit5.EmfUtil.copy((CatalogImpl) cat);
-
-                    /* TODO: UserDefinedFunction
-                     * When UserDefinedFunction support is added to EMF mapping, implement:
-                     *
-                     * org.eclipse.daanse.rolap.mapping.emf.rolapmapping.UserDefinedFunction udf =
-                     *     org.eclipse.daanse.rolap.mapping.emf.rolapmapping.RolapMappingFactory.eINSTANCE.createUserDefinedFunction();
-                     * udf.setName("SleepUdf");
-                     * udf.setClassName(BasicQueryTest.SleepUdf.class.getName());
-                     * catalog.getUserDefinedFunctions().add(udf);
-                     */
-                }
-
-                @Override
-                public Catalog get() {
-                    return catalog;
-                }
-            }
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema,
-        null, null, null, null,
-        "<UserDefinedFunction name=\"SleepUdf\" className=\""
-          + BasicQueryTest.SleepUdf.class.getName()
-          + "\"/>", null );
-      TestUtil.withSchema(context, schema);
-       */
-            withSchemaEmf(context, TestFilterWillTimeoutModifierEmf::new);
             executeAxis(context.getConnectionWithDefaultRole(), "Sales",
                 "Filter("
                     + "Filter(CrossJoin([Customers].[Name].members, [Product].[Product Name].members), SleepUdf([Measures]"
@@ -163,24 +143,24 @@ class FilterFunDefTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFilterEmpty(Context<?> context) {
         // Unlike "Descendants(<set>, ...)", we do not need to know the precise
         // type of the set, therefore it is OK if the set is empty.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Filter({}, 1=0)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Filter({}, 1=0)")
+            .returns(
             "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Filter({[Time].[Time].Children}, 1=0)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Filter({[Time].[Time].Children}, 1=0)")
+            .returns(
             "" );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFilterCalcSlicer(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time].[Date Range] as \n"
                 + "'Aggregate({[Time].[1997].[Q1]:[Time].[1997].[Q3]})'\n"
                 + "select\n"
@@ -188,7 +168,8 @@ class FilterFunDefTest {
                 + "[Measures].[Store Sales]} ON columns,\n"
                 + "NON EMPTY Filter ([Store].[Store State].members,\n"
                 + "[Measures].[Store Cost] > 75000) ON rows\n"
-                + "from [Sales] where [Time].[Date Range]",
+                + "from [Sales] where [Time].[Date Range]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[Date Range]}\n"
                 + "Axis #1:\n"
@@ -200,7 +181,7 @@ class FilterFunDefTest {
                 + "Row #0: 90,131\n"
                 + "Row #0: 76,151.59\n"
                 + "Row #0: 190,776.88\n" );
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time].[Date Range] as \n"
                 + "'Aggregate({[Time].[1997].[Q1]:[Time].[1997].[Q3]})'\n"
                 + "select\n"
@@ -208,7 +189,8 @@ class FilterFunDefTest {
                 + "[Measures].[Store Sales]} ON columns,\n"
                 + "NON EMPTY Order (Filter ([Store].[Store State].members,\n"
                 + "[Measures].[Store Cost] > 100),[Measures].[Store Cost], DESC) ON rows\n"
-                + "from [Sales] where [Time].[Date Range]",
+                + "from [Sales] where [Time].[Date Range]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[Date Range]}\n"
                 + "Axis #1:\n"

@@ -13,65 +13,56 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.minus;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class MinusPrefixOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnaryMinus(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "-3", "-3" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-3").returns( "-3" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnaryMinusMember(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "- ([Measures].[Unit Sales],[Gender].[F])",
-            "-131,558" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "- ([Measures].[Unit Sales],[Gender].[F])")
+            .returns( "-131,558" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnaryMinusPrecedence(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "1 - -10.5 * 2 -3", "19" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1 - -10.5 * 2 -3").returns( "19" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegativeZero(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "-0.0", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-0.0").returns( "0" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegativeZero1(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "-(0.0)", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-(0.0)").returns( "0" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegativeZeroSubtract(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "-0.0 - 0.0", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-0.0 - 0.0").returns( "0" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegativeZeroMultiply(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "-1 * 0", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-1 * 0").returns( "0" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testNegativeZeroDivide(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "-0.0 / 2", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "-0.0 / 2").returns( "0" );
     }
 
 }

@@ -13,36 +13,34 @@
  */
 package org.eclipse.daanse.olap.function.def.cache;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertExprThrows;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class CacheFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCache(Context<?> context) {
         // test various data types: integer, string, member, set, tuple
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Cache(1 + 2)", "3" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Cache('foo' || 'bar')", "foobar" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Gender].Children",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Cache(1 + 2)").returns("3");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Cache('foo' || 'bar')").returns("foobar" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Gender].Children").returns(
             "[Gender].[Gender].[F]\n"
                 + "[Gender].[Gender].[M]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "([Gender].[M], [Marital Status].[S].PrevMember)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "([Gender].[M], [Marital Status].[S].PrevMember)").returns(
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
 
         // inside another expression
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Order(Cache([Gender].Children), Cache(([Measures].[Unit Sales], [Time].[1997].[Q1])), BDESC)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Order(Cache([Gender].Children), Cache(([Measures].[Unit Sales], [Time].[1997].[Q1])), BDESC)").returns(
             "[Gender].[Gender].[M]\n"
                 + "[Gender].[Gender].[F]" );
 

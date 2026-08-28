@@ -12,13 +12,14 @@ package mondrian.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -30,12 +31,13 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -46,15 +48,14 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author anikitin
  * @since 5 July, 2005
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class PropertiesTest {
 
     /**
      * Tests existence and values of mandatory member properties.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMandatoryMemberProperties(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
+    @Test
+    void testMandatoryMemberProperties(Connection connection) {
         Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CatalogReader scr = salesCube.getCatalogReader(null).withLocus();
         Member member =
@@ -62,7 +63,9 @@ class PropertiesTest {
                 IdImpl.toList("Customers", "All Customers", "USA", "CA"),
                 true);
         final boolean caseSensitive =
-            ((TestContextImpl) context).isCaseSensitive();
+            connection.getContext().getConfigValue(
+                ConfigConstants.CASE_SENSITIVE,
+                ConfigConstants.CASE_SENSITIVE_DEFAULT_VALUE, Boolean.class);
 
         String stringPropValue;
         Integer intPropValue;
@@ -192,10 +195,8 @@ class PropertiesTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetChildCardinalityPropertyValue(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
+    @Test
+    void testGetChildCardinalityPropertyValue(Connection connection) {
         Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CatalogReader scr = salesCube.getCatalogReader(null);
         Member memberForCardinalityTest =
@@ -212,10 +213,9 @@ class PropertiesTest {
      * Tests the ability of MDX parser to pass requested member properties
      * to Result object.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertiesMDX(Context<?> context) {
-        Result result = executeQuery(context.getConnectionWithDefaultRole(),
+    @Test
+    void testPropertiesMDX(Connection connection) {
+        Result result = executeQuery(connection,
             "SELECT {[Customers].[All Customers].[USA].[CA]} DIMENSION PROPERTIES \n"
             + " CATALOG_NAME, SCHEMA_NAME, CUBE_NAME, DIMENSION_UNIQUE_NAME, \n"
             + " HIERARCHY_UNIQUE_NAME, LEVEL_UNIQUE_NAME, LEVEL_NUMBER, MEMBER_UNIQUE_NAME, \n"
@@ -255,10 +255,9 @@ class PropertiesTest {
     /**
      * Tests the ability to project non-standard member properties.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberProperties(Context<?> context) {
-        Result result = executeQuery(context.getConnectionWithDefaultRole(),
+    @Test
+    void testMemberProperties(Connection connection) {
+        Result result = executeQuery(connection,
             "SELECT {[Store].Children} DIMENSION PROPERTIES\n"
             + " CATALOG_NAME, PARENT_UNIQUE_NAME, [Store Type], FORMAT_EXP\n"
             + " ON COLUMNS\n"
@@ -272,10 +271,9 @@ class PropertiesTest {
     /**
      * Tests the ability to project non-standard member properties.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberPropertiesBad(Context<?> context) {
-        Result result = executeQuery(context.getConnectionWithDefaultRole(),
+    @Test
+    void testMemberPropertiesBad(Connection connection) {
+        Result result = executeQuery(connection,
             "SELECT {[Store].Children} DIMENSION PROPERTIES\n"
             + " CATALOG_NAME, PARENT_UNIQUE_NAME, [Store Type], BAD\n"
             + " ON COLUMNS\n"
@@ -286,10 +284,8 @@ class PropertiesTest {
         assertEquals(4, axesProperties.length);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMandatoryCellProperties(Context<?> context) {
-        Connection connection = context.getConnectionWithDefaultRole();
+    @Test
+    void testMandatoryCellProperties(Connection connection) {
         Query salesCube = connection.parseQuery(
             "select \n"
             + " {[Measures].[Store Sales], [Measures].[Unit Sales]} on columns, \n"
@@ -319,7 +315,9 @@ class PropertiesTest {
             0.1);
 
         // Case sensitivity.
-        if (((TestContextImpl) context).isCaseSensitive()) {
+        if (connection.getContext().getConfigValue(
+                ConfigConstants.CASE_SENSITIVE,
+                ConfigConstants.CASE_SENSITIVE_DEFAULT_VALUE, Boolean.class)) {
             assertNull(cell.getPropertyValue("cell_ordinal"));
             assertNull(cell.getPropertyValue("font_flags"));
             assertNull(cell.getPropertyValue("format_string"));
@@ -341,12 +339,11 @@ class PropertiesTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertyDescription(Context<?> context) throws Exception {
-        withSchemaEmf(context, SchemaModifiersEmf.PropertiesTestModifier::new);
-        List<Cube> cubes = context.getConnectionWithDefaultRole().getCatalog()
-            .getCubes();
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.PropertiesTestModifier.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testPropertyDescription(Connection connection) throws Exception {
+        List<Cube> cubes = connection.getCatalog().getCubes();
         Optional<Cube> optionalCube = cubes.stream().filter(c -> c.getName().equals("Foo")).findFirst();
         Cube cube = optionalCube.orElseThrow(() -> new RuntimeException("Cube with name Foo absent"));
         Optional<? extends Dimension> optionalDimension  = cube.getDimensions().stream().filter(d -> d.getName().equals("Promotions")).findFirst();
@@ -358,5 +355,13 @@ class PropertiesTest {
             "BaconDesc",
             property
                 .getDescription());
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 }
