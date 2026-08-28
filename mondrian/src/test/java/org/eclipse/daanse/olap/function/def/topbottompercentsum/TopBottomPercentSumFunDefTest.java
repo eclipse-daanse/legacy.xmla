@@ -13,29 +13,28 @@
  */
 package org.eclipse.daanse.olap.function.def.topbottompercentsum;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class TopBottomPercentSumFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBottomPercent(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "BottomPercent(Filter({[Store].[All Stores].[USA].[CA].Children, [Store].[All Stores].[USA].[OR].Children, "
                 + "[Store].[All Stores].[USA].[WA].Children}, ([Measures].[Unit Sales] > 0.0)), 100.0, [Measures].[Store "
-                + "Sales])",
+                + "Sales])")
+            .returns(
             "[Store].[Store].[USA].[CA].[San Francisco]\n"
                 + "[Store].[Store].[USA].[WA].[Walla Walla]\n"
                 + "[Store].[Store].[USA].[WA].[Bellingham]\n"
@@ -50,19 +49,20 @@ class TopBottomPercentSumFunDefTest {
                 + "[Store].[Store].[USA].[WA].[Tacoma]\n"
                 + "[Store].[Store].[USA].[OR].[Salem]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "BottomPercent({[Promotion Media].[Media Type].members}, 1, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "BottomPercent({[Promotion Media].[Media Type].members}, 1, [Measures].[Unit Sales])")
+            .returns(
             "[Promotion Media].[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]" );
     }
 
     // todo: test precision
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBottomSum(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "BottomSum({[Promotion Media].[Media Type].members}, 5000, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "BottomSum({[Promotion Media].[Media Type].members}, 5000, [Measures].[Unit Sales])")
+            .returns(
             "[Promotion Media].[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]" );
     }
@@ -71,43 +71,43 @@ class TopBottomPercentSumFunDefTest {
      * Tests that TopPercent() operates succesfully on a axis of crossjoined tuples.  previously, this would fail with a
      * ClassCastException in FunUtil.java.  bug 1440306
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopPercentCrossjoin(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "{TopPercent(Crossjoin([Product].[Product Department].members,\n"
-                + "[Time].[1997].children),10,[Measures].[Store Sales])}",
+                + "[Time].[1997].children),10,[Measures].[Store Sales])}")
+            .returns(
             "{[Product].[Product].[Food].[Produce], [Time].[Time].[1997].[Q4]}\n"
                 + "{[Product].[Product].[Food].[Produce], [Time].[Time].[1997].[Q1]}\n"
                 + "{[Product].[Product].[Food].[Produce], [Time].[Time].[1997].[Q3]}" );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopPercent(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TopPercent({[Promotion Media].[Media Type].members}, 70, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "TopPercent({[Promotion Media].[Media Type].members}, 70, [Measures].[Unit Sales])")
+            .returns(
             "[Promotion Media].[Promotion Media].[No Media]" );
     }
 
     // todo: test precision
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopSum(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TopSum({[Promotion Media].[Media Type].members}, 200000, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "TopSum({[Promotion Media].[Media Type].members}, 200000, [Measures].[Unit Sales])")
+            .returns(
             "[Promotion Media].[Promotion Media].[No Media]\n"
                 + "[Promotion Media].[Promotion Media].[Daily Paper, Radio, TV]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopSumEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "TopSum(Filter({[Promotion Media].[Media Type].members}, 1=0), "
-                + "200000, [Measures].[Unit Sales])",
+                + "200000, [Measures].[Unit Sales])")
+            .returns(
             "" );
     }
 
@@ -118,8 +118,7 @@ class TopBottomPercentSumFunDefTest {
      * <p/>
      * <p>The results should be equivalent either we use aliases or not</p>
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopPercentWithAlias(Context<?> context) {
         final String queryWithoutAlias =
             "select\n"
@@ -136,8 +135,9 @@ class TopBottomPercentSumFunDefTest {
                 + "from Sales";
 
         final Result result = executeQuery(context.getConnectionWithDefaultRole(), queryWithoutAlias );
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            queryWithAlias,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            queryWithAlias)
+            .returnsGrid(
             TestUtil.toString( result ) );
     }
 }

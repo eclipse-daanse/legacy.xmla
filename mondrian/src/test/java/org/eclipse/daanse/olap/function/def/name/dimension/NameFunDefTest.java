@@ -13,22 +13,20 @@
  */
 package org.eclipse.daanse.olap.function.def.name.dimension;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class NameFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDimensionName(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Dimension.Name", "Time" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Dimension.Name").returns( "Time" );
     }
 
 }

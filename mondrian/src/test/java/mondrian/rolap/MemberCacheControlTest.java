@@ -24,6 +24,7 @@
 
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushCache;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
@@ -526,8 +526,8 @@ class MemberCacheControlTest {
                 yearCubeMember
             };
 
-        assertQueryReturns(conn,
-            "select {[Retail].[City].Members} on columns from [Sales]",
+        assertThatQuery(conn,
+            "select {[Retail].[City].Members} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -626,8 +626,8 @@ class MemberCacheControlTest {
             + "[Retail].[Retail].[CA].[San Francisco]\n"
             + "[Retail].[Retail].[CA].[Berkeley]");
 
-        assertQueryReturns(conn,
-            "select {[Retail].[Retail].[City].Members} on columns from [Sales]",
+        assertThatQuery(conn,
+            "select {[Retail].[Retail].[City].Members} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -682,8 +682,8 @@ class MemberCacheControlTest {
             + "Row #0: \n"
             + "Row #0: \n");
 
-        assertQueryReturns(conn,
-            "select [Retail].[Retail].Children on 0 from [Sales]",
+        assertThatQuery(conn,
+            "select [Retail].[Retail].Children on 0 from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

@@ -14,22 +14,20 @@
 package org.eclipse.daanse.olap.function.def.aggregatex.count;
 
 import static mondrian.olap.fun.FunctionTest.allHiersExcept;
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class CountFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCount(Context<?> context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)",
@@ -41,28 +39,27 @@ class CountFunDefTest {
                 + "{[Gender].children}), EXCLUDEEMPTY)",
             s1 );
 
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "count({[Promotion Media].[Media Type].members})", "14" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "count({[Promotion Media].[Media Type].members})").returns("14" );
 
         // applied to an empty set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "count({[Gender].Parent}, IncludeEmpty)", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "count({[Gender].Parent}, IncludeEmpty)").returns("0");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCountExcludeEmpty(Context<?> context) {
         String s1 = allHiersExcept( "[Store].[Store]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[USA].Children, {[Gender].children}), EXCLUDEEMPTY)",
             s1 );
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Promo Count] as \n"
                 + " ' Count(Crossjoin({[Measures].[Unit Sales]},\n"
                 + " {[Promotion Media].[Media Type].members}), EXCLUDEEMPTY)'\n"
                 + "select {[Measures].[Unit Sales], [Measures].[Promo Count]} on columns,\n"
                 + " {[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].children} on rows\n"
-                + "from Sales",
+                + "from Sales").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -86,7 +83,7 @@ class CountFunDefTest {
                 + "Row #4: 12\n" );
 
         // applied to an empty set
-        assertExprReturns(context.getConnectionWithDefaultRole(), "count({[Gender].Parent}, ExcludeEmpty)", "0" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "count({[Gender].Parent}, ExcludeEmpty)").returns("0");
     }
 
     /**
@@ -96,10 +93,9 @@ class CountFunDefTest {
 
      */
     // {@link mondrian.xmla.XmlaCognosTest#testCognosMDXSuiteConvertedAdventureWorksToFoodMart_015()}
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCountExcludeEmptyNull(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Foo] AS\n"
                 + "    Iif("
                 + hierarchyName( "Time", "Time" )
@@ -120,7 +116,7 @@ class CountFunDefTest {
                 + "  {[Time].[1997].Children,\n"
                 + "   [Time].[CountExc],\n"
                 + "   [Time].[CountInc]} ON 1\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -160,16 +156,15 @@ class CountFunDefTest {
      * bug MONDRIAN-710, "Count with ExcludeEmpty throws an exception when the cube does not have a
      * factCountMeasure"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCountExcludeEmptyOnCubeWithNoCountFacts(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"
                 + "    COUNT([Store Type].[Store Type].[Store Type].MEMBERS, EXCLUDEEMPTY)'"
                 + " SELECT "
                 + "  {[Measures].[count]} ON AXIS(0)"
-                + " FROM [Warehouse]",
+                + " FROM [Warehouse]").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -177,16 +172,15 @@ class CountFunDefTest {
                 + "Row #0: 5\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCountExcludeEmptyOnVirtualCubeWithNoCountFacts(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"
                 + "    COUNT([Store].MEMBERS, EXCLUDEEMPTY)'"
                 + " SELECT "
                 + "  {[Measures].[count]} ON AXIS(0)"
-                + " FROM [Warehouse and Sales]",
+                + " FROM [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

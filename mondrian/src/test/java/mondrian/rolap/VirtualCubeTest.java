@@ -10,10 +10,10 @@
 */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.withSchemaEmf;
@@ -429,13 +429,13 @@ class VirtualCubeTest extends BatchTestCase {
 
     private void checkXxx(Connection connection) {
         // I do not know/believe that the return values are correct.
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select\n"
             + "{ [Measures].[Warehouse Sales], [Measures].[Unit Sales] }\n"
             + "ON COLUMNS,\n"
             + "{[Product].[All Products]}\n"
             + "ON ROWS\n"
-            + "from [Sales vs Warehouse]",
+            + "from [Sales vs Warehouse]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -459,9 +459,9 @@ class VirtualCubeTest extends BatchTestCase {
         // that does not have ALL as its default member.
         //createContextWithNonDefaultAllMember(context);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Warehouse].defaultMember} on columns, "
-            + "{[Measures].[Warehouse Cost]} on rows from [Warehouse (Default USA)]",
+            + "{[Measures].[Warehouse Cost]} on rows from [Warehouse (Default USA)]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -472,10 +472,10 @@ class VirtualCubeTest extends BatchTestCase {
 
         // There is a value for [USA] -- because it is the default member and
         // the hierarchy has no all member -- but not for [USA].[CA].
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Warehouse].defaultMember, [Warehouse].[USA].[CA]} on columns, "
             + "{[Measures].[Warehouse Cost], [Measures].[Sales Count]} on rows "
-            + "from [Warehouse (Default USA) and Sales]",
+            + "from [Warehouse (Default USA) and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -495,9 +495,9 @@ class VirtualCubeTest extends BatchTestCase {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNonDefaultAllMember2(Context<?> context) {
         //createContextWithNonDefaultAllMember(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select { measures.[unit sales] } on 0 \n"
-            + "from [warehouse (Default USA) and Sales]",
+            + "from [warehouse (Default USA) and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -924,11 +924,11 @@ class VirtualCubeTest extends BatchTestCase {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Profit Per Unit Shipped]} ON COLUMNS, "
             + "{[Store].[All Stores].[USA].[CA], [Store].[All Stores].[USA].[OR], [Store].[All Stores].[USA].[WA]} ON ROWS "
             + "from [Warehouse and Sales Format Expression Cube No Cache] "
-            + "where [Time].[1997]",
+            + "where [Time].[1997]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -945,13 +945,13 @@ class VirtualCubeTest extends BatchTestCase {
     @Test
     void testCalculatedMeasure(Context<?> context) {
         // calculated measures reference measures defined in the base cube
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + "{[Measures].[Profit Growth], "
             + "[Measures].[Profit], "
             + "[Measures].[Average Warehouse Sale] }\n"
             + "ON COLUMNS\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -965,10 +965,10 @@ class VirtualCubeTest extends BatchTestCase {
 
     @Test
     void testLostData(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Time].[Time].Members} on columns,\n"
             + " {[Product].Children} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1112,11 +1112,11 @@ class VirtualCubeTest extends BatchTestCase {
             + "Row #2: \n"
             + "Row #2: \n"
             + "Row #2: \n");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Measures].[Unit Sales]} on 0,\n"
             + " {[Product].Children} on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1136,7 +1136,7 @@ class VirtualCubeTest extends BatchTestCase {
      */
     @Test
     void testCalculatedMeasureAcrossCubes(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Shipped per Ordered] as ' [Measures].[Units Shipped] / [Measures].[Unit Sales] ', format_string='#.00%'\n"
             + " member [Measures].[Profit per Unit Shipped] as ' [Measures].[Profit] / [Measures].[Units Shipped] '\n"
             + "select\n"
@@ -1145,7 +1145,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "  [Measures].[Shipped per Ordered],\n"
             + "  [Measures].[Profit per Unit Shipped]} on 0,\n"
             + " NON EMPTY Crossjoin([Product].Children, [Time].[1997].Children) on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1232,12 +1232,12 @@ class VirtualCubeTest extends BatchTestCase {
             + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"#.0%\"/>\n"
             + "  </CalculatedMember>\n"));
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Measures].[Unit Sales], \n"
             + "  [Measures].[Shipped per Ordered]} on 0,\n"
             + " NON EMPTY Crossjoin([Product].Children, [Time].[Time].[1997].Children) on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1286,10 +1286,10 @@ class VirtualCubeTest extends BatchTestCase {
     void testAllMeasureMembers(Context<?> context) {
         // result should exclude measures that are not explicitly defined
         // in the virtual cube (e.g., [Profit last Period])
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + "{[Measures].allMembers} on columns\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1377,11 +1377,11 @@ class VirtualCubeTest extends BatchTestCase {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Org Salary]} on columns, "
             + "non empty "
             + "crossjoin([Store].[Store Country].members, [Position].[Store Management].children) "
-            + "on rows from [Sales vs HR]",
+            + "on rows from [Sales vs HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1665,10 +1665,10 @@ class VirtualCubeTest extends BatchTestCase {
 //       See the next test case for a constraint that does not contain
 //       AllLevel member and hence cannot be satisfied. The cell should be
 //       empty.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Warehouse].[x] as 'Aggregate([Warehouse].members)'\n"
             + "member [Measures].[foo] AS '([Warehouse].[x],[Measures].[Customer Count])'\n"
-            + "select {[Measures].[foo]} on 0 from [Warehouse And Sales2]",
+            + "select {[Measures].[foo]} on 0 from [Warehouse And Sales2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1733,10 +1733,10 @@ class VirtualCubeTest extends BatchTestCase {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Warehouse].[x] as 'Aggregate({[Warehouse].[Canada], [Warehouse].[USA]})'\n"
             + "member [Measures].[foo] AS '([Warehouse].[x],[Measures].[Customer Count])'\n"
-            + "select {[Measures].[foo]} on 0 from [Warehouse And Sales2]",
+            + "select {[Measures].[foo]} on 0 from [Warehouse And Sales2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1911,7 +1911,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "Row #9: 15,356\n"
             + "Row #10: 13,948\n";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query2, result);
+        assertThatQuery(context.getConnectionWithDefaultRole(), query2).returnsGrid(result);
     }
 
     /**
@@ -2092,7 +2092,7 @@ class VirtualCubeTest extends BatchTestCase {
 
         Connection connection = context.getConnectionWithDefaultRole();
         assertQuerySql(connection, query, mysqlPattern, true);
-        assertQueryReturns(connection, query, result);
+        assertThatQuery(connection, query).returnsGrid(result);
     }
 
     /**
@@ -2203,7 +2203,7 @@ class VirtualCubeTest extends BatchTestCase {
 
         Connection connection = context.getConnectionWithDefaultRole();
         assertQuerySql(connection, query, mysqlPattern, true);
-        assertQueryReturns(connection, query, result);
+        assertThatQuery(connection, query).returnsGrid(result);
     }
 
     /**
@@ -2314,7 +2314,7 @@ class VirtualCubeTest extends BatchTestCase {
         + "Row #0: 72,024\n"
         + "Row #0: 72,024\n"
         + "Row #0: 72,024\n";
-      assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
+      assertThatQuery(context.getConnectionWithDefaultRole(), query).returnsGrid(expected);
     }
 
     @Test
@@ -2330,12 +2330,12 @@ class VirtualCubeTest extends BatchTestCase {
                 null));
          */
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH member measures.ratio as 'measures.[Store Cost]/measures.[warehouse cost]' "
             + " member [marital status].agg as 'aggregate({[marital status].M})' "
             + " select non empty [Warehouse].[USA] "
             + " * {[marital status].[marital status].members, [marital status].agg }  on 0 "
-            + "FROM [warehouse and sales] where [measures].[Customer Count]",
+            + "FROM [warehouse and sales] where [measures].[Customer Count]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #1:\n");

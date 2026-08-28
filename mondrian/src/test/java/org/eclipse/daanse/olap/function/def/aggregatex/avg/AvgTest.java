@@ -13,27 +13,26 @@
  */
 package org.eclipse.daanse.olap.function.def.aggregatex.avg;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
+import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
+
+@RolapContextTest(FoodmartTestInstance.class)
 public class AvgTest {
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
 	void testAvg(Context<?> context) {
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-				"AVG({[Store].[All Stores].[USA].children})", "88,924");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+                "AVG({[Store].[All Stores].[USA].children})").returns("88,924");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
 	void testAvgNumeric(Context<?> context) {
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-				"AVG({[Store].[All Stores].[USA].children},[Measures].[Store Sales])", "188,412.71");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+                "AVG({[Store].[All Stores].[USA].children},[Measures].[Store Sales])").returns("188,412.71");
 	}
 
 	// todo: testAvgWithNulls

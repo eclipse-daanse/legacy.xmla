@@ -13,31 +13,28 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.orx;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class OrStringOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStringConcat(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            " \"foo\" || \"bar\"  ",
-            "foobar" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " \"foo\" || \"bar\"  ")
+            .returns( "foobar" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStringConcat2(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            " \"foo\" || [Gender].[M].Name || \"\" ",
-            "fooM" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " \"foo\" || [Gender].[M].Name || \"\" ")
+            .returns( "fooM" );
     }
 
 }

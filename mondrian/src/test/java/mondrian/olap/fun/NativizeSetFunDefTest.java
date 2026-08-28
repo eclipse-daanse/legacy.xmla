@@ -9,10 +9,10 @@
 
 package mondrian.olap.fun;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -1487,12 +1487,12 @@ class NativizeSetFunDefTest extends BatchTestCase {
     @Test
     @RolapConfig(key = ConfigConstants.NATIVIZE_MIN_THRESHOLD, value = "0", type = Integer.class)
     void testCrossjoinWithFilter(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,   \n"
             + "NON EMPTY NativizeSet(Crossjoin({[Time].[Time].[1997]}, "
             + "Filter({[Gender].[Gender].[Gender].Members}, ([Measures].[Unit Sales] < 131559)))) ON ROWS \n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

@@ -13,23 +13,21 @@
  */
 package org.eclipse.daanse.olap.function.def.stdev;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class StdevPFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStdevP(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "STDEVP({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
-            "53,746.26" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "STDEVP({[Store].[All Stores].[USA].children},[Measures].[Store Sales])")
+            .returns( "53,746.26" );
     }
 
 }

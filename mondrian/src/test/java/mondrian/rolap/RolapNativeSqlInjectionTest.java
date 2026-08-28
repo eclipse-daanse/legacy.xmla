@@ -17,17 +17,17 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 
 /**
  * @author Andrey Khayrutdinov
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class RolapNativeSqlInjectionTest {
 
     @AfterEach
@@ -35,8 +35,7 @@ class RolapNativeSqlInjectionTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMondrian2436(Context<?> context) {
         String mdxQuery = ""
             + "select {[Measures].[Store Sales]} on columns, "

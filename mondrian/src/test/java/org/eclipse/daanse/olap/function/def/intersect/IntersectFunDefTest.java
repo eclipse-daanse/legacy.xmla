@@ -13,49 +13,47 @@
  */
 package org.eclipse.daanse.olap.function.def.intersect;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class IntersectFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIntersectAll(Context<?> context) {
         // Note: duplicates retained from left, not from right; and order is
         // preserved.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Intersect({[Time].[1997].[Q2], [Time].[1997], [Time].[1997].[Q1], [Time].[1997].[Q2]}, "
                 + "{[Time].[1998], [Time].[1997], [Time].[1997].[Q2], [Time].[1997]}, "
-                + "ALL)",
+                + "ALL)")
+            .returns(
             "[Time].[Time].[1997].[Q2]\n"
                 + "[Time].[Time].[1997]\n"
                 + "[Time].[Time].[1997].[Q2]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIntersect(Context<?> context) {
         // Duplicates not preserved. Output in order that first duplicate
         // occurred.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Intersect(\n"
                 + "  {[Time].[1997].[Q2], [Time].[1997], [Time].[1997].[Q1], [Time].[1997].[Q2]}, "
-                + "{[Time].[1998], [Time].[1997], [Time].[1997].[Q2], [Time].[1997]})",
+                + "{[Time].[1998], [Time].[1997], [Time].[1997].[Q2], [Time].[1997]})")
+            .returns(
             "[Time].[Time].[1997].[Q2]\n"
                 + "[Time].[Time].[1997]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIntersectTuples(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Intersect(\n"
                 + "  {([Time].[1997].[Q2], [Gender].[M]),\n"
                 + "   ([Time].[1997], [Gender].[F]),\n"
@@ -64,24 +62,25 @@ class IntersectFunDefTest {
                 + "  {([Time].[1998], [Gender].[F]),\n"
                 + "   ([Time].[1997], [Gender].[F]),\n"
                 + "   ([Time].[1997].[Q2], [Gender].[M]),\n"
-                + "   ([Time].[1997], [Gender])})",
+                + "   ([Time].[1997], [Gender])})")
+            .returns(
             "{[Time].[Time].[1997].[Q2], [Gender].[Gender].[M]}\n"
                 + "{[Time].[Time].[1997], [Gender].[Gender].[F]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIntersectRightEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Intersect({[Time].[1997]}, {})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Intersect({[Time].[1997]}, {})")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIntersectLeftEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Intersect({}, {[Store].[USA].[CA]})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Intersect({}, {[Store].[USA].[CA]})")
+            .returns(
             "" );
     }
 

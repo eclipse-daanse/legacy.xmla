@@ -13,23 +13,21 @@
  */
 package org.eclipse.daanse.olap.function.def.periodstodate;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class PeriodsToDateFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testPeriodsToDate(Context<?> context) {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "PeriodsToDate()", "{[Time].[Time]}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
@@ -39,26 +37,29 @@ class PeriodsToDateFunDefTest {
             "PeriodsToDate([Time].[Year], [Time].[1997].[Q2].[5])", "{}" );
 
         // two args
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "PeriodsToDate([Time].[Quarter], [Time].[1997].[Q2].[5])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "PeriodsToDate([Time].[Quarter], [Time].[1997].[Q2].[5])")
+            .returns(
             "[Time].[Time].[1997].[Q2].[4]\n" + "[Time].[Time].[1997].[Q2].[5]" );
 
         // equivalent to above
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount("
                 + "  Descendants("
                 + "    Ancestor("
                 + "      [Time].[1997].[Q2].[5], [Time].[Quarter]),"
                 + "    [Time].[1997].[Q2].[5].Level),"
-                + "  1).Item(0) : [Time].[1997].[Q2].[5]",
+                + "  1).Item(0) : [Time].[1997].[Q2].[5]")
+            .returns(
             "[Time].[Time].[1997].[Q2].[4]\n" + "[Time].[Time].[1997].[Q2].[5]" );
 
         // one arg
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' SetToStr(PeriodsToDate([Time].[Quarter])) '\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from [Sales]\n"
-                + "where [Time].[1997].[Q2].[5]",
+                + "where [Time].[1997].[Q2].[5]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q2].[5]}\n"
                 + "Axis #1:\n"
@@ -66,11 +67,12 @@ class PeriodsToDateFunDefTest {
                 + "Row #0: {[Time].[Time].[1997].[Q2].[4], [Time].[Time].[1997].[Q2].[5]}\n" );
 
         // zero args
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' SetToStr(PeriodsToDate()) '\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from [Sales]\n"
-                + "where [Time].[1997].[Q2].[5]",
+                + "where [Time].[1997].[Q2].[5]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q2].[5]}\n"
                 + "Axis #1:\n"
@@ -81,11 +83,12 @@ class PeriodsToDateFunDefTest {
         // The default level is the level above the current member -- so
         // choosing a member at the highest level might trip up the
         // implementation.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' SetToStr(PeriodsToDate()) '\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from [Sales]\n"
-                + "where [Time].[1997]",
+                + "where [Time].[1997]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997]}\n"
                 + "Axis #1:\n"
@@ -94,7 +97,7 @@ class PeriodsToDateFunDefTest {
 
         // Testcase for bug 1598379, which caused NPE because the args[0].type
         // knew its dimension but not its hierarchy.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Position] as\n"
                 + " 'Sum("
                 + "PeriodsToDate([Time].[Time].Levels(0),"
@@ -106,7 +109,8 @@ class PeriodsToDateFunDefTest {
                 + " [Time].[1997].[Q1].[2],\n"
                 + " [Time].[1997].[Q1].[3]} ON COLUMNS,\n"
                 + "{[Measures].[Store Sales], [Measures].[Position] } ON ROWS\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -129,14 +133,15 @@ class PeriodsToDateFunDefTest {
                 + "Row #1: 89,598.48\n"
                 + "Row #1: 139,628.35\n" );
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
                 + "{[Measures].[Unit Sales]} on columns,\n"
                 + "periodstodate(\n"
                 + "    [Product].[Product Category],\n"
                 + "    [Product].[Food].[Baked Goods].[Bread].[Muffins]) on rows\n"
                 + "from [Sales]\n"
-                + "",
+                + "")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -150,9 +155,9 @@ class PeriodsToDateFunDefTest {
 
         // TODO: enable
         if ( false ) {
-            assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-                "Sum(PeriodsToDate([Time.Weekly].[Year], [Time].CurrentMember), [Measures].[Unit Sales])",
-                "wrong dimension" );
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+                "Sum(PeriodsToDate([Time.Weekly].[Year], [Time].CurrentMember), [Measures].[Unit Sales])")
+                .throwsMessage( "wrong dimension" );
         }
     }
 

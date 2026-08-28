@@ -13,38 +13,35 @@
  */
 package org.eclipse.daanse.olap.function.def.minmax;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-import mondrian.olap.fun.FunctionTest;
-
-
+@RolapContextTest(FoodmartTestInstance.class)
 class MinMaxFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMax(Context<?> context) {
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
-            "MAX({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
-            "263,793.22" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "MAX({[Store].[All Stores].[USA].children},[Measures].[Store Sales])")
+            .returns( "263,793.22" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMaxNegative(Context<?> context) {
         // Bug 1771928, "Max() works incorrectly with negative values"
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  member [Customers].[Neg] as '-1'\n"
                 + "  member [Customers].[Min] as 'Min({[Customers].[Neg]})'\n"
                 + "  member [Customers].[Max] as 'Max({[Customers].[Neg]})'\n"
                 + "select {[Customers].[Neg],[Customers].[Min],[Customers].[Max]} on 0\n"
-                + "from Sales",
+                + "from Sales")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -56,20 +53,18 @@ class MinMaxFunDefTest {
                 + "Row #0: -1\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMin(Context<?> context) {
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
-            "MIN({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
-            "142,277.07" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "MIN({[Store].[All Stores].[USA].children},[Measures].[Store Sales])")
+            .returns( "142,277.07" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMinTuple(Context<?> context) {
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Min([Customers].[All Customers].[USA].Children, ([Measures].[Unit Sales], [Gender].[All Gender].[F]))",
-            "33,036" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Min([Customers].[All Customers].[USA].Children, ([Measures].[Unit Sales], [Gender].[All Gender].[F]))")
+            .returns( "33,036" );
     }
 
 }

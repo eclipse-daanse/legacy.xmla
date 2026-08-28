@@ -13,28 +13,27 @@
  */
 package org.eclipse.daanse.olap.function.def.settostr;
 
-import static org.opencube.junit5.TestUtil.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class SetToStrFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetToStr(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "SetToStr([Time].[Time].children)",
-            "{[Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2], [Time].[Time].[1997].[Q3], [Time].[Time].[1997].[Q4]}" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "SetToStr([Time].[Time].children)")
+            .returns( "{[Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2], [Time].[Time].[1997].[Q3], [Time].[Time].[1997].[Q4]}" );
 
         // Now, applied to tuples
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "SetToStr({CrossJoin([Marital Status].children, {[Gender].[M]})})",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "SetToStr({CrossJoin([Marital Status].children, {[Gender].[M]})})")
+            .returns(
             "{"
                 + "([Marital Status].[Marital Status].[M], [Gender].[Gender].[M]), "
                 + "([Marital Status].[Marital Status].[S], [Gender].[Gender].[M])"

@@ -14,67 +14,64 @@
 package org.eclipse.daanse.olap.function.def.member.parentcalc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
-
+@RolapContextTest(FoodmartTestInstance.class)
 class ParentFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParent(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "[Gender].Parent",
             "{[Gender].[Gender]}" );
         assertMemberExprDependsOn(connection, "[Gender].[M].Parent", "{}" );
-        assertAxisReturns(connection, "Sales",
-            "{[Store].[USA].[CA].Parent}", "[Store].[Store].[USA]" );
+        assertThatAxis(connection, "Sales",
+            "{[Store].[USA].[CA].Parent}").returns( "[Store].[Store].[USA]" );
         // root member has null parent
-        assertAxisReturns(connection, "Sales", "{[Store].[All Stores].Parent}", "" );
+        assertThatAxis(connection, "Sales", "{[Store].[All Stores].Parent}").returns( "" );
         // parent of null member is null
-        assertAxisReturns(connection, "Sales", "{[Store].[All Stores].Parent.Parent}", "" );
+        assertThatAxis(connection, "Sales", "{[Store].[All Stores].Parent.Parent}").returns( "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testParentPC(Context<?> context) {
         //final Context<?> testContext<?> = getContext().withCube( "HR" );
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "HR",
-            "[Employees].Parent",
-            "" );
-        assertAxisReturns(connection, "HR",
-            "[Employees].[Sheri Nowmer].Parent",
-            "[Employees].[Employees].[All Employees]" );
-        assertAxisReturns(connection, "HR",
-            "[Employees].[Sheri Nowmer].[Derrick Whelply].Parent",
-            "[Employees].[Employees].[Sheri Nowmer]" );
-        assertAxisReturns(connection, "HR",
-            "[Employees].Members.Item(3)",
-            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]" );
-        assertAxisReturns(connection, "HR",
-            "[Employees].Members.Item(3).Parent",
-            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]" );
-        assertAxisReturns(connection, "HR",
-            "[Employees].AllMembers.Item(3).Parent",
-            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]" );
+        assertThatAxis(connection, "HR",
+            "[Employees].Parent")
+            .returns( "" );
+        assertThatAxis(connection, "HR",
+            "[Employees].[Sheri Nowmer].Parent")
+            .returns( "[Employees].[Employees].[All Employees]" );
+        assertThatAxis(connection, "HR",
+            "[Employees].[Sheri Nowmer].[Derrick Whelply].Parent")
+            .returns( "[Employees].[Employees].[Sheri Nowmer]" );
+        assertThatAxis(connection, "HR",
+            "[Employees].Members.Item(3)")
+            .returns( "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]" );
+        assertThatAxis(connection, "HR",
+            "[Employees].Members.Item(3).Parent")
+            .returns( "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]" );
+        assertThatAxis(connection, "HR",
+            "[Employees].AllMembers.Item(3).Parent")
+            .returns( "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]" );
 
         // Ascendants(<Member>) applied to parent-child hierarchy accessed via
         // <Level>.Members
-        assertAxisReturns(connection, "HR",
-            "Ascendants([Employees].Members.Item(73))",
+        assertThatAxis(connection, "HR",
+            "Ascendants([Employees].Members.Item(73))")
+            .returns(
             "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Bertha "
                 + "Jameson].[James Bailey]\n"
                 + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Bertha "
@@ -87,8 +84,7 @@ class ParentFunDefTest {
                 + "[Employees].[Employees].[All Employees]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBasic5(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
@@ -99,8 +95,7 @@ class ParentFunDefTest {
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 ).getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstInLevel5(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
@@ -111,8 +106,7 @@ class ParentFunDefTest {
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 ).getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAll5(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),

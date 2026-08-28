@@ -13,30 +13,28 @@
  */
 package org.eclipse.daanse.olap.function.def.name.member;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class NameFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMemberName(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Name", "1997" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Name").returns( "1997" );
         // dimension name
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Name", "Store" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].Name").returns( "Store" );
         // member name
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].DefaultMember.Name", "All Stores" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].DefaultMember.Name").returns( "All Stores" );
         if ( isDefaultNullMemberRepresentation(context) ) {
             // name of null member
-            assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Parent.Name", "#null" );
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].Parent.Name").returns( "#null" );
         }
     }
 

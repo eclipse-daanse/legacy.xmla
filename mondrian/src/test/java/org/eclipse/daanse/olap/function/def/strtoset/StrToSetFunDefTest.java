@@ -13,21 +13,20 @@
  */
 package org.eclipse.daanse.olap.function.def.strtoset;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class StrToSetFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStrToSet(Context<?> context) {
         // TODO: handle text after '}'
         // TODO: handle string which ends too soon
@@ -35,29 +34,31 @@ class StrToSetFunDefTest {
         // TODO: test spaces before unbracketed names,
         //       e.g. "{Gender. M, Gender. F   }".
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + " \"{[Gender].[F], [Gender].[M]}\","
-                + " [Gender])",
+                + " [Gender])")
+            .returns(
             "[Gender].[Gender].[F]\n"
                 + "[Gender].[Gender].[M]" );
 
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + " \"{[Gender].[F], [Time].[1997]}\","
-                + " [Gender])",
-            "member is of wrong hierarchy", "Sales" );
+                + " [Gender])")
+            .throwsMessage( "member is of wrong hierarchy" );
 
         // whitespace ok
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + " \"  {   [Gender] .  [F]  ,[Gender].[M] }  \","
-                + " [Gender])",
+                + " [Gender])")
+            .returns(
             "[Gender].[Gender].[F]\n"
                 + "[Gender].[Gender].[M]" );
 
         // tuples
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -66,12 +67,13 @@ class StrToSetFunDefTest {
                 + "}"
                 + "\","
                 + " [Gender],"
-                + " [Time])",
+                + " [Time])")
+            .returns(
             "{[Gender].[Gender].[F], [Time].[Time].[1997].[Q2]}\n"
                 + "{[Gender].[Gender].[M], [Time].[Time].[1997]}" );
 
         // matches unique name
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -80,16 +82,16 @@ class StrToSetFunDefTest {
                 + " [Store].[All Stores]. [USA] . [WA]"
                 + "}"
                 + "\","
-                + " [Store])",
+                + " [Store])")
+            .returns(
             "[Store].[Store].[USA].[CA]\n"
                 + "[Store].[Store].[USA].[OR]\n"
                 + "[Store].[Store].[USA].[WA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStrToSetDupDimensionsFails(Context<?> context) {
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -99,16 +101,14 @@ class StrToSetFunDefTest {
                 + "\","
                 + " [Gender],"
                 + " [Time],"
-                + " [Gender])",
-            "Tuple contains more than one member of hierarchy '[Gender].[Gender]'.", "Sales" );
+                + " [Gender])")
+            .throwsMessage( "Tuple contains more than one member of hierarchy '[Gender].[Gender]'." );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, value = "true", type = Boolean.class)
     void testStrToSetIgnoreInvalidMembers(Context<?> context) {
-        context.getCatalogCache().clear();
-        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -118,11 +118,12 @@ class StrToSetFunDefTest {
                 + " [Product].[Drink].[Dairy]"
                 + "}"
                 + "\","
-                + " [Product])",
+                + " [Product])")
+            .returns(
             "[Product].[Product].[Food]\n"
                 + "[Product].[Product].[Drink].[Dairy]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -132,7 +133,8 @@ class StrToSetFunDefTest {
                 + " ([Gender].[F], [Product].[Drink].[Dairy])"
                 + "}"
                 + "\","
-                + " [Gender], [Product])",
+                + " [Gender], [Product])")
+            .returns(
             "{[Gender].[Gender].[M], [Product].[Product].[Food]}\n"
                 + "{[Gender].[Gender].[F], [Product].[Product].[Drink].[Dairy]}" );
     }

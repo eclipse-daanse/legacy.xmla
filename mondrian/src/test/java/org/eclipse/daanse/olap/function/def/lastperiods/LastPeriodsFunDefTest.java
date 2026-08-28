@@ -13,75 +13,88 @@
  */
 package org.eclipse.daanse.olap.function.def.lastperiods;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class LastPeriodsFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLastPeriods(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(0, [Time].[1998])", "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(1, [Time].[1998])", "[Time].[Time].[1998]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-1, [Time].[1998])", "[Time].[Time].[1998]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Time].[1998])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(0, [Time].[1998])")
+            .returns( "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(1, [Time].[1998])")
+            .returns( "[Time].[Time].[1998]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-1, [Time].[1998])")
+            .returns( "[Time].[Time].[1998]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(2, [Time].[1998])")
+            .returns(
             "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-2, [Time].[1997])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-2, [Time].[1997])")
+            .returns(
             "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(5000, [Time].[1998])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(5000, [Time].[1998])")
+            .returns(
             "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-5000, [Time].[1997])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-5000, [Time].[1997])")
+            .returns(
             "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Time].[1998].[Q2])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(2, [Time].[1998].[Q2])")
+            .returns(
             "[Time].[Time].[1998].[Q1]\n" + "[Time].[Time].[1998].[Q2]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(4, [Time].[1998].[Q2])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(4, [Time].[1998].[Q2])")
+            .returns(
             "[Time].[Time].[1997].[Q3]\n"
                 + "[Time].[Time].[1997].[Q4]\n"
                 + "[Time].[Time].[1998].[Q1]\n"
                 + "[Time].[Time].[1998].[Q2]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-2, [Time].[1997].[Q2])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-2, [Time].[1997].[Q2])")
+            .returns(
             "[Time].[Time].[1997].[Q2]\n" + "[Time].[Time].[1997].[Q3]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-4, [Time].[1997].[Q2])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-4, [Time].[1997].[Q2])")
+            .returns(
             "[Time].[Time].[1997].[Q2]\n"
                 + "[Time].[Time].[1997].[Q3]\n"
                 + "[Time].[Time].[1997].[Q4]\n"
                 + "[Time].[Time].[1998].[Q1]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(5000, [Time].[1998].[Q2])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(5000, [Time].[1998].[Q2])")
+            .returns(
             "[Time].[Time].[1997].[Q1]\n"
                 + "[Time].[Time].[1997].[Q2]\n"
                 + "[Time].[Time].[1997].[Q3]\n"
                 + "[Time].[Time].[1997].[Q4]\n"
                 + "[Time].[Time].[1998].[Q1]\n"
                 + "[Time].[Time].[1998].[Q2]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-5000, [Time].[1998].[Q2])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-5000, [Time].[1998].[Q2])")
+            .returns(
             "[Time].[Time].[1998].[Q2]\n"
                 + "[Time].[Time].[1998].[Q3]\n"
                 + "[Time].[Time].[1998].[Q4]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Time].[1998].[Q2].[5])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(2, [Time].[1998].[Q2].[5])")
+            .returns(
             "[Time].[Time].[1998].[Q2].[4]\n" + "[Time].[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(12, [Time].[1998].[Q2].[5])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(12, [Time].[1998].[Q2].[5])")
+            .returns(
             "[Time].[Time].[1997].[Q2].[6]\n"
                 + "[Time].[Time].[1997].[Q3].[7]\n"
                 + "[Time].[Time].[1997].[Q3].[8]\n"
@@ -94,11 +107,13 @@ class LastPeriodsFunDefTest {
                 + "[Time].[Time].[1998].[Q1].[3]\n"
                 + "[Time].[Time].[1998].[Q2].[4]\n"
                 + "[Time].[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-2, [Time].[1998].[Q2].[4])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-2, [Time].[1998].[Q2].[4])")
+            .returns(
             "[Time].[Time].[1998].[Q2].[4]\n" + "[Time].[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-12, [Time].[1997].[Q2].[6])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-12, [Time].[1997].[Q2].[6])")
+            .returns(
             "[Time].[Time].[1997].[Q2].[6]\n"
                 + "[Time].[Time].[1997].[Q3].[7]\n"
                 + "[Time].[Time].[1997].[Q3].[8]\n"
@@ -111,16 +126,20 @@ class LastPeriodsFunDefTest {
                 + "[Time].[Time].[1998].[Q1].[3]\n"
                 + "[Time].[Time].[1998].[Q2].[4]\n"
                 + "[Time].[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Gender].[M])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(2, [Gender].[M])")
+            .returns(
             "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-2, [Gender].[F])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(-2, [Gender].[F])")
+            .returns(
             "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Gender])", "[Gender].[Gender].[All Gender]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Gender].Parent)", "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(2, [Gender])")
+            .returns( "[Gender].[Gender].[All Gender]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "LastPeriods(2, [Gender].Parent)")
+            .returns( "" );
     }
 
 }

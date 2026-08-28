@@ -13,70 +13,70 @@
  */
 package org.eclipse.daanse.olap.function.def.subset;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class SubsetFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSubset(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Promotion Media].Children, 7, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Promotion Media].Children, 7, 2)")
+            .returns(
             "[Promotion Media].[Promotion Media].[Product Attachment]\n"
                 + "[Promotion Media].[Promotion Media].[Radio]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSubsetNegativeCount(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Promotion Media].Children, 3, -1)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Promotion Media].Children, 3, -1)")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSubsetNegativeStart(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Promotion Media].Children, -2, 4)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Promotion Media].Children, -2, 4)")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSubsetDefault(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Promotion Media].Children, 11)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Promotion Media].Children, 11)")
+            .returns(
             "[Promotion Media].[Promotion Media].[Sunday Paper, Radio]\n"
                 + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]\n"
                 + "[Promotion Media].[Promotion Media].[TV]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSubsetOvershoot(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Promotion Media].Children, 15)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Promotion Media].Children, 15)")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSubsetEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Gender].[F].Children, 1)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Gender].[F].Children, 1)")
+            .returns(
             "" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Subset([Gender].[F].Children, 1, 3)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Subset([Gender].[F].Children, 1, 3)")
+            .returns(
             "" );
     }
 

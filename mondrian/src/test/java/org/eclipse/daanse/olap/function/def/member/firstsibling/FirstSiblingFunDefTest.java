@@ -20,40 +20,35 @@ import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class FirstSiblingFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstSiblingFirstInLevel(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstSibling", "Sales" );
         assertEquals( "F", member.getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstSiblingLastInLevel(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].FirstSibling", "Sales" );
         assertEquals( "Q1", member.getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstSiblingAll(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].FirstSibling", "Sales" );
         assertTrue( member.isAll() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstSiblingRoot(Context<?> context) {
         // The [Measures] hierarchy does not have an 'all' member, so
         // [Unit Sales] does not have a parent.
@@ -62,8 +57,7 @@ class FirstSiblingFunDefTest {
         assertEquals( "Unit Sales", member.getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstSiblingNull(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstChild.FirstSibling", "Sales" );

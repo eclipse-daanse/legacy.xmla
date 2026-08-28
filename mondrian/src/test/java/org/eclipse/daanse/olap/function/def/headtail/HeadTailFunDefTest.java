@@ -13,73 +13,72 @@
  */
 package org.eclipse.daanse.olap.function.def.headtail;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class HeadTailFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHead(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Head([Store].Children, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Head([Store].Children, 2)")
+            .returns(
             "[Store].[Store].[Canada]\n"
                 + "[Store].[Store].[Mexico]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHeadNegative(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Head([Store].Children, 2 - 3)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Head([Store].Children, 2 - 3)")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHeadDefault(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Head([Store].Children)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Head([Store].Children)")
+            .returns(
             "[Store].[Store].[Canada]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHeadOvershoot(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Head([Store].Children, 2 + 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Head([Store].Children, 2 + 2)")
+            .returns(
             "[Store].[Store].[Canada]\n"
                 + "[Store].[Store].[Mexico]\n"
                 + "[Store].[Store].[USA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHeadEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Head([Gender].[F].Children, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Head([Gender].[F].Children, 2)")
+            .returns(
             "" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Head([Gender].[F].Children)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Head([Gender].[F].Children)")
+            .returns(
             "" );
     }
 
     /**
      * Test case for bug 2488492, "Union between calc mem and head function throws exception"
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHeadBug(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT\n"
                 + "                        UNION(\n"
                 + "                            {([Customers].CURRENTMEMBER)},\n"
@@ -98,7 +97,8 @@ class HeadTailFunDefTest {
                 + "                            ALL)\n"
                 + "    ON AXIS(0)\n"
                 + "FROM\n"
-                + "    [Sales]\n",
+                + "    [Sales]\n")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -107,7 +107,7 @@ class HeadTailFunDefTest {
                 + "Row #0: 266,773\n"
                 + "Row #0: 266,773\n" );
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "    MEMBER\n"
                 + "        [Customers].[COG_OQP_INT_t2]AS '1',\n"
@@ -130,7 +130,8 @@ class HeadTailFunDefTest {
                 + "                            ALL)\n"
                 + "    ON AXIS(0)\n"
                 + "FROM\n"
-                + "    [Sales]",
+                + "    [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -140,14 +141,15 @@ class HeadTailFunDefTest {
                 + "Row #0: 266,773\n" );
 
         // More minimal test case. Also demonstrates similar problem with Tail.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Union(\n"
                 + "  Union(\n"
                 + "    Tail([Customers].[USA].[CA].Children, 2),\n"
                 + "    Head([Customers].[USA].[WA].Children, 2),\n"
                 + "    ALL),\n"
                 + "  Tail([Customers].[USA].[OR].Children, 2),"
-                + "  ALL)",
+                + "  ALL)")
+            .returns(
             "[Customers].[Customers].[USA].[CA].[West Covina]\n"
                 + "[Customers].[Customers].[USA].[CA].[Woodland Hills]\n"
                 + "[Customers].[Customers].[USA].[WA].[Anacortes]\n"
@@ -157,50 +159,51 @@ class HeadTailFunDefTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTail(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Tail([Store].Children, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Tail([Store].Children, 2)")
+            .returns(
             "[Store].[Store].[Mexico]\n"
                 + "[Store].[Store].[USA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTailNegative(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Tail([Store].Children, 2 - 3)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Tail([Store].Children, 2 - 3)")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTailDefault(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Tail([Store].Children)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Tail([Store].Children)")
+            .returns(
             "[Store].[Store].[USA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTailOvershoot(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Tail([Store].Children, 2 + 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Tail([Store].Children, 2 + 2)")
+            .returns(
             "[Store].[Store].[Canada]\n"
                 + "[Store].[Store].[Mexico]\n"
                 + "[Store].[Store].[USA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTailEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Tail([Gender].[F].Children, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Tail([Gender].[F].Children, 2)")
+            .returns(
             "" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Tail([Gender].[F].Children)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Tail([Gender].[F].Children)")
+            .returns(
             "" );
     }
 

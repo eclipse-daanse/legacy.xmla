@@ -13,11 +13,18 @@ package mondrian.test;
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.daanse.cwm.model.cwm.resource.relational.Schema;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessCatalogGrant;
 import org.eclipse.daanse.rolap.mapping.model.access.common.AccessRole;
 import org.eclipse.daanse.rolap.mapping.model.access.common.CatalogAccess;
@@ -52,19 +59,26 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelDefinition;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.LevelFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
-import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
+import org.junit.jupiter.api.Test;
 /**
  * @author Andrey Khayrutdinov
  */
+@RolapContextTest(SteelWheelsTestInstance.class)
 class SteelWheelsAggregationTest {
+
+    /** Named bridge onto the SteelWheels CSVs (for the {@code data =} supplier form). */
+    public static class SteelWheelsData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new SteelWheelsTestInstance().dataSupplier().csvResources();
+        }
+    }
 
     private static final String QUERY = ""
             + "WITH\n"
@@ -181,7 +195,7 @@ class SteelWheelsAggregationTest {
 
 
 
-    private Catalog getSchemaWith(List<AccessRole> roles) {
+    private static Catalog getSchemaWith(List<AccessRole> roles) {
 
 
         Catalog catalog = CatalogFactory.eINSTANCE.createCatalog();
@@ -189,248 +203,244 @@ class SteelWheelsAggregationTest {
         org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
         catalog.getImportedElement().add(customersCube);
         catalog.getImportedElement().addAll(roles);
-        catalog.getImportedElement().add(CatalogSupplier.DATABASE_SCHEMA_STEELWHEELS);
+        // Copy, don't steal: CatalogSupplier.DATABASE_SCHEMA_STEELWHEELS is contained by the
+        // shared static CatalogSupplier singleton catalog; adding it directly here would move
+        // it out from under every other user of that singleton for the life of the JVM.
+        catalog.getImportedElement().add((Schema) EcoreUtil.copy(CatalogSupplier.DATABASE_SCHEMA_STEELWHEELS));
     	return catalog;
     }
 
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { TestWithAggregationCatalogSupplier.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testWithAggregation(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-
-        AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
-        //.withDimension("Measures")
-        dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
-
-        AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant1.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine]"));
-        memberGrant1.setMemberAccess(MemberAccess.NONE);
-
-        AccessMemberGrant memberGrant2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant2.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
-        memberGrant2.setMemberAccess(MemberAccess.ALL);
-
-        AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
-        hierarchyGrant.setHierarchy(customersHierarchy);
-        hierarchyGrant.setTopLevel(nameLevel);
-        hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
-        hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
-        hierarchyGrant.getMemberGrants().add(memberGrant1);
-        hierarchyGrant.getMemberGrants().add(memberGrant2);
-
-        AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
-        accessCubeGrant.setCube(customersCube);
-        accessCubeGrant.setCubeAccess(CubeAccess.ALL);
-        accessCubeGrant.getDimensionGrants().add(dimensionGrant);
-        accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
-
-        final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
-        accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
-        accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
-
-        final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
-        powerUserRole.setName("Power User");
-        powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
-
-        final Catalog schema = getSchemaWith(
-                List.of(powerUserRole));
-
-        context.getCatalogCache().clear();
-        ((TestContext)context).setCatalogMappingSupplier(new MyCatalogSuplier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testWithAggregationNoRestrictionsOnTopLevel(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-
-        AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
-        //.withDimension("Measures")
-        dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
-
-        AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember(mdx("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine]"));
-        memberGrant.setMemberAccess(MemberAccess.ALL);
-
-        AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
-        hierarchyGrant.setHierarchy(customersHierarchy);
-        hierarchyGrant.setTopLevel(nameLevel);
-        hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
-        hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
-        hierarchyGrant.getMemberGrants().add(memberGrant);
-
-        AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
-        accessCubeGrant.setCube(customersCube);
-        accessCubeGrant.setCubeAccess(CubeAccess.ALL);
-        accessCubeGrant.getDimensionGrants().add(dimensionGrant);
-        accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
-
-        final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
-        accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
-        accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
-
-        final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
-        powerUserRole.setName("Power User");
-        powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
-
-        final Catalog schema = getSchemaWith(
-                List.of(powerUserRole));
-        context.getCatalogCache().clear();
-        ((TestContext)context).setCatalogMappingSupplier(new MyCatalogSuplier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
-    }
-
-    @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testUnionWithAggregation(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-
-        AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
-        //.withDimension("Measures")
-        dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
-
-        AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
-        memberGrant.setMemberAccess(MemberAccess.NONE);
-
-        AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
-        hierarchyGrant.setHierarchy(customersHierarchy);
-        hierarchyGrant.setTopLevel(nameLevel);
-        hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
-        hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
-        hierarchyGrant.getMemberGrants().add(memberGrant);
-
-        AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
-        accessCubeGrant.setCube(customersCube);
-        accessCubeGrant.setCubeAccess(CubeAccess.ALL);
-        accessCubeGrant.getDimensionGrants().add(dimensionGrant);
-        accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
-
-        final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
-        accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
-        accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
-
-        final AccessCatalogGrant accessCatalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
-        accessCatalogGrant1.setCatalogAccess(CatalogAccess.NONE);
-
-        final AccessRole fooRole = CommonFactory.eINSTANCE.createAccessRole();
-        fooRole.setName("Foo");
-        fooRole.getAccessCatalogGrants().add(accessCatalogGrant1);
-
-        final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
-        powerUserRole.setName("Power User");
-        powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
-
-        final AccessRole powerUserUnionRole = CommonFactory.eINSTANCE.createAccessRole();
-        powerUserRole.setName("Power User Union");
-        powerUserRole.getReferencedAccessRoles().add(powerUserUnionRole);
-        powerUserRole.getReferencedAccessRoles().add(fooRole);
-
-
-        final Catalog schema = getSchemaWith(List.of(fooRole, powerUserRole, powerUserUnionRole));
-        context.getCatalogCache().clear();
-        ((TestContext)context).setCatalogMappingSupplier(new MyCatalogSuplier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
-    }
-
-    @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testWithAggregationUnionRolesWithSameGrants(Context<?> context) throws Exception {
-        ((TestContextImpl)context).setUseAggregates(true);
-        ((TestContextImpl)context).setReadAggregates(true);
-
-        AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
-        //.withDimension("Measures")
-        dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
-
-        AccessDimensionGrant dimensionGrant1 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
-        //.withDimension("Measures")
-        dimensionGrant1.setDimensionAccess(DimensionAccess.ALL);
-
-        AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
-        memberGrant.setMemberAccess(MemberAccess.NONE);
-
-        AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
-        memberGrant1.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
-        memberGrant1.setMemberAccess(MemberAccess.ALL);
-
-        AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
-        hierarchyGrant.setHierarchy(customersHierarchy);
-        hierarchyGrant.setTopLevel(nameLevel);
-        hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
-        hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
-        hierarchyGrant.getMemberGrants().add(memberGrant);
-
-        AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
-        hierarchyGrant1.setHierarchy(customersHierarchy);
-        hierarchyGrant1.setTopLevel(nameLevel);
-        hierarchyGrant1.setRollupPolicy(RollupPolicy.PARTIAL);
-        hierarchyGrant1.setHierarchyAccess(HierarchyAccess.CUSTOM);
-        hierarchyGrant1.getMemberGrants().add(memberGrant1);
-
-        AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
-        accessCubeGrant.setCube(customersCube);
-        accessCubeGrant.setCubeAccess(CubeAccess.ALL);
-        accessCubeGrant.getDimensionGrants().add(dimensionGrant);
-        accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
-
-        final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
-        accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
-        accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
-
-        AccessCubeGrant accessCubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
-        accessCubeGrant1.setCube(customersCube);
-        accessCubeGrant1.setCubeAccess(CubeAccess.ALL);
-        accessCubeGrant1.getDimensionGrants().add(dimensionGrant1);
-        accessCubeGrant1.getHierarchyGrants().add(hierarchyGrant1);
-
-        final AccessCatalogGrant accessCatalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
-        accessCatalogGrant1.setCatalogAccess(CatalogAccess.NONE);
-        accessCatalogGrant1.getCubeGrants().add(accessCubeGrant1);
-
-        final AccessRole fooRole = CommonFactory.eINSTANCE.createAccessRole();
-        fooRole.setName("Foo");
-        fooRole.getAccessCatalogGrants().add(accessCatalogGrant1);
-
-        final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
-        powerUserRole.setName("Power User");
-        powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
-
-        final AccessRole powerUserUnionRole = CommonFactory.eINSTANCE.createAccessRole();
-        powerUserRole.setName("Power User Union");
-        powerUserRole.getReferencedAccessRoles().add(powerUserUnionRole);
-        powerUserRole.getReferencedAccessRoles().add(fooRole);
-
-        final Catalog schema = getSchemaWith
-            (List.of(
-           		fooRole,
-                powerUserRole,
-                powerUserUnionRole));
-        context.getCatalogCache().clear();
-        ((TestContext)context).setCatalogMappingSupplier(new MyCatalogSuplier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
-    }
-
-    private static class MyCatalogSuplier implements CatalogMappingSupplier {
-
-        private Catalog catalog;
-
-        public MyCatalogSuplier(Catalog catalog) {
-            this.catalog = catalog;
-        }
-
+    public static class TestWithAggregationCatalogSupplier implements CatalogMappingSupplier {
         @Override
         public Catalog get() {
-            return catalog;
-        }
+            AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
+            //.withDimension("Measures")
+            dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
 
+            AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            memberGrant1.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine]"));
+            memberGrant1.setMemberAccess(MemberAccess.NONE);
+
+            AccessMemberGrant memberGrant2 = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            memberGrant2.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
+            memberGrant2.setMemberAccess(MemberAccess.ALL);
+
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            hierarchyGrant.setHierarchy(customersHierarchy);
+            hierarchyGrant.setTopLevel(nameLevel);
+            hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+            hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+            hierarchyGrant.getMemberGrants().add(memberGrant1);
+            hierarchyGrant.getMemberGrants().add(memberGrant2);
+
+            AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            accessCubeGrant.setCube(customersCube);
+            accessCubeGrant.setCubeAccess(CubeAccess.ALL);
+            accessCubeGrant.getDimensionGrants().add(dimensionGrant);
+            accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+            final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
+            accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
+
+            final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
+            powerUserRole.setName("Power User");
+            powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
+
+            return getSchemaWith(List.of(powerUserRole));
+        }
+    }
+
+    @Test
+    @RolapContextTest(catalog = { TestWithAggregationNoRestrictionsOnTopLevelCatalogSupplier.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testWithAggregationNoRestrictionsOnTopLevel(Context<?> context) throws Exception {
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
+    }
+
+    public static class TestWithAggregationNoRestrictionsOnTopLevelCatalogSupplier implements CatalogMappingSupplier {
+        @Override
+        public Catalog get() {
+            AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
+            //.withDimension("Measures")
+            dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
+
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            memberGrant.setMember(mdx("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine]"));
+            memberGrant.setMemberAccess(MemberAccess.ALL);
+
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            hierarchyGrant.setHierarchy(customersHierarchy);
+            hierarchyGrant.setTopLevel(nameLevel);
+            hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+            hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+            hierarchyGrant.getMemberGrants().add(memberGrant);
+
+            AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            accessCubeGrant.setCube(customersCube);
+            accessCubeGrant.setCubeAccess(CubeAccess.ALL);
+            accessCubeGrant.getDimensionGrants().add(dimensionGrant);
+            accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+            final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
+            accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
+
+            final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
+            powerUserRole.setName("Power User");
+            powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
+
+            return getSchemaWith(List.of(powerUserRole));
+        }
+    }
+
+    @Disabled //disabled for CI build
+    @Test
+    @RolapContextTest(catalog = { TestUnionWithAggregationCatalogSupplier.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testUnionWithAggregation(Context<?> context) throws Exception {
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
+    }
+
+    public static class TestUnionWithAggregationCatalogSupplier implements CatalogMappingSupplier {
+        @Override
+        public Catalog get() {
+            AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
+            //.withDimension("Measures")
+            dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
+
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            memberGrant.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
+            memberGrant.setMemberAccess(MemberAccess.NONE);
+
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            hierarchyGrant.setHierarchy(customersHierarchy);
+            hierarchyGrant.setTopLevel(nameLevel);
+            hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+            hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+            hierarchyGrant.getMemberGrants().add(memberGrant);
+
+            AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            accessCubeGrant.setCube(customersCube);
+            accessCubeGrant.setCubeAccess(CubeAccess.ALL);
+            accessCubeGrant.getDimensionGrants().add(dimensionGrant);
+            accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+            final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
+            accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
+
+            final AccessCatalogGrant accessCatalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            accessCatalogGrant1.setCatalogAccess(CatalogAccess.NONE);
+
+            final AccessRole fooRole = CommonFactory.eINSTANCE.createAccessRole();
+            fooRole.setName("Foo");
+            fooRole.getAccessCatalogGrants().add(accessCatalogGrant1);
+
+            final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
+            powerUserRole.setName("Power User");
+            powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
+
+            final AccessRole powerUserUnionRole = CommonFactory.eINSTANCE.createAccessRole();
+            powerUserRole.setName("Power User Union");
+            powerUserRole.getReferencedAccessRoles().add(powerUserUnionRole);
+            powerUserRole.getReferencedAccessRoles().add(fooRole);
+
+            return getSchemaWith(List.of(fooRole, powerUserRole, powerUserUnionRole));
+        }
+    }
+
+    @Disabled //disabled for CI build
+    @Test
+    @RolapContextTest(catalog = { TestWithAggregationUnionRolesWithSameGrantsCatalogSupplier.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    void testWithAggregationUnionRolesWithSameGrants(Context<?> context) throws Exception {
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
+    }
+
+    public static class TestWithAggregationUnionRolesWithSameGrantsCatalogSupplier implements CatalogMappingSupplier {
+        @Override
+        public Catalog get() {
+            AccessDimensionGrant dimensionGrant = OlapFactory.eINSTANCE.createAccessDimensionGrant();
+            //.withDimension("Measures")
+            dimensionGrant.setDimensionAccess(DimensionAccess.ALL);
+
+            AccessDimensionGrant dimensionGrant1 = OlapFactory.eINSTANCE.createAccessDimensionGrant();
+            //.withDimension("Measures")
+            dimensionGrant1.setDimensionAccess(DimensionAccess.ALL);
+
+            AccessMemberGrant memberGrant = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            memberGrant.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
+            memberGrant.setMemberAccess(MemberAccess.NONE);
+
+            AccessMemberGrant memberGrant1 = OlapFactory.eINSTANCE.createAccessMemberGrant();
+            memberGrant1.setMember(mdx("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]"));
+            memberGrant1.setMemberAccess(MemberAccess.ALL);
+
+            AccessHierarchyGrant hierarchyGrant = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            hierarchyGrant.setHierarchy(customersHierarchy);
+            hierarchyGrant.setTopLevel(nameLevel);
+            hierarchyGrant.setRollupPolicy(RollupPolicy.PARTIAL);
+            hierarchyGrant.setHierarchyAccess(HierarchyAccess.CUSTOM);
+            hierarchyGrant.getMemberGrants().add(memberGrant);
+
+            AccessHierarchyGrant hierarchyGrant1 = OlapFactory.eINSTANCE.createAccessHierarchyGrant();
+            hierarchyGrant1.setHierarchy(customersHierarchy);
+            hierarchyGrant1.setTopLevel(nameLevel);
+            hierarchyGrant1.setRollupPolicy(RollupPolicy.PARTIAL);
+            hierarchyGrant1.setHierarchyAccess(HierarchyAccess.CUSTOM);
+            hierarchyGrant1.getMemberGrants().add(memberGrant1);
+
+            AccessCubeGrant accessCubeGrant = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            accessCubeGrant.setCube(customersCube);
+            accessCubeGrant.setCubeAccess(CubeAccess.ALL);
+            accessCubeGrant.getDimensionGrants().add(dimensionGrant);
+            accessCubeGrant.getHierarchyGrants().add(hierarchyGrant);
+
+            final AccessCatalogGrant accessCatalogGrant = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            accessCatalogGrant.setCatalogAccess(CatalogAccess.NONE);
+            accessCatalogGrant.getCubeGrants().add(accessCubeGrant);
+
+            AccessCubeGrant accessCubeGrant1 = OlapFactory.eINSTANCE.createAccessCubeGrant();
+            accessCubeGrant1.setCube(customersCube);
+            accessCubeGrant1.setCubeAccess(CubeAccess.ALL);
+            accessCubeGrant1.getDimensionGrants().add(dimensionGrant1);
+            accessCubeGrant1.getHierarchyGrants().add(hierarchyGrant1);
+
+            final AccessCatalogGrant accessCatalogGrant1 = CommonFactory.eINSTANCE.createAccessCatalogGrant();
+            accessCatalogGrant1.setCatalogAccess(CatalogAccess.NONE);
+            accessCatalogGrant1.getCubeGrants().add(accessCubeGrant1);
+
+            final AccessRole fooRole = CommonFactory.eINSTANCE.createAccessRole();
+            fooRole.setName("Foo");
+            fooRole.getAccessCatalogGrants().add(accessCatalogGrant1);
+
+            final AccessRole powerUserRole = CommonFactory.eINSTANCE.createAccessRole();
+            powerUserRole.setName("Power User");
+            powerUserRole.getAccessCatalogGrants().add(accessCatalogGrant);
+
+            final AccessRole powerUserUnionRole = CommonFactory.eINSTANCE.createAccessRole();
+            powerUserRole.setName("Power User Union");
+            powerUserRole.getReferencedAccessRoles().add(powerUserUnionRole);
+            powerUserRole.getReferencedAccessRoles().add(fooRole);
+
+            return getSchemaWith(List.of(fooRole, powerUserRole, powerUserUnionRole));
+        }
     }
 }

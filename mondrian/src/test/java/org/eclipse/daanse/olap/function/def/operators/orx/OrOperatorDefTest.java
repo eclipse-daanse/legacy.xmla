@@ -14,51 +14,46 @@
 package org.eclipse.daanse.olap.function.def.operators.orx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class OrOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOr2(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 0=0 ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 0=0 ").isTrue();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOrAssociativity1(Context<?> context) {
         // Would give 'false' if OR were stronger than AND (wrong!)
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 1=0 OR 1=1 ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 1=0 OR 1=1 ").isTrue();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOrAssociativity2(Context<?> context) {
         // Would give 'false' if OR were stronger than AND (wrong!)
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 OR 1=0 AND 1=1 ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1=1 OR 1=0 AND 1=1 ").isTrue();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOrAssociativity3(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " (1=0 OR 1=1) AND 1=1 ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " (1=0 OR 1=1) AND 1=1 ").isTrue();
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.MAX_EVAL_DEPTH, value = "3", type = Integer.class)
     void testComplexOrExpr(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
@@ -71,9 +66,7 @@ class OrOperatorDefTest {
         // make sure all aggregates referenced in the OR expression are
         // processed in a single load request by setting the eval depth to
         // a value smaller than the number of measures
-        int origDepth = context.getConfigValue(ConfigConstants.MAX_EVAL_DEPTH, ConfigConstants.MAX_EVAL_DEPTH_DEFAULT_VALUE, Integer.class);
-        ((TestContextImpl)context).setMaxEvalDepth( 3 );
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with set [*NATIVE_CJ_SET] as '[Store].[Store Country].members' "
                 + "set [*GENERATED_MEMBERS_Measures] as "
                 + "    '{[Measures].[Unit Sales], [Measures].[Store Cost], "
@@ -94,7 +87,8 @@ class OrOperatorDefTest {
                 + "            (NOT IsEmpty([Measures].[Customer Count]))) OR "
                 + "            (NOT IsEmpty([Measures].[Promotion Sales])))) "
                 + "on rows "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -110,7 +104,6 @@ class OrOperatorDefTest {
                 + "Row #0: 86,837\n"
                 + "Row #0: 5,581\n"
                 + "Row #0: 151,211.21\n" );
-        ((TestContextImpl)context).setMaxEvalDepth( origDepth );
     }
 
 }

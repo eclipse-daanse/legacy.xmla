@@ -8,6 +8,7 @@
 */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import java.net.URL;
 import java.util.Map;
 
@@ -40,8 +41,8 @@ class NonCollapsedAggTest {
             "select {[Measures].[Unit Sales]} on columns, {[dimension].[tenant].[tenant].Members} on rows from [foo]";
 
         // We expect the correct cell value + 1 if the agg table is used.
-        TestUtil.assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -61,8 +62,8 @@ class NonCollapsedAggTest {
             "select {[Measures].[Unit Sales]} on columns, {[dimension].[distributor].[line class].Members} on rows from [foo]";
 
         // We expect the correct cell value + 1 if the agg table is used.
-        TestUtil.assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -76,8 +77,8 @@ class NonCollapsedAggTest {
         final String mdx2 =
             "select {[Measures].[Unit Sales]} on columns, {[dimension].[network].[line class].Members} on rows from [foo]";
         // We expect the correct cell value + 1 if the agg table is used.
-        TestUtil.assertQueryReturns(connection,
-            mdx2,
+        assertThatQuery(connection,
+            mdx2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -97,8 +98,8 @@ class NonCollapsedAggTest {
         // We expect the correct cell value + 2 if the agg table is used.
         final String mdx =
             "select {[Measures].[Unit Sales]} on columns, {[dimension.distributor].[line class].Members} on rows from [foo2]";
-        TestUtil.assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -112,8 +113,8 @@ class NonCollapsedAggTest {
         final String mdx2 =
             "select {[Measures].[Unit Sales]} on columns, {[dimension.network].[line class].Members} on rows from [foo2]";
         // We expect the correct cell value + 2 if the agg table is used.
-        TestUtil.assertQueryReturns(connection,
-            mdx2,
+        assertThatQuery(connection,
+            mdx2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -131,8 +132,8 @@ class NonCollapsedAggTest {
         // MONDRIAN-1085
         final String mdx =
                 "select {[Measures].[Unit Sales]} on columns, {[dimension].[tenant].[tenant].Members} on rows from [testSsas]";
-        TestUtil.assertQueryReturns(connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

@@ -12,11 +12,10 @@ package mondrian.test;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
-import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * They must be deactivated by default.
  * @author LBoudreau
  */
+@RolapContextTest(SteelWheelsTestInstance.class)
 class SteelWheelsPerformanceTest {
     /**
      * Certain tests are enabled only if logging is enabled.
@@ -38,9 +38,8 @@ class SteelWheelsPerformanceTest {
      * tons of filters and sort to test the performance
      * of some bug fixes before/after.
      */
-    @ParameterizedTest
+    @Test
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
     void testComplexFilters(Context<?> context) throws Exception {
         final String query =
             "with set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product], NonEmptyCrossJoin([*BASE_MEMBERS_Markets], NonEmptyCrossJoin([*BASE_MEMBERS_Customers], NonEmptyCrossJoin([*BASE_MEMBERS_Time], [*BASE_MEMBERS_Order Status]))))'\n"

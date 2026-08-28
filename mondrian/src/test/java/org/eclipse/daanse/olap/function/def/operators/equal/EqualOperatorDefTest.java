@@ -14,25 +14,23 @@
 package org.eclipse.daanse.olap.function.def.operators.equal;
 
 import static mondrian.olap.fun.FunctionTest.checkNullOp;
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class EqualOperatorDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testEq(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1.0 = 1 ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1.0 = 1 ").isTrue();
 
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Product].CurrentMember.Level.Ordinal = 2.0", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Product].CurrentMember.Level.Ordinal = 2.0").isFalse();
         checkNullOp(context.getConnectionWithDefaultRole(), "=" );
     }
 

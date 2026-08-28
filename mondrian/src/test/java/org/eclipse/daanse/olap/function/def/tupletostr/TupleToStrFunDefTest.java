@@ -13,60 +13,58 @@
  */
 package org.eclipse.daanse.olap.function.def.tupletostr;
 
-import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class TupleToStrFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTupleToStr(Context<?> context) {
         // Applied to a dimension (which becomes a member)
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr([Product])",
-            "[Product].[Product].[All Products]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr([Product])")
+            .returns( "[Product].[Product].[All Products]" );
 
         // Applied to a dimension (invalid because has no default hierarchy)
 
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr([Time])",
-            "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly." );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr([Time])")
+            .throwsMessage( "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly." );
 
         // Applied to a hierarchy
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr([Time].[Time])",
-            "[Time].[Time].[1997]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr([Time].[Time])")
+            .returns( "[Time].[Time].[1997]" );
 
         // Applied to a member
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr([Store].[USA].[OR])",
-            "[Store].[Store].[USA].[OR]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr([Store].[USA].[OR])")
+            .returns( "[Store].[Store].[USA].[OR]" );
 
         // Applied to a member (extra set of parens)
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr(([Store].[USA].[OR]))",
-            "([Store].[Store].[USA].[OR])" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr(([Store].[USA].[OR]))")
+            .returns( "([Store].[Store].[USA].[OR])" );
 
         // Now, applied to a tuple
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr(([Marital Status], [Gender].[M]))",
-            "([Marital Status].[Marital Status].[All Marital Status], [Gender].[Gender].[M])" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr(([Marital Status], [Gender].[M]))")
+            .returns( "([Marital Status].[Marital Status].[All Marital Status], [Gender].[Gender].[M])" );
 
         // Applied to a tuple containing a null member
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr(([Marital Status], [Gender].Parent))",
-            "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr(([Marital Status], [Gender].Parent))")
+            .returns( "" );
 
         // Applied to a null member
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TupleToStr([Marital Status].Parent)",
-            "" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr([Marital Status].Parent)")
+            .returns( "" );
     }
 
 }

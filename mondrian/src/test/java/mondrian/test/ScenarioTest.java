@@ -9,16 +9,16 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.checkThrowable;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -31,14 +31,16 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.SchemaModifiersEmf;
+import mondrian.test.CaptionTest.FoodmartData;
 
 /**
  * Test for writeback functionality.
@@ -46,12 +48,12 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author jhyde
  * @since 24 April, 2009
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class ScenarioTest {
     /**
      * Tests creating a scenario and setting a connection's active scenario.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCreateScenario(Context<?> context) throws SQLException {
         final Connection connection =
             context.getConnectionWithDefaultRole();
@@ -74,8 +76,7 @@ class ScenarioTest {
     /**
      * Tests setting the value of one cell.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetCell(Context<?> context) throws SQLException {
         final Connection connection =
             context.getConnectionWithDefaultRole();
@@ -96,8 +97,7 @@ class ScenarioTest {
     /**
      * Tests that setting a cell's value without an active scenario is illegal.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetCellWithoutScenarioFails(Context<?> context) throws SQLException {
         final Connection connection =
             context.getConnectionWithDefaultRole();
@@ -124,8 +124,7 @@ class ScenarioTest {
     /**
      * Tests that setting a calculated member is illegal.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetCellCalcError(Context<?> context) throws SQLException {
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
@@ -174,8 +173,7 @@ class ScenarioTest {
     /**
      * Tests that allocation policies that are not supported give an error.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnsupportedAllocationPolicyFails(Context<?> context) throws SQLException {
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
@@ -213,8 +211,9 @@ class ScenarioTest {
      * Tests setting cells by the "equal increment" allocation policy.
      */
     @Disabled //disabled by reason wrong Scenario with InlineTabl foo
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.ScenarioTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testEqualIncrement(Context<?> context) throws SQLException {
         assertAllocation(context, AllocationPolicy.EQUAL_INCREMENT);
     }
@@ -222,8 +221,9 @@ class ScenarioTest {
     /**
      * Tests setting cells by the "equal allocation" allocation policy.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.ScenarioTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testEqualAllocation(Context<?> context) throws SQLException {
         assertAllocation(context, AllocationPolicy.EQUAL_ALLOCATION);
     }
@@ -252,7 +252,6 @@ class ScenarioTest {
                 + "</Dimension>",
                 "<Measure name='Atomic Cell Count' aggregator='count'/>"));
         */
-        withSchemaEmf(context,  SchemaModifiersEmf.ScenarioTestModifier1::new);
 
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
@@ -272,11 +271,11 @@ class ScenarioTest {
         final Cell cell = cellSet.getCell(Arrays.asList(0, 0));
         cell.setValue(connection.getScenario(),23597, allocationPolicy);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on 0,\n"
             + "{[Product].[Drink]} on 1\n"
             + "from [Sales]"
-            + "where [Scenario].[" + id + "]",
+            + "where [Scenario].[" + id + "]").returnsGrid(
             "Axis #0:\n"
             + "{[Scenario].[Scenario].[" + id + "]}\n"
             + "Axis #1:\n"
@@ -285,14 +284,14 @@ class ScenarioTest {
             + "{[Product].[Product].[Drink]}\n"
             + "Row #0: 23,597\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on 0,\n"
             + "{[Product].Children,\n"
             + " [Product].[Drink].Children,\n"
             + " [Product].[Drink].[Beverages].[Carbonated Beverages].[Soda],\n"
             + " [Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].Children} on 1\n"
             + "from [Sales]"
-            + "where [Scenario].[" + id + "]",
+            + "where [Scenario].[" + id + "]").returnsGrid(
             "Axis #0:\n"
             + "{[Scenario].[Scenario].[" + id + "]}\n"
             + "Axis #1:\n"
@@ -420,8 +419,9 @@ class ScenarioTest {
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-815">MONDRIAN-815</a>,
      * "NPE from query if use a scenario and one of the cells is empty/null".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.ScenarioTestModifier1.class },
+    database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian815(Context<?> context) throws SQLException {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -439,7 +439,6 @@ class ScenarioTest {
                 + "</Dimension>",
                 "<Measure name='Atomic Cell Count' aggregator='count'/>"));
          */
-        withSchemaEmf(context,  SchemaModifiersEmf.ScenarioTestModifier1::new);
 
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
@@ -508,8 +507,7 @@ class ScenarioTest {
             TestUtil.toString(cellSet2));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testScenarioPropertyBug1496(Context<?> context) {
         // looking up the $scenario property for a non ScenarioCalc member
         // causes class cast exception

@@ -13,34 +13,44 @@
  */
 package org.eclipse.daanse.olap.function.def.hierarchize;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
+import java.net.URL;
+import java.util.Map;
+
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class HierarchizeFunDefTest {
 
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+
+    @Test
     void testHierarchize(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "    {[Product].[All Products], "
                 + "     [Product].[Food],\n"
                 + "     [Product].[Drink],\n"
                 + "     [Product].[Non-Consumable],\n"
                 + "     [Product].[Food].[Eggs],\n"
-                + "     [Product].[Drink].[Dairy]})",
+                + "     [Product].[Drink].[Dairy]})")
+            .returns(
 
             "[Product].[Product].[All Products]\n"
                 + "[Product].[Product].[Drink]\n"
@@ -50,16 +60,16 @@ class HierarchizeFunDefTest {
                 + "[Product].[Product].[Non-Consumable]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchizePost(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "    {[Product].[All Products], "
                 + "     [Product].[Food],\n"
                 + "     [Product].[Food].[Eggs],\n"
                 + "     [Product].[Drink].[Dairy]},\n"
-                + "  POST)",
+                + "  POST)")
+            .returns(
 
             "[Product].[Product].[Drink].[Dairy]\n"
                 + "[Product].[Product].[Food].[Eggs]\n"
@@ -67,14 +77,14 @@ class HierarchizeFunDefTest {
                 + "[Product].[Product].[All Products]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchizePC(Context<?> context) {
         //getTestContext().withCube( "HR" ).
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "HR",
             "Hierarchize(\n"
                 + "   { Subset([Employees].Members, 90, 10),\n"
-                + "     Head([Employees].Members, 5) })",
+                + "     Head([Employees].Members, 5) })")
+            .returns(
             "[Employees].[Employees].[All Employees]\n"
                 + "[Employees].[Employees].[Sheri Nowmer]\n"
                 + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
@@ -102,10 +112,9 @@ class HierarchizeFunDefTest {
                 + ".[Tricia Clark]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchizeCrossJoinPre(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "  CrossJoin(\n"
                 + "    {[Product].[All Products], "
@@ -113,7 +122,8 @@ class HierarchizeFunDefTest {
                 + "     [Product].[Food].[Eggs],\n"
                 + "     [Product].[Drink].[Dairy]},\n"
                 + "    [Gender].MEMBERS),\n"
-                + "  PRE)",
+                + "  PRE)")
+            .returns(
 
             "{[Product].[Product].[All Products], [Gender].[Gender].[All Gender]}\n"
                 + "{[Product].[Product].[All Products], [Gender].[Gender].[F]}\n"
@@ -129,10 +139,9 @@ class HierarchizeFunDefTest {
                 + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[M]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchizeCrossJoinPost(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "  CrossJoin(\n"
                 + "    {[Product].[All Products], "
@@ -140,7 +149,8 @@ class HierarchizeFunDefTest {
                 + "     [Product].[Food].[Eggs],\n"
                 + "     [Product].[Drink].[Dairy]},\n"
                 + "    [Gender].MEMBERS),\n"
-                + "  POST)",
+                + "  POST)")
+            .returns(
 
             "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[F]}\n"
                 + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[M]}\n"
@@ -164,8 +174,9 @@ class HierarchizeFunDefTest {
      * specifically XMLA tests that return a list of cubes.  We could run this test after XMLA, or clear out the cache to
      * solve this.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.FunctionTestModifier3.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchizeOrdinal(Context<?> context) {
         //TestContext<?> testContext<?> = getTestContext().withCube( "[Sales_Hierarchize]" );
     /*
@@ -198,12 +209,12 @@ class HierarchizeFunDefTest {
         + "      formatString=\"Standard\"/>\n"
         + "</Cube>" );
      */
-        withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier3::new);
         final Connection connection = context.getConnectionWithDefaultRole();
 
         // The [Time_Alphabetical] is ordered alphabetically by month
-        assertAxisReturns(connection, "[Sales_Hierarchize]",
-            "Hierarchize([Time_Alphabetical].members)",
+        assertThatAxis(connection, "[Sales_Hierarchize]",
+            "Hierarchize([Time_Alphabetical].members)")
+            .returns(
             "[Time_Alphabetical].[Time_Alphabetical].[1997]\n"
                 + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q1]\n"
                 + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q1].[2]\n"
@@ -241,8 +252,9 @@ class HierarchizeFunDefTest {
 
         // The [Month_Alphabetical] is a single-level hierarchy ordered
         // alphabetically by month.
-        assertAxisReturns(connection, "[Sales_Hierarchize]",
-            "Hierarchize([Month_Alphabetical].members)",
+        assertThatAxis(connection, "[Sales_Hierarchize]",
+            "Hierarchize([Month_Alphabetical].members)")
+            .returns(
             "[Month_Alphabetical].[Month_Alphabetical].[4]\n"
                 + "[Month_Alphabetical].[Month_Alphabetical].[8]\n"
                 + "[Month_Alphabetical].[Month_Alphabetical].[12]\n"
@@ -255,10 +267,6 @@ class HierarchizeFunDefTest {
                 + "[Month_Alphabetical].[Month_Alphabetical].[11]\n"
                 + "[Month_Alphabetical].[Month_Alphabetical].[10]\n"
                 + "[Month_Alphabetical].[Month_Alphabetical].[9]" );
-
-        // clear the cache so that future tests don't fail that expect a
-        // specific set of cubes
-        TestUtil.flushSchemaCache(connection);
     }
 
 }

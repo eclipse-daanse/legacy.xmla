@@ -14,27 +14,25 @@
 package org.eclipse.daanse.olap.function.def.nonstandard;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class CalculatedChildFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCalculatedChild(Context<?> context) {
         // Construct calculated children with the same name for both [Drink] and
         // [Non-Consumable].  Then, create a metric to select the calculated
         // child based on current product member.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
                 + " member [Product].[All Products].[Drink].[Calculated Child] as '[Product].[All Products].[Drink]"
                 + ".[Alcoholic Beverages]'\n"
@@ -44,8 +42,8 @@ class CalculatedChildFunDefTest {
                 + "(\"Calculated Child\"))'\n"
                 + " select non empty {[Measures].[Unit Sales CC]} on columns,\n"
                 + " non empty {[Product].[Drink], [Product].[Non-Consumable]} on rows\n"
-                + " from [Sales]",
-
+                + " from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -61,13 +59,12 @@ class CalculatedChildFunDefTest {
     }
 
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCalculatedChildUsingItem(Context<?> context) {
         // Construct calculated children with the same name for both [Drink] and
         // [Non-Consumable].  Then, create a metric to select the first
         // calculated child.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
                 + " member [Product].[All Products].[Drink].[Calculated Child] as '[Product].[All Products].[Drink]"
                 + ".[Alcoholic Beverages]'\n"
@@ -77,8 +74,8 @@ class CalculatedChildFunDefTest {
                 + ".currentmember.children).Item(\"Calculated Child\"))'\n"
                 + " select non empty {[Measures].[Unit Sales CC]} on columns,\n"
                 + " non empty {[Product].[Drink], [Product].[Non-Consumable]} on rows\n"
-                + " from [Sales]",
-
+                + " from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -95,8 +92,7 @@ class CalculatedChildFunDefTest {
         assertEquals( null, member );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCalculatedChildOnMemberWithNoChildren(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
@@ -104,8 +100,7 @@ class CalculatedChildFunDefTest {
         assertEquals( null, member );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCalculatedChildOnNullMember(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),

@@ -31,11 +31,13 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.databaseIsValid;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.access.RoleImpl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -46,19 +48,31 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import  org.eclipse.daanse.olap.util.Bug;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
-import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
+@RolapContextTest(SteelWheelsTestInstance.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class SteelWheelsSchemaTest {
+
+    /** Named bridge onto the SteelWheels CSVs (for the {@code data =} supplier form). */
+    public static class SteelWheelsData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new SteelWheelsTestInstance().dataSupplier().csvResources();
+        }
+    }
 
 
 
@@ -74,8 +88,7 @@ class SteelWheelsSchemaTest {
     /**
      * Sanity check, that enumerates the Measures dimension.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testMeasures(Context<?> context) {
         if (!TestUtil.databaseIsValid(context.getConnectionWithDefaultRole(), "Sales")) {
             return;
@@ -87,12 +100,12 @@ class SteelWheelsSchemaTest {
             + "[Measures].[Fact Count]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier1.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian1273(Context<?> context) {
         //createContext(context, schema);
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier1::new);
-        if (!databaseIsValid(((TestContext)context).getConnection(new ConnectionProps(List.of("dev"))), "Sales")) {
+        if (!databaseIsValid(context.getConnection(new ConnectionProps(List.of("dev"))), "Sales")) {
             return;
         }
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -120,8 +133,7 @@ class SteelWheelsSchemaTest {
      * was not found but [Markets].[All Markets].[JAPAN] was OK.
      * (We've since dropped 'All Xxx' from member unique names.)
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testMarkets(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -194,8 +206,7 @@ class SteelWheelsSchemaTest {
      * Test case for bug <a href="http://jira.pentaho.com/browse/MONDRIAN-755">
      * MONDRIAN-755, "Getting drillthrough count results in exception"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testBugMondrian755(Context<?> context) {
         //getTestContext(context);
         //if (!databaseIsValid(context.getConnection())) {
@@ -271,13 +282,13 @@ class SteelWheelsSchemaTest {
      *
      * @see #testBugMondrian805() duplicate bug MONDRIAN-805
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier2.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testBugMondrian756(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS,\n"
             + "NON EMPTY {[Markets].[APAC]} ON ROWS\n"
@@ -298,13 +309,13 @@ class SteelWheelsSchemaTest {
      *
      * @see #testBugMondrian805() duplicate bug MONDRIAN-805
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier2.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testBugMondrian756b(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier2::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS,\n"
             + "NON EMPTY {[Markets].[APAC]} ON ROWS\n"
@@ -321,13 +332,13 @@ class SteelWheelsSchemaTest {
      * bug <a href="http://jira.pentaho.com/browse/MONDRIAN-805">MONDRIAN-805,
      * "Two dimensions with hasAll=false fail"</a>.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier3.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testBugMondrian805(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier3::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS, \n"
             + "  NON EMPTY {([Markets].[APAC], [Customers].[All Customers], "
@@ -360,10 +371,10 @@ class SteelWheelsSchemaTest {
             + "Row #0: 596\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier4.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrianBug476_770_957(Context<?> context) throws Exception {
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier4::new);
         final String mdxQuery =
             "with set [*NATIVE_CJ_SET] as 'Filter([*BASE_MEMBERS_Time], (NOT IsEmpty([Measures].[Price Each])))'\n"
             + "  set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], Ancestor([Time].CurrentMember, [Time].[Years]).OrderKey, BASC, [Time].CurrentMember.OrderKey, BASC)'\n"
@@ -404,8 +415,7 @@ class SteelWheelsSchemaTest {
             + "Row #9: 6,107.0\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testBugMondrian935(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -455,14 +465,14 @@ class SteelWheelsSchemaTest {
      *
      * @throws Exception on error
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier5.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testPropertyWithParameterOfTimestampType(Context<?> context) throws Exception {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
 
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier5::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Date] as 'Format([Orders].CurrentMember.Properties(\"OrderDate\"), \"yyyy-mm-dd\")'\n"
@@ -482,8 +492,7 @@ class SteelWheelsSchemaTest {
      * only execute one SQL query, basically, "select year_id from time group by
      * year_id order by year_id". It should definitely not join to fact table.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testEsr1587(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -504,8 +513,7 @@ class SteelWheelsSchemaTest {
             + "Row #0: 0\n" + "Row #0: 0\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testMondrian1133(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -535,8 +543,7 @@ class SteelWheelsSchemaTest {
      * I've also created a bunch of tests with null keys and I sort them
      * every which way to verify the correct ordering.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testMondrian1197(Context<?> context) {
 
         //if (!databaseIsValid(context.getConnection())) {
@@ -976,14 +983,12 @@ class SteelWheelsSchemaTest {
      * results. This was because of a confusion of the ordering of null
      * keys.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testRangeSortWithNullKeys(Context<?> context) {
 
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-    	context.getCatalogCache().clear();
         final String mdx =
             "With\n"
             + "Member [Measures].[*ZERO] as '0', SOLVE_ORDER=0\n"
@@ -1053,8 +1058,7 @@ class SteelWheelsSchemaTest {
      * java.lang.Integer cannot be cast to java.lang.Double
      * keys.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testBug1285(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -1143,8 +1147,7 @@ class SteelWheelsSchemaTest {
             + "Row #7: 2\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testDoubleValueCanBeRankedAmongIntegers(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -1184,10 +1187,10 @@ class SteelWheelsSchemaTest {
      * Member Unique Name is incorrect for a calculated member on a shared
      * dimension whose name is different from the dimension it is based on.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier6.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian1360(Context<?> context) {
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier6::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
@@ -1226,14 +1229,13 @@ class SteelWheelsSchemaTest {
      *
      * Invalid filter SQL generated on numeric column
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, value = "true", type = Boolean.class)
     void testMondrian1464(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        ((TestContextImpl)context).setIgnoreInvalidMembers(true);
-        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + "SET [*NATIVE_CJ_SET] AS '[*BASE_MEMBERS_Time]' \n"
@@ -1259,14 +1261,14 @@ class SteelWheelsSchemaTest {
      *
      * On .Members in NonEmpty, with mondrian.native.nonempty.enabled=true
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier7.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian1252(Context<?> context) throws Exception {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
 
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier7::new);
         Connection connection = context.getConnectionWithDefaultRole();
         Catalog schema = connection.getCatalog();
 
@@ -1338,8 +1340,7 @@ class SteelWheelsSchemaTest {
      *
      * Compound slicer getting applied to CurrentDateMember
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
     void testMondrian1750(Context<?> context) throws Exception {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -1376,12 +1377,12 @@ class SteelWheelsSchemaTest {
             + "Row #4: 6,447\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier8.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian2411_1(Context<?> context) throws Exception {
         // Tests a user query followed by an admin query
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier8::new);
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1401,7 +1402,7 @@ class SteelWheelsSchemaTest {
             + "{[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]}\n"
             + "Row #0: 1,701.95\n");
 
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Administrator"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1616,12 +1617,12 @@ class SteelWheelsSchemaTest {
             + "Row #97: 4,235.63\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier8.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian2411_2(Context<?> context) throws Exception {
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier8::new);
 
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Administrator"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1835,7 +1836,7 @@ class SteelWheelsSchemaTest {
             + "Row #96: 2,662.14\n"
             + "Row #97: 4,235.63\n");
 
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1856,8 +1857,9 @@ class SteelWheelsSchemaTest {
             + "Row #0: 1,701.95\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier9.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian2411_3(Context<?> context) throws Exception {
         // Tests an admin query followed by a user query, but both are wrapped
         // with a no-op role in a union.
@@ -1866,8 +1868,7 @@ class SteelWheelsSchemaTest {
         {
             return;
         }
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier9::new);
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Administrator Union"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -2081,7 +2082,7 @@ class SteelWheelsSchemaTest {
             + "Row #96: 2,662.14\n"
             + "Row #97: 4,235.63\n");
 
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User Union"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -2106,8 +2107,9 @@ class SteelWheelsSchemaTest {
      * this tests the fix for
      * http://jira.pentaho.com/browse/Mondrian-2652
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SteelWheelsSchemaTestModifier10.class },
+        database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian2652(Context<?> context) {
         // Check if there is a valid SteelWheels database.
         //if (!databaseIsValid(context.getConnection())) {
@@ -2129,22 +2131,20 @@ class SteelWheelsSchemaTest {
             + " FROM [rolesTest]";
 
 
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier10::new);
         //withCube("SteelWheelsSales");
 
         // Report Author gets an exception since
         // he has no access to [Dimension2].[All Customers].[Alpha Cognac].
-        assertQueryThrows(((TestContext)context).getConnection(new ConnectionProps(List.of("Report Author"))),
+        assertQueryThrows(context.getConnection(new ConnectionProps(List.of("Report Author"))),
             mdxQuery,
     "MDX object '[Dimension2].[All Customers].[Alpha Cognac]' not found in cube 'rolesTest'");
 
 
-        withSchemaEmf(context, SchemaModifiersEmf.SteelWheelsSchemaTestModifier10::new);
         //withCube("SteelWheelsSales");
 
         // Administrator has full access to the data,
         // So he gets the expected result.
-        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Administrator"))),
+        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator"))),
             mdxQuery,
             "Axis #0:\n"
             + "{}\n"
@@ -2169,6 +2169,5 @@ class SteelWheelsSchemaTest {
             + "Row #3: 96\n"
             + "Row #3: 70,488.44\n"
             + "Row #3: \n");
-        context.getCatalogCache().clear();
     }
 }

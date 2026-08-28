@@ -9,21 +9,24 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertExprReturns;
 import static org.opencube.junit5.TestUtil.assertExprThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.getCubeByNameFromArray;
 import static org.opencube.junit5.TestUtil.getDimensionByNameFromArray;
 import static org.opencube.junit5.TestUtil.getHierarchyByNameFromArray;
 import static org.opencube.junit5.TestUtil.getLevelByNameFromArray;
 import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
+import java.net.URL;
 import java.sql.SQLException;
+import java.util.Map;
 
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -32,18 +35,16 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextArgumentsProvider;
-import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -63,7 +64,16 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author jhyde
  * @since December 15, 2008
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class Ssas2005CompatibilityTest {
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
     /**
      * Whether member naming rules are implemented.
@@ -96,7 +106,6 @@ class Ssas2005CompatibilityTest {
     }
 
     private void runQ(Context<?> context, String s) {
-        prepareContext(context);
         context.getCatalogCache().clear();
         Result result = TestUtil.executeQuery(context.getConnectionWithDefaultRole(), s);
         TestUtil.toString(result);
@@ -104,19 +113,15 @@ class Ssas2005CompatibilityTest {
     }
 
 
-    private void prepareContext(Context<?> context) {
-        // Key features:
-        // 1. Dimension [Product] has hierarchies [Products] and at least one
-        //    other.
-        // 2. Dimension [Currency] has one unnamed hierarchy
-        // 3. Dimension [Time] has hierarchies [Time2] and [Time by Week]
-        //    (intentionally named hierarchy differently from dimension)
-        withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5::new);
-        //withCube("Warehouse and Sales");
-    }
+    // Key features of the Ssas2005CompatibilityTestModifier5 schema, applied
+    // declaratively per-test via @RolapContextTest below:
+    // 1. Dimension [Product] has hierarchies [Products] and at least one
+    //    other.
+    // 2. Dimension [Currency] has one unnamed hierarchy
+    // 3. Dimension [Time] has hierarchies [Time2] and [Time by Week]
+    //    (intentionally named hierarchy differently from dimension)
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUniqueName(Context<?> context) {
         // TODO:
         // Unique mmbers:
@@ -130,9 +135,8 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDotHierarchyAmbiguous(Context<?> context) {
         // If there is a dimension, hierarchy, level with the same name X,
         // then [X].[X] might reasonably resolve to hierarchy or the level.
@@ -162,8 +166,9 @@ class Ssas2005CompatibilityTest {
                 "14");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyLevelsFunction(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -173,14 +178,14 @@ class Ssas2005CompatibilityTest {
         // only <Hierarchy>.Levels(<Numeric Expression>)
         // and <Hierarchy>.Levels(<String Expression>)
         // SSAS returns 7.
-        prepareContext(context);
         assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
             "[Product].[Products].Levels.Count",
             "7");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionDotHierarchyDotLevelDotMembers(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -193,8 +198,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionDotHierarchyDotLevel(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -202,10 +208,9 @@ class Ssas2005CompatibilityTest {
         // [dimension].[hierarchy].[level] is valid on dimension with single
         // hierarchy
         // SSAS2005 succeeds
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Store].[Stores].[Store State].MEMBERS on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -231,8 +236,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 124,366\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamingDimensionDotLevel(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -249,10 +255,10 @@ class Ssas2005CompatibilityTest {
         // hierarchies. (Note that [Week] is a level in hierarchy
         // [Time].[Time by Week]; here is no attribute [Time].[Week].)
         // SSAS returns "[Time].[Time By Week].[Year2]".
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' [Time].[Year2].UniqueName '\n"
             + "select [Measures].[Foo] on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -260,8 +266,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: [Time].[Time By Week].[Year2]\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamingDimensionDotLevel2(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -278,8 +285,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamingDimensionDotLevelNotUnique(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -300,17 +308,17 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionMembersOnSingleHierarchyDimension(Context<?> context) {
         // [dimension].members for a dimension with one hierarchy
         // (and no attributes)
         // SSAS2005 succeeds
-    	prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Currency].Members on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -346,8 +354,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 3,607\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMultipleHierarchyRequiresQualification(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -358,7 +367,6 @@ class Ssas2005CompatibilityTest {
         //   Query (1, 8) The 'Product' dimension contains more than
         //   one hierarchy, therefore the hierarchy must be explicitly
         //   specified.
-        prepareContext(context);
         TestUtil.assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Product].Members on 0\n"
             + "from [Warehouse and Sales]",
@@ -370,8 +378,7 @@ class Ssas2005CompatibilityTest {
      * with multiple hierarchies without specifying hierarchy.
      * Based on {@link BasicQueryTest#testHalfYears()}.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCalcMemberAmbiguousHierarchy(Context<?> context) {
         String mdx =
             "WITH MEMBER [Measures].[ProfitPercent] AS\n"
@@ -394,8 +401,8 @@ class Ssas2005CompatibilityTest {
                 mdx,
                 "Hierarchy for calculated member '[Time].[First Half 97]' not found");
         } else {
-            assertQueryReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-                mdx,
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                mdx).returnsGrid(
                 "Axis #0:\n"
                 + "{[Measures].[ProfitPercent]}\n"
                 + "Axis #1:\n"
@@ -431,8 +438,9 @@ class Ssas2005CompatibilityTest {
     }
 
     // TODO:
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnqualifiedHierarchy(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -463,8 +471,9 @@ class Ssas2005CompatibilityTest {
      * Tests that time functions such as Ytd behave correctly when there are
      * multiple time hierarchies.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testYtd(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -472,13 +481,12 @@ class Ssas2005CompatibilityTest {
         // We use 'Generate' to establish context for Ytd without passing it
         // an explicit argument.
         // SSAS returns [Q1], [Q2], [Q3].
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select Generate(\n"
             + "  {[Time].[Time2].[1997].[Q3]},\n"
             + "  {Ytd()}) on 0,\n"
             + " [Products].Children on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -488,19 +496,19 @@ class Ssas2005CompatibilityTest {
             + "{[Product].[Products].[Non-Consumable]}\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAxesOutOfOrder(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
         // TODO: run this in SSAS
         // Ssas2000 disallowed out-of-order axes. Don't know about Ssas2005.
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 1,\n"
             + "[Products].Children on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -514,8 +522,7 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 50,236\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDimensionMembersRequiresHierarchyQualification(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -533,9 +540,8 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionMemberRequiresHierarchyQualification(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -579,17 +585,17 @@ class Ssas2005CompatibilityTest {
             + "Axis #1:\n"
             + "{[Time].[Time2].[1997]}\n"
             + "Row #0: 266,773\n";
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select Dimensions(3).CurrentMember on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             expectedResult);
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select Dimensions(3).DefaultMember on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             expectedResult);
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "select Head(Dimensions(7).AllMembers, 3) on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -601,8 +607,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 6,697\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testImplicitCurrentMemberRequiresHierarchyQualification(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -612,16 +619,15 @@ class Ssas2005CompatibilityTest {
         //   Query (1, 8) The 'Product' dimension contains more than
         //   one hierarchy, therefore the hierarchy must be explicitly
         //   specified.
-        prepareContext(context);
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select Ascendants([Product]) on 0\n"
             + "from [Warehouse and Sales]",
             "It may contains more than one hierarchy. Specify the hierarchy explicitly");
         // Works for [Store], which has only one hierarchy.
         // TODO: check SSAS
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select Ascendants([Store]) on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -629,8 +635,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 266,773\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnqualifiedHierarchyCurrentMember(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -642,8 +649,7 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCannotDistinguishMdxFromSql(Context<?> context) {
         // Cannot tell whether statement is MDX or SQL
         // SSAS2005 gives error:
@@ -655,8 +661,9 @@ class Ssas2005CompatibilityTest {
             "Encountered an error at (or somewhere around) input:2:6");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamingDimensionAttr(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -667,8 +674,9 @@ class Ssas2005CompatibilityTest {
             "select [Store].[Store Manager].Members on 0 from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamingDimensionAttrVsLevel(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -682,8 +690,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAttrHierarchyMemberParent(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -696,8 +705,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAttrHierarchyMemberChildren(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -709,8 +719,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAttrHierarchyAllMemberChildren(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -722,8 +733,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAttrHierarchyMemberLevel(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -736,8 +748,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAttrHierarchyUniqueName(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -749,8 +762,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberAddressedByLevelAndKey(Context<?> context) {
         if (!MEMBER_NAMING_IMPL) {
             return;
@@ -762,8 +776,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberAddressedByCompoundKey(Context<?> context) {
         if (!MEMBER_NAMING_IMPL) {
             return;
@@ -775,8 +790,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberAddressedByPartialCompoundKey(Context<?> context) {
         if (!MEMBER_NAMING_IMPL) {
             return;
@@ -788,8 +804,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberAddressedByNonUniqueName(Context<?> context) {
         if (!MEMBER_NAMING_IMPL) {
             return;
@@ -802,8 +819,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberAddressedByLevelAndCompoundKey(Context<?> context) {
         if (!MEMBER_NAMING_IMPL) {
             return;
@@ -815,8 +833,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberAddressedByLevelAndName(Context<?> context) {
         if (!MEMBER_NAMING_IMPL) {
             return;
@@ -829,8 +848,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testFoo31(Context<?> context) {
         // [dimension].[member name]
         // returns [Product].[Products].[Product Department].[Dairy]
@@ -844,8 +864,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testFoo32(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -862,8 +883,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamingAttrVsLevel(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -876,14 +898,15 @@ class Ssas2005CompatibilityTest {
 
         // the attribute hierarchy wins over the level
         // SSAS2005 returns [Store].[Store City]
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as [Store City].UniqueName\n"
             + "select [Measures].[Foo] on 0\n"
-            + "from [Warehouse and Sales]", "xxxxx");
+            + "from [Warehouse and Sales]").returnsGrid("xxxxx");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnqualifiedLevel(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -895,8 +918,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionAsScalarExpression(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -911,8 +935,7 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDimensionWithMultipleHierarchiesDotParent(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -927,9 +950,10 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDotHierarchyInBrackets(Context<?> context) {
         // [dimension.hierarchy] is valid
         // SSAS2005 succeeds
@@ -944,9 +968,10 @@ class Ssas2005CompatibilityTest {
      * [name.name].
      */
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier1.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDotHierarchySameNameInBrackets(Context<?> context) {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -959,11 +984,10 @@ class Ssas2005CompatibilityTest {
             + "</Dimension>",
             null));
          */
-    	withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier1::new);
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Store Type 2.Store Type 2].[Store Type].members ON columns "
-            + "from [Sales] where [Time].[1997]",
+            + "from [Sales] where [Time].[1997]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -981,8 +1005,7 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 150,555\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDimensionDotLevelDotHierarchyInBrackets(Context<?> context) {
         // [dimension.hierarchy.level]
         // SSAS2005 gives error:
@@ -995,8 +1018,7 @@ class Ssas2005CompatibilityTest {
             "MDX object '[Time.Time2.Quarter]' not found in cube 'Warehouse and Sales'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDimensionDotInvalidHierarchyInBrackets(Context<?> context) {
         // invalid hierarchy name
         // SSAS2005 gives error:
@@ -1009,8 +1031,7 @@ class Ssas2005CompatibilityTest {
             "MDX object '[Time.Time By Week55]' not found in cube 'Warehouse and Sales'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDimensionDotDimensionInBrackets(Context<?> context) {
         // [dimension.dimension] is invalid.  SSAS2005 gives similar
         // error to above.  (The Time dimension has hierarchies called
@@ -1021,8 +1042,9 @@ class Ssas2005CompatibilityTest {
             "MDX object '[Time.Time]' not found in cube 'Warehouse and Sales'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionDotHierarchyDotNonExistentLevel(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1041,8 +1063,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionDotHierarchyDotLevelMembers(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1053,8 +1076,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDupHierarchyOnAxes(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1066,7 +1090,6 @@ class Ssas2005CompatibilityTest {
         //   select [Products] on 0,
         //     [Products] on 1
         //   from [Warehouse and Sales]
-        prepareContext(context);
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select {[Products]} on 0,\n"
             + "  {[Products]} on 1\n"
@@ -1074,8 +1097,9 @@ class Ssas2005CompatibilityTest {
             "Hierarchy '[Product].[Products]' appears in more than one independent axis.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionOnAxis(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1085,8 +1109,9 @@ class Ssas2005CompatibilityTest {
         runQ(context,"select [Product] on 0 from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionDotHierarchyOnAxis(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1099,8 +1124,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchiesFromSameDimensionOnAxes(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1114,8 +1140,9 @@ class Ssas2005CompatibilityTest {
     }
 
     // TODO:
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDifferentHierarchiesFromSameDimensionOnAxes(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1131,8 +1158,9 @@ class Ssas2005CompatibilityTest {
     }
 
     // TODO:
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDifferentHierarchiesFromSameDimensionInCrossjoin(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1144,8 +1172,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testHierarchyUsedTwiceInCrossjoin(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1161,8 +1190,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAttributeHierarchyUsedTwiceInCrossjoin(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -1180,8 +1210,9 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testFoo50(Context<?> context) {
         if (!ATTR_HIER_IMPL) {
             return;
@@ -1194,16 +1225,15 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testQuoteInStringInQuotedFormula(Context<?> context) {
         // Quoted formulas vs. unquoted formulas
         // Single quote in string
         // SSAS2005 returns 5
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' len(\"can''t\") '\n"
             + "select [Measures].[Foo] on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1211,14 +1241,13 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 5\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testQuoteInStringInUnquotedFormula(Context<?> context) {
         // SSAS2005 returns 6
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as len(\"can''t\")\n"
             + "select [Measures].[Foo] on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1227,8 +1256,9 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMemberIdentifiedByDimensionAndKey(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1244,8 +1274,9 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionHierarchyKey(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1260,19 +1291,19 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCompoundKey(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
         // compound key
         // succeeds on SSAS
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Time].[Time2].[Month].&[12]&Q4&[1997] on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1282,8 +1313,7 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 26,796\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCompoundKeySyntaxError(Context<?> context) {
         // without [] fails on SSAS (syntax error because a number)
         assertQueryThrows(context.getConnectionWithDefaultRole(),
@@ -1294,14 +1324,14 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCompoundKeyStringBad(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
         // too few values in key
-        prepareContext(context);
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Product].[Products].[Brand Name].&[43]&Walrus&Foo on 1\n"
@@ -1324,18 +1354,18 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCompoundKeyString(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
         // succeeds on SSAS (gives 1 row)
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Store].[Stores].[Store City].&[San Francisco]&CA on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1353,15 +1383,15 @@ class Ssas2005CompatibilityTest {
      * {@link SystemWideProperties#SsasCompatibleNaming}. Mondrian-3 had this
      * functionality.</p>
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNameAfterKey(Context<?> context) {
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + hierarchyName("Store", "Stores")
             + ".[Store State].&CA.[San Francisco].[Store 14] on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1378,17 +1408,17 @@ class Ssas2005CompatibilityTest {
      * composite key segment {@code &amp;[San Francisco]&amp;CA}.
      */
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNameAfterCompositeKey(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Store].[Stores].[Store City].&[San Francisco]&CA.[Store 14] on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1399,13 +1429,13 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCompoundKeyAll(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
-        prepareContext(context);
         assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
                 "[Customer].Level.Name",
                 "(All)");
@@ -1417,20 +1447,21 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCompoundKeyParent(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
-        prepareContext(context);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Warehouse and Sales]",
                 "[Store].[Stores].[Store City].&[San Francisco]&CA.Parent",
                 "[Store].[Stores].[USA].[CA]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCompoundKeyNull(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1438,11 +1469,10 @@ class Ssas2005CompatibilityTest {
         // Note: [Store Size in SQFT].[#null] is the member whose name is null;
         //   [Store Size in SQFT].&[#null] is the member whose key is null.
         // REVIEW: Does SSAS use the same syntax, '&[#null]', for null key?
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Store Size in SQFT].[Store Size in SQFT].&[#null] on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1452,8 +1482,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 39,329\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testFoo56(Context<?> context) {
         if (!IMPLEMENTED) {
             return;
@@ -1466,9 +1497,10 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testKeyNonExistent(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1479,19 +1511,20 @@ class Ssas2005CompatibilityTest {
             + "[Time].[Time2].[Quarter].&Q3&[1997] on 1\n"
             + "from [Warehouse and Sales]");
 
-        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
+        // TODO: needs ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY=true
+        // for this part; no per-test runtime config toggle is available under
+        // the new testkit (test is disabled anyway).
         // SSAS gives 0 rows
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Time].[Time2].[Quarter].&Q5&[1997] on 1\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n");
 
-        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(false);
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
             + "[Time].[Time2].[Quarter].&Q5&[1997] on 1\n"
@@ -1499,18 +1532,18 @@ class Ssas2005CompatibilityTest {
             "MDX object '[Time].[Time2].[Quarter].&Q5&[1997]' not found in cube 'Warehouse and Sales'");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAxesLabelsOutOfSequence(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
         // succeeds on SSAS
-        prepareContext(context);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 1,\n"
             + "[Product].[Products] on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1520,8 +1553,9 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 266,773\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAxisLabelsNotContiguousFails(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1529,7 +1563,6 @@ class Ssas2005CompatibilityTest {
         // SSAS gives error:
         //   Query (1, 8) Axis numbers specified in a query must be sequentially
         //   specified, and cannot contain gaps.
-        prepareContext(context);
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 1,\n"
             + "[Product].[Products].Children on 2\n"
@@ -1538,8 +1571,9 @@ class Ssas2005CompatibilityTest {
             + "specified, and cannot contain gaps. Axis 0 (COLUMNS) is missing.");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testLotsOfAxes(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -1558,8 +1592,7 @@ class Ssas2005CompatibilityTest {
             + "from [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOnAxesFails(Context<?> context) {
         // axes(n) is not an acceptable alternative to axis(n)
         // SSAS gives:
@@ -1570,8 +1603,7 @@ class Ssas2005CompatibilityTest {
             "Found string \"axes\" of type ID");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOnExpression(Context<?> context) {
         // SSAS gives syntax error
         assertQueryThrows(context.getConnectionWithDefaultRole(),
@@ -1580,8 +1612,7 @@ class Ssas2005CompatibilityTest {
             "Encountered an error at (or somewhere around) input:1:37");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOnFractionFails(Context<?> context) {
         // SSAS gives syntax error
         assertQueryThrows(context.getConnectionWithDefaultRole(),
@@ -1590,8 +1621,9 @@ class Ssas2005CompatibilityTest {
             "Found string \"0.4\" of type DECIMAL_NUMERIC_LITERAL");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testAxisFunction(Context<?> context) {
         // AXIS(n) function as expression
         // SSAS succeeds
@@ -1606,8 +1638,7 @@ class Ssas2005CompatibilityTest {
             + "FROM [Warehouse and Sales]");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAxisAppliedToExpr(Context<?> context) {
         // Axis applied to an expression ('3 - 2' in place of '1' above).
         // SSAS succeeds.
@@ -1616,34 +1647,32 @@ class Ssas2005CompatibilityTest {
         if (!AXIS_IMPL) {
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER MEASURES.AXISDEMO AS\n"
             + "  SUM(AXIS(1), [Measures].[Unit Sales])\n"
             + "SELECT {[Measures].[Unit Sales],MEASURES.AXISDEMO} ON 0,\n"
             + "{[Time].[Time by Week].Children} ON 1\n"
-            + "FROM [Warehouse and Sales]",
+            + "FROM [Warehouse and Sales]").returnsGrid(
             "xxx");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAxisFunctionReferencesPreviousAxis(Context<?> context) {
         // reference axis 0 while computing axis 1
         // SSAS succeeds
         if (!AXIS_IMPL) {
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER MEASURES.AXISDEMO AS\n"
             + "  SUM(AXIS(0), [Measures].CurrentMember)\n"
             + "SELECT {[Measures].[Store Sales],MEASURES.AXISDEMO} ON 0,\n"
             + "{Filter([Time].[Time by Week].Members, Measures.AxisDemo > 0)} ON 1\n"
-            + "FROM [Warehouse and Sales]",
+            + "FROM [Warehouse and Sales]").returnsGrid(
             "xxx");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAxisFunctionReferencesSameAxisFails(Context<?> context) {
         // reference axis 1 while computing axis 1, not ok
         // SSAS gives:
@@ -1661,8 +1690,7 @@ class Ssas2005CompatibilityTest {
             "xxx");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAxisFunctionReferencesSameAxisZeroFails(Context<?> context) {
         // reference axis 0 while computing axis 0, not ok
         // SSAS gives:
@@ -1680,8 +1708,7 @@ class Ssas2005CompatibilityTest {
             "xxx");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAxisFunctionReferencesLaterAxis(Context<?> context) {
         // reference axis 1 while computing axis 0, ok
         // The SSAS online doc says:
@@ -1692,17 +1719,16 @@ class Ssas2005CompatibilityTest {
         if (!AXIS_IMPL) {
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER MEASURES.AXISDEMO AS\n"
             + "  SUM(AXIS(1), [Measures].CurrentMember)\n"
             + "SELECT {[Measures].[Store Sales],MEASURES.AXISDEMO} ON 1,\n"
             + "{Filter([Time].[Time by Week].Members, Measures.AxisDemo > 0)} ON 0\n"
-            + "FROM [Warehouse and Sales]",
+            + "FROM [Warehouse and Sales]").returnsGrid(
             "xxx");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAxisFunctionReferencesSameAxisInlineFails(Context<?> context) {
         // If we inline the member, SSAS runs out of memory.
         // SSAS gives error:
@@ -1719,8 +1745,7 @@ class Ssas2005CompatibilityTest {
             "xxx cyclic something");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinMember(Context<?> context) {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
             // Can't resolve [Products] under old mondrian
@@ -1733,9 +1758,9 @@ class Ssas2005CompatibilityTest {
         }
         // Apply crossjoin(Member,Set)
         // SSAS gives 626866, 626866, 626866.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select crossjoin([Products].DefaultMember, [Gender].Members) on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "xx");
     }
 
@@ -1745,8 +1770,9 @@ class Ssas2005CompatibilityTest {
      * @throws SQLException If the test fails.
      */
     @Disabled //has not been fixed during creating Daanse project
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier2.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testCanHaveMemberWithSameNameAsLevel(Context<?> context) throws SQLException {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1769,7 +1795,6 @@ class Ssas2005CompatibilityTest {
              + " </Hierarchy>\n"
              + "</Dimension>"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier2::new);
         Cube cube = getCubeByNameFromArray(context.getConnectionWithDefaultRole()
             .getCatalog().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
         Dimension dimension =  getDimensionByNameFromArray(cube.getDimensions(), "SameName")
@@ -1789,8 +1814,8 @@ class Ssas2005CompatibilityTest {
             + "} on 0 from Sales",
             "Mondrian Error:No function matches signature '{<Level>}'");
 
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[SameName].[SameName].[SameName].[SameName]} on 0 from Sales",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[SameName].[SameName].[SameName].[SameName]} on 0 from Sales").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -1799,9 +1824,10 @@ class Ssas2005CompatibilityTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier3.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberNameSortCaseSensitivity(Context<?> context)
     {
         // In SSAS, "MacDougal" occurs between "Maccietto" and "Macha". This
@@ -1819,7 +1845,6 @@ class Ssas2005CompatibilityTest {
                 + "    </Hierarchy>\n"
                 + "  </Dimension>\n"));
     	 */
-    	withSchemaEmf(context, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier3::new);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "head(\n"
             + "  filter(\n"
@@ -1862,10 +1887,10 @@ class Ssas2005CompatibilityTest {
      * SSAS can resolve root members of a hierarchy even if not qualified
      * by hierarchy, and even if the dimension has more than one hierarchy.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.Ssas2005CompatibilityTestModifier5.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRootMembers(Context<?> context) {
-    	prepareContext(context);
         // for member defined in the database
         final String timeByWeek =
             hierarchyName("Time", "Time By Week");
@@ -1877,11 +1902,11 @@ class Ssas2005CompatibilityTest {
         //    return;
         //}
         // now for a calc member defined in a query
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time2].[Foo] as\n"
             + "[Time].[Time2].[1997] + [Time].[Time2].[1997].[Q3]\n"
             + "select [Time].[Foo] on 0\n"
-            + "from [Warehouse and Sales]",
+            + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

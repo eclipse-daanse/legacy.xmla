@@ -13,40 +13,36 @@
  */
 package org.eclipse.daanse.olap.function.def.format;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class FormatFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFormatFixed(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Format(12.2, \"#,##0.00\")",
-            "12.20" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Format(12.2, \"#,##0.00\")")
+            .returns( "12.20" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFormatVariable(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Format(1234.5, \"#,#\" || \"#0.00\")",
-            "1,234.50" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Format(1234.5, \"#,#\" || \"#0.00\")")
+            .returns( "1,234.50" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFormatMember(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Format([Store].[USA].[CA], \"#,#\" || \"#0.00\")",
-            "74,748.00" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Format([Store].[USA].[CA], \"#,#\" || \"#0.00\")")
+            .returns( "74,748.00" );
     }
 
 }

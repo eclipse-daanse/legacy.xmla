@@ -14,84 +14,82 @@
 package org.eclipse.daanse.olap.function.def.topbottomcount;
 
 import static mondrian.olap.fun.FunctionTest.allHiersExcept;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class TopBottomCountFunDefTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( TopBottomCountFunDefTest.class );
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBottomCount(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "BottomCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "BottomCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])")
+            .returns(
             "[Promotion Media].[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBottomCountUnordered(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "BottomCount({[Promotion Media].[Media Type].members}, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "BottomCount({[Promotion Media].[Media Type].members}, 2)")
+            .returns(
             "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]\n"
                 + "[Promotion Media].[Promotion Media].[TV]" );
     }
 
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopCount(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TopCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "TopCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])")
+            .returns(
             "[Promotion Media].[Promotion Media].[No Media]\n"
                 + "[Promotion Media].[Promotion Media].[Daily Paper, Radio, TV]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopCountUnordered(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TopCount({[Promotion Media].[Media Type].members}, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "TopCount({[Promotion Media].[Media Type].members}, 2)")
+            .returns(
             "[Promotion Media].[Promotion Media].[Bulk Mail]\n"
                 + "[Promotion Media].[Promotion Media].[Cash Register Handout]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopCountTuple(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TopCount([Customers].[Name].members,2,(Time.[1997].[Q1],[Measures].[Store Sales]))",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "TopCount([Customers].[Name].members,2,(Time.[1997].[Q1],[Measures].[Store Sales]))")
+            .returns(
             "[Customers].[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]\n"
                 + "[Customers].[Customers].[USA].[WA].[Spokane].[Matt Bellah]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopCountEmpty(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "TopCount(Filter({[Promotion Media].[Media Type].members}, 1=0), 2, [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "TopCount(Filter({[Promotion Media].[Media Type].members}, 1=0), 2, [Measures].[Unit Sales])")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopCountDepends(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         checkTopBottomCountPercentDepends(connection, "TopCount" );
@@ -124,8 +122,7 @@ class TopBottomCountFunDefTest {
      * <p>Before optimizing (see FunUtil.partialSort), on a 2-core 32-bit 2.4GHz
      * machine, the 1st query took 14.5 secs, the 2nd query took 5.0 secs. After optimizing, who knows?
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testTopCountHuge(Context<?> context) {
         // TODO convert printfs to trace
         final String query =
@@ -146,10 +143,12 @@ class TopBottomCountFunDefTest {
                 + "Row #1: 199.46\n"
                 + "Row #2: 191.90\n";
         long now = System.currentTimeMillis();
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, desiredResult );
+        assertThatQuery(context.getConnectionWithDefaultRole(), query)
+            .returnsGrid( desiredResult );
         LOGGER.info( "first query took " + ( System.currentTimeMillis() - now ) );
         now = System.currentTimeMillis();
-        assertQueryReturns(context.getConnectionWithDefaultRole(), query, desiredResult );
+        assertThatQuery(context.getConnectionWithDefaultRole(), query)
+            .returnsGrid( desiredResult );
         LOGGER.info( "second query took " + ( System.currentTimeMillis() - now ) );
     }
 
@@ -160,8 +159,7 @@ class TopBottomCountFunDefTest {
      * <p/>
      * <p>The results should be equivalent</p>
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMondrian_1187(Context<?> context) {
         final String queryWithoutAlias =
             "WITH\n" + "SET [Top Count] AS\n"
@@ -176,8 +174,9 @@ class TopBottomCountFunDefTest {
                 + "FROM [Sales]\n"
                 + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q3].[8]";
         final Result result = executeQuery(context.getConnectionWithDefaultRole(), queryWithoutAlias );
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            queryWithAlias,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            queryWithAlias)
+            .returnsGrid(
             TestUtil.toString(result));
     }
 

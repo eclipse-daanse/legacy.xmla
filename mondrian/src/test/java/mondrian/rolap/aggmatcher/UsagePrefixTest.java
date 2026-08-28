@@ -9,6 +9,7 @@
 
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
@@ -16,7 +17,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * Validates the dimension attribute usagePrefix is correctly
@@ -37,7 +37,7 @@ class UsagePrefixTest {
             "select {[StoreX].[Store Value].members} on columns, "
                 +   "{ measures.[Amount] } on rows from Cheques";
 
-        TestUtil.assertQueryReturns(connection, mdx,
+        assertThatQuery(connection, mdx).returnsGrid(
             "Axis #0:\n"
             +    "{}\n"
             +    "Axis #1:\n"
@@ -61,7 +61,7 @@ class UsagePrefixTest {
             + " [StoreY].[Store Value].members) on columns, "
             +   "{ measures.[Amount] } on rows from Cheques";
 
-        TestUtil.assertQueryReturns(connection, mdx,
+        assertThatQuery(connection, mdx).returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

@@ -13,28 +13,27 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.minus;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class MinusOperatorDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMinus_bug1234759(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Customers].[USAMinusMexico]\n"
                 + "AS '([Customers].[All Customers].[USA] - [Customers].[All Customers].[Mexico])'\n"
                 + "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
                 + "{[Customers].[All Customers].[USA], [Customers].[All Customers].[Mexico],\n"
                 + "[Customers].[USAMinusMexico]} ON ROWS\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -50,11 +49,10 @@ class MinusOperatorDefTest {
                 + "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMinusAssociativity(Context<?> context) {
         // right-associative would give 11-(7-5) = 9, which is wrong
-        assertExprReturns(context.getConnectionWithDefaultRole(), "11-7-5", "-1" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "11-7-5").returns( "-1" );
     }
 
 }

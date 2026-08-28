@@ -13,21 +13,20 @@
  */
 package org.eclipse.daanse.olap.function.def.aggregatex;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.olap.fun.FunctionTest.allHiersExcept;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class AggregateFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateDepends(Context<?> context) {
         // Depends on everything except Measures, Gender
         String s12 = allHiersExcept("[Measures]", "[Gender].[Gender]" );
@@ -52,15 +51,14 @@ class AggregateFunDefTest {
             s1 );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregate(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})'\n"
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,\n"
                 + "      {[Store].[USA].[CA], [Store].[USA].[OR], [Store].[CA plus OR]} ON ROWS\n"
                 + "FROM Sales\n"
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])").returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
@@ -78,10 +76,9 @@ class AggregateFunDefTest {
                 + "Row #2: 76,345.49\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregate2(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "  Member [Time].[Time].[1st Half Sales] AS 'Aggregate({Time.[1997].[Q1], Time.[1997].[Q2]})'\n"
                 + "  Member [Time].[Time].[2nd Half Sales] AS 'Aggregate({Time.[1997].[Q3], Time.[1997].[Q4]})'\n"
@@ -90,7 +87,7 @@ class AggregateFunDefTest {
                 + "   { [Store].[Store State].Members} ON COLUMNS,\n"
                 + "   { Time.[1st Half Sales], Time.[2nd Half Sales], Time.[Difference]} ON ROWS\n"
                 + "FROM Sales\n"
-                + "WHERE [Measures].[Store Sales]",
+                + "WHERE [Measures].[Store Sales]").returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #1:\n"
@@ -140,14 +137,13 @@ class AggregateFunDefTest {
                 + "Row #2: 12,234.22\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateWithIIF(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member store.foo as 'iif(3>1,"
                 + "aggregate({[Store].[All Stores].[USA].[OR]}),"
                 + "aggregate({[Store].[All Stores].[USA].[CA]}))' "
-                + "select {store.foo} on 0 from sales",
+                + "select {store.foo} on 0 from sales").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -156,10 +152,9 @@ class AggregateFunDefTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregate2AllMembers(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "  Member [Time].[Time].[1st Half Sales] AS 'Aggregate({Time.[1997].[Q1], Time.[1997].[Q2]})'\n"
                 + "  Member [Time].[Time].[2nd Half Sales] AS 'Aggregate({Time.[1997].[Q3], Time.[1997].[Q4]})'\n"
@@ -168,7 +163,7 @@ class AggregateFunDefTest {
                 + "   { [Store].[Store State].AllMembers} ON COLUMNS,\n"
                 + "   { Time.[1st Half Sales], Time.[2nd Half Sales], Time.[Difference]} ON ROWS\n"
                 + "FROM Sales\n"
-                + "WHERE [Measures].[Store Sales]",
+                + "WHERE [Measures].[Store Sales]").returnsGrid(
             "Axis #0:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #1:\n"
@@ -219,17 +214,16 @@ class AggregateFunDefTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateToSimulateCompoundSlicer(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Time].[Time].[1997 H1] as 'Aggregate({[Time].[1997].[Q1], [Time].[1997].[Q2]})'\n"
                 + "  MEMBER [Education Level].[College or higher] as 'Aggregate({[Education Level].[Bachelors Degree], "
                 + "[Education Level].[Graduate Degree]})'\n"
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} on columns,\n"
                 + "  {[Product].children} on rows\n"
                 + "FROM [Sales]\n"
-                + "WHERE ([Time].[1997 H1], [Education Level].[College or higher], [Gender].[F])",
+                + "WHERE ([Time].[1997 H1], [Education Level].[College or higher], [Gender].[F])").returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997 H1], [Education Level].[Education Level].[College or higher], [Gender].[Gender].[F]}\n"
                 + "Axis #1:\n"

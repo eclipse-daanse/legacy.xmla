@@ -18,15 +18,14 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class PrevMemberFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAll2(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
@@ -34,8 +33,7 @@ class PrevMemberFunDefTest {
         assertEquals( 0, result.getAxes()[ 0 ].getPositions().size() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBasic(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
@@ -45,8 +43,7 @@ class PrevMemberFunDefTest {
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 ).getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFirstInLevel(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
@@ -54,8 +51,7 @@ class PrevMemberFunDefTest {
         assertEquals( 0, result.getAxes()[ 0 ].getPositions().size() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAll(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );

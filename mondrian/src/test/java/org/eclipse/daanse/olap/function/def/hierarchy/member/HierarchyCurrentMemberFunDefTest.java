@@ -14,7 +14,7 @@
 package org.eclipse.daanse.olap.function.def.hierarchy.member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeQuery;
@@ -22,36 +22,33 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 import mondrian.olap.fun.FunctionTest;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class HierarchyCurrentMemberFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMember(Context<?> context) {
         // <Dimension>.CurrentMember
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "Sales", "[Gender].CurrentMember", "[Gender].[Gender].[All Gender]" );
+        assertThatAxis(connection, "Sales", "[Gender].CurrentMember").returns( "[Gender].[Gender].[All Gender]" );
         // <Hierarchy>.CurrentMember
-        assertAxisReturns(connection, "Sales",
-            "[Gender].Hierarchy.CurrentMember", "[Gender].[Gender].[All Gender]" );
+        assertThatAxis(connection, "Sales",
+            "[Gender].Hierarchy.CurrentMember").returns( "[Gender].[Gender].[All Gender]" );
 
         // <Level>.CurrentMember
         // MSAS doesn't allow this, but Mondrian does: it implicitly casts
         // level to hierarchy.
-        assertAxisReturns(connection, "Sales", "[Store Name].CurrentMember", "[Store].[Store].[All Stores]" );
+        assertThatAxis(connection, "Sales", "[Store Name].CurrentMember").returns( "[Store].[Store].[All Stores]" );
     }
 
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMemberDepends(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
@@ -77,8 +74,7 @@ class HierarchyCurrentMemberFunDefTest {
             "[Customers]", FunctionTest.allHiers() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMemberFromSlicer(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as '[Gender].CurrentMember.Name'\n"
@@ -87,8 +83,7 @@ class HierarchyCurrentMemberFunDefTest {
         assertEquals( "F", result.getCell( new int[] { 0 } ).getValue() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMemberFromDefaultMember(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as"
@@ -98,8 +93,7 @@ class HierarchyCurrentMemberFunDefTest {
         assertEquals( "1997", result.getCell( new int[] { 0 } ).getValue() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMemberMultiHierarchy(Context<?> context) {
         final String hierarchyName = "Weekly";
         final String queryString =
@@ -159,8 +153,7 @@ class HierarchyCurrentMemberFunDefTest {
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMemberFromAxis(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as"
@@ -178,8 +171,7 @@ class HierarchyCurrentMemberFunDefTest {
      * so it cycles in this case. But I disagree; it is the previous current member, before the calculated member was
      * expanded.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCurrentMemberInCalcMember(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as '[Measures].CurrentMember.Name'\n"

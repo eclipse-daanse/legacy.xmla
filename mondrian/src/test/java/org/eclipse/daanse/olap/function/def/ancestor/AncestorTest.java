@@ -24,16 +24,15 @@ import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
+@RolapContextTest(FoodmartTestInstance.class)
 public class AncestorTest {
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestor(Context<?> context) {
 		Connection con = context.getConnectionWithDefaultRole();
 		Member member = TestUtil.executeSingletonAxis(con,
@@ -44,8 +43,7 @@ public class AncestorTest {
 				"Error while executing query", "Sales");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	//
 	void testAncestorNumeric(Context<?> context) {
 		Connection con = context.getConnectionWithDefaultRole();
@@ -73,23 +71,20 @@ public class AncestorTest {
 		assertNull(member, "Ancestor at -5 must be null");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestorHigher(Context<?> context) {
 		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA],[Store].[Store City])", "Sales");
 		assertNull(member); // MSOLAP returns null
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestorSameLevel(Context<?> context) {
 		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
 				"Ancestor([Store].[Canada],[Store].[Store Country])", "Sales");
 		assertEquals("Canada", member.getName());
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestorWrongHierarchy(Context<?> context) {
 		// MSOLAP gives error "Formula error - dimensions are not
 		// valid (they do not match) - in the Ancestor function"
@@ -97,15 +92,13 @@ public class AncestorTest {
 				"Error while executing query", "Sales");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestorAllLevel(Context<?> context) {
 		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA].[CA],[Store].Levels(0))", "Sales");
 		assertTrue(member.isAll());
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestorWithHiddenParent(Context<?> context) {
 		// final Context<?> testContext<?> =
 		// getContext().withCube( "[Sales Ragged]" );
@@ -116,8 +109,7 @@ public class AncestorTest {
 		assertEquals("Israel", member.getName());
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
 	void testAncestorDepends(Context<?> context) {
 		Connection con = context.getConnectionWithDefaultRole();
 		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, [Store].[Store Country]).Name", "{[Store].[Store]}");

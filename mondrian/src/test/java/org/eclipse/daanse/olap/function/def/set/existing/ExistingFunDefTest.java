@@ -13,27 +13,26 @@
  */
 package org.eclipse.daanse.olap.function.def.set.existing;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class ExistingFunDefTest {
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExisting(Context<?> context) {
         // basic test
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  member measures.ExistingCount as\n"
                 + "  count(Existing [Product].[Product Subcategory].Members)\n"
                 + "  select {measures.ExistingCount} on 0,\n"
                 + "  [Product].[Product Family].Members on 1\n"
-                + "  from [Sales]",
+                + "  from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -46,7 +45,7 @@ class ExistingFunDefTest {
                 + "Row #1: 62\n"
                 + "Row #2: 32\n" );
         // same as exists+currentMember
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member measures.StaticCount as\n"
                 + "  count([Product].[Product Subcategory].Members)\n"
                 + "  member measures.WithExisting as\n"
@@ -55,7 +54,8 @@ class ExistingFunDefTest {
                 + "  count(Exists([Product].[Product Subcategory].Members, [Product].CurrentMember))\n"
                 + "  select {measures.StaticCount, measures.WithExisting, measures.WithExists} on 0,\n"
                 + "  [Product].[Product Family].Members on 1\n"
-                + "  from [Sales]",
+                + "  from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -77,11 +77,10 @@ class ExistingFunDefTest {
                 + "Row #2: 32\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExistingCalculatedMeasure(Context<?> context) {
         // sorry about the mess, this came from Analyzer
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH \n"
                 + "SET [*NATIVE_CJ_SET] AS 'FILTER({[Time].[Weekly].[All Weeklys].[1997].[2],[Time].[Weekly].[All "
                 + "Weeklys].[1997].[24]}, NOT ISEMPTY ([Measures].[Store Sales]) OR NOT ISEMPTY ([Measures]"
@@ -99,7 +98,8 @@ class ExistingFunDefTest {
                 + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
                 + ", NON EMPTY\n"
                 + "[*SORTED_ROW_AXIS] ON ROWS\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -114,16 +114,16 @@ class ExistingFunDefTest {
                 + "Row #1: {[Time].[Weekly].[1997].[24]}\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExistingCalculatedMeasureCompoundSlicer(Context<?> context) {
         // basic test
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  member measures.subcategorystring as SetToStr( EXISTING [Product].[Product Subcategory].Members)\n"
                 + "  select { measures.subcategorystring } on 0\n"
                 + "  from [Sales]\n"
-                + "  where {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]} ",
+                + "  where {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]} ")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
                 + "Axis #1:\n"
@@ -131,12 +131,13 @@ class ExistingFunDefTest {
                 + "Row #0: {[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Product].[Drink].[Alcoholic "
                 + "Beverages].[Beer and Wine].[Wine]}\n" );
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with MEMBER [Measures].[*CALCULATED_MEASURE_1] AS 'SetToStr( EXISTING [Product].[Product Category].Members )'\n"
                 + " SELECT {[Measures].[*CALCULATED_MEASURE_1]} ON COLUMNS\n"
                 + " FROM [Sales]\n"
                 + " WHERE {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Drink].[Alcoholic "
-                + "Beverages].[Beer and Wine].[Wine], [Product].[Food].[Eggs].[Eggs] } ",
+                + "Beverages].[Beer and Wine].[Wine], [Product].[Food].[Eggs].[Eggs] } ")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
                 + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine]}\n"
@@ -146,16 +147,16 @@ class ExistingFunDefTest {
                 + "Row #0: {[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Product].[Product].[Food].[Eggs].[Eggs]}\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExistingAggSet(Context<?> context) {
         // aggregate simple set
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Edible Sales] AS \n"
                 + "Aggregate( Existing {[Product].[Drink], [Product].[Food]}, Measures.[Unit Sales] )\n"
                 + "SELECT {Measures.[Unit Sales], Measures.[Edible Sales]} ON 0,\n"
                 + "{ [Product].[Product Family].Members, [Product].[All Products] } ON 1\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -176,11 +177,10 @@ class ExistingFunDefTest {
                 + "Row #3: 216,537\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExistingGenerateAgg(Context<?> context) {
         // generate overrides existing context
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET BestOfFamilies AS\n"
                 + "  Generate( [Product].[Product Family].Members,\n"
                 + "            TopCount( Existing [Product].[Brand Name].Members, 10, Measures.[Unit Sales]) ) \n"
@@ -189,7 +189,8 @@ class ExistingFunDefTest {
                 + "BestOfFamilies), Measures.[Unit Sales])"
                 + "SELECT { Measures.[Unit Sales], Measures.[Top 10 Brand Sales], Measures.[Rest Brand Sales] } ON 0,\n"
                 + "       {[Product].[Product Family].Members} ON 1\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -211,16 +212,16 @@ class ExistingFunDefTest {
                 + "Row #2: 41,300\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExistingGenerateOverrides(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER Measures.[StaticSumNC] AS\n"
                 + " 'Sum(Generate([Product].[Non-Consumable],"
                 + "    Existing [Product].[Product Department].Members), Measures.[Unit Sales])'\n"
                 + "SELECT { Measures.[StaticSumNC], Measures.[Unit Sales] } ON 0,\n"
                 + "    NON EMPTY {[Product].[Product Family].Members} ON 1\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -236,13 +237,14 @@ class ExistingFunDefTest {
                 + "Row #1: 191,940\n"
                 + "Row #2: 50,236\n"
                 + "Row #2: 50,236\n" );
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER Measures.[StaticSumNC] AS\n"
                 + " 'Sum(Generate([Product].[Product Family].Members,"
                 + "    Existing [Product].[Product Department].Members), Measures.[Unit Sales])'\n"
                 + "SELECT { Measures.[StaticSumNC], Measures.[Unit Sales] } ON 0,\n"
                 + "    NON EMPTY {[Product].[Non-Consumable]} ON 1\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -254,12 +256,11 @@ class ExistingFunDefTest {
                 + "Row #0: 50,236\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExistingVirtualCube(Context<?> context) {
         // this should ideally return 14 for both,
         // but being coherent with exists is good enough
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Count Exists] AS Count(exists( [Time].[Weekly].[Week].Members, [Time].[Weekly]"
                 + ".CurrentMember ) )\n"
                 + " MEMBER [Measures].[Count Existing] AS Count(existing [Time].[Weekly].[Week].Members)\n"
@@ -267,7 +268,8 @@ class ExistingFunDefTest {
                 + "{[Measures].[Count Exists], [Measures].[Count Existing]}\n"
                 + "ON 0\n"
                 + "FROM [Warehouse and Sales]\n"
-                + "WHERE [Time].[Time].[1997].[Q2]",
+                + "WHERE [Time].[Time].[1997].[Q2]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q2]}\n"
                 + "Axis #1:\n"

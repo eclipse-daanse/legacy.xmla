@@ -14,36 +14,35 @@
 package org.eclipse.daanse.olap.function.def.union;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 
+@RolapContextTest(FoodmartTestInstance.class)
 class UnionFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionAll(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Union({[Gender].[M]}, {[Gender].[F]}, ALL)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Union({[Gender].[M]}, {[Gender].[F]}, ALL)")
+            .returns(
             "[Gender].[Gender].[M]\n"
                 + "[Gender].[Gender].[F]" ); // order is preserved
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionAllTuple(Context<?> context) {
         // With the bug, the last 8 rows are repeated.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "set [Set1] as 'Crossjoin({[Time].[1997].[Q1]:[Time].[1997].[Q4]},{[Store].[USA].[CA]:[Store].[USA].[OR]})'\n"
                 + "set [Set2] as 'Crossjoin({[Time].[1997].[Q2]:[Time].[1997].[Q3]},{[Store].[Mexico].[DF]:[Store].[Mexico]"
@@ -51,7 +50,8 @@ class UnionFunDefTest {
                 + "select \n"
                 + "{[Measures].[Unit Sales]} ON COLUMNS,\n"
                 + "Union([Set1], [Set2], ALL) ON ROWS\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -91,69 +91,66 @@ class UnionFunDefTest {
                 + "Row #15: \n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnion(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Store].[USA], [Store].[USA], [Store].[USA].[OR]}, "
-                + "{[Store].[USA].[CA], [Store].[USA]})",
+                + "{[Store].[USA].[CA], [Store].[USA]})")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[OR]\n"
                 + "[Store].[Store].[USA].[CA]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionEmptyBoth(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Union({}, {})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Union({}, {})")
+            .returns(
             "" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionEmptyRight(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Union({[Gender].[M]}, {})",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Union({[Gender].[M]}, {})")
+            .returns(
             "[Gender].[Gender].[M]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionTuple(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Union({"
                 + " ([Gender].[M], [Marital Status].[S]),"
                 + " ([Gender].[F], [Marital Status].[S])"
                 + "}, {"
                 + " ([Gender].[M], [Marital Status].[M]),"
                 + " ([Gender].[M], [Marital Status].[S])"
-                + "})",
-
+                + "})")
+            .returns(
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
                 + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionTupleDistinct(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Union({"
                 + " ([Gender].[M], [Marital Status].[S]),"
                 + " ([Gender].[F], [Marital Status].[S])"
                 + "}, {"
                 + " ([Gender].[M], [Marital Status].[M]),"
                 + " ([Gender].[M], [Marital Status].[S])"
-                + "}, Distinct)",
-
+                + "}, Distinct)")
+            .returns(
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
                 + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnionQuery(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales], "

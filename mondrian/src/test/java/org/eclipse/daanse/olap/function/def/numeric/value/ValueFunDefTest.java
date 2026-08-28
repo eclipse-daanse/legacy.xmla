@@ -13,27 +13,24 @@
  */
 package org.eclipse.daanse.olap.function.def.numeric.value;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.olap.fun.FunctionTest;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class ValueFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testValue(Context<?> context) {
         // VALUE is usually a cell property, not a member property.
         // We allow it because MS documents it as a function, <Member>.VALUE.
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].VALUE", "565,238.13" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].VALUE").returns( "565,238.13" );
 
         // Depends upon almost everything.
         String s1 = FunctionTest.allHiersExcept( "[Measures]" );
@@ -41,16 +38,16 @@ class ValueFunDefTest {
             "[Measures].[Store Sales].VALUE", s1 );
 
         // We do not allow FORMATTED_VALUE.
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Measures].[Store Sales].FORMATTED_VALUE",
-            "MDX object '[Measures].[Store Sales].FORMATTED_VALUE' not found in cube 'Sales'" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Measures].[Store Sales].FORMATTED_VALUE")
+            .throwsMessage( "MDX object '[Measures].[Store Sales].FORMATTED_VALUE' not found in cube 'Sales'" );
 
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].NAME", "Store Sales" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].NAME").returns( "Store Sales" );
         // MS says that ID and KEY are standard member properties for
         // OLE DB for OLAP, but not for XML/A. We don't support them.
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Measures].[Store Sales].ID",
-            "MDX object '[Measures].[Store Sales].ID' not found in cube 'Sales'" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Measures].[Store Sales].ID")
+            .throwsMessage( "MDX object '[Measures].[Store Sales].ID' not found in cube 'Sales'" );
 
         // Error for KEY is slightly different than for ID. It doesn't matter
         // very much.
@@ -60,11 +57,11 @@ class ValueFunDefTest {
         // "<MEMBER>.KEY" syntax because there is not function defined. For
         // other builtin properties, such as NAME, CAPTION there is a builtin
         // function.
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Measures].[Store Sales].KEY",
-            "No function matches signature '<Member>.KEY'" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Measures].[Store Sales].KEY")
+            .throwsMessage( "No function matches signature '<Member>.KEY'" );
 
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].CAPTION", "Store Sales" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].CAPTION").returns( "Store Sales" );
     }
 
 }

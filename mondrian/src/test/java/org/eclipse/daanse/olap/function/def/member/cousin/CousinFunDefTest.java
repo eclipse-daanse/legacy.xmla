@@ -23,30 +23,27 @@ import java.text.MessageFormat;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class CousinFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousin1(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([1997].[Q4],[1998])", "Sales" );
         assertEquals( "[Time].[Time].[1998].[Q4]", member.getUniqueName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousin2(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "Cousin([1997].[Q4].[12],[1998].[Q1])", "Sales" );
         assertEquals( "[Time].[Time].[1998].[Q1].[3]", member.getUniqueName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousinOverrun(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "Cousin([Customers].[USA].[CA].[San Jose],"
@@ -55,8 +52,7 @@ class CousinFunDefTest {
         assertNull( member );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousinThreeDown(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
@@ -75,24 +71,21 @@ class CousinFunDefTest {
             member.getUniqueName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousinSameLevel(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([Gender].[M], [Gender].[F])", "Sales" );
         assertEquals( "F", member.getName() );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousinHigherLevel(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([Time].[1997], [Time].[1998].[Q1])", "Sales" );
         assertNull( member );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCousinWrongHierarchy(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Cousin([Time].[1997], [Gender].[M])",

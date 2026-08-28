@@ -21,16 +21,14 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class CoalesceEmptyFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCoalesceEmptyDepends(Context<?> context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "coalesceempty([Time].[1997], [Gender].[M])",
@@ -42,8 +40,7 @@ class CoalesceEmptyFunDefTest {
             s1 );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCoalesceEmpty(Context<?> context) {
         // [DF] is all null and [WA] has numbers for 1997 but not for 1998.
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
@@ -118,8 +115,7 @@ class CoalesceEmptyFunDefTest {
             0.001 );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCoalesceEmpty2(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with\n"
@@ -144,8 +140,7 @@ class CoalesceEmptyFunDefTest {
             0.001 );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testBrokenContextBug(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with\n"

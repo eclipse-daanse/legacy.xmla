@@ -14,39 +14,40 @@
 package org.eclipse.daanse.olap.function.def.set.hierarchyx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class AllMembersFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAllMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.allmembers
-        assertAxisReturns(connection, "Sales",
-            "{[Customers].[Country].allmembers}",
+        assertThatAxis(connection, "Sales",
+            "{[Customers].[Country].allmembers}")
+            .returns(
             "[Customers].[Customers].[Canada]\n"
                 + "[Customers].[Customers].[Mexico]\n"
                 + "[Customers].[Customers].[USA]" );
 
         // <Level>.allmembers applied to 'all' level
-        assertAxisReturns(connection, "Sales",
-            "{[Customers].[(All)].allmembers}", "[Customers].[Customers].[All Customers]" );
+        assertThatAxis(connection, "Sales",
+            "{[Customers].[(All)].allmembers}")
+            .returns( "[Customers].[Customers].[All Customers]" );
 
         // <Level>.allmembers applied to measures dimension
         // Note -- cube-level calculated members ARE present
-        assertAxisReturns(connection, "Sales",
-            "{[Measures].[MeasuresLevel].allmembers}",
+        assertThatAxis(connection, "Sales",
+            "{[Measures].[MeasuresLevel].allmembers}")
+            .returns(
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
                 + "[Measures].[Store Sales]\n"
@@ -58,8 +59,9 @@ class AllMembersFunDefTest {
                 + "[Measures].[Profit last Period]" );
 
         // <Dimension>.allmembers applied to Measures
-        assertAxisReturns(connection, "Sales",
-            "{[Measures].allmembers}",
+        assertThatAxis(connection, "Sales",
+            "{[Measures].allmembers}")
+            .returns(
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
                 + "[Measures].[Store Sales]\n"
@@ -78,9 +80,10 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(connection,
+                assertThatQuery(connection,
                     "with member [Measures].[Xxx] AS ' [Measures].[Unit Sales] '"
-                        + "select {[Measures].allmembers} on columns from [Sales]",
+                        + "select {[Measures].allmembers} on columns from [Sales]")
+            .returnsGrid(
                     "Axis #0:\n"
                         + "{}\n"
                         + "Axis #1:\n"
@@ -113,13 +116,14 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(context.getConnectionWithDefaultRole(),
+                assertThatQuery(context.getConnectionWithDefaultRole(),
                     "WITH MEMBER [Measures].[Unit to Sales ratio] as\n"
                         + " '[Measures].[Unit Sales] / [Measures].[Store Sales]', FORMAT_STRING='0.0%' "
                         + "SELECT {[Measures].AllMembers} ON COLUMNS,"
                         + "non empty({[Store].[Store State].Members}) ON ROWS "
                         + "FROM Sales "
-                        + "WHERE ([1997].[Q1])",
+                        + "WHERE ([1997].[Q1])")
+            .returnsGrid(
                     "Axis #0:\n"
                         + "{[Time].[Time].[1997].[Q1]}\n"
                         + "Axis #1:\n"
@@ -176,13 +180,14 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(context.getConnectionWithDefaultRole(),
+                assertThatQuery(context.getConnectionWithDefaultRole(),
                     "WITH MEMBER [Measures].[Unit to Sales ratio] as '[Measures].[Unit Sales] / [Measures].[Store Sales]', "
                         + "FORMAT_STRING='0.0%' "
                         + "SELECT {[Measures].AllMembers} ON COLUMNS,"
                         + "non empty({[Store].[Store State].Members}) ON ROWS "
                         + "FROM Sales "
-                        + "WHERE ([1997].[Q1])",
+                        + "WHERE ([1997].[Q1])")
+            .returnsGrid(
                     "Axis #0:\n"
                         + "{[Time].[Time].[1997].[Q1]}\n"
                         + "Axis #1:\n"
@@ -239,13 +244,14 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(context.getConnectionWithDefaultRole(),
+                assertThatQuery(context.getConnectionWithDefaultRole(),
                     "WITH MEMBER [Measures].[Unit to Sales ratio] as '[Measures].[Unit Sales] / [Measures].[Store Sales]', "
                         + "FORMAT_STRING='0.0%' "
                         + "SELECT {[Measures].Members} ON COLUMNS,"
                         + "non empty({[Store].[Store State].Members}) ON ROWS "
                         + "FROM Sales "
-                        + "WHERE ([1997].[Q1])",
+                        + "WHERE ([1997].[Q1])")
+            .returnsGrid(
                     "Axis #0:\n"
                         + "{[Time].[Time].[1997].[Q1]}\n"
                         + "Axis #1:\n"
@@ -280,12 +286,13 @@ class AllMembersFunDefTest {
         }
 
         // Calc member in dimension based on level
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,"
                 + "non empty({[Store].[Store State].AllMembers}) ON ROWS "
                 + "FROM Sales "
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
@@ -306,12 +313,13 @@ class AllMembersFunDefTest {
                 + "Row #3: 76,345.49\n" );
 
         // Calc member in dimension based on level not seen
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,"
                 + "non empty({[Store].[Store Country].AllMembers}) ON ROWS "
                 + "FROM Sales "
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"

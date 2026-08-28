@@ -13,29 +13,28 @@
  */
 package org.eclipse.daanse.olap.function.def.levels.string;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
+import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
+
+@RolapContextTest(FoodmartTestInstance.class)
 class LevelsStringFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLevelsStringFail(Context<?> context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "Levels(\"nonexistent\").UniqueName",
-            "Level 'nonexistent' not found" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Levels(\"nonexistent\").UniqueName")
+            .throwsMessage( "Level 'nonexistent' not found" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testLevelsString(Context<?> context) {
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-        "Levels(\"[Time].[Year]\").UniqueName",
-        "[Time].[Time].[Year]" );
+      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+        "Levels(\"[Time].[Year]\").UniqueName")
+        .returns( "[Time].[Time].[Year]" );
     }
 
 }

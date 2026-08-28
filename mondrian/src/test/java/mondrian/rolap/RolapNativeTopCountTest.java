@@ -9,7 +9,7 @@
 */
 package mondrian.rolap;
 
-
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.rolap.RolapNativeTopCountTestCases.CUSTOM_COUNT_MEASURE_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.CUSTOM_COUNT_MEASURE_RESULT;
 import static mondrian.rolap.RolapNativeTopCountTestCases.EMPTY_CELLS_ARE_HIDDEN_WHEN_NON_EMPTY_QUERY;
@@ -38,7 +38,6 @@ import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_W
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_RESULT;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_RESULT;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import java.net.URL;
 import java.util.Map;
@@ -60,48 +59,48 @@ class RolapNativeTopCountTest extends BatchTestCase {
 
     @Test
     void testTopCount_ImplicitCountMeasure(Connection connection) throws Exception {
-        assertQueryReturns(connection,
-            IMPLICIT_COUNT_MEASURE_QUERY, IMPLICIT_COUNT_MEASURE_RESULT);
+        assertThatQuery(connection,
+            IMPLICIT_COUNT_MEASURE_QUERY).returnsGrid(IMPLICIT_COUNT_MEASURE_RESULT);
     }
 
     @Test
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.CustomCountMeasureCubeName.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTopCount_CountMeasure(Connection connection) throws Exception {
-        assertQueryReturns(connection,
-            CUSTOM_COUNT_MEASURE_QUERY, CUSTOM_COUNT_MEASURE_RESULT);
+        assertThatQuery(connection,
+            CUSTOM_COUNT_MEASURE_QUERY).returnsGrid(CUSTOM_COUNT_MEASURE_RESULT);
     }
 
     @Test
     void testTopCount_SumMeasure(Connection connection) throws Exception {
-        assertQueryReturns(connection, SUM_MEASURE_QUERY, SUM_MEASURE_RESULT);
+        assertThatQuery(connection, SUM_MEASURE_QUERY).returnsGrid(SUM_MEASURE_RESULT);
     }
 
     @Test
     void testEmptyCellsAreShown_Countries(Connection connection) {
-        assertQueryReturns(connection,
-            EMPTY_CELLS_ARE_SHOWN_COUNTRIES_QUERY,
+        assertThatQuery(connection,
+            EMPTY_CELLS_ARE_SHOWN_COUNTRIES_QUERY).returnsGrid(
             EMPTY_CELLS_ARE_SHOWN_COUNTRIES_RESULT);
     }
 
     @Test
     void testEmptyCellsAreShown_States(Connection connection) {
-        assertQueryReturns(connection,
-            EMPTY_CELLS_ARE_SHOWN_STATES_QUERY,
+        assertThatQuery(connection,
+            EMPTY_CELLS_ARE_SHOWN_STATES_QUERY).returnsGrid(
             EMPTY_CELLS_ARE_SHOWN_STATES_RESULT);
     }
 
     @Test
     void testEmptyCellsAreShown_ButNoMoreThanReallyExist(Connection connection) {
-        assertQueryReturns(connection,
-            EMPTY_CELLS_ARE_SHOWN_NOT_MORE_THAN_EXIST_QUERY,
+        assertThatQuery(connection,
+            EMPTY_CELLS_ARE_SHOWN_NOT_MORE_THAN_EXIST_QUERY).returnsGrid(
             EMPTY_CELLS_ARE_SHOWN_NOT_MORE_THAN_EXIST_RESULT);
     }
 
     @Test
     void testEmptyCellsAreHidden_WhenNonEmptyIsDeclaredExplicitly(Connection connection) {
-        assertQueryReturns(connection,
-            EMPTY_CELLS_ARE_HIDDEN_WHEN_NON_EMPTY_QUERY,
+        assertThatQuery(connection,
+            EMPTY_CELLS_ARE_HIDDEN_WHEN_NON_EMPTY_QUERY).returnsGrid(
             EMPTY_CELLS_ARE_HIDDEN_WHEN_NON_EMPTY_RESULT);
     }
 
@@ -112,8 +111,8 @@ class RolapNativeTopCountTest extends BatchTestCase {
     void testRoleRestrictionWorks_ForRowWithData(
         @Roles(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME) Connection connection) throws Exception
     {
-        assertQueryReturns(connection,
-            ROLE_RESTRICTION_WORKS_WA_QUERY,
+        assertThatQuery(connection,
+            ROLE_RESTRICTION_WORKS_WA_QUERY).returnsGrid(
             ROLE_RESTRICTION_WORKS_WA_RESULT);
     }
 
@@ -123,36 +122,36 @@ class RolapNativeTopCountTest extends BatchTestCase {
     void testRoleRestrictionWorks_ForRowWithOutData(
         @Roles(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME) Connection connection) throws Exception
     {
-        assertQueryReturns(connection,
-            ROLE_RESTRICTION_WORKS_DF_QUERY,
+        assertThatQuery(connection,
+            ROLE_RESTRICTION_WORKS_DF_QUERY).returnsGrid(
             ROLE_RESTRICTION_WORKS_DF_RESULT);
     }
 
     @Test
     void testMimicsHeadWhenTwoParams_States(Connection connection) {
-        assertQueryReturns(connection,
-            TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY,
+        assertThatQuery(connection,
+            TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY).returnsGrid(
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_RESULT);
     }
 
     @Test
     void testMimicsHeadWhenTwoParams_Cities(Connection connection) {
-        assertQueryReturns(connection,
-            TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_QUERY,
+        assertThatQuery(connection,
+            TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_QUERY).returnsGrid(
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_RESULT);
     }
 
     @Test
     void testMimicsHeadWhenTwoParams_ShowsNotMoreThanExist(Connection connection) {
-        assertQueryReturns(connection,
-            RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_QUERY,
+        assertThatQuery(connection,
+            RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_QUERY).returnsGrid(
             RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_RESULT);
     }
 
     @Test
     void testMimicsHeadWhenTwoParams_DoesNotIgnoreNonEmpty(Connection connection) {
-        assertQueryReturns(connection,
-            NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_QUERY,
+        assertThatQuery(connection,
+            NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_QUERY).returnsGrid(
             NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_RESULT);
     }
 

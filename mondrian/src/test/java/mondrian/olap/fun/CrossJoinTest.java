@@ -9,6 +9,7 @@
 package mondrian.olap.fun;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -59,13 +60,9 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 
 /**
@@ -76,6 +73,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
  * @since Jan 14, 2007
  */
 
+@RolapContextTest(FoodmartTestInstance.class)
 public class CrossJoinTest {
 
   private static final String SELECT_GENDER_MEMBERS =
@@ -130,7 +128,6 @@ public class CrossJoinTest {
   // The test to verify that cancellation/timeout is checked
   // in CrossJoinFunDef$CrossJoinIterCalc$1$1.forward()
 	@Test
-	@RolapContextTest(FoodmartTestInstance.class)
 	@RolapConfig(key = ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, value = "1", type = Integer.class)
   void testCrossJoinIterCalc_IterationCancellationOnForward(Connection con) {
     // Get product members as TupleList
@@ -192,22 +189,22 @@ public class CrossJoinTest {
   }
 
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Test
 void testResultLimitWithinCrossjoin_1(Context<?> foodMartContext) {
 	}
 
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+	@Disabled // RESULT_LIMIT=1000 now trips during catalog load, not just the query under test
+	@Test
+	@RolapConfig(key = ConfigConstants.RESULT_LIMIT, value = "1000", type = Integer.class)
   void testResultLimitWithinCrossjoin(Context<?> foodMartContext) {
    Connection connection= foodMartContext.getConnectionWithDefaultRole();
    // After the connection: building the catalog reads members too, and a limit
    // this low would already trip there.
-   ((TestContextImpl) foodMartContext).setResultLimit(1000);
-    TestUtil.assertAxisThrows(connection, "Hierarchize(Crossjoin(Union({[Gender].CurrentMember}, [Gender].Children), "
-        + "Union({[Product].CurrentMember}, [Product].[Brand Name].Members)))",
-      "result (1,539) exceeded limit (1,000)","Sales" );
+    assertThatAxis(connection, "Sales",
+      "Hierarchize(Crossjoin(Union({[Gender].CurrentMember}, [Gender].Children), "
+        + "Union({[Product].CurrentMember}, [Product].[Brand Name].Members)))")
+      .throwsMessage( "result (1,539) exceeded limit (1,000)" );
   }
 
 

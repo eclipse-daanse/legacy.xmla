@@ -13,34 +13,35 @@
  */
 package org.eclipse.daanse.olap.function.def.unorder;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 
+@RolapContextTest(FoodmartTestInstance.class)
 class UnorderFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnorder(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Unorder([Gender].members)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Unorder([Gender].members)")
+            .returns(
             "[Gender].[Gender].[All Gender]\n"
                 + "[Gender].[Gender].[F]\n"
                 + "[Gender].[Gender].[M]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Unorder(Order([Gender].members, -[Measures].[Unit Sales]))",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Unorder(Order([Gender].members, -[Measures].[Unit Sales]))")
+            .returns(
             "[Gender].[Gender].[All Gender]\n"
                 + "[Gender].[Gender].[M]\n"
                 + "[Gender].[Gender].[F]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Unorder(Crossjoin([Gender].members, [Marital Status].[Marital Status].Children))",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Unorder(Crossjoin([Gender].members, [Marital Status].[Marital Status].Children))")
+            .returns(
             "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[M]}\n"
                 + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[S]}\n"
                 + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
@@ -49,20 +50,22 @@ class UnorderFunDefTest {
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
 
         // implicitly convert member to set
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Unorder([Gender].[M])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Unorder([Gender].[M])")
+            .returns(
             "[Gender].[Gender].[M]" );
 
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Unorder(1 + 3)",
-            "No function matches signature 'Unorder(<Numeric Expression>)'", "Sales");
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Unorder([Gender].[M], 1 + 3)",
-            "No function matches signature 'Unorder(<Member>, <Numeric Expression>)'", "Sales" );
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Unorder(1 + 3)")
+            .throwsMessage( "No function matches signature 'Unorder(<Numeric Expression>)'" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Unorder([Gender].[M], 1 + 3)")
+            .throwsMessage( "No function matches signature 'Unorder(<Member>, <Numeric Expression>)'" );
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Store Sales], [Measures].[Unit Sales]} on 0,\n"
                 + "  Unorder([Gender].Members) on 1\n"
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

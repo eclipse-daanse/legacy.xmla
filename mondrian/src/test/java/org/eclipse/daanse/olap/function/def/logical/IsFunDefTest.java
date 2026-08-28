@@ -13,92 +13,83 @@
  */
 package org.eclipse.daanse.olap.function.def.logical;
 
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class IsFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsMember(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " Store.[USA].parent IS Store.[All Stores]", true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " [Store].[USA].[CA].parent IS [Store].[Mexico]", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " Store.[USA].parent IS Store.[All Stores]").isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " [Store].[USA].[CA].parent IS [Store].[Mexico]").isFalse();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsString(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            " [Store].[USA].Name IS \"USA\" ",
-            "No function matches signature '<String> IS <String>'" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " [Store].[USA].Name IS \"USA\" ")
+            .throwsMessage( "No function matches signature '<String> IS <String>'" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsNumeric(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            " [Store].[USA].Level.Ordinal IS 25 ",
-            "No function matches signature '<Numeric Expression> IS <Numeric Expression>'" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " [Store].[USA].Level.Ordinal IS 25 ")
+            .throwsMessage( "No function matches signature '<Numeric Expression> IS <Numeric Expression>'" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsTuple(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " (Store.[USA], Gender.[M]) IS (Store.[USA], Gender.[M])", true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " (Store.[USA], Gender.[M]) IS (Gender.[M], Store.[USA])", true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " (Store.[USA], Gender.[M]) IS (Store.[USA], Gender.[M])").isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " (Store.[USA], Gender.[M]) IS (Gender.[M], Store.[USA])").isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             " (Store.[USA], Gender.[M]) IS (Gender.[M], Store.[USA]) "
-                + "OR [Gender] IS NULL",
-            true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
+                + "OR [Gender] IS NULL")
+            .isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             " (Store.[USA], Gender.[M]) IS (Gender.[M], Store.[USA]) "
-                + "AND [Gender] IS NULL",
-            false );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " (Store.[USA], Gender.[M]) IS (Store.[USA], Gender.[F])",
-            false );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " (Store.[USA], Gender.[M]) IS (Store.[USA])",
-            false );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(),
-                "Sales", " (Store.[USA], Gender.[M]) IS Store.[USA]",
-            false );
+                + "AND [Gender] IS NULL")
+            .isFalse();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " (Store.[USA], Gender.[M]) IS (Store.[USA], Gender.[F])")
+            .isFalse();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " (Store.[USA], Gender.[M]) IS (Store.[USA])")
+            .isFalse();
+        assertThatExpr(context.getConnectionWithDefaultRole(),
+                "Sales", " (Store.[USA], Gender.[M]) IS Store.[USA]")
+            .isFalse();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsLevel(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " Store.[USA].level IS Store.[Store Country] ", true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " Store.[USA].[CA].level IS Store.[Store Country] ", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " Store.[USA].level IS Store.[Store Country] ").isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " Store.[USA].[CA].level IS Store.[Store Country] ").isFalse();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsHierarchy(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " Store.[USA].hierarchy IS Store.[Mexico].hierarchy ", true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            " Store.[USA].hierarchy IS Gender.[M].hierarchy ", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " Store.[USA].hierarchy IS Store.[Mexico].hierarchy ").isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            " Store.[USA].hierarchy IS Gender.[M].hierarchy ").isFalse();
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsDimension(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[USA].dimension IS Store ", true );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Gender.[M].dimension IS Store ", false );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " Store.[USA].dimension IS Store ").isTrue();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " Gender.[M].dimension IS Store ").isFalse();
     }
 
 }

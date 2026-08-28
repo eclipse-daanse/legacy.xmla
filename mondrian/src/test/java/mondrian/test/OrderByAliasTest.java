@@ -9,22 +9,23 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import java.net.URL;
+import java.util.Map;
+
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -40,6 +41,7 @@ import mondrian.rolap.SchemaModifiersEmf;
  *
  * @author Aleksandr Kozlov
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class OrderByAliasTest extends BatchTestCase {
 
 
@@ -54,18 +56,17 @@ class OrderByAliasTest extends BatchTestCase {
   public void afterEach() {
   }
 
-  @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInKeyExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier1KE.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testSqlInKeyExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -79,11 +80,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-      context.getCatalogCache().clear();
-      Catalog catalog = ((RolapContext) context).getCatalogMapping();
-      ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier1KE(catalog, colName));
-
-      assertQuerySql(context.getConnectionWithDefaultRole(),
+      assertQuerySql(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -99,18 +96,17 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
   }
 
-     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInNameExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier1NE.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testSqlInNameExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -124,11 +120,8 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getCatalogCache().clear();
-         Catalog catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier1NE(catalog, colName));
          assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -146,18 +139,17 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
   }
 
-     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInCaptionExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier1CE.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testSqlInCaptionExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -171,11 +163,8 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getCatalogCache().clear();
-         Catalog catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier1CE(catalog, colName));
          assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -193,18 +182,17 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
   }
 
-     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInOrdinalExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier1OE.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testSqlInOrdinalExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -218,11 +206,8 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getCatalogCache().clear();
-         Catalog catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier1OE(catalog, colName));
          assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -240,18 +225,17 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c1\") ASC, \"c1\" ASC"));
   }
 
-     @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInParentExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier2.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testSqlInParentExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("supervisor_id");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "HR",
@@ -277,11 +261,8 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getCatalogCache().clear();
-         Catalog catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier2(catalog, colName));
          assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty{[Employees].[All Employees].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [HR] "
@@ -314,18 +295,17 @@ class OrderByAliasTest extends BatchTestCase {
   }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInPropertyExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier3.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+    void testSqlInPropertyExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -339,11 +319,8 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getCatalogCache().clear();
-         Catalog catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier3(catalog, colName));
          assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -362,19 +339,17 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
   }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSqlInMeasureExpression(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier1ME.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testSqlInMeasureExpression(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    flushSchemaCache(context.getConnectionWithDefaultRole());
-    final String colName = getDialect(context.getConnectionWithDefaultRole())
-        .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -388,12 +363,8 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-        context.getCatalogCache().clear();
-        Catalog catalog = ((RolapContext) context).getCatalogMapping();
-        ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.OrderByAliasTestModifier1ME(catalog, colName));
-
         assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -409,18 +380,17 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
   }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyCrossJoin(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testNonEmptyCrossJoin(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
     assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "with set necj as\n"
         + "NonEmptyCrossJoin([Customers].[Name].members,[Store].[Store Name].members)\n"
         + "select\n"
@@ -487,19 +457,19 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c13\") ASC, \"c13\" ASC"));
   }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualCube(Context<?> context) {
-    ((TestContextImpl)context).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).name())
+  @Test
+  @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.OrderByAliasTestModifier4.class },
+      database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+  @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
+  void testVirtualCube(Connection connection) {
+    if (getDatabaseProduct(getDialect(connection).name())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
+        || !getDialect(connection).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    withSchemaEmf(context, SchemaModifiersEmf.OrderByAliasTestModifier4::new);
     assertQuerySql(
-        context.getConnectionWithDefaultRole(),
+        connection,
         "select non empty crossjoin( product.[product family].members, time.quarter.members) on 0 "
         + "from [warehouse and sales]",
         mysqlPattern(
@@ -532,5 +502,13 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(2) ASC, 2 ASC,\n"
             + "    ISNULL(3) ASC, 3 ASC"));
   }
+
+    /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
 }

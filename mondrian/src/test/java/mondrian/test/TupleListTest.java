@@ -9,6 +9,7 @@
 */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -16,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -40,20 +40,19 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link TupleList} and common implementations.
  *
  * @author jhyde
  */
+@RolapContextTest(FoodmartTestInstance.class)
 class TupleListTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testUnaryTupleList(Context<?> context) {
         // empty list
         final TupleList list0 = new UnaryTupleList();
@@ -91,8 +90,7 @@ class TupleListTest {
         list1.add(Collections.<Member>singletonList(null));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testArrayTupleList(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         final Member genderFMember = xxx(connection, "[Gender].[F]");
@@ -174,8 +172,7 @@ class TupleListTest {
         checkProject(fm);
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDelegatingTupleList(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         final Member genderFMember = xxx(connection, "[Gender].[F]");
@@ -201,13 +198,12 @@ class TupleListTest {
      * This is a test for MONDRIAN-1040. The DelegatingTupleList.slice()
      * method was mixing up the column and index variables.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDelegatingTupleListSlice(Context<?> context) {
         // Functional test.
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
-            "select {[Measures].[Store Sales]} ON COLUMNS, Hierarchize(Except({[Customers].[All Customers], [Customers].[All Customers].Children}, {[Customers].[All Customers]})) ON ROWS from [Sales] ",
+        assertThatQuery(connection,
+            "select {[Measures].[Store Sales]} ON COLUMNS, Hierarchize(Except({[Customers].[All Customers], [Customers].[All Customers].Children}, {[Customers].[All Customers]})) ON ROWS from [Sales] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

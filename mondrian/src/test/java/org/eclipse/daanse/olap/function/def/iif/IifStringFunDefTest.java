@@ -13,43 +13,39 @@
  */
 package org.eclipse.daanse.olap.function.def.iif;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class IifStringFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIf(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, \"Yes\",\"No\")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, \"Yes\",\"No\")").returns(
             "Yes" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIIfWithStringAndNull(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, null,\"foo\")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, null,\"foo\")").returns(
             "" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, \"foo\",null)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, \"foo\",null)").returns(
             "foo" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testIsEmptyWithNull(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "iif (isempty(null), \"is empty\", \"not is empty\")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "iif (isempty(null), \"is empty\", \"not is empty\")").returns(
             "is empty" );
-        assertExprReturns(context.getConnectionWithDefaultRole(), "iif (isempty(null), 1, 2)", "1" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "iif (isempty(null), 1, 2)").returns("1");
     }
 
 }

@@ -13,26 +13,25 @@
  */
 package org.eclipse.daanse.olap.function.def.set.stripcalculatedmembers;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class StripCalculatedMembersFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStripCalculatedMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "Sales",
-            "StripCalculatedMembers({[Measures].AllMembers})",
+        assertThatAxis(connection, "Sales",
+            "StripCalculatedMembers({[Measures].AllMembers})")
+            .returns(
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
                 + "[Measures].[Store Sales]\n"
@@ -41,7 +40,8 @@ class StripCalculatedMembersFunDefTest {
                 + "[Measures].[Promotion Sales]" );
 
         // applied to empty set
-        assertAxisReturns(connection, "Sales", "StripCalculatedMembers({[Gender].Parent})", "" );
+        assertThatAxis(connection, "Sales", "StripCalculatedMembers({[Gender].Parent})")
+            .returns( "" );
 
         assertSetExprDependsOn(connection,
             "StripCalculatedMembers([Customers].CurrentMember.Children)",
@@ -51,7 +51,7 @@ class StripCalculatedMembersFunDefTest {
         // Calc members in dimension based on level stripped
         // Actual members in measures left alone
         // ----------------------------------------------------
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH MEMBER [Store].[USA].[CA plus OR] AS "
                 + "'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT StripCalculatedMembers({[Measures].[Unit Sales], "
@@ -59,7 +59,8 @@ class StripCalculatedMembersFunDefTest {
                 + "StripCalculatedMembers("
                 + "AddCalculatedMembers([Store].[USA].Children)) ON ROWS "
                 + "FROM Sales "
-                + "WHERE ([1997].[Q1])",
+                + "WHERE ([1997].[Q1])")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"

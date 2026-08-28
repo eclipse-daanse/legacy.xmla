@@ -13,45 +13,46 @@
  */
 package org.eclipse.daanse.olap.function.def.drilldownleveltopbottom;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class DrilldownLevelTopBottomFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDrilldownLevelTop(Context<?> context) {
         // <set>, <n>, <level>
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA]}, 2, [Store].[Store Country])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, 2, [Store].[Store Country])")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[WA]\n"
                 + "[Store].[Store].[USA].[CA]" );
 
         // similarly DrilldownLevelBottom
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelBottom({[Store].[USA]}, 2, [Store].[Store Country])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelBottom({[Store].[USA]}, 2, [Store].[Store Country])")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[OR]\n"
                 + "[Store].[Store].[USA].[CA]" );
 
         // <set>, <n>
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA]}, 2)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, 2)")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[WA]\n"
                 + "[Store].[Store].[USA].[CA]" );
 
         // <n> greater than number of children
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA], [Store].[Canada]}, 4)",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA], [Store].[Canada]}, 4)")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[WA]\n"
                 + "[Store].[Store].[USA].[CA]\n"
@@ -60,27 +61,28 @@ class DrilldownLevelTopBottomFunDefTest {
                 + "[Store].[Store].[Canada].[BC]" );
 
         // <n> negative
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA]}, 2 - 3)",
-            "[Store].[Store].[USA]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, 2 - 3)")
+            .returns( "[Store].[Store].[USA]" );
 
         // <n> zero
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA]}, 2 - 2)",
-            "[Store].[Store].[USA]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, 2 - 2)")
+            .returns( "[Store].[Store].[USA]" );
 
         // <n> null
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA]}, null)",
-            "[Store].[Store].[USA]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, null)")
+            .returns( "[Store].[Store].[USA]" );
 
         // mixed bag, no level, all expanded
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevelTop({[Store].[USA], "
                 + "[Store].[USA].[CA].[San Francisco], "
                 + "[Store].[All Stores], "
                 + "[Store].[Canada].[BC]}, "
-                + "2)",
+                + "2)")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[WA]\n"
                 + "[Store].[Store].[USA].[CA]\n"
@@ -94,11 +96,12 @@ class DrilldownLevelTopBottomFunDefTest {
                 + "[Store].[Store].[Canada].[BC].[Victoria]" );
 
         // mixed bag, only specified level expanded
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevelTop({[Store].[USA], "
                 + "[Store].[USA].[CA].[San Francisco], "
                 + "[Store].[All Stores], "
-                + "[Store].[Canada].[BC]}, 2, [Store].[Store City])",
+                + "[Store].[Canada].[BC]}, 2, [Store].[Store City])")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[CA].[San Francisco]\n"
                 + "[Store].[Store].[USA].[CA].[San Francisco].[Store 14]\n"
@@ -106,26 +109,28 @@ class DrilldownLevelTopBottomFunDefTest {
                 + "[Store].[Store].[Canada].[BC]" );
 
         // bad level
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "DrilldownLevelTop({[Store].[USA]}, 2, [Customers].[Country])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, 2, [Customers].[Country])")
+            .throwsMessage(
             "Level '[Customers].[Customers].[Country]' not compatible with "
-                + "member '[Store].[Store].[USA]'", "Sales" );
+                + "member '[Store].[Store].[USA]'" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDrilldownMemberEmptyExpr(Context<?> context) {
         // no level, with expression
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "DrilldownLevelTop({[Store].[USA]}, 2, , [Measures].[Unit Sales])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "DrilldownLevelTop({[Store].[USA]}, 2, , [Measures].[Unit Sales])")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[WA]\n"
                 + "[Store].[Store].[USA].[CA]" );
 
         // reverse expression
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevelTop("
-                + "{[Store].[USA]}, 2, , - [Measures].[Unit Sales])",
+                + "{[Store].[USA]}, 2, , - [Measures].[Unit Sales])")
+            .returns(
             "[Store].[Store].[USA]\n"
                 + "[Store].[Store].[USA].[OR]\n"
                 + "[Store].[Store].[USA].[CA]" );

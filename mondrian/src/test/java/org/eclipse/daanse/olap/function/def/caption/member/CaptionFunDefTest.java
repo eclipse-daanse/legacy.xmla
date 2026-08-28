@@ -13,29 +13,28 @@
  */
 package org.eclipse.daanse.olap.function.def.caption.member;
 
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
+@RolapContextTest(FoodmartTestInstance.class)
 class CaptionFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMemberCaption(Context<?> context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Caption", "1997" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Caption").returns("1997");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testGetCaptionUsingMemberDotCaption(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT Filter(Store.allmembers, "
-                + "[store].currentMember.caption = \"USA\") on 0 FROM SALES",
+                + "[store].currentMember.caption = \"USA\") on 0 FROM SALES").returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"

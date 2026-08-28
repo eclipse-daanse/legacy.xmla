@@ -10,13 +10,13 @@
 */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
@@ -126,14 +126,13 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testBugCantRestrictSlicerToCalcMember(Context<?> context) throws Exception {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH Member [Time].[Time].[Aggr] AS 'Aggregate({[Time].[1998].[Q1], [Time].[1998].[Q2]})' "
         + "SELECT {[Measures].[Store Sales]} ON COLUMNS, "
         + "NON EMPTY Order(TopCount([Customers].[Name].Members,3,[Measures].[Store Sales]),[Measures].[Store Sales],"
         + "BASC) ON ROWS "
         + "FROM [Sales] "
-        + "WHERE ([Time].[Aggr])",
-
+        + "WHERE ([Time].[Aggr])").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[Aggr]}\n"
         + "Axis #1:\n"
@@ -155,7 +154,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.RESULT_LIMIT, value = "5000000", type = Integer.class)
   void testAnalyzerPerformanceIssue(Context<?> context) {
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Education Level], NonEmptyCrossJoin"
         + "([*BASE_MEMBERS_Product], NonEmptyCrossJoin([*BASE_MEMBERS_Customers], [*BASE_MEMBERS_Time])))' "
         + "set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET], ([Measures].[*TOP_Unit Sales_SEL~SUM] <= 2.0))' "
@@ -199,7 +198,7 @@ class NonEmptyTest extends BatchTestCase {
         + "(Crossjoin(Generate([*METRIC_CJ_SET], {[Product].CurrentMember}), {[Customers].[Customers].[*TOTAL_MEMBER_SEL~SUM]}), "
         + "[*SORTED_ROW_AXIS])) ON ROWS "
         + "from [Sales] "
-        + "where [Time].[Time].[*SLICER_MEMBER] ",
+        + "where [Time].[Time].[*SLICER_MEMBER] ").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[*SLICER_MEMBER]}\n"
         + "Axis #1:\n"
@@ -613,13 +612,12 @@ class NonEmptyTest extends BatchTestCase {
 
 @Test
   void testBug1961163(Context<?> context) throws Exception {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Measures].[AvgRevenue] as 'Avg([Store].[Store Name].Members, [Measures].[Store Sales])' "
         + "select NON EMPTY {[Measures].[Store Sales], [Measures].[AvgRevenue]} ON COLUMNS, "
         + "NON EMPTY Filter([Store].[Store Name].Members, ([Measures].[AvgRevenue] < [Measures].[Store Sales])) ON "
         + "ROWS "
-        + "from [Sales]",
-
+        + "from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -659,12 +657,12 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testTopCountWithCalcMemberInSlicer(Context<?> context) {
     // Internal error: can not restrict SQL to calculated Members
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Time].[Time].[First Term] as 'Aggregate({[Time].[1997].[Q1], [Time].[1997].[Q2]})' "
         + "select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "TopCount([Product].[Product Subcategory].Members, 3, [Measures].[Unit Sales]) ON ROWS "
         + "from [Sales] "
-        + "where ([Time].[First Term]) ",
+        + "where ([Time].[First Term]) ").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[First Term]}\n"
         + "Axis #1:\n"
@@ -685,10 +683,10 @@ class NonEmptyTest extends BatchTestCase {
      * When caching topcount results, the number of elements must
      * be part of the cache key
      */
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "TopCount([Product].[Product Subcategory].Members, 2, [Measures].[Unit Sales]) ON ROWS "
-        + "from [Sales]",
+        + "from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -699,10 +697,10 @@ class NonEmptyTest extends BatchTestCase {
         + "Row #0: 20,739\n"
         + "Row #1: 11,767\n" );
     // run again with different count
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "TopCount([Product].[Product Subcategory].Members, 3, [Measures].[Unit Sales]) ON ROWS "
-        + "from [Sales]",
+        + "from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -721,8 +719,8 @@ class NonEmptyTest extends BatchTestCase {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testStrMeasure(Context<?> context) {
-      assertQueryReturns(context.getConnectionWithDefaultRole(),
-      "select {[Measures].[Media]} on columns " + "from [StrMeasure]",
+      assertThatQuery(context.getConnectionWithDefaultRole(),
+      "select {[Measures].[Media]} on columns " + "from [StrMeasure]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -735,12 +733,12 @@ class NonEmptyTest extends BatchTestCase {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testBug1515302(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} on columns, "
         + "non empty crossjoin({[Promotions].[Big Promo]}, "
         + "Descendants([Customers].[USA], [City], "
         + "SELF_AND_BEFORE)) on rows "
-        + "from [Bug1515302]",
+        + "from [Bug1515302]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -1484,7 +1482,7 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMeasureAndAggregateInSlicer(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Store Type].[All Store Types].[All Types] as 'Aggregate({[Store Type].[All Store Types].[Deluxe "
         + "Supermarket],  "
         + "[Store Type].[All Store Types].[Gourmet Supermarket],  "
@@ -1496,7 +1494,7 @@ class NonEmptyTest extends BatchTestCase {
         + "NON EMPTY [Store].[All Stores].[USA].[CA].Children ON ROWS   "
         + "from [Sales] "
         + "where ([Store Type].[All Store Types].[All Types], [Measures].[Unit Sales], [Customers].[All Customers]"
-        + ".[USA], [Product].[All Products].[Drink])  ",
+        + ".[USA], [Product].[All Products].[Drink])  ").returnsGrid(
       "Axis #0:\n"
         + "{[Store Type].[Store Type].[All Store Types].[All Types], [Measures].[Unit Sales], [Customers].[Customers].[USA], [Product].[Product]"
         + ".[Drink]}\n"
@@ -1516,11 +1514,11 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMeasureInSlicer(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Time].[1997]} ON COLUMNS,   "
         + "NON EMPTY [Store].[All Stores].[USA].[CA].Children ON ROWS  "
         + "from [Sales]  "
-        + "where ([Measures].[Unit Sales], [Customers].[All Customers].[USA], [Product].[All Products].[Drink])",
+        + "where ([Measures].[Unit Sales], [Customers].[All Customers].[USA], [Product].[All Products].[Drink])").returnsGrid(
       "Axis #0:\n"
         + "{[Measures].[Unit Sales], [Customers].[Customers].[USA], [Product].[Product].[Drink]}\n"
         + "Axis #1:\n"
@@ -1568,12 +1566,12 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testCmInSlicerResults(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Time].[Time].[Jan] as  "
         + "'Aggregate({[Time].[1998].[Q1].[1], [Time].[1997].[Q1].[1]})'  "
         + "select NON EMPTY {[Measures].[Unit Sales]} ON columns,  "
         + "NON EMPTY [Product].Children ON rows from [Sales] "
-        + "where ([Time].[Jan]) ",
+        + "where ([Time].[Jan]) ").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[Jan]}\n"
         + "Axis #1:\n"
@@ -1590,10 +1588,10 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testSetInSlicerResults(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Measures].[Unit Sales]} ON columns,  "
         + "NON EMPTY [Product].Children ON rows from [Sales] "
-        + "where {[Time].[1998].[Q1].[1], [Time].[1997].[Q1].[1]} ",
+        + "where {[Time].[1998].[Q1].[1], [Time].[1997].[Q1].[1]} ").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1998].[Q1].[1]}\n"
         + "{[Time].[Time].[1997].[Q1].[1]}\n"
@@ -2765,12 +2763,12 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testBug1412384(Context<?> context)  {
     // Bug 1412384 causes a NPE in ContextConstraintWriter.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Time].[1997]} ON COLUMNS,\n"
         + "NON EMPTY Hierarchize(Union({[Customers].[All Customers]},\n"
         + "[Customers].[All Customers].Children)) ON ROWS\n"
         + "from [Sales]\n"
-        + "where [Measures].[Profit]",
+        + "where [Measures].[Profit]").returnsGrid(
       "Axis #0:\n"
         + "{[Measures].[Profit]}\n"
         + "Axis #1:\n"
@@ -3280,7 +3278,7 @@ class NonEmptyTest extends BatchTestCase {
     // join will try evaluating the calculated member (when it shouldn't)
     // and the calculated member references the cross join, resulting
     // in the loop
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "With "
         + "Set [*NATIVE_CJ_SET] as "
         + "'NonEmptyCrossJoin([*BASE_MEMBERS_Store], [*BASE_MEMBERS_Products])' "
@@ -3301,8 +3299,7 @@ class NonEmptyTest extends BatchTestCase {
         + "'sum(Filter([*GENERATED_MEMBERS_Store], [Measures].[*TOP_BOTTOM_MEMBER] <= 10))'"
         + "Select {[Measures].[Store Cost]} on columns, "
         + "Non Empty Filter(Generate([*NATIVE_CJ_SET], {([Store].CurrentMember)}), "
-        + "[Measures].[*TOP_BOTTOM_MEMBER] <= 10) on rows From [Sales]",
-
+        + "[Measures].[*TOP_BOTTOM_MEMBER] <= 10) on rows From [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -3335,7 +3332,7 @@ class NonEmptyTest extends BatchTestCase {
   void testCrossJoinEvaluatorContext2(Context<?> context)  {
 
     // calculated measure contains a calculated member
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "With Set [*NATIVE_CJ_SET] as "
         + "'NonEmptyCrossJoin([*BASE_MEMBERS_Dates], [*BASE_MEMBERS_Stores])' "
         + "Set [*BASE_MEMBERS_Dates] as '{[Time].[1997].[Q1], [Time].[1997].[Q2]}' "
@@ -3375,7 +3372,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Filter("
         + "{[Store].[*SUBTOTAL_MEMBER_SEL~SUM]}, "
         + "Not IsEmpty ([Measures].[Unit Sales]))) on rows "
-        + "From [Sales]",
+        + "From [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -3405,7 +3402,7 @@ class NonEmptyTest extends BatchTestCase {
     //
     // A measures member is referenced in the IsEmpty() function.  This
     // shouldn't prevent native cross join from being used.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with "
         + "set BM_PRODUCT as {[Product].[Product].[All Products].[Drink]} "
         + "set BM_EDU as [Education Level].[Education Level].[Education Level].Members "
@@ -3421,7 +3418,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Filter(GM_PRODUCT, Not IsEmpty([Measures].[Unit Sales])) on rows, "
         + "GM_MEASURE on columns "
         + "from [Warehouse and Sales] "
-        + "where ([Education Level].[Education Level].FILTER1, [Gender].[Gender].FILTER2)",
+        + "where ([Education Level].[Education Level].FILTER1, [Gender].[Gender].FILTER2)").returnsGrid(
       "Axis #0:\n"
         + "{[Education Level].[Education Level].[FILTER1], [Gender].[Gender].[FILTER2]}\n"
         + "Axis #1:\n"
@@ -3556,13 +3553,13 @@ class NonEmptyTest extends BatchTestCase {
     //final TestContext<?> context = getTestContext().withFreshConnection();
     Connection connection = context.getConnectionWithDefaultRole();
     try {
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "with set [p] as '[Product].[Product Family].members' "
           + "set [s] as '[Store].[Store Country].members' "
           + "set [ne] as 'nonemptycrossjoin([p],[s])' "
           + "set [nep] as 'Generate([ne],{[Product].CurrentMember})' "
           + "select [nep] on columns from sales "
-          + "where ([Store].[Store Country].[Mexico])",
+          + "where ([Store].[Store Country].[Mexico])").returnsGrid(
         "Axis #0:\n"
           + "{[Store].[Store].[Mexico]}\n"
           + "Axis #1:\n"
@@ -3587,13 +3584,13 @@ class NonEmptyTest extends BatchTestCase {
     //final TestContext<?> context = getTestContext().withFreshConnection();
     Connection connection = context.getConnectionWithDefaultRole();
     try {
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "with set [p] as '[Product].[Product Family].members' "
           + "set [s] as '[Store].[Store Country].members' "
           + "set [ne] as 'nonemptycrossjoin([p],[s])' "
           + "set [nep] as 'Generate([ne],{[Product].CurrentMember})' "
           + "select [nep] on columns from sales "
-          + "where ([Time].[1998])",
+          + "where ([Time].[1998])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1998]}\n"
           + "Axis #1:\n" );
@@ -3612,13 +3609,13 @@ class NonEmptyTest extends BatchTestCase {
     //final TestContext<?> context = getTestContext().withFreshConnection();
     Connection connection = context.getConnectionWithDefaultRole();
     try {
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "with set [p] as '[Product].[Product Family].members' "
           + "set [s] as '[Store].[Store Country].members' "
           + "set [ne] as 'nonemptycrossjoin([p],[s])' "
           + "set [nep] as 'Generate([ne],{[Product].CurrentMember})' "
           + "select [nep] on columns from sales "
-          + "where ([Time].[1998])",
+          + "where ([Time].[1998])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1998]}\n"
           + "Axis #1:\n" );
@@ -3640,7 +3637,7 @@ class NonEmptyTest extends BatchTestCase {
     //   With NON EMPTY (mondrian.rolap.nonempty) behavior set to true
     //   the following mdx return no result. The same mdx returns valid
     // result when NON EMPTY is turned off.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH \n"
         + "MEMBER Measures.Calc AS '[Measures].[Profit] * 2', SOLVE_ORDER=1000\n"
         + "MEMBER Product.Conditional as 'Iif (Measures.CurrentMember IS Measures.[Calc], "
@@ -3658,7 +3655,7 @@ class NonEmptyTest extends BatchTestCase {
         + "                 ) \n"
         + "                                   ON AXIS(0), \n"
         + "NON EMPTY [S2] ON AXIS(1) \n"
-        + "FROM [Sales]",
+        + "FROM [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -3738,12 +3735,12 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "false", type = Boolean.class)
   @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
   void testNonEmptyLevelMembers(Context<?> context)  {
-      assertQueryReturns(context.getConnectionWithDefaultRole(),
+      assertThatQuery(context.getConnectionWithDefaultRole(),
         "WITH MEMBER [Measures].[One] AS '1' "
           + "SELECT "
           + "NON EMPTY {[Measures].[One], [Measures].[Store Sales]} ON rows, "
           + "NON EMPTY [Store].[Store State].MEMBERS on columns "
-          + "FROM sales",
+          + "FROM sales").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -3790,10 +3787,10 @@ class NonEmptyTest extends BatchTestCase {
     // This unit test was failing with a NullPointerException in JPivot
     // after the highcardinality feature was added, I've included it
     // here to make sure it continues to work.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Measures].[Unit Sales], [Measures].[Store Cost]} ON columns, "
         + "NON EMPTY Filter([Product].[Brand Name].Members, ([Measures].[Unit Sales] > 100000.0)) ON rows "
-        + "from [Sales] where [Time].[1997]",
+        + "from [Sales] where [Time].[1997]").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1997]}\n"
         + "Axis #1:\n"
@@ -3807,12 +3804,12 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testBugMondrian412(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Measures].[AvgRevenue] as 'Avg([Store].[Store Name].Members, [Measures].[Store Sales])' "
         + "select NON EMPTY {[Measures].[Store Sales], [Measures].[AvgRevenue]} ON COLUMNS, "
         + "NON EMPTY Filter([Store].[Store Name].Members, ([Measures].[AvgRevenue] < [Measures].[Store Sales])) ON "
         + "ROWS "
-        + "from [Sales]",
+        + "from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -3851,10 +3848,10 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testNonEmpyOnVirtualCubeWithNonJoiningDimension(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select non empty {[Warehouse].[Warehouse name].members} on 0,"
         + "{[Measures].[Units Shipped],[Measures].[Unit Sales]} on 1"
-        + " from [Warehouse and Sales]",
+        + " from [Warehouse and Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -3905,11 +3902,11 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testNonEmptyOnNonJoiningValidMeasure(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Measures].[vm] as 'ValidMeasure([Measures].[Unit Sales])'"
         + "select non empty {[Warehouse].[Warehouse name].members} on 0,"
         + "{[Measures].[Units Shipped],[Measures].[vm]} on 1"
-        + " from [Warehouse and Sales]",
+        + " from [Warehouse and Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -3965,11 +3962,11 @@ class NonEmptyTest extends BatchTestCase {
     // Warehouse to the [All] level when evaluating the [vm] measure,
     // the results should include each [warehouse name] member intersected
     // with the non-empty Gender members.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Measures].[vm] as 'ValidMeasure([Measures].[Unit Sales])'\n"
         + "select non empty Crossjoin([Warehouse].[Warehouse].[Warehouse Name].members, [Gender].[Gender].[Gender].members) on 0,\n"
         + "{[Measures].[Units Shipped],[Measures].[vm]} on 1\n"
-        + "from [Warehouse and Sales]",
+        + "from [Warehouse and Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4059,11 +4056,11 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testCrossjoinWithOneDimensionThatDoesNotJoinToBothBaseCubes(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member [Measures].[vm] as 'ValidMeasure([Measures].[Units Shipped])'"
         + "select non empty Crossjoin([Store].[Store].[Store Name].members, [Gender].[Gender].[Gender].members) on 0,"
         + "{[Measures].[Unit Sales],[Measures].[vm]} on 1"
-        + " from [Warehouse and Sales]",
+        + " from [Warehouse and Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4224,11 +4221,11 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testBugMondrian321(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH SET [#DataSet#] AS 'Crossjoin({Descendants([Customers].[All Customers], 2)}, {[Product].[All Products]})'"
         + " \n"
         + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} on columns, \n"
-        + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales]",
+        + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4700,8 +4697,8 @@ class NonEmptyTest extends BatchTestCase {
         + "  non empty "
         + "  [Marital Status].[Marital Status].[Marital Status].members on rows"
         + " from sales";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4726,8 +4723,8 @@ class NonEmptyTest extends BatchTestCase {
         + " NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, "
         + " NON EMPTY {[Gender].[Gender].[Gender].Members} ON ROWS "
         + " from [onlyGender] ";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4752,11 +4749,11 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "true", type = Boolean.class)
   void testCalculatedDefaultMeasureOnVirtualCubeNoThrowException(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select "
         + " [Measures].[Unit Sales] on COLUMNS, "
         + " NON EMPTY {[Store].[Store State].Members} ON ROWS "
-        + " from [virtual] ",
+        + " from [virtual] ").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4789,8 +4786,8 @@ class NonEmptyTest extends BatchTestCase {
         + "Level].[All Education Levels], [Gender].[All Gender], [Marital Status].[All Marital Status], [Yearly "
         + "Income].[All Yearly Incomes])}) ON ROWS"
         + " from [Sales]";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -4916,9 +4913,9 @@ class NonEmptyTest extends BatchTestCase {
       return;
     }
     // children across a snowflake boundary
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select [Product].[Drink].[Baking Goods].[Dry Goods].[Coffee].Children on 0\n"
-        + "from [Sales]",
+        + "from [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n" );
@@ -4951,9 +4948,9 @@ class NonEmptyTest extends BatchTestCase {
 
       // note that returns an extra member,
       // [Product].[Drink].[Baking Goods]
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select [Product].[Drink].Children on 0\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -4967,9 +4964,9 @@ class NonEmptyTest extends BatchTestCase {
           + "Row #0: 4,186\n" );
 
       // [Product].[Drink].[Baking Goods] has one child, but no fact data
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select [Product].[Drink].[Baking Goods].Children on 0\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -4977,18 +4974,18 @@ class NonEmptyTest extends BatchTestCase {
           + "Row #0: \n" );
 
       // NON EMPTY filters out that child
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select non empty [Product].[Drink].[Baking Goods].Children on 0\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n" );
 
       // [Product].[Drink].[Baking Goods].[Dry Goods] has one child, but
       // no fact data
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select [Product].[Drink].[Baking Goods].[Dry Goods].Children on 0\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -4996,25 +4993,25 @@ class NonEmptyTest extends BatchTestCase {
           + "Row #0: \n" );
 
       // NON EMPTY filters out that child
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select non empty [Product].[Drink].[Baking Goods].[Dry Goods].Children on 0\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n" );
 
       // [Coffee] has no children
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select [Product].[Drink].[Baking Goods].[Dry Goods].[Coffee].Children on 0\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n" );
 
-      assertQueryReturns(connection,
+      assertThatQuery(connection,
         "select [Measures].[Unit Sales] on 0,\n"
           + " [Product].[Product Family].Members on 1\n"
-          + "from [Sales]",
+          + "from [Sales]").returnsGrid(
         "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -5038,14 +5035,14 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testBugMondrian897DoubleNamedSetDefinitions(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH SET [CustomerSet] as {[Customers].[Canada].[BC].[Burnaby].[Alexandra Wellington], [Customers].[USA].[WA]"
         + ".[Tacoma].[Eric Coleman]} "
         + "SET [InterestingCustomers] as [CustomerSet] "
         + "SET [TimeRange] as {[Time].[1998].[Q1], [Time].[1998].[Q2]} "
         + "SELECT {[Measures].[Store Sales]} ON COLUMNS, "
         + "CrossJoin([InterestingCustomers], [TimeRange]) ON ROWS "
-        + "FROM [Sales]",
+        + "FROM [Sales]").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5519,7 +5516,7 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Gender].[Gender].[F], [Time].[Time].[1997].[Q2]}\n"
         + "Row #0: 33,381\n"
         + "Row #1: 30,992\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, expected );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(expected );
   }
 
   @Test
@@ -5539,7 +5536,7 @@ class NonEmptyTest extends BatchTestCase {
     };
 
     for ( String timeMember : referencesToTimeMember ) {
-      assertQueryReturns(context.getConnectionWithDefaultRole(),
+      assertThatQuery(context.getConnectionWithDefaultRole(),
         "with member [Measures].[YTD Unit Sales] as "
           + "'Sum(Ytd(" + timeMember + "), [Measures].[Unit Sales])'\n"
           + "select\n"
@@ -5550,7 +5547,7 @@ class NonEmptyTest extends BatchTestCase {
           + ", [Product].[Drink].[Dairy].[Dairy].[Milk].[Booker].Children) ON ROWS\n"
           + "from [Sales]\n"
           + "where\n"
-          + "{ [Time].[1997].[Q3].[9]}",
+          + "{ [Time].[1997].[Q3].[9]}").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1997].[Q3].[9]}\n"
           + "Axis #1:\n"
@@ -5575,11 +5572,11 @@ class NonEmptyTest extends BatchTestCase {
   void testMondrian2202WithCrossjoin(Context<?> context)  {
     // the [overrideContext] measure should have a value for the tuple
     // on rows, given it overrides the time member on the axis.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NON EMPTY crossjoin( Time.[1998].Q1, [Marital Status].[M]) on 1\n"
-        + "FROM sales\n",
+        + "FROM sales\n").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5588,11 +5585,11 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Time].[Time].[1998].[Q1], [Marital Status].[Marital Status].[M]}\n"
         + "Row #0: 33,101\n" );
     // same thing w/ nonemptycrossjoin().
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NonEmptyCrossjoin( Time.[1998].Q1, [Marital Status].[M]) on 1\n"
-        + "FROM sales\n",
+        + "FROM sales\n").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5613,12 +5610,12 @@ class NonEmptyTest extends BatchTestCase {
     // In this case it would result in
     //    (year = 1997 AND year = 1998)
     // if potential conflicts aren't removed.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as '( measures.[unit sales], Time.Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NON EMPTY [Marital Status].[Marital Status].[Marital Status].members on 1,\n"
         + "NON EMPTY Time.Time.[1998].Q1 on 2\n"
-        + "FROM sales\n",
+        + "FROM sales\n").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5636,13 +5633,13 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMondrian2202WithAggTopCountSet(Context<?> context)  {
     // in slicer
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member measures.top5Prod as "
         + "'aggregate(topcount("
         + "crossjoin( {time.time.[1997]}, product.product.[product name].members), 5, measures.[unit sales]), measures.[unit "
         + "sales])'"
         + " select measures.top5Prod on 0, non empty crossjoin({[Marital Status].[Marital Status].[M]}, gender.gender.gender.members) on 1"
-        + " from sales where time.[1998].[Q1]",
+        + " from sales where time.[1998].[Q1]").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1998].[Q1]}\n"
         + "Axis #1:\n"
@@ -5653,13 +5650,13 @@ class NonEmptyTest extends BatchTestCase {
         + "Row #0: 398\n"
         + "Row #1: 385\n" );
     // in CJ
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member measures.top5Prod as "
         + "'aggregate(topcount("
         + "crossjoin( {time.time.[1997]}, product.product.[product name].members), 5, measures.[unit sales]), measures.[unit "
         + "sales])'"
         + " select measures.top5Prod on 0, non empty crossjoin({[Time].[Time].[1998].[Q1]}, gender.gender.gender.members) on 1"
-        + " from sales",
+        + " from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5674,14 +5671,14 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMondrian2202WithParameter(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH "
         + "member measures.[overrideContext] as "
         + "'( measures.[unit sales], "
         + "Parameter(\"timeParam\",[Time].[Time],[Time].[Time].[1997].[Q1],\"?\") )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NON EMPTY crossjoin( Time.Time.[1998].Q1, [Marital Status].[Marital Status].[M]) on 1\n"
-        + "FROM sales\n",
+        + "FROM sales\n").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5689,12 +5686,12 @@ class NonEmptyTest extends BatchTestCase {
         + "Axis #2:\n"
         + "{[Time].[Time].[1998].[Q1], [Marital Status].[Marital Status].[M]}\n"
         + "Row #0: 33,101\n" );
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH member Time.Time.param as 'Parameter(\"timeParam\",[Time].[Time],[Time].[Time].[1997].[Q1],\"?\")' "
         + "member measures.[overrideContext] as '( measures.[unit sales], Time.param )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NON EMPTY crossjoin( Time.Time.[1998].Q1, [Marital Status].[Marital Status].[M]) on 1\n"
-        + "FROM sales\n",
+        + "FROM sales\n").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5711,13 +5708,13 @@ class NonEmptyTest extends BatchTestCase {
     // overriden by the filter condition.
     // (This worked before the fix for MONDRIAN-2202, since
     // RolapNativeSql cannot nativize tuple calculations.)
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as "
         + " '( measures.[unit sales], Time.Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "filter ( Crossjoin(Time.Time.[1998].Q1, [Marital Status].[Marital Status].[marital status].members), "
         + "measures.[overrideContext] >= 0) on 1\n"
-        + "FROM sales",
+        + "FROM sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5736,14 +5733,14 @@ class NonEmptyTest extends BatchTestCase {
     // overriden by the filter condition.
     // (This worked before the fix for MONDRIAN-2202, since
     // RolapNativeSql cannot nativize tuple calculations.)
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as "
         + " '( measures.[unit sales], Time.Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "TopCount ( Crossjoin(Time.Time.[1998].Q1.children, "
         + "[Marital Status].[Marital Status].[marital status].members), "
         + "2, measures.[overrideContext] ) on 1\n"
-        + "FROM sales",
+        + "FROM sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -5759,7 +5756,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMondrian2202WithMeasureContainingCJ(Context<?> context)  {
     // NECJ nested within a measure expression
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with  "
         + " member gender.gender.agg as 'aggregate(NonEmptyCrossJoin({Gender.Gender.F}, {[Marital Status].[Marital Status].[Marital Status]"
         + ".members}))' "
@@ -5767,7 +5764,7 @@ class NonEmptyTest extends BatchTestCase {
         + "sales])' "
         + "member measures.ratioCurrentOverAgg as 'Measures.[Unit Sales] / (gender.gender.agg, Measures.[Unit Sales])' "
         + " select gender.gender.agg on 0, {measures.lastYear, measures.ratioCurrentOverAgg} on 1 from sales where [Time]"
-        + ".[1998].[Q2]",
+        + ".[1998].[Q2]").returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1998].[Q2]}\n"
         + "Axis #1:\n"
@@ -5782,7 +5779,7 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMon2202RunningSum(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Education Level_],[*BASE_MEMBERS__Customers_])))'\n"
@@ -5804,7 +5801,7 @@ class NonEmptyTest extends BatchTestCase {
         + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
         + ",NON EMPTY [*SORTED_ROW_AXIS] ON ROWS\n"
         + "FROM [Sales]\n"
-        + "WHERE ([*CJ_SLICER_AXIS])",
+        + "WHERE ([*CJ_SLICER_AXIS])").returnsGrid(
       "Axis #0:\n"
         + "{[Education Level].[Education Level].[Partial College], [Customers].[Customers].[USA].[WA].[Ballard]}\n"
         + "Axis #1:\n"
@@ -5927,7 +5924,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, value = "ERROR", type = String.class)
   void testMon2202AnalyzerFilter(Context<?> context)  {
     withDuckDbColumnLifetimeDisabled(context, () -> {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
         "WITH\n"
           + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
           + "([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Time_]))'\n"
@@ -5956,7 +5953,7 @@ class NonEmptyTest extends BatchTestCase {
           + ",NON EMPTY\n"
           + "[*SORTED_ROW_AXIS] ON ROWS\n"
           + "FROM [Sales]\n"
-          + "WHERE ([*CJ_SLICER_AXIS])",
+          + "WHERE ([*CJ_SLICER_AXIS])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1997].[Q1].[1]}\n"
           + "{[Time].[Time].[1997].[Q1].[3]}\n"
@@ -6001,7 +5998,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, value = "ERROR", type = String.class)
   void testMon2202AnalyzerPercOfMeasure(Context<?> context)  {
     withDuckDbColumnLifetimeDisabled(context, () -> {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
         "WITH\n"
           + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
           + "([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Time_]))'\n"
@@ -6031,7 +6028,7 @@ class NonEmptyTest extends BatchTestCase {
           + ",NON EMPTY\n"
           + "[*SORTED_ROW_AXIS] ON ROWS\n"
           + "FROM [Sales]\n"
-          + "WHERE ([*CJ_SLICER_AXIS])",
+          + "WHERE ([*CJ_SLICER_AXIS])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1997].[Q1].[1]}\n"
           + "{[Time].[Time].[1997].[Q1].[3]}\n"
@@ -6085,7 +6082,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, value = "ERROR", type = String.class)
   void testMon2202AnalyzerRunningSum(Context<?> context)  {
     withDuckDbColumnLifetimeDisabled(context, () -> {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
         "WITH\n"
           + "SET [*NATIVE_CJ_SET] AS 'FILTER(NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
           + "([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Time_])), NOT ISEMPTY ([Measures].[Unit Sales]))'\n"
@@ -6110,7 +6107,7 @@ class NonEmptyTest extends BatchTestCase {
           + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
           + ",[*SORTED_ROW_AXIS] ON ROWS\n"
           + "FROM [Sales]\n"
-          + "WHERE ([*CJ_SLICER_AXIS])",
+          + "WHERE ([*CJ_SLICER_AXIS])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1997].[Q1].[1]}\n"
           + "{[Time].[Time].[1997].[Q1].[3]}\n"
@@ -6179,7 +6176,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, value = "ERROR", type = String.class)
   void testMon2202SeveralFilteredHierarchiesPlusMeasureFilter(Context<?> context)  {
     withDuckDbColumnLifetimeDisabled(context, () -> {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
         "WITH\n"
           + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Promotion Media_],NONEMPTYCROSSJOIN"
           + "([*BASE_MEMBERS__Store_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
@@ -6215,7 +6212,7 @@ class NonEmptyTest extends BatchTestCase {
           + ",NON EMPTY\n"
           + "[*SORTED_ROW_AXIS] ON ROWS\n"
           + "FROM [Sales]\n"
-          + "WHERE ([*CJ_SLICER_AXIS])",
+          + "WHERE ([*CJ_SLICER_AXIS])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1997].[Q1].[3]}\n"
           + "{[Time].[Time].[1997].[Q2].[4]}\n"
@@ -6258,7 +6255,7 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, value = "ERROR", type = String.class)
   void testMon2202AnalyzerCompoundMeasureFilterPlusTopCount(Context<?> context)  {
     withDuckDbColumnLifetimeDisabled(context, () -> {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
         "WITH\n"
           + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Promotion Media_],NONEMPTYCROSSJOIN"
           + "([*BASE_MEMBERS__Product_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],[*BASE_MEMBERS__Time_])))'\n"
@@ -6298,7 +6295,7 @@ class NonEmptyTest extends BatchTestCase {
           + ",NON EMPTY\n"
           + "[*SORTED_ROW_AXIS] ON ROWS\n"
           + "FROM [Sales]\n"
-          + "WHERE ([*CJ_SLICER_AXIS])",
+          + "WHERE ([*CJ_SLICER_AXIS])").returnsGrid(
         "Axis #0:\n"
           + "{[Time].[Time].[1997].[Q1].[2]}\n"
           + "{[Time].[Time].[1997].[Q1].[3]}\n"
@@ -6349,7 +6346,7 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testNonEmptyCrossJoinCalcMember(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(), new StringBuilder()
+    assertThatQuery(context.getConnectionWithDefaultRole(), new StringBuilder()
         .append( "WITH \n" )
         .append( "MEMBER Measures.Calc AS '[Measures].[Profit] * 2', SOLVE_ORDER=1000\n" )
         .append( "MEMBER Product.Conditional as 'Iif(Measures.CurrentMember IS Measures.[Calc], + Measures.CurrentMember, " )
@@ -6357,7 +6354,7 @@ class NonEmptyTest extends BatchTestCase {
         .append( "SET [S1] AS 'CROSSJOIN({[Customers].[Customers].[All Customers]},{Product.Product.Conditional})' \n" ).append( "SELECT \n" )
         .append( "NON EMPTY GENERATE({Measures.[Calc]}, CROSSJOIN(HEAD({([Measures].CURRENTMEMBER)}, 1),{[S1]}), ALL) ON AXIS" )
         .append( "(0), NON EMPTY [S2] ON AXIS(1) \n" )
-        .append( "FROM [Sales]" ).toString(),
+        .append( "FROM [Sales]" ).toString()).returnsGrid(
       String.format(
         "Axis #0:\n{}\nAxis #1:\n{[Measures].[Calc], [Customers].[Customers].[All Customers], [Product].[Product].[Conditional]}\nAxis "
           + "#2:\n{[Store].[Store].[All Stores]}\n{[Store].[Store].[USA]}\n{[Store].[Store].[USA].[CA]}\n{[Store].[Store].[USA].[CA].[Beverly "
@@ -6383,12 +6380,12 @@ class NonEmptyTest extends BatchTestCase {
   @Test
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testCrossJoinCalcMember(Context<?> context)  {
-    assertQueryReturns(context.getConnectionWithDefaultRole(), String.format(
+    assertThatQuery(context.getConnectionWithDefaultRole(), String.format(
       "WITH \nMEMBER Measures.Calc AS '[Measures].[Profit] * 2', SOLVE_ORDER=1000\nMEMBER Product.Conditional as 'Iif"
         + "(Measures.CurrentMember IS Measures.[Calc], + Measures.CurrentMember, null)', SOLVE_ORDER=2000\nSET [S2] AS "
         + "'{[Store].MEMBERS}' \nSET [S1] AS 'CROSSJOIN({[Customers].[All Customers]},{Product.Conditional})' \nSELECT "
         + "\nGENERATE({Measures.[Calc]}, CROSSJOIN(HEAD({([Measures].CURRENTMEMBER)}, 1),{[S1]}), ALL) ON AXIS(0), NON "
-        + "EMPTY [S2] ON AXIS(1) \nFROM [Sales]" ),
+        + "EMPTY [S2] ON AXIS(1) \nFROM [Sales]" )).returnsGrid(
       String.format(
         "Axis #0:\n{}\nAxis #1:\n{[Measures].[Calc], [Customers].[Customers].[All Customers], [Product].[Product].[Conditional]}\nAxis "
           + "#2:\n{[Store].[Store].[All Stores]}\n{[Store].[Store].[USA]}\n{[Store].[Store].[USA].[CA]}\n{[Store].[Store].[USA].[CA].[Beverly "
@@ -6416,8 +6413,8 @@ class NonEmptyTest extends BatchTestCase {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testDefaultMemberNonEmptyContext(Context<?> context)  {
-      assertQueryReturns(context.getConnectionWithDefaultRole(),
-      "with member measures.one as '1' select non empty store2.usa.[OR].children on 0, measures.one on 1 from sales",
+      assertThatQuery(context.getConnectionWithDefaultRole(),
+      "with member measures.one as '1' select non empty store2.usa.[OR].children on 0, measures.one on 1 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -6427,8 +6424,8 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Measures].[one]}\n"
         + "Row #0: 1\n"
         + "Row #0: 1\n" );
-    assertQueryReturns(context.getConnectionWithDefaultRole(), "with member measures.one as '1' "
-        + "select store2.usa.[OR].children on 0, measures.one on 1 from sales",
+    assertThatQuery(context.getConnectionWithDefaultRole(), "with member measures.one as '1' "
+        + "select store2.usa.[OR].children on 0, measures.one on 1 from sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"

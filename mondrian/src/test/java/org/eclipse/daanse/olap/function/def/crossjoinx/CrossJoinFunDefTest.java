@@ -13,31 +13,28 @@
  */
 package org.eclipse.daanse.olap.function.def.crossjoinx;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class CrossJoinFunDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinNested(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "  CrossJoin(\n"
                 + "    CrossJoin(\n"
                 + "      [Gender].members,\n"
                 + "      [Marital Status].members),\n"
-                + "   {[Store], [Store].children})",
-
+                + "   {[Store], [Store].children})")
+            .returns(
             "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[All Stores]}\n"
                 + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Canada]}\n"
                 + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Mexico]}\n"
@@ -76,41 +73,39 @@ class CrossJoinFunDefTest {
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[USA]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinSingletonTuples(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "CrossJoin({([Gender].[M])}, {([Marital Status].[S])})",
-            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "CrossJoin({([Gender].[M])}, {([Marital Status].[S])})")
+            .returns("{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinSingletonTuplesNested(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "CrossJoin({([Gender].[M])}, CrossJoin({([Marital Status].[S])}, [Store].[Store].children))",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "CrossJoin({([Gender].[M])}, CrossJoin({([Marital Status].[S])}, [Store].[Store].children))")
+            .returns(
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Canada]}\n"
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Mexico]}\n"
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[USA]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinAsterisk(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{[Gender].[Gender].[M]} * {[Marital Status].[Marital Status].[S]}",
-            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "{[Gender].[Gender].[M]} * {[Marital Status].[Marital Status].[S]}")
+            .returns("{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinAsteriskTuple(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} ON COLUMNS, "
                 + "NON EMPTY [Store].[All Stores] "
                 + " * ([Product].[All Products], [Gender]) "
                 + " * [Customers].[All Customers] ON ROWS "
-                + "from [Sales]",
+                + "from [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -120,12 +115,12 @@ class CrossJoinFunDefTest {
                 + "Row #0: 266,773\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinAsteriskAssoc(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Order({[Gender].Children} * {[Marital Status].Children} * {[Time].[1997].[Q2].Children},"
-                + "[Measures].[Unit Sales])",
+                + "[Measures].[Unit Sales])")
+            .returns(
             "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[4]}\n"
                 + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[6]}\n"
                 + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[5]}\n"
@@ -140,24 +135,24 @@ class CrossJoinFunDefTest {
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[5]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinAsteriskInsideBraces(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{[Gender].[M] * [Marital Status].[S] * [Time].[1997].[Q2].Children}",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "{[Gender].[M] * [Marital Status].[S] * [Time].[1997].[Q2].Children}")
+            .returns(
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[4]}\n"
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[5]}\n"
                 + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[6]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossJoinAsteriskQuery(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].members * [1997].children} ON COLUMNS,\n"
                 + " {[Store].[USA].children * [Position].[All Position].children} DIMENSION PROPERTIES [Store].[Store SQFT] "
                 + "ON ROWS\n"
-                + "FROM [HR]",
+                + "FROM [HR]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -375,10 +370,9 @@ class CrossJoinFunDefTest {
      * Testcase for bug 1889745, "StackOverflowError while resolving crossjoin". The problem occurs when a calculated
      * member that references itself is referenced in a crossjoin.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinResolve(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "member [Measures].[Filtered Unit Sales] as\n"
                 + " 'IIf((([Measures].[Unit Sales] > 50000.0)\n"
@@ -393,7 +387,8 @@ class CrossJoinFunDefTest {
                 + "{[Gender].[Gender].[M], [Gender].[Gender].[F]})} ON COLUMNS,\n"
                 + "NON EMPTY {[Product].[Product].[All Products]} ON ROWS\n"
                 + "from [Sales]\n"
-                + "where [Time].[Time].[1997]",
+                + "where [Time].[Time].[1997]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{[Time].[Time].[1997]}\n"
                 + "Axis #1:\n"
@@ -408,17 +403,17 @@ class CrossJoinFunDefTest {
     /**
      * Test case for bug 1911832, "Exception converting immutable list to array in JDK 1.5".
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinOrder(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "\n"
                 + "SET [S1] AS 'CROSSJOIN({[Time].[Time].[1997]}, {[Gender].[Gender].[Gender].MEMBERS})'\n"
                 + "\n"
                 + "SELECT CROSSJOIN(ORDER([S1], [Measures].[Unit Sales], BDESC),\n"
                 + "{[Measures].[Unit Sales]}) ON AXIS(0)\n"
-                + "FROM [Sales]",
+                + "FROM [Sales]")
+            .returnsGrid(
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -428,28 +423,27 @@ class CrossJoinFunDefTest {
                 + "Row #0: 131,558\n" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinDupHierarchyFails(Context<?> context) {
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {[Time].[Month].[5]}) ON ROWS\n"
-                + "from [Sales]",
-            "Tuple contains more than one member of hierarchy '[Time].[Time]'." );
+                + "from [Sales]")
+            .throwsMessage("Tuple contains more than one member of hierarchy '[Time].[Time]'." );
 
         // now with Item, for kicks
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {[Time].[Month].[5]}).Item(0) ON ROWS\n"
-                + "from [Sales]",
-            "Tuple contains more than one member of hierarchy '[Time].[Time]'." );
+                + "from [Sales]")
+            .throwsMessage("Tuple contains more than one member of hierarchy '[Time].[Time]'." );
 
         // same query using explicit tuple
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " ([Time].[Quarter].[Q1], [Time].[Month].[5]) ON ROWS\n"
-                + "from [Sales]",
-            "Tuple contains more than one member of hierarchy '[Time].[Time]'." );
+                + "from [Sales]")
+            .throwsMessage("Tuple contains more than one member of hierarchy '[Time].[Time]'." );
     }
 
     /**
@@ -457,8 +451,7 @@ class CrossJoinFunDefTest {
      * Not an error.
      */
     //* Tests cases of different hierarchies in the same dimension. (Compare to {@link #testCrossjoinDupHierarchyFails()}).
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCrossjoinDupDimensionOk(Context<?> context) {
         final String expectedResult =
             "Axis #0:\n"
@@ -469,37 +462,37 @@ class CrossJoinFunDefTest {
                 + "{[Time].[Time].[1997].[Q1], [Time].[Weekly].[1997].[10]}\n"
                 + "Row #0: 4,395\n";
         final String timeWeekly = hierarchyName( "Time", "Weekly" );
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {"
                 + timeWeekly + ".[1997].[10]}) ON ROWS\n"
-                + "from [Sales]",
-            expectedResult );
+                + "from [Sales]")
+            .returnsGrid(expectedResult );
 
         // now with Item, for kicks
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {"
                 + timeWeekly + ".[1997].[10]}).Item(0) ON ROWS\n"
-                + "from [Sales]",
-            expectedResult );
+                + "from [Sales]")
+            .returnsGrid(expectedResult );
 
         // same query using explicit tuple
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " ([Time].[Quarter].[Q1], "
                 + timeWeekly + ".[1997].[10]) ON ROWS\n"
-                + "from [Sales]",
-            expectedResult );
+                + "from [Sales]")
+            .returnsGrid(expectedResult );
     }
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testItemTuple(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(),
+            "Sales",
             "CrossJoin([Gender].[All Gender].children, "
-                + "[Time].[1997].[Q2].children).Item(0).Item(1).UniqueName",
-            "[Time].[Time].[1997].[Q2].[4]" );
+                + "[Time].[1997].[Q2].children).Item(0).Item(1).UniqueName")
+            .returns("[Time].[Time].[1997].[Q2].[4]" );
     }
 }

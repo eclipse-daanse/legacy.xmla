@@ -13,116 +13,115 @@
  */
 package org.eclipse.daanse.olap.function.def.except;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
-
+@RolapContextTest(FoodmartTestInstance.class)
 class ExceptFunDefTest {
 
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExceptEmpty(Context<?> context) {
         // If left is empty, result is empty.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Except(Filter([Gender].Members, 1=0), {[Gender].[Gender].[M]})", "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Except(Filter([Gender].Members, 1=0), {[Gender].[Gender].[M]})").returns( "" );
 
         // If right is empty, result is left.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Except({[Gender].[M]}, Filter([Gender].Members, 1=0))",
-            "[Gender].[Gender].[M]" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Except({[Gender].[M]}, Filter([Gender].Members, 1=0))")
+            .returns( "[Gender].[Gender].[M]" );
     }
 
     /**
      * Tests that Except() successfully removes crossjoined tuples from the axis results.  Previously, this would fail by
      * returning all tuples in the first argument to Except.  bug 1439627
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExceptCrossjoin(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Except(CROSSJOIN({[Promotion Media].[All Media]},\n"
                 + "                  [Product].[All Products].Children),\n"
                 + "       CROSSJOIN({[Promotion Media].[All Media]},\n"
-                + "                  {[Product].[All Products].[Drink]}))",
+                + "                  {[Product].[All Products].[Drink]}))")
+            .returns(
             "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Food]}\n"
                 + "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Non-Consumable]}" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testExtract(Context<?> context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "Crossjoin({[Gender].[F], [Gender].[M]},\n"
                 + "          {[Marital Status].Members}),\n"
-                + "[Gender])",
-            "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
+                + "[Gender])")
+            .returns( "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
 
         // Extract(<set>) with no dimensions is not valid
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Extract(Crossjoin({[Gender].[F], [Gender].[M]}, {[Marital Status].Members}))",
-            "No function matches signature 'Extract(<Set>)'", "Sales" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Extract(Crossjoin({[Gender].[F], [Gender].[M]}, {[Marital Status].Members}))")
+            .throwsMessage( "No function matches signature 'Extract(<Set>)'" );
 
         // Extract applied to non-constant dimension should fail
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Extract(Crossjoin([Gender].Members, [Store].Children), [Store].Hierarchy.Dimension)",
-            "not a constant hierarchy: [Store].Hierarchy.Dimension", "Sales" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Extract(Crossjoin([Gender].Members, [Store].Children), [Store].Hierarchy.Dimension)")
+            .throwsMessage( "not a constant hierarchy: [Store].Hierarchy.Dimension" );
 
         // Extract applied to non-constant hierarchy should fail
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Extract(Crossjoin([Gender].Members, [Store].Children), [Store].Hierarchy)",
-            "not a constant hierarchy: [Store].Hierarchy", "Sales" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Extract(Crossjoin([Gender].Members, [Store].Children), [Store].Hierarchy)")
+            .throwsMessage( "not a constant hierarchy: [Store].Hierarchy" );
 
         // Extract applied to set of members is OK (if silly). Duplicates are
         // removed, as always.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Extract({[Gender].[M], [Gender].Members}, [Gender])",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Extract({[Gender].[M], [Gender].Members}, [Gender])")
+            .returns(
             "[Gender].[Gender].[M]\n"
                 + "[Gender].[Gender].[All Gender]\n"
                 + "[Gender].[Gender].[F]" );
 
         // Extract of hierarchy not in set fails
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Extract(Crossjoin([Gender].Members, [Store].Children), [Marital Status])",
-            "hierarchy [Marital Status].[Marital Status] is not a hierarchy of the expression Crossjoin([Gender].Members, [Store].Children)" , "Sales");
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Extract(Crossjoin([Gender].Members, [Store].Children), [Marital Status])")
+            .throwsMessage( "hierarchy [Marital Status].[Marital Status] is not a hierarchy of the expression Crossjoin([Gender].Members, [Store].Children)" );
 
         // Extract applied to empty set returns empty set
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Extract(Crossjoin({[Gender].Parent}, [Store].Children), [Store])",
-            "" );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Extract(Crossjoin({[Gender].Parent}, [Store].Children), [Store])")
+            .returns( "" );
 
         // Extract applied to asymmetric set
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "{([Gender].[M], [Marital Status].[M]),\n"
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
-                + "[Gender])",
-            "[Gender].[Gender].[M]\n" + "[Gender].[Gender].[F]" );
+                + "[Gender])")
+            .returns( "[Gender].[Gender].[M]\n" + "[Gender].[Gender].[F]" );
 
         // Extract applied to asymmetric set (other side)
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "{([Gender].[M], [Marital Status].[M]),\n"
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
-                + "[Marital Status])",
+                + "[Marital Status])")
+            .returns(
             "[Marital Status].[Marital Status].[M]\n"
                 + "[Marital Status].[Marital Status].[S]" );
 
         // Extract more than one hierarchy
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "[Gender].Children * [Marital Status].Children * [Time].[1997].Children * [Store].[USA].Children,\n"
-                + "[Time], [Marital Status])",
+                + "[Time], [Marital Status])")
+            .returns(
             "{[Time].[Time].[1997].[Q1], [Marital Status].[Marital Status].[M]}\n"
                 + "{[Time].[Time].[1997].[Q2], [Marital Status].[Marital Status].[M]}\n"
                 + "{[Time].[Time].[1997].[Q3], [Marital Status].[Marital Status].[M]}\n"
@@ -133,13 +132,13 @@ class ExceptFunDefTest {
                 + "{[Time].[Time].[1997].[Q4], [Marital Status].[Marital Status].[S]}" );
 
         // Extract duplicate hierarchies fails
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "{([Gender].[M], [Marital Status].[M]),\n"
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
-                + "[Gender], [Gender])",
-            "hierarchy [Gender].[Gender] is extracted more than once", "Sales" );
+                + "[Gender], [Gender])")
+            .throwsMessage( "hierarchy [Gender].[Gender] is extracted more than once" );
     }
 
     /**
@@ -149,8 +148,7 @@ class ExceptFunDefTest {
      * <p>This test makes sure that
      * Hierarchize and Except can be used within each other and that the sort order is maintained.</p>
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchizeExcept(Context<?> context) throws Exception {
         final String[] mdxA =
             new String[] {
@@ -160,8 +158,8 @@ class ExceptFunDefTest {
                     + ".Children, [Customers].[USA].[CA].Children}), [Customers].[USA].[CA]) ON ROWS FROM [Sales] "
             };
         for ( String mdx : mdxA ) {
-            TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
-                mdx,
+            assertThatQuery(context.getConnectionWithDefaultRole(), mdx)
+                .returnsGrid(
                 "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"

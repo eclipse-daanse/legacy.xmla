@@ -13,28 +13,27 @@
  */
 package org.eclipse.daanse.olap.function.def.levels.string;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
+import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
+
+@RolapContextTest(FoodmartTestInstance.class)
 class LevelsStringPropertyDefTest {
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchyLevelsString(Context<?> context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[Time].Levels(\"Year\").UniqueName", "[Time].[Time].[Year]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[Time].Levels(\"Year\").UniqueName").returns( "[Time].[Time].[Year]" );
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testHierarchyLevelsStringFail(Context<?> context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[Time].Levels(\"nonexistent\").UniqueName",
-            "Level 'nonexistent' not found in hierarchy '[Time].[Time]'" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[Time].Levels(\"nonexistent\").UniqueName")
+            .throwsMessage( "Level 'nonexistent' not found in hierarchy '[Time].[Time]'" );
     }
 
 }
