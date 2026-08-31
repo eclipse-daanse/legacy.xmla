@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.assertSimpleQuery;
 import static org.opencube.junit5.TestUtil.checkThrowable;
@@ -284,8 +284,8 @@ class SchemaTest {
         }*/
         // EMF version of TestSolveOrderInCalculatedMemberModifier
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures].[QuantumProfit]} on 0, {(Gender.foo)} on 1 from sales",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Measures].[QuantumProfit]} on 0, {(Gender.foo)} on 1 from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -400,8 +400,8 @@ class SchemaTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Gender with default]} on columns from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Gender with default]} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -544,8 +544,8 @@ class SchemaTest {
             + "  </Dimension>\n"));
         */
         // note that default member name has no 'all' and has a name not an id
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Product with no all]} on columns from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Product with no all]} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -690,8 +690,8 @@ class SchemaTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Gender with default]} on columns from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Gender with default]} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1004,10 +1004,10 @@ class SchemaTest {
             null,
             "<Measure name=\"Fact Count\" aggregator=\"count\"/>\n"));
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Fact Count], [Measures].[Unit Sales]} on 0,\n"
             + "[Gender].members on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1607,8 +1607,8 @@ class SchemaTest {
             + "  </Hierarchy>\n"
             + "</Dimension>"));
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Yearly Income2]} on columns, {[Measures].[Unit Sales]} on rows from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Yearly Income2]} on columns, {[Measures].[Unit Sales]} on rows from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1723,18 +1723,18 @@ class SchemaTest {
             + "    <Level name=\"Yearly Income\" column=\"yearly_income\" uniqueMembers=\"true\"/>\n"
             + "  </Hierarchy>\n"
             + "</Dimension>")); */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "266,773");
 
         // NonEmptyCrossJoin Fails
         if (false) {
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
+            assertThatQuery(context.getConnectionWithDefaultRole(),
                 "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
                 + "NON EMPTY {[Measures].[Unit Sales]} on columns"
-                + " from [Sales]",
+                + " from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "266,773");
@@ -1848,9 +1848,9 @@ class SchemaTest {
             + "</Dimension>"));
         */
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Yearly Income].[$10K - $30K]} on columns,"
-            + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
+            + "{[Yearly Income2].[$150K +]} on rows from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1859,11 +1859,11 @@ class SchemaTest {
             + "{[Yearly Income2].[Yearly Income2].[$150K +]}\n"
             + "Row #0: 918\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "NON EMPTY Crossjoin({[Yearly Income].[All Yearly Incomes].Children},\n"
             + "                     [Yearly Income2].[All Yearly Income2s].Children) ON ROWS\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2105,10 +2105,10 @@ class SchemaTest {
             + "  </Hierarchy>\n"
             + "</Dimension>"));
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
             + "NON EMPTY {[Measures].[Unit Sales]} on columns"
-            + " from [Sales]",
+            + " from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2226,9 +2226,9 @@ class SchemaTest {
             + "  </Hierarchy>\n"
             + "</Dimension>"));
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Yearly Income].[$10K - $30K]} on columns,"
-            + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
+            + "{[Yearly Income2].[$150K +]} on rows from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2237,11 +2237,11 @@ class SchemaTest {
             + "{[Yearly Income2].[Yearly Income2].[$150K +]}\n"
             + "Row #0: \n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "NON EMPTY Crossjoin({[Yearly Income].[All Yearly Incomes].Children},\n"
             + "                     [Yearly Income2].[All Yearly Income2s].Children) ON ROWS\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2569,11 +2569,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[MyHierarchy].[Mexico]} on rows,"
             + "{[Customers].[Customers].[USA].[South West]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -3063,11 +3063,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[MyHierarchy].[USA].[South West]} on rows,"
             + "{[Customers].[Customers].[USA].[South West]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -3505,11 +3505,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -3898,11 +3898,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -4297,11 +4297,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -4664,11 +4664,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -4960,11 +4960,11 @@ class SchemaTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
             + " from "
-            + "AliasedDimensionsTesting",
+            + "AliasedDimensionsTesting").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -5174,11 +5174,11 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time2].[1997]} on columns,\n"
             + " {[Time].[1997].[Q3]} on rows\n"
-            + "From [Sales Two Dimensions]",
+            + "From [Sales Two Dimensions]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -5503,21 +5503,21 @@ class SchemaTest {
         }
         */
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Store].[All Stores].children} on columns \n"
-            + "From [Sales Create Dimension]",
+            + "From [Sales Create Dimension]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Store].[Store].[USA]}\n"
             + "Row #0: 266,773\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Store].[All Stores].children} on columns, \n"
             + "{[Time].[1997].[Q1]} on rows \n"
-            + "From [Sales Create Dimension]",
+            + "From [Sales Create Dimension]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -5645,10 +5645,10 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store State].members} on columns \n"
-            + "From [Customer Usage Level]",
+            + "From [Customer Usage Level]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -5676,10 +5676,10 @@ class SchemaTest {
         // BC.children should return an empty list, considering that we've
         // joined Store at the State level.
         if (false) {
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
+            assertThatQuery(context.getConnectionWithDefaultRole(),
                 "select\n"
                 + " {[Store].[All Stores].[Canada].[BC].children} on columns \n"
-                + "From [Customer Usage Level]",
+                + "From [Customer Usage Level]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n");
@@ -5836,11 +5836,11 @@ class SchemaTest {
         //
         // Under the old behavior, the member is called [Store2].[All Store2s].
         final String store2AllMember = "[Store2].[All Stores]";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store].[All Stores]} on columns,\n"
             + " {" + store2AllMember + "} on rows\n"
-            + "From [Sales Two Sales Dimensions]",
+            + "From [Sales Two Sales Dimensions]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -6012,8 +6012,8 @@ class SchemaTest {
         final String query = "select\n"
                              + " {[Time2].[Time].[1997]} on columns \n"
                              + "From [Sales Two Dimensions]";
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                query,
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                query).returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -6240,12 +6240,12 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " NON EMPTY {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
             + " NON EMPTY {[Store].[USA].Children} on rows\n"
             + "From [Warehouse (based on view)]\n"
-            + "where [Warehouse].[2]",
+            + "where [Warehouse].[2]").returnsGrid(
             "Axis #0:\n"
             + "{[Warehouse].[Warehouse].[2]}\n"
             + "Axis #1:\n"
@@ -6568,12 +6568,12 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
             + " {[Store].[USA].Children} on rows\n"
             + "From [Warehouse (based on view)]\n"
-            + "where [Warehouse].[USA]",
+            + "where [Warehouse].[USA]").returnsGrid(
             "Axis #0:\n"
             + "{[Warehouse].[Warehouse].[USA]}\n"
             + "Axis #1:\n"
@@ -6863,8 +6863,8 @@ class SchemaTest {
             + "</Cube>", null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Store Type].Children} on columns from [Store2]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Store Type].Children} on columns from [Store2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -7028,14 +7028,14 @@ class SchemaTest {
             }
         }
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],"
             + "    [Measures].[Customer Count], "
             + "    [Measures].[Customer Count2], "
             + "    [Measures].[Half Customer Count]} on 0,\n"
             + " {[Store].[USA].Children} ON 1\n"
             + "FROM [Sales]\n"
-            + "WHERE ([Gender].[M])",
+            + "WHERE ([Gender].[M])").returnsGrid(
             "Axis #0:\n"
             + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
@@ -7293,8 +7293,8 @@ class SchemaTest {
                 + "</Cube>\n"
                 + "</Schema>");
          */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select from [Sales Degen]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select from [Sales Degen]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "225,627.23");
@@ -7725,8 +7725,8 @@ class SchemaTest {
                 + "</Cube>\n"
                 + "</Schema>");
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select from [Denormalized Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select from [Denormalized Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "225,627.23");
@@ -8169,11 +8169,11 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures]} on 0 from [Sales2]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Measures]} on 0 from [Sales2]").returnsGrid(
             expected);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures]} on 0 from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Measures]} on 0 from [Sales]").returnsGrid(
             expected);
     }
 
@@ -8323,14 +8323,14 @@ class SchemaTest {
          */
         // In the query below Mondrian (prior to the fix) would
         // return the store name instead of the store type.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "   MEMBER [Measures].[StoreType] AS \n"
             + "   '[Store2].CurrentMember.Properties(\"Store Type\")'\n"
             + "SELECT\n"
             + "   NonEmptyCrossJoin({[Store2].[All Stores].children}, {[Product].[All Products]}) ON ROWS,\n"
             + "   { [Measures].[Store Sales], [Measures].[StoreType]} ON COLUMNS\n"
-            + "FROM Sales",
+            + "FROM Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -8528,8 +8528,8 @@ class SchemaTest {
             null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Promotion Media]} on columns from [OneDim]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Promotion Media]} on columns from [OneDim]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -8664,8 +8664,8 @@ class SchemaTest {
             null, null, null, null);
         withSchema(context, schema);
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Product].Children} on columns from [OneDimUsage]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Product].Children} on columns from [OneDimUsage]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -8930,8 +8930,8 @@ class SchemaTest {
             }
         }
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures].[Unit Sales]} on columns from [NoDim]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Measures].[Unit Sales]} on columns from [NoDim]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -9213,9 +9213,9 @@ class SchemaTest {
         // Because there are no explicit stored measures, the default measure is
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures]} on columns from [OneCalcMeasure]\n"
-            + "where [Promotion Media].[TV]",
+            + "where [Promotion Media].[TV]").returnsGrid(
             "Axis #0:\n"
             + "{[Promotion Media].[Promotion Media].[TV]}\n"
             + "Axis #1:\n"
@@ -9343,8 +9343,8 @@ class SchemaTest {
         // Because there are no explicit stored measures, the default measure is
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Store].[Store].[USA].[CA].[SF and LA]} on columns from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Store].[Store].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -9354,8 +9354,8 @@ class SchemaTest {
         // Now access the same member using a path that is not its unique name.
         // Only works with new name resolver (if ssas = true).
 
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -9411,8 +9411,8 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -9474,8 +9474,8 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -9534,8 +9534,8 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -9595,8 +9595,8 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -9659,8 +9659,8 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -9722,8 +9722,8 @@ class SchemaTest {
                     + "</CalculatedMember>",
                     null, false));
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -10154,11 +10154,11 @@ class SchemaTest {
 
             withSchema(context, schema);
              */
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
+            assertThatQuery(context.getConnectionWithDefaultRole(),
                 "select\n"
                 + " {[Time2].[1997]} on columns,\n"
                 + " {[Time].[1997].[Q3]} on rows\n"
-                + "From [Sales Two Dimensions]",
+                + "From [Sales Two Dimensions]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -10688,9 +10688,9 @@ class SchemaTest {
             }
         }
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [TIME].[CALENDAR].[All TIME(CALENDAR)] on columns\n"
-            + "from [Sales Special Time]",
+            + "from [Sales Special Time]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -10816,8 +10816,8 @@ class SchemaTest {
             + "</Role>\n");
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Role1Plus2Plus1"))),
-            "select from [Sales]",
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Role1Plus2Plus1"))),
+            "select from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "266,773");
@@ -11076,7 +11076,7 @@ class SchemaTest {
             "<NamedSet name=\"Non CA State Stores\" "
             + "formula=\"EXCEPT({[Store].[Store Country].[USA].children},{[Store].[Store Country].[USA].[CA]})\"/>"));
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH "
             + "SET [Non CA State Stores] AS 'EXCEPT({[Store].[Store Country].[USA].children},"
             + "{[Store].[Store Country].[USA].[CA]})'\n"
@@ -11084,7 +11084,7 @@ class SchemaTest {
             + "[Store].[Total Non CA State] AS \n"
             + "'SUM({[Non CA State Stores]})'\n"
             + "SELECT {[Store].[Store Country].[USA],[Store].[Total Non CA State]} ON 0,"
-            + "{[Measures].[Unit Sales]} ON 1 FROM [Sales]",
+            + "{[Measures].[Unit Sales]} ON 1 FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -11094,13 +11094,13 @@ class SchemaTest {
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n"
             + "Row #0: 192,025\n");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH "
             + "MEMBER "
             + "[Store].[Total Non CA State] AS \n"
             + "'SUM({[Non CA State Stores]})'\n"
             + "SELECT {[Store].[Store Country].[USA],[Store].[Total Non CA State]} ON 0,"
-            + "{[Measures].[Unit Sales]} ON 1 FROM [Warehouse and Sales]",
+            + "{[Measures].[Unit Sales]} ON 1 FROM [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -11175,7 +11175,7 @@ class SchemaTest {
          */
 
         try {
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
+            assertThatQuery(context.getConnectionWithDefaultRole(),
                 "WITH "
                 + "SET [Non CA State Stores] AS 'EXCEPT({[Store].[Store Country].[USA].children},"
                 + "{[Store].[Store Country].[USA].[CA]})'\n"
@@ -11183,7 +11183,7 @@ class SchemaTest {
                 + "[Store].[Total Non CA State] AS \n"
                 + "'SUM({[Non CA State Stores]})'\n"
                 + "SELECT {[Store].[Store Country].[USA],[Store].[Total Non CA State]} ON 0,"
-                + "{[Measures].[Unit Sales]} ON 1 FROM [Sales]",
+                + "{[Measures].[Unit Sales]} ON 1 FROM [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -11658,8 +11658,8 @@ class SchemaTest {
             + "  </Dimension>\n"));
          */
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Binary].members} on 0 from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Binary].members} on 0 from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -11673,8 +11673,8 @@ class SchemaTest {
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select hierarchize({[Binary].members}) on 0 from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select hierarchize({[Binary].members}) on 0 from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -11931,8 +11931,8 @@ class SchemaTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>\n"));
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Big numbers].members} on 0 from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Big numbers].members} on 0 from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -12164,7 +12164,7 @@ class SchemaTest {
     void _testAttributeHierarchy(Context<?> context) {
         // from email from peter tran dated 2008/9/8
         // TODO: schema syntax to create attribute hierarchy
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + " MEMBER\n"
             + "  Measures.SalesPerWorkingDay AS \n"
@@ -12193,7 +12193,7 @@ class SchemaTest {
             + "    )\n"
             + "SELECT [Measures].[SalesPerWorkingDay] ON 0\n"
             + ", [Date].[Calendar].[Month].MEMBERS ON 1\n"
-            + "FROM [Adventure Works]",
+            + "FROM [Adventure Works]").returnsGrid(
             "x");
     }
 
@@ -12343,10 +12343,10 @@ class SchemaTest {
                 }
         }
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[Unit Sales]} on 0,\n"
             + " non empty Filter({[Product truncated].Members}, [Measures].[Unit Sales] > 10000) on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -12713,8 +12713,8 @@ class SchemaTest {
             + "SELECT {[Measures].[Unit Sales]} on columns, "
             + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales2]";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            query1,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            query1).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -12731,8 +12731,8 @@ class SchemaTest {
             + "SELECT {[Measures].[Unit Sales]} on columns, "
             + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales2]";
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            query2,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            query2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -12757,9 +12757,9 @@ class SchemaTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, CheckBugMondrian355Modifier1Emf.class },
         database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian355(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select Head([Time2].[Quarter hours].Members, 3) on columns\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -12772,12 +12772,12 @@ class SchemaTest {
 
         // Check that can apply ParallelPeriod to a TimeUndefined level.
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "Sales",
-            "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])",
+        assertThatAxis(connection, "Sales",
+            "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])").returns(
             "[Time2].[Time2].[1997].[Q1].[1].[368]");
 
-        assertAxisReturns(connection, "Sales",
-            "PeriodsToDate([Time2].[Half year], [Time2].[1997].[Q1].[1].[368])",
+        assertThatAxis(connection, "Sales",
+            "PeriodsToDate([Time2].[Half year], [Time2].[1997].[Q1].[1].[368])").returns(
             "[Time2].[Time2].[1997].[Q1].[1].[367]\n"
             + "[Time2].[Time2].[1997].[Q1].[1].[368]");
     }
@@ -14478,10 +14478,10 @@ class SchemaTest {
         final String x = !Bug.Bug747Fixed
             ? "1,379,620"
             : "266,773";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[unitsales2]} on 0,\n"
             + " non empty [Store].members on 1\n"
-            + "from [cube2]",
+            + "from [cube2]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -14498,10 +14498,10 @@ class SchemaTest {
             + "Row #3: 135,318\n"
             + "Row #4: 870,562\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[unitsales1]} on 0,\n"
             + " non empty [Store].members on 1\n"
-            + "from [cube1]",
+            + "from [cube1]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -14544,10 +14544,10 @@ class SchemaTest {
             + "Row #16: 2,203\n"
             + "Row #17: 11,491\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[unitsales2], [Measures].[unitsales1]} on 0,\n"
             + " non empty [Store].members on 1\n"
-            + "from [virtual_cube]",
+            + "from [virtual_cube]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -15212,10 +15212,10 @@ class SchemaTest {
         }
 
     private void checkBugMondrian463(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures] on 0,\n"
             + " head([Product3].members, 10) on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -16816,8 +16816,8 @@ class SchemaTest {
                 null, cube, null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -18906,8 +18906,8 @@ class SchemaTest {
                 null, cube, null, null, null, null);
         withSchema(context, schema);
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {Crossjoin([Product].[Product Family].Members, [Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select {Crossjoin([Product].[Product Family].Members, [Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -19271,8 +19271,8 @@ class SchemaTest {
         default:
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "$39,431.67");
@@ -19290,8 +19290,8 @@ class SchemaTest {
         default:
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "$39,431.67");
@@ -19309,8 +19309,8 @@ class SchemaTest {
         default:
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "$39,431.67");
@@ -19328,8 +19328,8 @@ class SchemaTest {
         default:
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "$39,431.67");
@@ -19347,8 +19347,8 @@ class SchemaTest {
         default:
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "$39,431.67");
@@ -19366,8 +19366,8 @@ class SchemaTest {
         default:
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select from [HR]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "$39,431.67");
@@ -19612,8 +19612,8 @@ class SchemaTest {
             + "  </Dimension>\n"));
          */
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select non empty crossjoin({[PandaSteak].[Level3].[level 3 - 1], [PandaSteak].[Level3].[level 3 - 2]}, {[Measures].[Unit Sales], [Measures].[Store Cost]}) on columns, {[Product].[Product Family].Members} on rows from [Sales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select non empty crossjoin({[PandaSteak].[Level3].[level 3 - 1], [PandaSteak].[Level3].[level 3 - 2]}, {[Measures].[Unit Sales], [Measures].[Store Cost]}) on columns, {[Product].[Product Family].Members} on rows from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -20063,9 +20063,9 @@ class SchemaTest {
                 + "</Cube>\n"
                 + "</Schema>");
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Org Salary]} on columns,\n"
-            + "{[Store].[Store Country].Members} on rows from [HR]",
+            + "{[Store].[Store Country].Members} on rows from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -20184,9 +20184,9 @@ class SchemaTest {
                     null, null, null, null);
         withSchema(context, schema);
         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(), "CubeB",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT [Measures].[Fantastic Count for Different Types of Promotion] ON COLUMNS\n"
-            + "FROM [CubeB]",
+            + "FROM [CubeB]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -20234,8 +20234,8 @@ class SchemaTest {
         context.setProperty(RolapConnectionProperties.Catalog.name(),
                 schemaFile.getAbsolutePath());
          */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select [Gender].members on 0 from sales",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select [Gender].members on 0 from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -20347,12 +20347,12 @@ class SchemaTest {
         withSchema(context, schema);
        */
 
-      assertQueryReturns(context.getConnection(new ConnectionProps(List.of("dev"))),
+      assertThatQuery(context.getConnection(new ConnectionProps(List.of("dev"))),
           "SELECT\n"
           + "[Product].[All Products] ON 0,\n"
           + "[Measures].[Store Sales] ON 1\n"
           + "FROM [Sales]\n"
-          + "WHERE FILTER([Store Type].children, [Store Type].CURRENTMEMBER NOT IN {[Store Type].[Deluxe Supermarket], [Store Type].[Gourmet Supermarket]})\n",
+          + "WHERE FILTER([Store Type].children, [Store Type].CURRENTMEMBER NOT IN {[Store Type].[Deluxe Supermarket], [Store Type].[Gourmet Supermarket]})\n").returnsGrid(
           "Axis #0:\n"
           + "{[Store Type].[Store Type].[HeadQuarters]}\n"
           + "{[Store Type].[Store Type].[Mid-Size Grocery]}\n"

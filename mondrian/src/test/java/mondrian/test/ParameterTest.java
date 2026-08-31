@@ -10,8 +10,8 @@
 */
 package mondrian.test;
 
-import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
 import static org.opencube.junit5.TestUtil.assertParameterizedExprReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.checkThrowable;
@@ -374,8 +373,8 @@ class ParameterTest {
     @Test
     void testNumericParameterStringValueFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"S\",NUMERIC,\"x\" || \"y\",\"A string parameter\")",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"S\",NUMERIC,\"x\" || \"y\",\"A string parameter\")").throwsMessage(
             "java.lang.NumberFormatException: For input string: \"xy\"");
     }
 
@@ -388,12 +387,12 @@ class ParameterTest {
             "Parameter(\"Foo\",[Time],[Time].[1997].[Q2].[5],\"Foo\").Name").returns(
             "5");
         // wrong dimension
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time],[Product].[All Products],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time],[Product].[All Products],\"Foo\").Name").throwsMessage(
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy=[Time].[Time]>");
         // non-existent member
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time],[Time].[1997].[Q5],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time],[Time].[1997].[Q5],\"Foo\").Name").throwsMessage(
             "MDX object '[Time].[1997].[Q5]' not found in cube 'Sales'");
     }
 
@@ -406,12 +405,12 @@ class ParameterTest {
           "Parameter(\"Foo\",[Store],[Store].[USA].[OR].[Portland],\"Foo\").Name").returns(
           "Portland");
       // wrong dimension
-      assertExprThrows(connection, "Sales",
-          "Parameter(\"Foo\",[Store],[Product].[All Products],\"Foo\").Name",
+      assertThatExpr(connection, "Sales",
+          "Parameter(\"Foo\",[Store],[Product].[All Products],\"Foo\").Name").throwsMessage(
           "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy=[Store].[Store]>");
       // non-existent member
-      assertExprThrows(connection, "Sales",
-          "Parameter(\"Foo\",[Store],[Store].[USA].[NY],\"Foo\").Name",
+      assertThatExpr(connection, "Sales",
+          "Parameter(\"Foo\",[Store],[Store].[USA].[NY],\"Foo\").Name").throwsMessage(
           "MDX object '[Store].[USA].[NY]' not found in cube 'Sales'");
   }
 
@@ -423,20 +422,20 @@ class ParameterTest {
             "40");
         // right dimension, wrong hierarchy
         final String levelName = "[Time].[Weekly]";
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time].[Weekly],[Time].[1997].[Q1],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time].[Weekly],[Time].[1997].[Q1],\"Foo\").Name").throwsMessage(
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy="
             + levelName
             + ">");
         // wrong dimension
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time].[Weekly],[Product].[All Products],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time].[Weekly],[Product].[All Products],\"Foo\").Name").throwsMessage(
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy="
             + levelName
             + ">");
         // garbage
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time].[Weekly],[Widget].[All Widgets],\"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time].[Weekly],[Widget].[All Widgets],\"Foo\").Name").throwsMessage(
             "MDX object '[Widget].[All Widgets]' not found in cube 'Sales'");
     }
 
@@ -446,16 +445,16 @@ class ParameterTest {
         assertThatExpr(connection, "Sales",
             "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3], \"Foo\").Name").returns(
             "Q3");
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3].[8], \"Foo\").Name",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3].[8], \"Foo\").Name").throwsMessage(
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<level=[Time].[Time].[Quarter]>");
     }
 
     @Test
     void testParameterMemberFails(Context<?> context) {
         // type of a param can be dimension, hierarchy, level but not member
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "Parameter(\"Foo\",[Time].[1997].[Q2],[Time].[1997],\"Foo\")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Parameter(\"Foo\",[Time].[1997].[Q2],[Time].[1997],\"Foo\")").throwsMessage(
             "Invalid type for parameter 'Foo'; expecting NUMERIC, STRING or a hierarchy");
     }
 
@@ -466,8 +465,8 @@ class ParameterTest {
     @Test
     void testParameterMemberFailsBadLevel(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\", [Customers].[State], [Customers].[USA].[CA], \"\")",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\", [Customers].[State], [Customers].[USA].[CA], \"\")").throwsMessage(
             "MDX object '[Customers].[State]' not found in cube 'Sales'");
         assertThatExpr(connection, "Sales",
             "Parameter(\"Foo\", [Customers].[State Province], [Customers].[USA].[CA], \"\")").returns(
@@ -534,8 +533,8 @@ class ParameterTest {
     @Test
     void testParameterWithExpressionForHierarchyFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Gender].DefaultMember.Hierarchy,[Gender].[M],\"Foo\")",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"Foo\",[Gender].DefaultMember.Hierarchy,[Gender].[M],\"Foo\")").throwsMessage(
             "Invalid parameter 'Foo'. Type must be a NUMERIC, STRING, or a dimension, hierarchy or level");
     }
 
@@ -596,7 +595,7 @@ class ParameterTest {
 
     @Test
     void testParamRefWithoutParamFails(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "ParamRef(\"Y\")", "Unknown parameter 'Y'");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "ParamRef(\"Y\")").throwsMessage( "Unknown parameter 'Y'");
     }
 
     @Test
@@ -612,8 +611,8 @@ class ParameterTest {
     @Test
     void testParamBadTypeFails(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprThrows(connection, "Sales",
-            "Parameter(\"P\", 5)",
+        assertThatExpr(connection, "Sales",
+            "Parameter(\"P\", 5)").throwsMessage(
             "No function matches signature 'Parameter(<String>, <Numeric Expression>)'");
     }
 
@@ -628,9 +627,9 @@ class ParameterTest {
 
     @Test
     void testParamCyclicFails(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Parameter(\"P\", NUMERIC, ParamRef(\"Q\") + 1) + "
-            + "Parameter(\"Q\", NUMERIC, Iif(1 = 1, ParamRef(\"P\"), 2))",
+            + "Parameter(\"Q\", NUMERIC, Iif(1 = 1, ParamRef(\"P\"), 2))").throwsMessage(
             "Cycle occurred while evaluating parameter 'P'");
     }
 
@@ -1150,8 +1149,8 @@ class ParameterTest {
     void testConnectionPropsWhichShouldBeNull(Context<?> context) {
         // properties which must always return null
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprThrows(connection, "Sales", "ParamRef(\"JdbcPassword\")", "Unknown parameter 'JdbcPassword'"); // was deleted
-        assertExprThrows(connection, "Sales", "ParamRef(\"CatalogContent\")", "Unknown parameter 'CatalogContent'");
+        assertThatExpr(connection, "Sales", "ParamRef(\"JdbcPassword\")").throwsMessage( "Unknown parameter 'JdbcPassword'"); // was deleted
+        assertThatExpr(connection, "Sales", "ParamRef(\"CatalogContent\")").throwsMessage( "Unknown parameter 'CatalogContent'");
     }
 
 
@@ -1181,8 +1180,8 @@ class ParameterTest {
      */
     @Test
     void testUnsetConfigPropNotAvailable(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "ParamRef(" + Util.singleQuoteString(ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY) + ")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(" + Util.singleQuoteString(ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY) + ")").throwsMessage(
             "Unknown parameter '" + ConfigConstants.COMPARE_SIBLINGS_BY_ORDER_KEY + "'");
     }
 
@@ -1191,8 +1190,8 @@ class ParameterTest {
      */
     @Test
     void testSystemPropsNotAvailable(Context<?> context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "ParamRef(\"java.version\")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(\"java.version\")").throwsMessage(
             "Unknown parameter 'java.version'");
     }
 
@@ -1300,7 +1299,10 @@ class ParameterTest {
             null);
         withSchema(context, schema);
          */
-        assertExprThrows(context, "Sales",
+        // Not assertThatExpr: the failure happens while resolving the connection
+        // itself (duplicate parameter is caught at schema load), before any MDX
+        // runs, so it must be inside the same try/catch as the connection lookup.
+        TestUtil.assertExprThrows(context, "Sales",
             "ParamRef(\"foo\")",
             "Duplicate parameter 'foo' in schema");
         context.getCatalogCache().clear();
@@ -1343,8 +1345,8 @@ class ParameterTest {
             null);
         withSchema(context, schema);
          */
-        assertExprThrows(context, "Sales",
-            "1",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "1").throwsMessage(
             "In Schema: In Parameter: "
             + "Value 'Bad type' of attribute 'type' has illegal value 'Bad type'.  "
             + "Legal values: {String, Numeric, Integer, Boolean, Date, Time, Timestamp, Member}");
@@ -1385,8 +1387,8 @@ class ParameterTest {
             null);
         withSchema(context,schema);
          */
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "ParamRef(\"Product Current Member\")",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParamRef(\"Product Current Member\")").throwsMessage(
             "No function matches signature '<Member>.Children(<Numeric Expression>)'");
     }
 

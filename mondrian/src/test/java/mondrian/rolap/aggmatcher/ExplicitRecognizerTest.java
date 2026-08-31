@@ -11,13 +11,14 @@ package mondrian.rolap.aggmatcher;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQuerySql;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
@@ -53,11 +54,9 @@ class ExplicitRecognizerTest {
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
-        TestUtil.flushSchemaCache(connection);
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`the_year` as `c0`,\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`quarter` as `c1`,\n"
@@ -87,11 +86,9 @@ class ExplicitRecognizerTest {
                     : "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`the_year`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`the_year` ASC,\n"
                     + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`quarter`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`quarter` ASC,\n"
                     + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`month_of_year`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`month_of_year` ASC,\n"
-                    + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`gender`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`gender` ASC")));
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+                    + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`gender`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`gender` ASC"))).verify();
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`the_year` as `c0`,\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`quarter` as `c1`,\n"
@@ -108,7 +105,7 @@ class ExplicitRecognizerTest {
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`the_year`,\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`quarter`,\n"
                 + "    `agg_g_ms_pcat_sales_fact_1997`.`month_of_year`,\n"
-                + "    `agg_g_ms_pcat_sales_fact_1997`.`gender`"));
+                + "    `agg_g_ms_pcat_sales_fact_1997`.`gender`")).verify();
     }
 
     @Test
@@ -124,10 +121,8 @@ class ExplicitRecognizerTest {
             + "from [ExtraCol] ";
         // Run the query twice, verifying both the SqlTupleReader and
         // Segment load queries.
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `agg_c_14_sales_fact_1997`.`the_year` as `c0`,\n"
                 + "    `agg_c_14_sales_fact_1997`.`quarter` as `c1`,\n"
@@ -173,12 +168,10 @@ class ExplicitRecognizerTest {
                     + "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC,\n"
                     + "    ISNULL(`store`.`store_state`) ASC, `store`.`store_state` ASC,\n"
                     + "    ISNULL(`store`.`store_city`) ASC, `store`.`store_city` ASC,\n"
-                    + "    ISNULL(`store`.`store_name`) ASC, `store`.`store_name` ASC")));
+                    + "    ISNULL(`store`.`store_name`) ASC, `store`.`store_name` ASC"))).verify();
 
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `agg_c_14_sales_fact_1997`.`the_year` as `c0`,\n"
                 + "    `agg_c_14_sales_fact_1997`.`quarter` as `c1`,\n"
@@ -197,7 +190,7 @@ class ExplicitRecognizerTest {
                 + "    `agg_c_14_sales_fact_1997`.`the_year`,\n"
                 + "    `agg_c_14_sales_fact_1997`.`quarter`,\n"
                 + "    `agg_c_14_sales_fact_1997`.`month_of_year`,\n"
-                + "    `store`.`store_name`"));
+                + "    `store`.`store_name`")).verify();
     }
 
     @Test
@@ -212,10 +205,8 @@ class ExplicitRecognizerTest {
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test`.`testyear` as `c0`,\n"
                 + "    `exp_agg_test`.`testqtr` as `c1`,\n"
@@ -243,7 +234,7 @@ class ExplicitRecognizerTest {
                     + "    ISNULL(`exp_agg_test`.`testqtr`) ASC, `exp_agg_test`.`testqtr` ASC,\n"
                     + "    ISNULL(`exp_agg_test`.`testmonthord`) ASC, `exp_agg_test`.`testmonthord` ASC,\n"
                     + "    ISNULL(`exp_agg_test`.`testmonthname`) ASC, `exp_agg_test`.`testmonthname` ASC,\n"
-                    + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC")));
+                    + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC"))).verify();
     }
 
     @Test
@@ -258,10 +249,8 @@ class ExplicitRecognizerTest {
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test`.`testyear` as `c0`,\n"
                 + "    `exp_agg_test`.`testqtr` as `c1`,\n"
@@ -287,7 +276,7 @@ class ExplicitRecognizerTest {
                     : "    ISNULL(`exp_agg_test`.`testyear`) ASC, `exp_agg_test`.`testyear` ASC,\n"
                     + "    ISNULL(`exp_agg_test`.`testqtr`) ASC, `exp_agg_test`.`testqtr` ASC,\n"
                     + "    ISNULL(`exp_agg_test`.`testmonthname`) ASC, `exp_agg_test`.`testmonthname` ASC,\n"
-                    + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC")));
+                    + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC"))).verify();
     }
 
     @Disabled //TODO need investigate
@@ -303,10 +292,8 @@ class ExplicitRecognizerTest {
             + "non empty CrossJoin({[TimeExtra].[Month].members},{[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test`.`testyear` as `c0`,\n"
                 + "    `exp_agg_test`.`testqtr` as `c1`,\n"
@@ -334,7 +321,7 @@ class ExplicitRecognizerTest {
                     : "    ISNULL(`exp_agg_test`.`testyear`) ASC, `exp_agg_test`.`testyear` ASC,\n"
                     + "    ISNULL(`exp_agg_test`.`testqtr`) ASC, `exp_agg_test`.`testqtr` ASC,\n"
                     + "    ISNULL(`exp_agg_test`.`testmonthname`) ASC, `exp_agg_test`.`testmonthname` ASC,\n"
-                    + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC")));
+                    + "    ISNULL(`exp_agg_test`.`gender`) ASC, `exp_agg_test`.`gender` ASC"))).verify();
     }
 
     @Test
@@ -349,10 +336,8 @@ class ExplicitRecognizerTest {
             + "select { measures.[propVal], measures.[Customer Count], [Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[Gender].[Gender].Gender.members},{[Store].[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
             + "from [ExtraCol]";
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test_distinct_count`.`gender` as `c0`,\n"
                 + "    `exp_agg_test_distinct_count`.`store_country` as `c1`,\n"
@@ -382,7 +367,7 @@ class ExplicitRecognizerTest {
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_country`) ASC, `exp_agg_test_distinct_count`.`store_country` ASC,\n"
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_st`) ASC, `exp_agg_test_distinct_count`.`store_st` ASC,\n"
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_cty`) ASC, `exp_agg_test_distinct_count`.`store_cty` ASC,\n"
-                    + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC")));
+                    + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC"))).verify();
 
         assertQueryReturns(connection,
             "Store Address Property should be '5922 La Salle Ct'",
@@ -403,10 +388,8 @@ class ExplicitRecognizerTest {
             + "Row #1: 39\n"
             + "Row #1: 11,523\n");
         // Should use agg table for distinct count measure
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test_distinct_count`.`testyear` as `c0`,\n"
                 + "    `exp_agg_test_distinct_count`.`gender` as `c1`,\n"
@@ -418,7 +401,7 @@ class ExplicitRecognizerTest {
                 + "where\n"
                 + "    `exp_agg_test_distinct_count`.`testyear` = 1997\n"
                 + "and\n"
-                + "    `exp_agg_test_distinct_count`.`store_name` = 'Store 16'"));
+                + "    `exp_agg_test_distinct_count`.`store_name` = 'Store 16'")).verify();
     }
 
     @Test
@@ -436,10 +419,8 @@ class ExplicitRecognizerTest {
             + "non empty CrossJoin({[TimeExtra].[TimeExtra].Year.members},{[Store].[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
             + "from [ExtraCol]";
 
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test_distinct_count`.`testyear` as `c0`,\n"
                 + "    `exp_agg_test_distinct_count`.`store_country` as `c1`,\n"
@@ -469,12 +450,10 @@ class ExplicitRecognizerTest {
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_country`) ASC, `exp_agg_test_distinct_count`.`store_country` ASC,\n"
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_st`) ASC, `exp_agg_test_distinct_count`.`store_st` ASC,\n"
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_cty`) ASC, `exp_agg_test_distinct_count`.`store_cty` ASC,\n"
-                    + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC")));
+                    + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC"))).verify();
 
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `exp_agg_test_distinct_count`.`testyear` as `c0`,\n"
                 + "    `exp_agg_test_distinct_count`.`store_name` as `c1`,\n"
@@ -488,7 +467,7 @@ class ExplicitRecognizerTest {
                 + "    `exp_agg_test_distinct_count`.`store_name` = 'Store 16'\n"
                 + "group by\n"
                 + "    `exp_agg_test_distinct_count`.`testyear`,\n"
-                + "    `exp_agg_test_distinct_count`.`store_name`"));
+                + "    `exp_agg_test_distinct_count`.`store_name`")).verify();
     }
 
     @Test
@@ -506,10 +485,8 @@ class ExplicitRecognizerTest {
         // Seg load query should not use agg table, since the independent
         // attributes for store are on the aggStar bitkey and not part of the
         // request and rollup is not safe
-        assertQuerySql(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `time_by_day`.`the_year` as `c0`,\n"
                 + "    `customer`.`gender` as `c1`,\n"
@@ -530,7 +507,7 @@ class ExplicitRecognizerTest {
                 + "    `customer`.`gender` = 'F'\n"
                 + "group by\n"
                 + "    `time_by_day`.`the_year`,\n"
-                + "    `customer`.`gender`"));
+                + "    `customer`.`gender`")).verify();
     }
 
 }

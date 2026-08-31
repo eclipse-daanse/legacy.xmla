@@ -17,6 +17,7 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -411,13 +412,12 @@ query).returnsGrid(
             + "UPPER('Time.Weekly') group by `store`.`store_country` order by"
             + " ISNULL(`store`.`store_country`) ASC, "
             + "`store`.`store_country` ASC";
-        TestUtil.assertNoQuerySql(context.getConnectionWithDefaultRole(),
-            "with member [Time].[Weekly].blah as '1' select from sales",
-            new SqlPattern[]{
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            "with member [Time].[Weekly].blah as '1' select from sales").expectNoSql(new SqlPattern[]{
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     forbiddenSql, forbiddenSql)
             }
-        );
+        ).verify();
     }
 }

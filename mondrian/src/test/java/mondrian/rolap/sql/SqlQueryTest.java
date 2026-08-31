@@ -17,9 +17,6 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.opencube.junit5.TestUtil.assertNoQuerySql;
-import static org.opencube.junit5.TestUtil.assertQuerySql;
-import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
 
@@ -27,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -305,7 +303,7 @@ class SqlQueryTest {
                 DatabaseProduct.ACCESS, accessSql, accessSql),
             new SqlPattern(MYSQL, mysqlSql, mysqlSql)};
 
-        assertQuerySql(connection, mdx, sqlPatterns);
+        SqlAssert.forQuery(connection, mdx).expectSql(sqlPatterns).verify();
     }
 
     @Test
@@ -343,7 +341,7 @@ class SqlQueryTest {
         SqlPattern[] sqlPatterns = {
             new SqlPattern(DatabaseProduct.ACCESS, sql, sql)
         };
-        assertQuerySql(connection, mdx, sqlPatterns);
+        SqlAssert.forQuery(connection, mdx).expectSql(sqlPatterns).verify();
     }
 
     @Test
@@ -388,7 +386,7 @@ class SqlQueryTest {
                 DatabaseProduct.ACCESS, accessSql, accessSql),
             new SqlPattern(MYSQL, mysqlSql, mysqlSql)};
 
-        assertQuerySql(connection, mdx, sqlPatterns);
+        SqlAssert.forQuery(connection, mdx).expectSql(sqlPatterns).verify();
     }
 
     /**
@@ -447,7 +445,7 @@ class SqlQueryTest {
                 DatabaseProduct.ACCESS, accessSql, accessSql),
             new SqlPattern(MYSQL, mysqlSql, mysqlSql)};
 
-        assertQuerySql(connection, mdx, sqlPatterns);
+        SqlAssert.forQuery(connection, mdx).expectSql(sqlPatterns).verify();
     }
 
     @Test
@@ -615,7 +613,7 @@ class SqlQueryTest {
                 loadSqlLucidDB,
                 loadSqlLucidDB)
         };
-        assertQuerySql(connection, query, patterns);
+        SqlAssert.forQuery(connection, query).expectSql(patterns).verify();
     }
 
     /**
@@ -646,9 +644,8 @@ class SqlQueryTest {
                 DatabaseProduct.ORACLE, sqlOracle, sqlOracle),
         };
 
-        assertNoQuerySql(connection,
-            "select {[Time].[Weekly].[All Weeklys]} ON COLUMNS from [Sales]",
-            patterns);
+        SqlAssert.forQuery(connection,
+            "select {[Time].[Weekly].[All Weeklys]} ON COLUMNS from [Sales]").expectNoSql(patterns).verify();
     }
 
     /**
@@ -678,13 +675,8 @@ class SqlQueryTest {
             new SqlPattern(
                 MYSQL, forbiddenSqlMysql, null)
         };
-        assertQuerySqlOrNot(
-            connection,
-            mdxQuery,
-            patterns,
-            true,
-            true,
-            true);
+        SqlAssert.forQuery(connection,
+            mdxQuery).bypassSchemaCache().clearCacheFirst().expectNoSql(patterns).verify();
     }
 
     @Test
@@ -721,7 +713,7 @@ class SqlQueryTest {
         SqlPattern myPattern = new SqlPattern(MYSQL, mySql, mySql.length());
         SqlPattern[] patterns = {pgPattern, myPattern};
         executeQuery(connection, mdx);
-        assertQuerySqlOrNot(connection, mdx, patterns, true, false, false);
+        SqlAssert.forQuery(connection, mdx).keepCache().expectNoSql(patterns).verify();
     }
 
     /**
@@ -756,7 +748,7 @@ class SqlQueryTest {
             + "and `time_by_day`.`the_year` = 1997))";
         SqlPattern mySqlPattern =
             new SqlPattern(DatabaseProduct.MYSQL, sql, sql.length());
-        assertQuerySql(connection, mdx, new SqlPattern[]{mySqlPattern});
+        SqlAssert.forQuery(connection, mdx).expectSql(new SqlPattern[]{mySqlPattern}).verify();
     }
 
     private boolean isGroupingSetsSupported(Connection connection) {

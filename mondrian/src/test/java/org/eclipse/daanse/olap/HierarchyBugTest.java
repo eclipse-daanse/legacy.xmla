@@ -39,6 +39,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -139,7 +140,7 @@ class HierarchyBugTest {
         verifyMemberLevelNamesIdentityDimAxis(
             resultTime.getAxes()[1], "[Time].[Time]");
 
-TestUtil.flushSchemaCache(conn);
+FlushSchemaCacheModifier.flushSchemaCache(conn);
     }
 	@Test
     void testNamesIdentitySsasCompatibleWeeklyHierarchy(Context<?> foodMartContext) {
@@ -161,7 +162,7 @@ TestUtil.flushSchemaCache(conn);
             resultWeekly.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
             resultWeekly.getAxes()[1], "[Time].[Weekly]");
-        TestUtil.flushSchemaCache(conn);
+        FlushSchemaCacheModifier.flushSchemaCache(conn);
     }
 	@Test
     void testNamesIdentitySsasInCompatibleTimeHierarchy(Context<?> foodMartContext) {
@@ -177,7 +178,7 @@ TestUtil.flushSchemaCache(conn);
             resultTime.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
             resultTime.getAxes()[1], "[Time].[Time]");
-        TestUtil.flushSchemaCache(conn);
+        FlushSchemaCacheModifier.flushSchemaCache(conn);
     }
 	@Test
     void testNamesIdentitySsasInCompatibleWeeklyHierarchy(Context<?> foodMartContext) {
@@ -193,7 +194,7 @@ TestUtil.flushSchemaCache(conn);
             resultWeekly.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
             resultWeekly.getAxes()[1], "[Time].[Weekly]");
-        TestUtil.flushSchemaCache(conn);
+        FlushSchemaCacheModifier.flushSchemaCache(conn);
     }
 
     private String verifyMemberLevelNamesIdentityMeasureAxis(
@@ -327,7 +328,7 @@ TestUtil.flushSchemaCache(conn);
         String yearHierarchyName = year.getHierarchy().getUniqueName();
         assertEquals(year1997HierarchyName, yearHierarchyName);
 
-        TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
+        FlushSchemaCacheModifier.flushSchemaCache(context.getConnectionWithDefaultRole());
     }
 
 

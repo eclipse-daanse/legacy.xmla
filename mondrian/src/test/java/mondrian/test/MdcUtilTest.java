@@ -10,7 +10,7 @@
 package mondrian.test;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 
 import java.io.StringWriter;
 

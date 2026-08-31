@@ -13,13 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.member.lastsibling;
 
-import static org.eclipse.daanse.olap.common.Util.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -29,36 +25,29 @@ class LastSiblingFunDefTest {
 
     @Test
     void testLastSibling(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].LastSibling", "Sales" );
-        assertEquals( "M", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[F].LastSibling").returns("[Gender].[Gender].[M]");
     }
 
     @Test
     void testLastSiblingFirstInLevel(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q1].LastSibling", "Sales" );
-        assertEquals( "Q4", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].[Q1].LastSibling").returns("[Time].[Time].[1997].[Q4]");
     }
 
     @Test
     void testLastSiblingAll(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].LastSibling", "Sales" );
-        assertTrue( member.isAll() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[All Gender].LastSibling").returns("[Gender].[Gender].[All Gender]");
     }
 
     @Test
     void testLastSiblingRoot(Context<?> context) {
         // The [Time] hierarchy does not have an 'all' member, so
         // [1997], [1998] do not have parents.
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].LastSibling", "Sales" );
-        assertEquals( "1998", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1998].LastSibling").returns("[Time].[Time].[1998]");
     }
 
     @Test
     void testLastSiblingNull(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstChild.LastSibling", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[F].FirstChild.LastSibling").returns("");
     }
 
 }

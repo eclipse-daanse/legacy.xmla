@@ -13,12 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.leadlag;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -28,62 +25,52 @@ class LeadLagFunDefTest {
 
     @Test
     void testLag(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].[12].Lag(4)", "Sales" );
-        assertEquals( "8", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].[Q4].[12].Lag(4)").returns("[Time].[Time].[1997].[Q3].[8]");
     }
 
     @Test
     void testLagFirstInLevel(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].Lag(1)", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[F].Lag(1)").returns("");
     }
 
     @Test
     void testLagAll(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].DefaultMember.Lag(2)", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].DefaultMember.Lag(2)").returns("");
     }
 
     @Test
     void testLagRoot(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].Lag(1)", "Sales" );
-        assertEquals( "1997", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1998].Lag(1)").returns("[Time].[Time].[1997]");
     }
 
     @Test
     void testLagRootTooFar(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].Lag(2)", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1998].Lag(2)").returns("");
     }
 
     @Test
     void testLead(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q2].[4].Lead(4)", "Sales" );
-        assertEquals( "8", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].[Q2].[4].Lead(4)").returns("[Time].[Time].[1997].[Q3].[8]");
     }
 
     @Test
     void testLeadNegative(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].Lead(-1)", "Sales" );
-        assertEquals( "F", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[M].Lead(-1)").returns("[Gender].[Gender].[F]");
     }
 
     @Test
     void testLeadLastInLevel(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].Lead(3)", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[M].Lead(3)").returns("");
     }
 
     @Test
     void testLeadNull(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].Parent.Lead(1)", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].Parent.Lead(1)").returns("");
     }
 
     @Test
     void testLeadZero(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].Lead(0)", "Sales" );
-        assertEquals( "F", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[F].Lead(0)").returns("[Gender].[Gender].[F]");
     }
 
 }

@@ -15,6 +15,8 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.assertions.NativeVerify;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
@@ -176,13 +178,11 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
         // not include the filter condition in the having.
         Connection connection = context.getConnectionWithDefaultRole();
         TestUtil.flushCache(connection);
-        TestUtil.flushSchemaCache(connection);
-        assertQuerySqlOrNot(
-             context.getConnectionWithDefaultRole(),
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
             "select filter(Time.[1997].children,  "
             + "measures.[Sales Count] +  measures.[unit sales] > 0) on 0 "
-            + "from [sales]",
-            patterns, false, true, true);
+            + "from [sales]").bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
 
         String mySqlWithHaving =
             "select\n"
@@ -208,11 +208,9 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
 
         // both measures are present on the agg table, so this one *should*
         // include having.
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
             "select filter(Time.[1997].children,  "
             + "measures.[Store Sales] +  measures.[unit sales] > 0) on 0 "
-            + "from [sales]",
-            patterns, false, true, true);
+            + "from [sales]").bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
     }
 }

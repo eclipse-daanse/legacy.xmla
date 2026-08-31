@@ -10,7 +10,6 @@ package mondrian.rolap.aggmatcher;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertQuerySql;
 import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
@@ -20,6 +19,7 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.result.RolapAxis;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
@@ -183,9 +183,8 @@ class MultipleColsInTupleAggTest {
         // check generated sql only for native evaluation
         if (connection.getContext().getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER,
                 ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
-          assertQuerySql(connection,
-              query,
-              new SqlPattern[] {
+          SqlAssert.forQuery(connection,
+              query).expectSql(new SqlPattern[] {
                   new SqlPattern(
                       DatabaseProduct.MYSQL,
                   "select\n"
@@ -231,7 +230,7 @@ class MultipleColsInTupleAggTest {
                       : "    ISNULL(`cat`.`ord`) ASC, `cat`.`ord` ASC,\n"
                       + "    ISNULL(`product_cat`.`ord`) ASC, `product_cat`.`ord` ASC,\n"
                       + "    ISNULL(`test_lp_xx2_fact`.`prodname`) ASC, "
-                      + "`test_lp_xx2_fact`.`prodname` ASC"), null)});
+                      + "`test_lp_xx2_fact`.`prodname` ASC"), null)}).verify();
         }
         Axis axis = executeAxis(connection, "Fact",
             "Filter([Product].[Product].[Product Name].members, "

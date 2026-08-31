@@ -16,6 +16,7 @@ import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.Map;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
@@ -148,13 +149,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Select\n"
             + "CrossJoin([*SORTED_COL_AXIS],[*BASE_MEMBERS_Measures]) on columns\n"
             + "From [Sales]";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            query,
-            patterns,
-            false,
-            true,
-            true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            query).bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
         assertThatQuery(
             context.getConnectionWithDefaultRole(),
             query).returnsGrid(
@@ -210,13 +206,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "CrossJoin([*SORTED_COL_AXIS],[*BASE_MEMBERS_Measures]) on columns\n"
             + "From [Sales]";
 
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            query,
-            patterns,
-            false,
-            true,
-            true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            query).bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
 
         final Result result = executeQuery(query, context.getConnectionWithDefaultRole());
         final String resultString = TestUtil.toString(result);
@@ -660,13 +651,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
             final SqlPattern[] patterns = mysqlPattern(sqlMysql);
             context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
             // Make sure the tuples list is using the HAVING clause.
-            assertQuerySqlOrNot(
-            	context.getConnectionWithDefaultRole(),
-                mdx,
-                patterns,
-                false,
-                true,
-                true);
+            SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+                mdx).bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
         }
         // Make sure the numbers are right
         assertThatQuery(context.getConnectionWithDefaultRole(),
@@ -722,13 +708,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
             // Make sure the tuples list is using the HAVING clause.
             context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
-            assertQuerySqlOrNot(
-                context.getConnectionWithDefaultRole(),
-                mdx,
-                patterns,
-                false,
-                true,
-                true);
+            SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+                mdx).bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
         }
         // Make sure the numbers are right
         assertThatQuery(
@@ -881,13 +862,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
             final SqlPattern[] patterns = mysqlPattern(sqlMysql);
 
             // Make sure the tuples list is using the HAVING clause.
-            assertQuerySqlOrNot(
-                context.getConnectionWithDefaultRole(),
-                mdx,
-                patterns,
-                false,
-                true,
-                true);
+            SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+                mdx).bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
         }
         // Make sure the numbers are right
         assertThatQuery(context.getConnectionWithDefaultRole(),

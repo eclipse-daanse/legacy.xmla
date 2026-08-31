@@ -12,6 +12,8 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -312,8 +314,7 @@ class CompatibilityTest {
     }
 
     private void checkAxis(Connection connection, String result, String expression) {
-        assertEquals(
-            result, TestUtil.executeSingletonAxis(connection, expression, "Sales").toString());
+        assertThatAxis(connection, "Sales", expression).returns(result);
     }
 
     protected boolean isDefaultNullMemberRepresentation(Context<?> context) {
@@ -536,37 +537,31 @@ class CompatibilityTest {
                 ConfigConstants.CASE_SENSITIVE, ConfigConstants.CASE_SENSITIVE_DEFAULT_VALUE, Boolean.class);
 
         // A user-defined property of a member.
-        TestUtil.assertExprReturns(
-    		connection, "Sales",
-            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")",
+        assertThatExpr(connection, "Sales",
+            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")").returns(
             "Gourmet Supermarket");
 
         if (caseSensitive) {
-        	TestUtil.assertExprThrows(
-        		connection, "Sales",
-                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"store tYpe\")",
+        	assertThatExpr(connection, "Sales",
+                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"store tYpe\")").throwsMessage(
                 "Property 'store tYpe' is not valid for member '[Store].[USA].[CA].[Beverly Hills].[Store 6]'");
         } else {
-        	TestUtil.assertExprReturns(
-        		connection, "Sales",
-                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"store tYpe\")",
+        	assertThatExpr(connection, "Sales",
+                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"store tYpe\")").returns(
                 "Gourmet Supermarket");
         }
 
         // A builtin property of a member.
-        TestUtil.assertExprReturns(
-    		connection, "Sales",
-            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"LEVEL_NUMBER\")",
+        assertThatExpr(connection, "Sales",
+            "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"LEVEL_NUMBER\")").returns(
             "4");
         if (caseSensitive) {
-        	TestUtil.assertExprThrows(
-        		connection, "Sales",
-                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Level_Number\")",
+        	assertThatExpr(connection, "Sales",
+                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Level_Number\")").throwsMessage(
                 "Property 'store tYpe' is not valid for member '[Store].[USA].[CA].[Beverly Hills].[Store 6]'");
         } else {
-        	TestUtil.assertExprReturns(
-        		connection, "Sales",
-                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Level_Number\")",
+        	assertThatExpr(connection, "Sales",
+                "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Level_Number\")").returns(
                 "4");
         }
 

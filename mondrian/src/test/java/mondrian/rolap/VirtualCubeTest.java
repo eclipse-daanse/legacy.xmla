@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -503,181 +503,6 @@ class VirtualCubeTest extends BatchTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n");
-    }
-
-    /**
-     * Creates a TestContext<?> containing a cube
-     * "Warehouse (Default USA) and Sales".
-     *
-     * @return test context with a cube where the default member in the
-     *     Warehouse dimension is USA
-     */
-    private void createContextWithNonDefaultAllMember(Context<?> context) {
-        /*
-        class CreateContextWithNonDefaultAllMemberModifier extends PojoMappingModifier {
-
-            public CreateContextWithNonDefaultAllMemberModifier(CatalogMapping catalog) {
-                super(catalog);
-            }
-
-            @Override
-            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
-            	PhysicalCubeMappingImpl warehouseDefaultUSA;
-                List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.catalogCubes(schema));
-                result.add(
-                  warehouseDefaultUSA = PhysicalCubeMappingImpl.builder()
-                    .withName("Warehouse (Default USA)")
-                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).build())
-                    .withDimensionConnectors(List.of(
-                        DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("Time")
-                    		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_TIME))
-                    		.withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .build(),
-                    	DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("Product")
-                    		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_PRODUCT))
-                    		.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .build(),
-                        DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("Store")
-                    		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_STORE_WITH_QUERY_STORE))
-                    		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .build(),
-                        DimensionConnectorMappingImpl.builder()
-                        	.withOverrideDimensionName("Warehouse")
-                            .withForeignKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withDimension(StandardDimensionMappingImpl.builder()
-                            	.withName("Warehouse")
-                            	.withHierarchies(List.of(
-                                ExplicitHierarchyMappingImpl.builder()
-                                    .withHasAll(false)
-                                    .withDefaultMember("[USA]")
-                                    .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
-                                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
-                                    .withLevels(List.of(
-                                        LevelMappingImpl.builder()
-                                            .withName("Country")
-                                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_COUNTRY_COLUMN_IN_WAREHOUSE)
-                                            .withUniqueMembers(true)
-                                            .build(),
-                                        LevelMappingImpl.builder()
-                                            .withName("State Province")
-                                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_STATE_PROVINCE_COLUMN_IN_WAREHOUSE)
-                                            .withUniqueMembers(true)
-                                            .build(),
-                                        LevelMappingImpl.builder()
-                                            .withName("City")
-                                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_CITY_COLUMN_IN_WAREHOUSE)
-                                            .withUniqueMembers(false)
-                                            .build(),
-                                        LevelMappingImpl.builder()
-                                            .withName("Warehouse Name")
-                                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_NAME_COLUMN_IN_WAREHOUSE)
-                                            .withUniqueMembers(true)
-                                            .build()
-
-                                    ))
-                                    .build()
-                            )).build())
-                            .build()
-                    ))
-                    .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        SumMeasureMappingImpl.builder()
-                            .withName("Warehouse Cost")
-                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .build(),
-                        SumMeasureMappingImpl.builder()
-                            .withName("Warehouse Sales")
-                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .build()
-                    )).build()))
-                    .build());
-                result.add(
-                	VirtualCubeMappingImpl.builder()
-                        .withName("Warehouse (Default USA) and Sales")
-                        .withDimensionConnectors(List.of(
-                            	DimensionConnectorMappingImpl.builder()
-                            		.withOverrideDimensionName("Product")
-                                    .build(),
-                                DimensionConnectorMappingImpl.builder()
-                            		.withOverrideDimensionName("Store")
-                                    .build(),
-                                DimensionConnectorMappingImpl.builder()
-                                	.withOverrideDimensionName("Time")
-                                    .build(),
-                                DimensionConnectorMappingImpl.builder()
-                                	.withOverrideDimensionName("Warehouse")
-                                	.withPhysicalCube(warehouseDefaultUSA)
-                                    .build()
-                        ))
-                        .withReferencedMeasures(List.of(
-                        	look(FoodmartMappingSupplier.MEASURE_SALES_COUNT),
-                        	look(FoodmartMappingSupplier.MEASURE_STORE_COST),
-                        	look(FoodmartMappingSupplier.MEASURE_STORE_SALES),
-                        	look(FoodmartMappingSupplier.MEASURE_UNIT_SALES),
-                        	look(FoodmartMappingSupplier.MEASURE_STORE_INVOICE),
-                        	look(FoodmartMappingSupplier.MEASURE_SUPPLY_TIME),
-                        	look(FoodmartMappingSupplier.MEASURE_UNITS_ORDERED),
-                        	look(FoodmartMappingSupplier.MEASURE_UNITS_SHIPPED),
-                        	look(FoodmartMappingSupplier.MEASURE_WAREHOUSE_COST),
-                        	look(FoodmartMappingSupplier.MEASURE_WAREHOUSE_SALES)
-                        ))
-                        .build()
-                );
-                return result;
-            }
-        }
-        */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-
-            // Warehouse cube where the default member in the Warehouse
-            // dimension is USA.
-            "<Cube name=\"Warehouse (Default USA)\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n"
-            + "\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Product\" source=\"Product\" foreignKey=\"product_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Dimension name=\"Warehouse\" foreignKey=\"warehouse_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" defaultMember=\"[USA]\" primaryKey=\"warehouse_id\"> \n"
-            + "      <Table name=\"warehouse\"/>\n"
-            + "      <Level name=\"Country\" column=\"warehouse_country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"State Province\" column=\"warehouse_state_province\"\n"
-            + "          uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" column=\"warehouse_city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Warehouse Name\" column=\"warehouse_name\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Warehouse Sales\" column=\"warehouse_sales\" aggregator=\"sum\"/>\n"
-            + "</Cube>",
-
-            // Virtual cube based on [Warehouse (Default USA)]
-            "<VirtualCube name=\"Warehouse (Default USA) and Sales\">\n"
-            + "  <VirtualCubeDimension name=\"Product\"/>\n"
-            + "  <VirtualCubeDimension name=\"Store\"/>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Warehouse (Default USA)\" name=\"Warehouse\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales 2\" name=\"[Measures].[Sales Count]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales 2\" name=\"[Measures].[Store Cost]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales 2\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales 2\" name=\"[Measures].[Unit Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Store Invoice]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Supply Time]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Units Ordered]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Units Shipped]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Cost]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "</VirtualCube>",
-            null, null, null);
-            withSchema(context, schema);
-         */
-        withSchemaEmf(context, CreateContextWithNonDefaultAllMemberModifier::new);
     }
 
     @Test
@@ -1584,12 +1409,12 @@ class VirtualCubeTest extends BatchTestCase {
 
         // Run query 1 with cleared cache;
         // Make sure NECJ 1 is evaluated natively.
-        assertQuerySql(context.getConnectionWithDefaultRole(), query1, patterns1, true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query1).expectSql(patterns1).verify();
 
         // Now run query 2 with warm cache;
         // Make sure NECJ 2 does not reuse the cache result from NECJ 1, and
         // NECJ 2 is evaluated natively.
-        assertQuerySql(context.getConnectionWithDefaultRole(), query2, patterns2, false);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query2).keepCache().expectSql(patterns2).verify();
     }
 
     /**
@@ -2091,7 +1916,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "Row #11: 41,484.40\n";
 
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQuerySql(connection, query, mysqlPattern, true);
+        SqlAssert.forQuery(connection, query).expectSql(mysqlPattern).verify();
         assertThatQuery(connection, query).returnsGrid(result);
     }
 
@@ -2202,7 +2027,7 @@ class VirtualCubeTest extends BatchTestCase {
         };
 
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQuerySql(connection, query, mysqlPattern, true);
+        SqlAssert.forQuery(connection, query).expectSql(mysqlPattern).verify();
         assertThatQuery(connection, query).returnsGrid(result);
     }
 

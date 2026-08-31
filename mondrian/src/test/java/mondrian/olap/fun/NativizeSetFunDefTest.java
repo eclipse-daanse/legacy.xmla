@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.Duration;
 import java.util.Optional;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -1516,8 +1517,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "Crossjoin([Gender].[Gender].members,{[Time].[1997]})) on 0 "
             + "from [Warehouse and Sales] "
             + "where [Marital Status].[Marital Status].[S]";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(), mdxQuery, patterns, true, false, true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdxQuery).expectNoSql(patterns).verify();
     }
 
     @Test
@@ -1561,8 +1561,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "  {[Measures].[Unit Sales]} ON ROWS "
             + "from [Sales] \n"
             + "where [Time].[1997]";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(), query, patterns, true, false, true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectNoSql(patterns).verify();
     }
 
     @Test
@@ -1665,8 +1664,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + ")) on 0 from Sales";
         Connection connection = context.getConnectionWithDefaultRole();
         connection.execute(connection.parseQuery(mdxQuery));
-        assertQuerySqlOrNot(
-                connection, mdxQuery, patterns, true, false, false);
+        SqlAssert.forQuery(connection, mdxQuery).keepCache().expectNoSql(patterns).verify();
     }
 
     @Test
@@ -1707,8 +1705,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
         SqlPattern oraclePattern =
             new SqlPattern(DatabaseProduct.ORACLE, sql, sql.length());
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQuerySql(connection, mdx1, new SqlPattern[]{oraclePattern});
-        assertQuerySql(connection, mdx2, new SqlPattern[]{oraclePattern});
+        SqlAssert.forQuery(connection, mdx1).expectSql(new SqlPattern[]{oraclePattern}).verify();
+        SqlAssert.forQuery(connection, mdx2).expectSql(new SqlPattern[]{oraclePattern}).verify();
     }
 
     // ~ ====== Helper methods =================================================

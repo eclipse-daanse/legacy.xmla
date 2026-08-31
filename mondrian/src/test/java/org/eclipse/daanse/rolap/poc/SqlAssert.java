@@ -105,6 +105,16 @@ public final class SqlAssert {
             return this;
         }
 
+        /**
+         * Sets the cache-clearing flag from a caller-supplied value, for call sites that decide
+         * at runtime rather than picking {@link #clearCacheFirst()} or {@link #keepCache()}
+         * literally.
+         */
+        public QuerySqlAssert clearCacheFirst(boolean clearCacheFirst) {
+            this.clearCacheFirst = clearCacheFirst;
+            return this;
+        }
+
         /** Records that {@link #verify()} must see each matching-dialect pattern's SQL get executed. */
         public QuerySqlAssert expectSql(SqlPattern... patterns) {
             this.patterns = Objects.requireNonNull(patterns, "patterns");

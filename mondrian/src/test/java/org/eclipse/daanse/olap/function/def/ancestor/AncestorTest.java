@@ -13,21 +13,15 @@
 */
 package org.eclipse.daanse.olap.function.def.ancestor;
 
-import static org.eclipse.daanse.olap.common.Util.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertAxisThrows;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 @RolapContextTest(FoodmartTestInstance.class)
 public class AncestorTest {
@@ -35,11 +29,10 @@ public class AncestorTest {
 	@Test
 	void testAncestor(Context<?> context) {
 		Connection con = context.getConnectionWithDefaultRole();
-		Member member = TestUtil.executeSingletonAxis(con,
-				"Ancestor([Store].[USA].[CA].[Los Angeles],[Store Country])", "Sales");
-		assertEquals("USA", member.getName());
+		assertThatAxis(con, "Sales",
+				"Ancestor([Store].[USA].[CA].[Los Angeles],[Store Country])").returns("[Store].[Store].[USA]");
 
-		TestUtil.assertAxisThrows(con, "Ancestor([Store].[USA].[CA].[Los Angeles],[Promotions].[Promotion Name])",
+		assertAxisThrows(con, "Ancestor([Store].[USA].[CA].[Los Angeles],[Promotions].[Promotion Name])",
 				"Error while executing query", "Sales");
 	}
 
@@ -48,40 +41,34 @@ public class AncestorTest {
 	void testAncestorNumeric(Context<?> context) {
 		Connection con = context.getConnectionWithDefaultRole();
 
-		Member member = executeSingletonAxis(con, "Ancestor([Store].[USA].[CA].[Los Angeles],1)", "Sales");
-		assertEquals("CA", member.getName());
+		assertThatAxis(con, "Sales", "Ancestor([Store].[USA].[CA].[Los Angeles],1)").returns("[Store].[Store].[USA].[CA]");
 
-		member = executeSingletonAxis(con, "Ancestor([Store].[USA].[CA].[Los Angeles], 0)", "Sales");
-		assertEquals("Los Angeles", member.getName());
+		assertThatAxis(con, "Sales", "Ancestor([Store].[USA].[CA].[Los Angeles], 0)").returns("[Store].[Store].[USA].[CA].[Los Angeles]");
 
-		member = executeSingletonAxis(con, "Ancestor([Store].[All Stores].[Vatican], 1)", "[Sales Ragged]");
-		assertEquals("All Stores", member.getName());
+		assertThatAxis(con, "Sales Ragged", "Ancestor([Store].[All Stores].[Vatican], 1)").returns("[Store].[Store].[All Stores]");
 
-		member = executeSingletonAxis(con, "Ancestor([Store].[USA].[Washington], 1)", "[Sales Ragged]");
-		assertEquals("USA", member.getName());
+		assertThatAxis(con, "Sales Ragged", "Ancestor([Store].[USA].[Washington], 1)").returns("[Store].[Store].[USA]");
 
 		// complicated way to say "1".
-		member = executeSingletonAxis(con, "Ancestor([Store].[USA].[Washington], 7 * 6 - 41)", "[Sales Ragged]");
-		assertEquals("USA", member.getName());
+		assertThatAxis(con, "Sales Ragged", "Ancestor([Store].[USA].[Washington], 7 * 6 - 41)").returns("[Store].[Store].[USA]");
 
-		member = executeSingletonAxis(con, "Ancestor([Store].[All Stores].[Vatican], 2)", "[Sales Ragged]");
-		assertNull(member, "Ancestor at 2 must be null");
+		// Ancestor at 2 must be null
+		assertThatAxis(con, "Sales Ragged", "Ancestor([Store].[All Stores].[Vatican], 2)").returns("");
 
-		member = executeSingletonAxis(con, "Ancestor([Store].[All Stores].[Vatican], -5)", "[Sales Ragged]");
-		assertNull(member, "Ancestor at -5 must be null");
+		// Ancestor at -5 must be null
+		assertThatAxis(con, "Sales Ragged", "Ancestor([Store].[All Stores].[Vatican], -5)").returns("");
 	}
 
 	@Test
 	void testAncestorHigher(Context<?> context) {
-		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA],[Store].[Store City])", "Sales");
-		assertNull(member); // MSOLAP returns null
+		// MSOLAP returns null
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ancestor([Store].[USA],[Store].[Store City])").returns("");
 	}
 
 	@Test
 	void testAncestorSameLevel(Context<?> context) {
-		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-				"Ancestor([Store].[Canada],[Store].[Store Country])", "Sales");
-		assertEquals("Canada", member.getName());
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+				"Ancestor([Store].[Canada],[Store].[Store Country])").returns("[Store].[Store].[Canada]");
 	}
 
 	@Test
@@ -94,19 +81,15 @@ public class AncestorTest {
 
 	@Test
 	void testAncestorAllLevel(Context<?> context) {
-		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA].[CA],[Store].Levels(0))", "Sales");
-		assertTrue(member.isAll());
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ancestor([Store].[USA].[CA],[Store].Levels(0))").returns("[Store].[Store].[All Stores]");
 	}
 
 	@Test
 	void testAncestorWithHiddenParent(Context<?> context) {
 		// final Context<?> testContext<?> =
-		// getContext().withCube( "[Sales Ragged]" );
-		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-				"Ancestor([Store].[All Stores].[Israel].[Haifa], [Store].[Store Country])", "[Sales Ragged]");
-
-		assertNotNull(member, "Member must not be null.");
-		assertEquals("Israel", member.getName());
+		// getContext().withCube( "Sales Ragged" );
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales Ragged",
+				"Ancestor([Store].[All Stores].[Israel].[Haifa], [Store].[Store Country])").returns("[Store].[Store].[Israel]");
 	}
 
 	@Test

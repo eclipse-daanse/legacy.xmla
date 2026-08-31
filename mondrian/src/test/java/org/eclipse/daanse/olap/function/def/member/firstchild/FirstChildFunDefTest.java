@@ -13,12 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.member.firstchild;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -29,22 +26,17 @@ class FirstChildFunDefTest {
 
     @Test
     void testFirstChildFirstInLevel(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].FirstChild", "Sales" );
-        assertEquals( "10", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].[Q4].FirstChild").returns("[Time].[Time].[1997].[Q4].[10]");
     }
 
     @Test
     void testFirstChildAll(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].FirstChild", "Sales" );
-        assertEquals( "F", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[All Gender].FirstChild").returns("[Gender].[Gender].[F]");
     }
 
     @Test
     void testFirstChildOfChildless(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].[F].FirstChild", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[All Gender].[F].FirstChild").returns("");
     }
 
 }

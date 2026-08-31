@@ -16,10 +16,11 @@ package mondrian.test.clearview;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.getDialect;
 
-import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.opencube.junit5.TestUtil;
@@ -120,13 +121,10 @@ import mondrian.test.SqlPattern;
             return;
         }
 
-        super.assertQuerySqlOrNot(
-            connection,
-            diffRepos.expand(null, "${mdx}"),
-            buildSqlPatternArray(connection),
-            false,
-            false,
-            flushCache);
+        SqlAssert.forQuery(connection, diffRepos.expand(null, "${mdx}"))
+            .clearCacheFirst(flushCache)
+            .expectSql(buildSqlPatternArray(connection))
+            .verify();
     }
 
     protected void assertNoQuerySql(Connection connection, boolean flushCache)
@@ -138,13 +136,10 @@ import mondrian.test.SqlPattern;
             return;
         }
 
-        assertQuerySqlOrNot(
-            connection,
-            diffRepos.expand(null, "${mdx}"),
-            buildSqlPatternArray(connection),
-            true,
-            false,
-            flushCache);
+        SqlAssert.forQuery(connection, diffRepos.expand(null, "${mdx}"))
+            .clearCacheFirst(flushCache)
+            .expectNoSql(buildSqlPatternArray(connection))
+            .verify();
     }
 
     private SqlPattern[] buildSqlPatternArray(Connection connection) {

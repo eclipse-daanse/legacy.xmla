@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
@@ -517,7 +518,7 @@ class TestAggregationManager extends BatchTestCase {
                     DatabaseProduct.DERBY, derbySql, derbySql)
             };
         }
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQuery, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdxQuery).expectSql(patterns).verify();
     }
 
     /**
@@ -584,7 +585,7 @@ class TestAggregationManager extends BatchTestCase {
         // test fails if the non-empty crossjoin optimizer is used.
         // With it on one gets a recursive call coming through the
         //  RolapEvaluator.getCachedResult.
-        assertNoQuerySql(connection, mdxQuery, patterns);
+        SqlAssert.forQuery(connection, mdxQuery).expectNoSql(patterns).verify();
     }
 
     /**
@@ -1009,14 +1010,13 @@ class TestAggregationManager extends BatchTestCase {
                 + "order by ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC",
                 26)};
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQuerySql(connection,
+        SqlAssert.forQuery(connection,
             "select NON EMPTY {[Customers].[USA]} ON COLUMNS,\n"
             + "       NON EMPTY Crossjoin(Hierarchize(Union({[Store].[All Stores]},\n"
             + "           [Store].[All Stores].Children)), {[Product].[All Products]}) \n"
             + "           ON ROWS\n"
             + "    from [Sales]\n"
-            + "    where ([Measures].[Unit Sales], [Time].[1998])",
-            patterns);
+            + "    where ([Measures].[Unit Sales], [Time].[1998])").expectSql(patterns).verify();
     }
 
     /**
@@ -1139,7 +1139,7 @@ class TestAggregationManager extends BatchTestCase {
             // This MDX should be able to reuse the cardinality for
             // [Product].[Product Family]; and should not issue a SQL to fetch
             // that from DB again.
-            assertQuerySqlOrNot(connection, query2, patterns, true, false, false);
+            SqlAssert.forQuery(connection, query2).keepCache().expectNoSql(patterns).verify();
         } finally {
             connection.close();
         }
@@ -1443,12 +1443,11 @@ class TestAggregationManager extends BatchTestCase {
         executeQuery(query, connection);
 
         // Query1 will find the "store"."store_country" cardinality in cache.
-        assertQuerySqlOrNot(connection, query1, patterns1, true, false, false);
+        SqlAssert.forQuery(connection, query1).keepCache().expectNoSql(patterns1).verify();
 
         // Query2 again will not find the "store_ragged"."store_country"
         // cardinality in cache.
-        assertQuerySqlOrNot(
-            connection, query2, patterns2, false, false, false);
+        SqlAssert.forQuery(connection, query2).keepCache().expectSql(patterns2).verify();
         context.getCatalogCache().clear();
     }
 
@@ -1747,8 +1746,7 @@ class TestAggregationManager extends BatchTestCase {
                 null)
         };
 
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(), query, patterns, false, false, false);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).keepCache().expectSql(patterns).verify();
 
         assertThatQuery(context.getConnectionWithDefaultRole(),
             query).returnsGrid(
@@ -1838,8 +1836,7 @@ class TestAggregationManager extends BatchTestCase {
                 null)
         };
 
-        assertQuerySqlOrNot(
-            connection, query, patterns, false, false, false);
+        SqlAssert.forQuery(connection, query).keepCache().expectSql(patterns).verify();
 
         assertThatQuery(connection,
             query).returnsGrid(
@@ -1882,8 +1879,7 @@ class TestAggregationManager extends BatchTestCase {
                 null)
         };
 
-        assertQuerySqlOrNot(
-            connection, query2, patterns2, false, false, false);
+        SqlAssert.forQuery(connection, query2).keepCache().expectSql(patterns2).verify();
 
         assertThatQuery(connection,
             query2).returnsGrid(
@@ -1935,8 +1931,7 @@ class TestAggregationManager extends BatchTestCase {
             "select non empty [Gender].Children on columns\n"
             + "from [Sales]";
 
-        assertQuerySqlOrNot(
-            connection, query, patterns, false, false, false);
+        SqlAssert.forQuery(connection, query).keepCache().expectSql(patterns).verify();
 
         assertThatQuery(connection,
             query).returnsGrid(
@@ -2273,10 +2268,8 @@ class TestAggregationManager extends BatchTestCase {
             "select count(*) as `c0` from `agg_pl_01_sales_fact_1997` as `agg_pl_01_sales_fact_1997`";
         // If the approxRowcount is used, there should not be
         // a query like : select count(*) from agg_pl_01_sales_fact_1997
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdxQuery,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdxQuery).keepCache().expectNoSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.ORACLE,
                     sqlOracle,
@@ -2285,10 +2278,7 @@ class TestAggregationManager extends BatchTestCase {
                     DatabaseProduct.MYSQL,
                     sqlMysql,
                     sqlMysql.length())
-            },
-            true,
-            false,
-            false);
+            }).verify();
         context.getCatalogCache().clear();
     }
 
@@ -2505,10 +2495,8 @@ class TestAggregationManager extends BatchTestCase {
             "select \"product_class\".\"product_family\" as \"c0\", sum(\"agg_l_05_sales_fact_1997\".\"unit_sales\") as \"m0\" from \"product_class\" \"product_class\", \"product\" \"product\", \"agg_l_05_sales_fact_1997\" \"agg_l_05_sales_fact_1997\" where \"agg_l_05_sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" and \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" group by \"product_class\".\"product_family\"";
         final String sqlMysql =
             "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class` join `product` as `product` on `product`.`product_class_id` = `product_class`.`product_class_id` join `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` on `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` group by `product_class`.`product_family`";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdx,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdx).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.ORACLE,
                     sqlOracle,
@@ -2517,8 +2505,7 @@ class TestAggregationManager extends BatchTestCase {
                     DatabaseProduct.MYSQL,
                     sqlMysql,
                     sqlMysql.length())
-            },
-            false, false, true);
+            }).verify();
         context.getCatalogCache().clear();
     }
 
@@ -2598,16 +2585,13 @@ class TestAggregationManager extends BatchTestCase {
             +    "Row #2: 50,236\n");
         final String sqlMysql =
             "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class` join `product` as `product` on `product`.`product_class_id` = `product_class`.`product_class_id` join `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` on `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` group by `product_class`.`product_family`";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdx,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdx).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysql,
                     sqlMysql.length())
-            },
-            false, false, true);
+            }).verify();
     }
 
 
@@ -2703,16 +2687,13 @@ class TestAggregationManager extends BatchTestCase {
             + "Row #13: 3,607\n");
         final String sqlMysql =
             "select `promotion`.`media_type` as `c0`, sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0` from `promotion` as `promotion` join `agg_c_special_sales_fact_1997` as `agg_c_special_sales_fact_1997` on `agg_c_special_sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` group by `promotion`.`media_type`";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdx,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdx).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysql,
                     sqlMysql.length())
-            },
-            false, false, true);
+            }).verify();
     }
 
     @Test
@@ -3004,10 +2985,8 @@ class TestAggregationManager extends BatchTestCase {
             + "    \"agg_l_05_sales_fact_1997\".\"store_id\"";
         final String sqlMysql =
             "select `product_class`.`product_family` as `c0`, `agg_l_05_sales_fact_1997`.`store_id` as `c1`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0`";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdx,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdx).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.ORACLE,
                     sqlOracle,
@@ -3016,8 +2995,7 @@ class TestAggregationManager extends BatchTestCase {
                     DatabaseProduct.MYSQL,
                     sqlMysql,
                     sqlMysql.length())
-            },
-            false, false, true);
+            }).verify();
     }
 
     /**
@@ -3146,16 +3124,13 @@ class TestAggregationManager extends BatchTestCase {
                 + "group by `agg_c_14_sales_fact_1997`.`the_year`, `agg_c_14_sales_fact_1997`.`quarter`, `agg_c_14_sales_fact_1997`.`month_of_year`, `store`.`store_country` "
                 + "order by ISNULL(`c0`) ASC, `c0` ASC, ISNULL(`c1`) ASC, `c1` ASC, ISNULL(`c2`) ASC, `c2` ASC, ISNULL(`c3`) ASC, `c3` ASC";
 
-            assertQuerySqlOrNot(
-                context.getConnectionWithDefaultRole(),
-                mdx,
-                new SqlPattern[] {
+            SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+                mdx).expectSql(new SqlPattern[] {
                     new SqlPattern(
                         DatabaseProduct.MYSQL,
                         sqlMysql,
                         sqlMysql.length())
-                },
-                false, false, true);
+                }).verify();
         }
         assertThatQuery(context.getConnectionWithDefaultRole(),
             mdx).returnsGrid(
@@ -3334,27 +3309,21 @@ class TestAggregationManager extends BatchTestCase {
             "select `store`.`store_country` as `c0`, `time_by_day`.`month_of_year` as `c1`, `time_by_day`.`day_of_month` as `c2`, sum(`sales_fact_1997`.`unit_sales`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `store` as `store` on `sales_fact_1997`.`store_id` = `store`.`store_id` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where `store`.`store_country` = 'USA' group by `store`.`store_country`, `time_by_day`.`month_of_year`, `time_by_day`.`day_of_month`";
 
 
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdx,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdx).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysqlTupleQuery,
                     sqlMysqlTupleQuery.length())
-            },
-            false, false, true);
+            }).verify();
 
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdx,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdx).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysqlSegmentQuery,
                     sqlMysqlSegmentQuery.length())
-            },
-            false, false, true);
+            }).verify();
 
         // Because we have caused a many-to-many relation between the agg table
         // and the dim table, we expect retarded numbers here.
@@ -3372,27 +3341,21 @@ class TestAggregationManager extends BatchTestCase {
 
         // Make sure that queries on lower levels don't trigger a
         // false positive with the agg matcher.
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdxTooLowForAgg,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdxTooLowForAgg).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysqlTooLowTupleQuery,
                     sqlMysqlTooLowTupleQuery.length())
-            },
-            false, false, true);
+            }).verify();
 
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            mdxTooLowForAgg,
-            new SqlPattern[] {
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            mdxTooLowForAgg).expectSql(new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysqlTooLowSegmentQuery,
                     sqlMysqlTooLowSegmentQuery.length())
-            },
-            false, false, true);
+            }).verify();
         context.getCatalogCache().clear();
     }
 
@@ -3480,10 +3443,8 @@ class TestAggregationManager extends BatchTestCase {
             + "    \"agg_c_10_sales_fact_1997\".\"the_year\" = 1997\n"
             + "group by\n"
             + "    \"agg_c_10_sales_fact_1997\".\"the_year\"";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            "select Time.Time.[1997] on 0 from sales",
-            new SqlPattern[]{
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            "select Time.Time.[1997] on 0 from sales").expectSql(new SqlPattern[]{
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysql,
@@ -3491,8 +3452,7 @@ class TestAggregationManager extends BatchTestCase {
                 new SqlPattern(
                     DatabaseProduct.ORACLE,
                     sqlOra,
-                    sqlOra.length())},
-            false, false, true);
+                    sqlOra.length())}).verify();
         context.getCatalogCache().clear();
     }
 
@@ -3562,10 +3522,8 @@ class TestAggregationManager extends BatchTestCase {
                 + "    \"customer\".\"gender\"";
             String sqlMysql =
                 "select `customer`.`gender` as `c0`, sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0`";
-            assertQuerySqlOrNot(
-                connection,
-                "select gender.gender.members on 0 from sales",
-                new SqlPattern[]{
+            SqlAssert.forQuery(connection,
+                "select gender.gender.members on 0 from sales").expectSql(new SqlPattern[]{
                     new SqlPattern(
                         DatabaseProduct.MYSQL,
                         sqlMysql,
@@ -3573,8 +3531,7 @@ class TestAggregationManager extends BatchTestCase {
                     new SqlPattern(
                         DatabaseProduct.ORACLE,
                         sqlOra,
-                        sqlOra.length())},
-                false, false, true);
+                        sqlOra.length())}).verify();
         } finally {
             flushSchemaCache(connection);
         }
@@ -3658,11 +3615,9 @@ class TestAggregationManager extends BatchTestCase {
             + "    \"time_by_day\".\"the_year\"";
         String sqlMysql =
             "select `time_by_day`.`the_year` as `c0`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where `time_by_day`.`the_year` = 1997 group by `time_by_day`.`the_year`";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
             "select Time.[1997] on 0 from sales where "
-            + "measures.[Customer Count]",
-            new SqlPattern[]{
+            + "measures.[Customer Count]").expectSql(new SqlPattern[]{
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     sqlMysql,
@@ -3670,8 +3625,7 @@ class TestAggregationManager extends BatchTestCase {
                 new SqlPattern(
                     DatabaseProduct.ORACLE,
                     sqlOra,
-                    sqlOra.length())},
-            false, false, true);
+                    sqlOra.length())}).verify();
         context.getCatalogCache().clear();
     }
 
@@ -3685,13 +3639,10 @@ class TestAggregationManager extends BatchTestCase {
         prepareContext(context);
         String sql =
             "select count(*) as `c0` from `agg_c_10_sales_fact_1997` as `agg_c_10_sales_fact_1997`";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            "select from sales",
-            new SqlPattern[]{
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            "select from sales").bypassSchemaCache().clearCacheFirst().expectNoSql(new SqlPattern[]{
                 new SqlPattern(
-                    DatabaseProduct.MYSQL, sql, sql.length()) },
-            true, true, true);
+                    DatabaseProduct.MYSQL, sql, sql.length()) }).verify();
     }
 
     private AggStar getAggStar(RolapStar star, String aggStarName) {

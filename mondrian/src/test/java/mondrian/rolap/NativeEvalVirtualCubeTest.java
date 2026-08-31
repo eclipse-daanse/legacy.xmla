@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -416,13 +417,13 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
     Connection connection = context.getConnection(new ConnectionProps(
         List.of("Administrator"), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
     ));
-    assertQuerySqlOrNot(connection,
-        mdx, new SqlPattern[]{ mysqlPattern }, false, false, false);
+    SqlAssert.forQuery(connection,
+        mdx).keepCache().expectSql(new SqlPattern[]{ mysqlPattern }).verify();
     // rerun the MDX, since the previous assert aborts when it hits the SQL.
     executeQuery(mdx, connection);
     // Subsequent query should pull from cache, not rerun gender query.
-    assertQuerySqlOrNot(connection,
-        mdx, new SqlPattern[]{ mysqlPattern }, true, false, false);
+    SqlAssert.forQuery(connection,
+        mdx).keepCache().expectNoSql(new SqlPattern[]{ mysqlPattern }).verify();
   }
 
   /**
@@ -512,14 +513,14 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
             + "FROM [Warehouse and Sales]";
     // first MDX with a fresh query should result in product_family,
     //product_department and the_year query.
-    assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
-        mdx, new SqlPattern[]{ mysqlPatternMembers }, false, false, false);
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+        mdx).keepCache().expectSql(new SqlPattern[]{ mysqlPatternMembers }).verify();
     // rerun the MDX, since the previous assert aborts when it hits the SQL.
     executeQuery(mdx, context.getConnectionWithDefaultRole());
     // Subsequent query should pull from cache, not rerun product_family,
     //product_department and the_year query.
-    assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
-        mdx, new SqlPattern[]{ mysqlPatternMembers }, true, false, false);
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+        mdx).keepCache().expectNoSql(new SqlPattern[]{ mysqlPatternMembers }).verify();
     //The MDX with added Warehouse Sales measure
     //that belongs to the regulr [Warehouse].
     String mdx1 =
@@ -537,7 +538,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
             + "FROM [Warehouse and Sales]";
     // Subsequent query should pull from cache, not rerun product_family,
     //product_department and the_year query.
-    assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
-        mdx1, new SqlPattern[]{ mysqlPatternMembers }, true, false, false);
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+        mdx1).keepCache().expectNoSql(new SqlPattern[]{ mysqlPatternMembers }).verify();
   }
 }

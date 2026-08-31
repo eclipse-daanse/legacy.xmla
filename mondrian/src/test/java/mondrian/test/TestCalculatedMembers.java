@@ -11,12 +11,11 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.executeExprRaw;
 
@@ -27,15 +26,18 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.context.TestContextImpl;
+
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -65,7 +67,7 @@ import mondrian.test.PropertiesTest.FoodmartData;
 
     @Test
      void testCalculatedMemberInCube(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Profit]", "$339,610.90");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Profit]").returns( "$339,610.90");
 
         // Testcase for bug 829012.
         assertThatQuery(context.getConnectionWithDefaultRole(),
@@ -367,50 +369,50 @@ import mondrian.test.PropertiesTest.FoodmartData;
 //        discard(result);
 
         // Level cannot be converted.
-        assertExprThrows(context, "Sales",
-            "[Customers].[Country]",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Customers].[Country]").throwsMessage(
             "Member expression '[Customers].[Customers].[Country]' must not be a set");
 
         // Hierarchy can be converted.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[Customers]", "266,773");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[Customers]").returns( "266,773");
 
         // Dimension can be converted, if unambiguous.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers]", "266,773");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Customers]").returns( "266,773");
 
         //if (SystemWideProperties.instance().SsasCompatibleNaming) {
         if (true) {
             // SSAS 2005 does not have default hierarchies.
-            assertExprThrows(context, "Sales",
-                "[Time]",
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+                "[Time]").throwsMessage(
                 "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly.");
         } else {
             // Default to first hierarchy.
-            assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time]", "266,773");
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Time]").returns( "266,773");
         }
 
         // Explicit hierarchy OK.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Time]", "266,773");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Time]").returns( "266,773");
 
         // Member can be converted.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[USA]", "266,773");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[USA]").returns( "266,773");
 
         // Tuple can be converted.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])").returns(
             "1,683");
 
         // Set of tuples cannot be converted.
-        assertExprThrows(context, "Sales",
-            "{([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "{([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}").throwsMessage(
             "Member expression '{([Customers].[Customers].[USA], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}' must not be a set");
-        assertExprThrows(context, "Sales",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "{([Customers].[USA], [Product].[Food]),"
-            + "([Customers].[USA], [Product].[Drink])}",
+            + "([Customers].[USA], [Product].[Drink])}").throwsMessage(
             "{([Customers].[Customers].[USA], [Product].[Product].[Food]), ([Customers].[Customers].[USA], [Product].[Product].[Drink])}' must not be a set");
 
         // Sets cannot be converted.
-        assertExprThrows(context, "Sales",
-            "{[Product].[Food]}",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "{[Product].[Food]}").throwsMessage(
             "Member expression '{[Product].[Product].[Food]}' must not be a set");
     }
 
@@ -1074,8 +1076,7 @@ import mondrian.test.PropertiesTest.FoodmartData;
             new SqlPattern(DatabaseProduct.MYSQL, mysqlSQL, mysqlSQL)
         };
 
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(), query, patterns, true, true, true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).bypassSchemaCache().clearCacheFirst().expectNoSql(patterns).verify();
     }
 
     /**
@@ -1264,8 +1265,8 @@ import mondrian.test.PropertiesTest.FoodmartData;
 
     @Disabled //TODO need investigate
     @Test
+    @RolapConfig(key = ConfigConstants.CASE_SENSITIVE, value = "false", type = Boolean.class)
      void testCalculatedMemberMSASCompatibility(Context<?> context) {
-        ((TestContextImpl) context).setCaseSensitive(false);
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "with "
             + "member gender.calculated as 'gender.m' "
