@@ -13,9 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.cache;
 
-import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -45,8 +44,8 @@ class CacheFunDefTest {
                 + "[Gender].[Gender].[F]" );
 
         // doesn't work with multiple args
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "Cache(1, 2)",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Cache(1, 2)").throwsMessage(
             "No function matches signature 'Cache(<Numeric Expression>, <Numeric Expression>)'" );
     }
 

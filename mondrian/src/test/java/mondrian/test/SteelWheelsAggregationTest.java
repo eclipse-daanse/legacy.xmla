@@ -11,7 +11,7 @@
 package mondrian.test;
 
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import java.net.URL;
 import java.util.List;
@@ -217,7 +217,7 @@ class SteelWheelsAggregationTest {
     @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testWithAggregation(Context<?> context) throws Exception {
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User"))), QUERY).returnsGrid(EXPECTED);
     }
 
     public static class TestWithAggregationCatalogSupplier implements CatalogMappingSupplier {
@@ -267,7 +267,7 @@ class SteelWheelsAggregationTest {
     @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testWithAggregationNoRestrictionsOnTopLevel(Context<?> context) throws Exception {
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User"))), QUERY).returnsGrid(EXPECTED);
     }
 
     public static class TestWithAggregationNoRestrictionsOnTopLevelCatalogSupplier implements CatalogMappingSupplier {
@@ -313,7 +313,7 @@ class SteelWheelsAggregationTest {
     @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testUnionWithAggregation(Context<?> context) throws Exception {
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY).returnsGrid(EXPECTED);
     }
 
     public static class TestUnionWithAggregationCatalogSupplier implements CatalogMappingSupplier {
@@ -371,7 +371,7 @@ class SteelWheelsAggregationTest {
     @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
     void testWithAggregationUnionRolesWithSameGrants(Context<?> context) throws Exception {
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY).returnsGrid(EXPECTED);
     }
 
     public static class TestWithAggregationUnionRolesWithSameGrantsCatalogSupplier implements CatalogMappingSupplier {

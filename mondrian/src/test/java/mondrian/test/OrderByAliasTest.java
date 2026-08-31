@@ -13,6 +13,7 @@ import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.Map;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -80,12 +81,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-      assertQuerySql(connection,
+      SqlAssert.forQuery(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
-        + "where {[Measures].[Unit Sales]}",
-        mysqlPattern(
+        + "where {[Measures].[Unit Sales]}").expectSql(mysqlPattern(
             "select\n"
             + "    RTRIM(\"promotion_name\") as \"c0\"\n"
             + "from\n"
@@ -93,7 +93,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "group by\n"
             + "    RTRIM(\"promotion_name\")\n"
             + "order by\n"
-            + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
+            + "    ISNULL(\"c0\") ASC, \"c0\" ASC")).verify();
   }
 
   @Test
@@ -120,13 +120,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         assertQuerySql(
-        connection,
+         SqlAssert.forQuery(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
-        + "where {[Measures].[Unit Sales]}",
-        mysqlPattern(
+        + "where {[Measures].[Unit Sales]}").expectSql(mysqlPattern(
             "select\n"
             + "    \"promotion\".\"promotion_name\" as \"c0\",\n"
             + "    RTRIM(\"promotion_name\") as \"c1\"\n"
@@ -136,7 +134,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "    \"promotion\".\"promotion_name\",\n"
             + "    RTRIM(\"promotion_name\")\n"
             + "order by\n"
-            + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
+            + "    ISNULL(\"c0\") ASC, \"c0\" ASC")).verify();
   }
 
   @Test
@@ -163,13 +161,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         assertQuerySql(
-        connection,
+         SqlAssert.forQuery(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
-        + "where {[Measures].[Unit Sales]}",
-        mysqlPattern(
+        + "where {[Measures].[Unit Sales]}").expectSql(mysqlPattern(
             "select\n"
             + "    \"promotion\".\"promotion_name\" as \"c0\",\n"
             + "    RTRIM(\"promotion_name\") as \"c1\"\n"
@@ -179,7 +175,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "    \"promotion\".\"promotion_name\",\n"
             + "    RTRIM(\"promotion_name\")\n"
             + "order by\n"
-            + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
+            + "    ISNULL(\"c0\") ASC, \"c0\" ASC")).verify();
   }
 
   @Test
@@ -206,13 +202,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         assertQuerySql(
-        connection,
+         SqlAssert.forQuery(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
-        + "where {[Measures].[Unit Sales]}",
-        mysqlPattern(
+        + "where {[Measures].[Unit Sales]}").expectSql(mysqlPattern(
             "select\n"
             + "    \"promotion\".\"promotion_name\" as \"c0\",\n"
             + "    RTRIM(\"promotion_name\") as \"c1\"\n"
@@ -222,7 +216,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "    \"promotion\".\"promotion_name\",\n"
             + "    RTRIM(\"promotion_name\")\n"
             + "order by\n"
-            + "    ISNULL(\"c1\") ASC, \"c1\" ASC"));
+            + "    ISNULL(\"c1\") ASC, \"c1\" ASC")).verify();
   }
 
   @Test
@@ -261,13 +255,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         assertQuerySql(
-        connection,
+         SqlAssert.forQuery(connection,
         "select non empty{[Employees].[All Employees].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [HR] "
-        + "where {[Measures].[Avg Salary]}",
-        mysqlPattern(
+        + "where {[Measures].[Avg Salary]}").expectSql(mysqlPattern(
             "select\n"
             + "    \"employee\".\"employee_id\" as \"c0\",\n"
             + "    \"employee\".\"full_name\" as \"c1\",\n"
@@ -291,7 +283,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "    \"employee\".\"education_level\",\n"
             + "    \"employee\".\"management_role\"\n"
             + "order by\n"
-            + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
+            + "    ISNULL(\"c0\") ASC, \"c0\" ASC")).verify();
   }
 
     @Disabled //TODO need investigate
@@ -319,13 +311,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         assertQuerySql(
-        connection,
+         SqlAssert.forQuery(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
-        + "where {[Measures].[Unit Sales]}",
-        mysqlPattern(
+        + "where {[Measures].[Unit Sales]}").expectSql(mysqlPattern(
             "select\n"
             + "    \"promotion\".\"promotion_name\" as \"c0\"\n"
             + "from\n"
@@ -336,7 +326,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "group by\n"
             + "    \"promotion\".\"promotion_name\"\n"
             + "order by\n"
-            + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
+            + "    ISNULL(\"c0\") ASC, \"c0\" ASC")).verify();
   }
 
   @Test
@@ -363,13 +353,11 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-        assertQuerySql(
-        connection,
+        SqlAssert.forQuery(connection,
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
-        + "where {[Measures].[Unit Sales]}",
-        mysqlPattern(
+        + "where {[Measures].[Unit Sales]}").expectSql(mysqlPattern(
             "select\n"
             + "    \"promotion\".\"promotion_name\" as \"c0\"\n"
             + "from\n"
@@ -377,7 +365,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "group by\n"
             + "    \"promotion\".\"promotion_name\"\n"
             + "order by\n"
-            + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
+            + "    ISNULL(\"c0\") ASC, \"c0\" ASC")).verify();
   }
 
   @Test
@@ -389,15 +377,13 @@ class OrderByAliasTest extends BatchTestCase {
     {
       return; // For MySQL 5.7+ only!
     }
-    assertQuerySql(
-        connection,
+    SqlAssert.forQuery(connection,
         "with set necj as\n"
         + "NonEmptyCrossJoin([Customers].[Name].members,[Store].[Store Name].members)\n"
         + "select\n"
         + "{[Measures].[Unit Sales]} on columns,\n"
         + "Tail(hierarchize(necj),5) on rows\n"
-        + "from sales",
-        mysqlPattern(
+        + "from sales").expectSql(mysqlPattern(
             "select\n"
             + "    \"customer\".\"country\" as \"c0\",\n"
             + "    \"customer\".\"state_province\" as \"c1\",\n"
@@ -454,7 +440,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c10\") ASC, \"c10\" ASC,\n"
             + "    ISNULL(\"c11\") ASC, \"c11\" ASC,\n"
             + "    ISNULL(\"c12\") ASC, \"c12\" ASC,\n"
-            + "    ISNULL(\"c13\") ASC, \"c13\" ASC"));
+            + "    ISNULL(\"c13\") ASC, \"c13\" ASC")).verify();
   }
 
   @Test
@@ -468,11 +454,9 @@ class OrderByAliasTest extends BatchTestCase {
     {
       return; // For MySQL 5.7+ only!
     }
-    assertQuerySql(
-        connection,
+    SqlAssert.forQuery(connection,
         "select non empty crossjoin( product.[product family].members, time.quarter.members) on 0 "
-        + "from [warehouse and sales]",
-        mysqlPattern(
+        + "from [warehouse and sales]").expectSql(mysqlPattern(
             "select\n"
             + "    *\n"
             + "from\n"
@@ -500,7 +484,7 @@ class OrderByAliasTest extends BatchTestCase {
             + "order by\n"
             + "    ISNULL(1) ASC, 1 ASC,\n"
             + "    ISNULL(2) ASC, 2 ASC,\n"
-            + "    ISNULL(3) ASC, 3 ASC"));
+            + "    ISNULL(3) ASC, 3 ASC")).verify();
   }
 
     /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */

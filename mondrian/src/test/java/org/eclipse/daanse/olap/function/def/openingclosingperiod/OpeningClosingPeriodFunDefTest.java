@@ -13,18 +13,14 @@
  */
 package org.eclipse.daanse.olap.function.def.openingclosingperiod;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -41,8 +37,7 @@ class OpeningClosingPeriodFunDefTest {
             "ClosingPeriod()", "{[Time].[Time]}" );
         // MSOLAP returns [1997].[Q4], because [Time].CurrentMember =
         // [1997].
-        Member member = executeSingletonAxis(connection, "ClosingPeriod()", "Sales" );
-        assertEquals( "[Time].[Time].[1997].[Q4]", member.getUniqueName() );
+        assertThatAxis(connection, "Sales", "ClosingPeriod()").returns( "[Time].[Time].[1997].[Q4]" );
     }
 
     @Test
@@ -54,16 +49,11 @@ class OpeningClosingPeriodFunDefTest {
             "([Measures].[Unit Sales], ClosingPeriod([Time].[Month]))",
             "{[Time].[Time]}" );
 
-        Member member;
+        assertThatAxis(connection, "Sales", "ClosingPeriod([Year])").returns( "[Time].[Time].[1997]" );
 
-        member = executeSingletonAxis(connection, "ClosingPeriod([Year])", "Sales" );
-        assertEquals( "[Time].[Time].[1997]", member.getUniqueName() );
+        assertThatAxis(connection, "Sales", "ClosingPeriod([Quarter])").returns( "[Time].[Time].[1997].[Q4]" );
 
-        member = executeSingletonAxis(connection, "ClosingPeriod([Quarter])", "Sales" );
-        assertEquals( "[Time].[Time].[1997].[Q4]", member.getUniqueName() );
-
-        member = executeSingletonAxis(connection, "ClosingPeriod([Month])", "Sales" );
-        assertEquals( "[Time].[Time].[1997].[Q4].[12]", member.getUniqueName() );
+        assertThatAxis(connection, "Sales", "ClosingPeriod([Month])").returns( "[Time].[Time].[1997].[Q4].[12]" );
 
         assertThatQuery(connection,
             "with member [Measures].[Closing Unit Sales] as "
@@ -157,21 +147,18 @@ class OpeningClosingPeriodFunDefTest {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
             // and ClosingPeriod(<level>, <member>), but not
             // ClosingPeriod(<member>)
-            Member member = executeSingletonAxis( context.getConnectionWithDefaultRole(),"ClosingPeriod([USA])", "Sales" );
-            assertEquals( "WA", member.getName() );
+            assertThatAxis( context.getConnectionWithDefaultRole(), "Sales", "ClosingPeriod([USA])" ).returns( "[Store].[Store].[USA].[WA]" );
         }
     }
 
     @Test
     void testClosingPeriodMemberLeaf(Context<?> context) {
-        Member member;
         if ( false ) {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
             // and ClosingPeriod(<level>, <member>), but not
             // ClosingPeriod(<member>)
-            member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "ClosingPeriod([Time].[1997].[Q3].[8])", "Sales" );
-            assertNull( member );
+            assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+                "ClosingPeriod([Time].[1997].[Q3].[8])").returns( "" );
         } else if ( isDefaultNullMemberRepresentation(context) ) {
             assertThatQuery(context.getConnectionWithDefaultRole(),
                 "with member [Measures].[Foo] as ClosingPeriod().uniquename\n"
@@ -291,9 +278,8 @@ class OpeningClosingPeriodFunDefTest {
 
     @Test
     void testClosingPeriodBelow(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "ClosingPeriod([Quarter],[1997].[Q3].[8])", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "ClosingPeriod([Quarter],[1997].[Q3].[8])").returns( "" );
     }
 
 

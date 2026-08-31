@@ -13,12 +13,10 @@
  */
 package org.eclipse.daanse.olap.function.def.nonstandard;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
@@ -53,9 +51,8 @@ class CalculatedChildFunDefTest {
                 + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 6,838\n" // Calculated child for [Drink]
                 + "Row #1: 841\n" ); // Calculated child for [Non-Consumable]
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "[Product].[All Products].CalculatedChild(\"foobar\")", "Sales" );
-        assertEquals( null, member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Product].[All Products].CalculatedChild(\"foobar\")").returns("");
     }
 
     @Disabled //disabled for CI build
@@ -87,25 +84,20 @@ class CalculatedChildFunDefTest {
                 // Note: For [Non-Consumable], the calculated child for [Drink] was
                 // selected!
                 + "Row #1: 6,838\n" );
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "[Product].[All Products].CalculatedChild(\"foobar\")", "Sales" );
-        assertEquals( null, member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "[Product].[All Products].CalculatedChild(\"foobar\")").returns("");
     }
 
     @Test
     void testCalculatedChildOnMemberWithNoChildren(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "[Measures].[Store Sales].CalculatedChild(\"foobar\")", "Sales" );
-        assertEquals( null, member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+                "[Measures].[Store Sales].CalculatedChild(\"foobar\")").returns("");
     }
 
     @Test
     void testCalculatedChildOnNullMember(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "[Measures].[Store Sales].parent.CalculatedChild(\"foobar\")", "Sales" );
-        assertEquals( null, member);
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+                "[Measures].[Store Sales].parent.CalculatedChild(\"foobar\")").returns("");
     }
 
 

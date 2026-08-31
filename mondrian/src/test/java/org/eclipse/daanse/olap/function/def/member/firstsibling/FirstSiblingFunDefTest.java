@@ -13,13 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.member.firstsibling;
 
-import static org.eclipse.daanse.olap.common.Util.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -30,38 +26,29 @@ class FirstSiblingFunDefTest {
 
     @Test
     void testFirstSiblingFirstInLevel(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstSibling", "Sales" );
-        assertEquals( "F", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[F].FirstSibling").returns("[Gender].[Gender].[F]");
     }
 
     @Test
     void testFirstSiblingLastInLevel(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].FirstSibling", "Sales" );
-        assertEquals( "Q1", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].[Q4].FirstSibling").returns("[Time].[Time].[1997].[Q1]");
     }
 
     @Test
     void testFirstSiblingAll(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].FirstSibling", "Sales" );
-        assertTrue( member.isAll() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[All Gender].FirstSibling").returns("[Gender].[Gender].[All Gender]");
     }
 
     @Test
     void testFirstSiblingRoot(Context<?> context) {
         // The [Measures] hierarchy does not have an 'all' member, so
         // [Unit Sales] does not have a parent.
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Measures].[Store Sales].FirstSibling", "Sales" );
-        assertEquals( "Unit Sales", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].FirstSibling").returns("[Measures].[Unit Sales]");
     }
 
     @Test
     void testFirstSiblingNull(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstChild.FirstSibling", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[F].FirstChild.FirstSibling").returns("");
     }
 
 

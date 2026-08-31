@@ -10,11 +10,11 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
@@ -51,10 +51,8 @@ class AggregationOverAggTableTest {
             + "Row #1: 3\n"
             + "Row #2: 3\n");
 
-        assertQuerySqlOrNot(
-            connection,
-            query,
-            mysqlPattern(
+        SqlAssert.forQuery(connection,
+            query).expectSql(mysqlPattern(
                 "select\n"
                 + "    `agg_c_avg_sales_fact_1997`.`the_year` as `c0`,\n"
                 + "    `agg_c_avg_sales_fact_1997`.`quarter` as `c1`,\n"
@@ -70,8 +68,7 @@ class AggregationOverAggTableTest {
                 + "and\n"
                 + "    `agg_c_avg_sales_fact_1997`.`month_of_year` in (1, 2, 3)\n"
                 + "and\n"
-                + "    `agg_c_avg_sales_fact_1997`.`gender` = 'M'"),
-            false, false, true);
+                + "    `agg_c_avg_sales_fact_1997`.`gender` = 'M'")).verify();
     }
 
 }

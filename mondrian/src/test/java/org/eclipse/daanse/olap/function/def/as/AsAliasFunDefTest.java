@@ -25,9 +25,8 @@
  */
 package org.eclipse.daanse.olap.function.def.as;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import  org.eclipse.daanse.olap.util.Bug;
@@ -43,7 +42,7 @@ public class AsAliasFunDefTest {
 	 */
 	@Test
 	void testAs(Context<?> context) {
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')").returns(
 				"[Customers].[Customers].[USA]");
 	}
 
@@ -51,12 +50,12 @@ public class AsAliasFunDefTest {
 	void testAsWithColon(Context<?> context) {
 		// 'AS' and the ':' operator have similar precedence, so it's worth
 		// checking that they play nice.
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select
 				  filter(
 				    [Time].[1997].[Q1].[2] : [Time].[1997].[Q3].[9] as t,\
 				    mod(t.CurrentOrdinal, 2) = 0) on 0
-				from [Sales]""", """
+				from [Sales]""").returnsGrid("""
 				Axis #0:
 				{}
 				Axis #1:
@@ -75,22 +74,22 @@ public class AsAliasFunDefTest {
 	void testAsFailsMember(Context<?> context) {
 		// AS member fails on SSAS with "The CHILDREN function expects a member
 		// expression for the 0 argument. A tuple set expression was used."
-		assertQueryThrows(context, """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select
 				 {([Time].[1997].[Q1] as t).Children,\s
 				  t.Parent } on 0\s
-				from [Sales]""", "No function matches signature '<Set>.Children'");
+				from [Sales]""").throwsMessage("No function matches signature '<Set>.Children'");
 
 	}
 
 	@Test
 	void testAsWithSetOfMembers(Context<?> context) {
 		// Set of members. OK.
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,\s
 				  {[Time].[1997].Children as t,\s
 				   Descendants(t, [Time].[Month])} on 1\s
-				from [Sales]""", """
+				from [Sales]""").returnsGrid("""
 				Axis #0:
 				{}
 				Axis #1:
@@ -135,11 +134,11 @@ public class AsAliasFunDefTest {
 	@Test
 	void testAsWithAliasMemberImplicitSet(Context<?> context) {
 		// Alias a member. Implicitly becomes set. OK.
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  {[Time].[1997] as t,
 				   Descendants(t, [Time].[Month])} on 1
-				from [Sales]""", """
+				from [Sales]""").returnsGrid("""
 				Axis #0:
 				{}
 				Axis #1:
@@ -180,11 +179,11 @@ public class AsAliasFunDefTest {
 		// Alias a tuple. Implicitly becomes set. The error confirms that the
 		// named set's type is a set of tuples. SSAS gives error "Descendants
 		// function expects a member or set ..."
-		assertQueryThrows(context, """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  {([Time].[1997], [Customers].[USA].[CA]) as t,
 				   Descendants(t, [Time].[Month])} on 1
-				from [Sales]""",
+				from [Sales]""").throwsMessage(
 				"Argument to Descendants function must be a member or set of members, not a set of tuples");
 	}
 
@@ -223,7 +222,7 @@ public class AsAliasFunDefTest {
 		// Named set and alias with same name (t) and a second alias (t2).
 		// Reference to t from within descendants resolves to alias, of type
 		// [Time], because it is nearer.
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				with set t as [Gender].Children
 				select
 				  Measures.[Unit Sales] * t on 0,
@@ -233,14 +232,14 @@ public class AsAliasFunDefTest {
 				      Descendants(t, [Time].[Month]) as t2,
 				      Mod(t2.CurrentOrdinal, 5) = 0)
 				  } on 1
-				from [Sales]""", result);
+				from [Sales]""").returnsGrid(result);
 
 	}
 
 	@Test
 	void testAsWith2AliasesOfSameName(Context<?> context) {
 		// Two aliases with same name. OK.
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select
 				  Measures.[Unit Sales] * [Gender].Children as t on 0,
 				  {[Time].[1997].Children as t,
@@ -248,7 +247,7 @@ public class AsAliasFunDefTest {
 				      Descendants(t, [Time].[Month]) as t2,
 				      Mod(t2.CurrentOrdinal, 5) = 0)
 				  } on 1
-				from [Sales]""", result);
+				from [Sales]""").returnsGrid(result);
 
 	}
 
@@ -257,11 +256,11 @@ public class AsAliasFunDefTest {
 		// Bug MONDRIAN-648 causes 'AS' to have lower precedence than '*'.
 		if (Bug.Bug648Fixed) {
 			// Note that 'as' has higher precedence than '*'.
-			assertQueryReturns(context.getConnectionWithDefaultRole(), """
+			assertThatQuery(context.getConnectionWithDefaultRole(), """
 					select
 					  Measures.[Unit Sales] * [Gender].Members as t on 0,
 					  {t} on 1
-					from [Sales]""", "xxxxx");
+					from [Sales]""").returnsGrid("xxxxx");
 		}
 	}
 
@@ -271,33 +270,33 @@ public class AsAliasFunDefTest {
 		// On SSAS 2005, finds t, and gives error,
 		// "The Gender hierarchy already appears in the Axis0 axis."
 		// On Mondrian, cannot find t. FIXME.
-		assertQueryThrows(context, """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select
 				  Measures.[Unit Sales] * ([Gender].Members as t) on 0,
 				  {t} on 1
-				from [Sales]""", "MDX object 't' not found in cube 'Sales'");
+				from [Sales]""").throwsMessage("MDX object 't' not found in cube 'Sales'");
 
 		// As above, with parentheses. Tuple valued.
 		// On SSAS 2005, finds t, and gives error,
 		// "The Measures hierarchy already appears in the Axis0 axis."
 		// On Mondrian, cannot find t. FIXME.
-		assertQueryThrows(context, """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select
 				  (Measures.[Unit Sales] * [Gender].Members) as t on 0,
 				  {t} on 1
-				from [Sales]""", "MDX object 't' not found in cube 'Sales'");
+				from [Sales]""").throwsMessage("MDX object 't' not found in cube 'Sales'");
 
 	}
 
 	@Test
 	void testAsWithCalcSetCurrMember(Context<?> context) {
 		// Calculated set, CurrentMember
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as s,
 				    (s.Current.Item(0).Parent, [Marital Status].[S], [Gender].[F]) > 17000) on 1
-				from [Sales]""", """
+				from [Sales]""").returnsGrid("""
 				Axis #0:
 				{}
 				Axis #1:
@@ -326,12 +325,12 @@ public class AsAliasFunDefTest {
 		// As above, but don't override [Gender] in filter condition. Note that
 		// the filter condition is evaluated in the context created by the
 		// filter set. So, only items with [All Gender] pass the filter.
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as s,
 				    (s.Current.Item(0).Parent, [Marital Status].[S]) > 35000) on 1
-				from [Sales]""", """
+				from [Sales]""").returnsGrid("""
 				Axis #0:
 				{}
 				Axis #1:
@@ -350,7 +349,7 @@ public class AsAliasFunDefTest {
 	@Test
 	void testAsWithMultiDefOfAliasInSameAxis(Context<?> context) {
 		// Multiple definitions of alias within same axis
-		assertQueryReturns(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  generate(
 				    [Marital Status].Children as s,
@@ -358,7 +357,7 @@ public class AsAliasFunDefTest {
 				      (Time.Month.Members * Gender.Members) as s,
 				      (s.Current.Item(0).Parent, [Marital Status].[S], [Gender].[F]) > 17000),
 				    ALL) on 1
-				from [Sales]""", """
+				from [Sales]""").returnsGrid("""
 				Axis #0:
 				{}
 				Axis #1:
@@ -407,7 +406,7 @@ public class AsAliasFunDefTest {
 		// On SSAS 2005, gives error, "The CURRENT function cannot be called in
 		// current context because the 'x' set is not in scope". SSAS 2005 gives
 		// same error even if set does not exist.
-		assertQueryThrows(context, """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				with member Measures.Foo as 'x.Current.Name'
 				select
 				  {Measures.[Unit Sales], Measures.Foo} on 0,
@@ -418,11 +417,11 @@ public class AsAliasFunDefTest {
 				      Gender.Members as x,
 				      (x.Current, [Marital Status].[S]) > 50000),
 				    ALL) on 1
-				from [Sales]""", "MDX object 'x' not found in cube 'Sales'");
+				from [Sales]""").throwsMessage("MDX object 'x' not found in cube 'Sales'");
 
 		// As above, but set is not out of scope; it does not exist; but error
 		// should be the same.
-		assertQueryThrows(context, """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				with member Measures.Foo as 'z.Current.Name'
 				select
 				  {Measures.[Unit Sales], Measures.Foo} on 0,
@@ -433,43 +432,43 @@ public class AsAliasFunDefTest {
 				      Gender.Members as s,
 				      (s.Current, [Marital Status].[S]) > 50000),
 				    ALL) on 1
-				from [Sales]""", "MDX object 'z' not found in cube 'Sales'");
+				from [Sales]""").throwsMessage("MDX object 'z' not found in cube 'Sales'");
 
 	}
 
 	@Test
 	void testAsWithFailingSetAsString(Context<?> context) {
 		// 'set AS string' is invalid
-		assertQueryThrows(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as 'foo',
 				    (s.Current.Item(0).Parent, [Marital Status].[S]) > 50000) on 1
-				from [Sales]""", "Encountered an error at (or somewhere around) input:3:46");
+				from [Sales]""").throwsMessage("Encountered an error at (or somewhere around) input:3:46");
 
 	}
 
 	@Test
 	void testAsWithFailingSetAsNumeric(Context<?> context) {
 		// 'set AS numeric' is invalid
-		assertQueryThrows(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as 1234,
 				    (s.Current.Item(0).Parent, [Marital Status].[S]) > 50000) on 1
-				from [Sales]""", "Encountered an error at (or somewhere around) input:3:46");
+				from [Sales]""").throwsMessage("Encountered an error at (or somewhere around) input:3:46");
 
 	}
 
 	@Test
 	void testAsWithFailingNumericAsIdentifier(Context<?> context) {
 		// 'numeric AS identifier' is invalid
-		assertQueryThrows(context.getConnectionWithDefaultRole(), """
+		assertThatQuery(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    123 * 456 as s,
 				    (s.Current.Item(0).Parent, [Marital Status].[S]) > 50000) on 1
-				from [Sales]""", "No function matches signature '<Numeric Expression> AS <Set>'");
+				from [Sales]""").throwsMessage("No function matches signature '<Numeric Expression> AS <Set>'");
 	}
 
 }

@@ -9,8 +9,7 @@
  */
 package mondrian.rolap.aggmatcher;
 
-import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
 
@@ -20,6 +19,7 @@ import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
@@ -108,10 +108,8 @@ class DefaultRecognizerTest {
             + "    `agg_c_10_sales_fact_1997`.`month_of_year` in (1, 2, 3)";
 
         //withSchemaEmf(context, SchemaModifiersEmf.DefaultRecognizerTestModifier::new);
-        assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
-            query,
-            mysqlPattern(expectedSql),
-            false, true, true);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            query).bypassSchemaCache().clearCacheFirst().expectSql(mysqlPattern(expectedSql)).verify();
         context.getCatalogCache().clear();
     }
 
@@ -178,11 +176,8 @@ class DefaultRecognizerTest {
                 + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`the_year`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`the_year` ASC,\n"
                 + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`quarter`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`quarter` ASC,\n"
                 + "    ISNULL(`agg_g_ms_pcat_sales_fact_1997`.`month_of_year`) ASC, `agg_g_ms_pcat_sales_fact_1997`.`month_of_year` ASC");
-        assertQuerySqlOrNot(
-            connection,
-            query,
-            mysqlPattern(sql),
-            false, true, true);
+        SqlAssert.forQuery(connection,
+            query).bypassSchemaCache().clearCacheFirst().expectSql(mysqlPattern(sql)).verify();
     }
 
     /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */

@@ -12,7 +12,7 @@ package mondrian.rolap;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 
 import java.net.URL;
 import java.util.Map;

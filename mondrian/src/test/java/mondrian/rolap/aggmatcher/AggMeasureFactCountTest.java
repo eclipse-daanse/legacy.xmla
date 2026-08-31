@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
@@ -390,8 +391,6 @@ class AggMeasureFactCountTest {
     }
 
     private void assertQuerySql(Connection connection, String sql) {
-        TestUtil.assertQuerySql(
-                connection, QUERY,
-                new SqlPattern[] { new SqlPattern(DatabaseProduct.MYSQL, sql, sql.length()) });
+        SqlAssert.forQuery(connection, QUERY).expectSql(new SqlPattern[] { new SqlPattern(DatabaseProduct.MYSQL, sql, sql.length()) }).verify();
     }
 }

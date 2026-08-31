@@ -9,11 +9,11 @@
 
 package mondrian.rolap.sql;
 
-import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.Map;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -115,7 +115,7 @@ class SelectNotInGroupByTest {
         };
 
         // Use dimension with level-dependent property
-        assertQuerySqlOrNot(connection, queryCubeA, sqlPatterns, false, false, true);
+        SqlAssert.forQuery(connection, queryCubeA).expectSql(sqlPatterns).verify();
     }
 
     @Test
@@ -131,7 +131,7 @@ class SelectNotInGroupByTest {
         };
 
         // Use dimension with level-independent property
-        assertQuerySqlOrNot(connection, queryCubeA, sqlPatterns, false, false, true);
+        SqlAssert.forQuery(connection, queryCubeA).expectSql(sqlPatterns).verify();
     }
 
     @Test
@@ -149,7 +149,7 @@ class SelectNotInGroupByTest {
         };
 
         // Use dimension with unique level & level-dependent properties
-        assertQuerySqlOrNot(connection, queryCubeA, sqlPatterns, false, false, true);
+        SqlAssert.forQuery(connection, queryCubeA).expectSql(sqlPatterns).verify();
     }
 
     @Test
@@ -165,7 +165,7 @@ class SelectNotInGroupByTest {
         };
 
         // Use dimension with unique level but level-indpendent property
-        assertQuerySqlOrNot(connection, queryCubeA, sqlPatterns, false, false, true);
+        SqlAssert.forQuery(connection, queryCubeA).expectSql(sqlPatterns).verify();
     }
 
     private boolean dialectAllowsSelectNotInGroupBy(Connection connection) {

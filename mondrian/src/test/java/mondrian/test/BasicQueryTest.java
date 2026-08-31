@@ -28,7 +28,7 @@ import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeExpr;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.executeQueryTimeoutTest;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
@@ -1538,7 +1538,7 @@ public class BasicQueryTest {
    */
     @Test
   void testBugMondrian46(Context<?> context) {
-    TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
+    flushSchemaCache(context.getConnectionWithDefaultRole());
     assertThatQuery( context.getConnectionWithDefaultRole(),"select {[Measures].[Customer Count]} ON columns,\n"
         + "  {([Promotion Media].[All Media], [Product].[All Products])} ON rows\n" + "from [Sales]\n"
         + "where [Time].[Time].[1997]")

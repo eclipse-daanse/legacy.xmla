@@ -13,8 +13,6 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatEx
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.getCubeByNameFromArray;
 import static org.opencube.junit5.TestUtil.getDimensionByNameFromArray;
@@ -145,24 +143,24 @@ class Ssas2005CompatibilityTest {
             // SSAS gives error with the <Level>.Ordinal function:
             //   The ORDINAL function expects a level expression for
             //   the  argument. A hierarchy expression was used.
-            assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-                "[Currency].[Currency].Ordinal",
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+                "[Currency].[Currency].Ordinal").throwsMessage(
                 "Mondrian Error:MDX object '[Currency].[Currency]' not found in cube 'Sales'");
 
             // SSAS succeeds with the '<Hierarchy>.Levels(<Numeric Expression>)'
             // function, returns 2
-            TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-                "[Currency].[Currency].Levels(0).Name",
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+                "[Currency].[Currency].Levels(0).Name").returns(
                 "(All)");
 
             // There are 4 hierarchy members (including 'Any currency')
-            TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-                "[Currency].[Currency].Members.Count",
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+                "[Currency].[Currency].Members.Count").returns(
                 "15");
 
             // There are 3 level members
-            TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-                "[Currency].[Currency].[Currency].Members.Count",
+            assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+                "[Currency].[Currency].[Currency].Members.Count").returns(
                 "14");
     }
 
@@ -178,8 +176,8 @@ class Ssas2005CompatibilityTest {
         // only <Hierarchy>.Levels(<Numeric Expression>)
         // and <Hierarchy>.Levels(<String Expression>)
         // SSAS returns 7.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-            "[Product].[Products].Levels.Count",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+            "[Product].[Products].Levels.Count").returns(
             "7");
     }
 
@@ -944,8 +942,8 @@ class Ssas2005CompatibilityTest {
         // SSAS2005 returns error:
         //   The 'Product' dimension contains more than one hierarchy,
         //   therefore the hierarchy must be explicitly specified.
-        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].Parent.UniqueName",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].Parent.UniqueName").throwsMessage(
             "It may contains more than one hierarchy. Specify the hierarchy explicitly");
     }
 
@@ -1436,8 +1434,8 @@ class Ssas2005CompatibilityTest {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-                "[Customer].Level.Name",
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+                "[Customer].Level.Name").returns(
                 "(All)");
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
@@ -1894,9 +1892,8 @@ class Ssas2005CompatibilityTest {
         // for member defined in the database
         final String timeByWeek =
             hierarchyName("Time", "Time By Week");
-        assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
-            "[Time].[1997].Level.UniqueName",
-            timeByWeek + ".[Year2]");
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+            "[Time].[1997].Level.UniqueName").returns(timeByWeek + ".[Year2]");
 
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;

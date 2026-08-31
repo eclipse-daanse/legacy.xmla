@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.allMember;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertQuerySql;
-import static org.opencube.junit5.TestUtil.assertQuerySqlOrNot;
 import static org.opencube.junit5.TestUtil.cubeByName;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.getDialect;
@@ -31,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.calc.tuple.TupleList;
@@ -222,7 +221,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
   @Test
@@ -288,7 +287,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
   @Test
@@ -773,7 +772,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql)
         };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
     }
 
   @Test
@@ -1058,7 +1057,7 @@ class AggregationOnDistinctCountMeasuresTest {
             new SqlPattern(
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
-        assertQuerySql(context.getConnectionWithDefaultRole(),
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + "SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Store].[Store].MEMBERS}, "
             + "{{[Gender].[Gender].MEMBERS}, "
@@ -1077,8 +1076,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[COG_OQP_INT_s2], HEAD({([Store].[COG_OQP_USR_Aggregate(Store)], "
             + "[Gender].DEFAULTMEMBER)}, "
             + "IIF(COUNT([COG_OQP_INT_s1], INCLUDEEMPTY) > 0, 1, 0))} ON AXIS(1) \n"
-            + "FROM [sales]",
-            patterns);
+            + "FROM [sales]").expectSql(patterns).verify();
     }
 
   @Test
@@ -1151,7 +1149,7 @@ class AggregationOnDistinctCountMeasuresTest {
         };
 
       assertThatQuery(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers).returnsGrid(desiredResult);
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers).expectSql(patterns).verify();
     }
 
 
@@ -1234,7 +1232,7 @@ class AggregationOnDistinctCountMeasuresTest {
         };
 
       assertThatQuery(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers).returnsGrid(desiredResult);
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers).expectSql(patterns).verify();
     }
 
   @Test
@@ -1294,9 +1292,9 @@ class AggregationOnDistinctCountMeasuresTest {
         };
 
       assertThatQuery(context.getConnectionWithDefaultRole(), mdxQueryWithMembers).returnsGrid(desiredResult);
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithMembers, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdxQueryWithMembers).expectSql(patterns).verify();
       assertThatQuery(context.getConnectionWithDefaultRole(), mdxQueryWithDefaultMember).returnsGrid(desiredResult);
-        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithDefaultMember, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdxQueryWithDefaultMember).expectSql(patterns).verify();
     }
 
   @Test
@@ -1351,7 +1349,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.LUCIDDB, luciddbSql, luciddbSql),
         };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
   @Test
@@ -1440,7 +1438,7 @@ class AggregationOnDistinctCountMeasuresTest {
             new SqlPattern(
                 DatabaseProduct.ACCESS, accessSql, accessSql)};
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
   @Test
@@ -2235,17 +2233,12 @@ class AggregationOnDistinctCountMeasuresTest {
             + "    `agg_c_10_sales_fact_1997`.`quarter` = 'Q1'\n"
             + "and\n"
             + "    `agg_c_10_sales_fact_1997`.`month_of_year` in (1, 2, 3)";
-        assertQuerySqlOrNot(
-            context.getConnectionWithDefaultRole(),
-            monthsQuery,
-            new SqlPattern[]{
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+            monthsQuery).bypassSchemaCache().clearCacheFirst().expectSql(new SqlPattern[]{
                 new SqlPattern(
                     DatabaseProduct.MYSQL,
                     expectedSql,
-                    expectedSql.indexOf("from"))},
-            false,
-            true,
-            true);
+                    expectedSql.indexOf("from"))}).verify();
     }
 
   /**

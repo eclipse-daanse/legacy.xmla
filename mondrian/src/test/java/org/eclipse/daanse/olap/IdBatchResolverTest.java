@@ -49,6 +49,7 @@ import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.opencube.junit5.TestUtil;
 
 
 @RolapContextTest(FoodmartTestInstance.class)
@@ -398,7 +398,7 @@ class IdBatchResolverTest  {
     }
 
     public IdBatchResolver makeTestBatchResolver(Context<?> context,String mdx) {
-    	TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
+    	FlushSchemaCacheModifier.flushSchemaCache(context.getConnectionWithDefaultRole());
 
         InternalRolapConnection conn = (InternalRolapConnection) spy(
         		context.getConnectionWithDefaultRole());

@@ -26,9 +26,8 @@ package mondrian.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.databaseIsValid;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
@@ -93,8 +92,8 @@ class SteelWheelsSchemaTest {
         if (!TestUtil.databaseIsValid(context.getConnectionWithDefaultRole(), "Sales")) {
             return;
         }
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Measures.Members",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Measures.Members").returns(
             "[Measures].[Quantity]\n"
             + "[Measures].[Sales]\n"
             + "[Measures].[Fact Count]");
@@ -108,7 +107,7 @@ class SteelWheelsSchemaTest {
         if (!databaseIsValid(context.getConnection(new ConnectionProps(List.of("dev"))), "Sales")) {
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [*NATIVE_CJ_SET] as 'Filter([*BASE_MEMBERS_Markets], (NOT IsEmpty([Measures].[Sales])))'\n"
             + "  set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], [Markets].CurrentMember.OrderKey, BASC)'\n"
             + "  set [*BASE_MEMBERS_Markets] as '[Markets].[Territory].Members'\n"
@@ -118,7 +117,7 @@ class SteelWheelsSchemaTest {
             + "  member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Sales]', FORMAT_STRING = \"#,###\", SOLVE_ORDER = 400\n"
             + "select [*BASE_MEMBERS_Measures] ON COLUMNS,\n"
             + "  [*SORTED_ROW_AXIS] ON ROWS\n"
-            + "from [SteelWheelsSales]\n",
+            + "from [SteelWheelsSales]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -138,16 +137,16 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select [Markets].[All Markets].[Japan] on 0 from [SteelWheelsSales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select [Markets].[All Markets].[Japan] on 0 from [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Markets].[Markets].[Japan]}\n"
             + "Row #0: 4,923\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select [Markets].Children on 0 from [SteelWheelsSales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select [Markets].Children on 0 from [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -162,8 +161,8 @@ class SteelWheelsSchemaTest {
             + "Row #0: 4,923\n"
             + "Row #0: 37,952\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select Subset([Markets].Members, 130, 8) on 0 from [SteelWheelsSales]",
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "select Subset([Markets].Members, 130, 8) on 0 from [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -184,9 +183,9 @@ class SteelWheelsSchemaTest {
             + "Row #0: 692\n"
             + "Row #0: 692\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Markets].[Territory].Members on 0 from "
-            + "[SteelWheelsSales]",
+            + "[SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -289,11 +288,11 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS,\n"
             + "NON EMPTY {[Markets].[APAC]} ON ROWS\n"
             + "from [SteelWheelsSales]\n"
-            + "where [Time].[2004]",
+            + "where [Time].[2004]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[2004]}\n"
             + "Axis #1:\n"
@@ -316,11 +315,11 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS,\n"
             + "NON EMPTY {[Markets].[APAC]} ON ROWS\n"
             + "from [SteelWheelsSales]\n"
-            + "where [Time].[2004]",
+            + "where [Time].[2004]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[2004]}\n"
             + "Axis #1:\n"
@@ -339,12 +338,12 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS, \n"
             + "  NON EMPTY {([Markets].[APAC], [Customers].[All Customers], "
             + "[Product].[All Products], [Time].[All Years])} ON ROWS \n"
             + "from [SteelWheelsSales] \n"
-            + "WHERE [Order Status].[Cancelled]",
+            + "WHERE [Order Status].[Cancelled]").returnsGrid(
             "Axis #0:\n"
             + "{[Order Status].[Order Status].[Cancelled]}\n"
             + "Axis #1:\n"
@@ -354,13 +353,13 @@ class SteelWheelsSchemaTest {
             + "Row #0: 596\n");
 
         // same query, pivoted
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Quantity]} ON COLUMNS, \n"
             + "  NON EMPTY {([Customers].[All Customers], "
             + "[Product].[All Products], "
             + "[Time].[All Years], [Order Status].[Cancelled])} ON ROWS \n"
             + "from [SteelWheelsSales] \n"
-            + "where [Markets].[APAC]",
+            + "where [Markets].[APAC]").returnsGrid(
             "Axis #0:\n"
             + "{[Markets].[Markets].[APAC]}\n"
             + "Axis #1:\n"
@@ -386,8 +385,8 @@ class SteelWheelsSchemaTest {
             + "select [*BASE_MEMBERS_Measures] ON COLUMNS,\n"
             + "  [*SORTED_ROW_AXIS] ON ROWS\n"
             + "from [SteelWheelsSales2]\n";
-       assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdxQuery,
+       assertThatQuery(context.getConnectionWithDefaultRole(),
+            mdxQuery).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -420,7 +419,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_Product]' \n"
             + "  set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], "
             + "[Product].CurrentMember.OrderKey, BASC)' \n"
@@ -432,7 +431,7 @@ class SteelWheelsSchemaTest {
             + "  member [Measures].[*ZERO] as '0.0', SOLVE_ORDER = 0.0 \n"
             + "select [*BASE_MEMBERS_Measures] ON COLUMNS, \n"
             + "  [*SORTED_ROW_AXIS] ON ROWS \n"
-            + "from [SteelWheelsSales]",
+            + "from [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -474,10 +473,10 @@ class SteelWheelsSchemaTest {
         //}
 
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Date] as 'Format([Orders].CurrentMember.Properties(\"OrderDate\"), \"yyyy-mm-dd\")'\n"
             + "select {[Orders].[Order].[10421]} on rows,\n"
-            + "{[Measures].[Date]} on columns from [Foo]",
+            + "{[Measures].[Date]} on columns from [Foo]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -497,7 +496,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_Time]'\n"
             + "  set [*SORTED_COL_AXIS] as 'Order([*CJ_COL_AXIS], [Time].[Time].CurrentMember.OrderKey, BASC)'\n"
             + "  set [*BASE_MEMBERS_Measures] as '{[Measures].[*ZERO]}'\n"
@@ -505,7 +504,7 @@ class SteelWheelsSchemaTest {
             + "  set [*CJ_COL_AXIS] as 'Generate([*NATIVE_CJ_SET], {[Time].CurrentMember})'\n"
             + "  member [Measures].[*ZERO] as '0', SOLVE_ORDER = 0\n"
             + "select Crossjoin([*SORTED_COL_AXIS], [*BASE_MEMBERS_Measures]) ON COLUMNS\n"
-            + "from [SteelWheelsSales]",
+            + "from [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Time].[Time].[2003], [Measures].[*ZERO]}\n"
             + "{[Time].[Time].[2004], [Measures].[*ZERO]}\n"
@@ -969,8 +968,8 @@ class SteelWheelsSchemaTest {
                 + "[*BASE_MEMBERS_Measures] on columns,\n"
                 + "[*SORTED_ROW_AXIS] on rows\n"
                 + "From [SteelWheelsSales]\n";
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                mdx,
+            assertThatQuery(context.getConnectionWithDefaultRole(),
+                mdx).returnsGrid(
                 results[i]);
         }
     }
@@ -996,8 +995,8 @@ class SteelWheelsSchemaTest {
             + "{[Measures].[*ZERO]} on columns,\n"
             + "{[Markets].[#null].[Germany].[#null] : [Markets].[EMEA].[France].[#null]} on rows\n"
             + "From [SteelWheelsSales]\n";
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1063,7 +1062,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [*NATIVE_CJ_SET] as 'Filter(NonEmptyCrossJoin([*BASE_MEMBERS_Time], [*BASE_MEMBERS_Product]), (NOT IsEmpty([Measures].[Quantity])))'\n"
             + "  set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], [Product].CurrentMember.OrderKey, BASC)'\n"
             + "  set [*SORTED_COL_AXIS] as 'Order([*CJ_COL_AXIS], [Time].CurrentMember.OrderKey, BASC)'\n"
@@ -1078,7 +1077,7 @@ class SteelWheelsSchemaTest {
             + "  member [Measures].[*FORMATTED_MEASURE_1] as '[Measures].[Quantity]', FORMAT_STRING = \"#,###\", SOLVE_ORDER = 400\n"
             + "select Crossjoin([*SORTED_COL_AXIS], [*BASE_MEMBERS_Measures]) ON COLUMNS,\n"
             + "  Union({[Product].[*TOTAL_MEMBER_SEL~AGG]}, [*SORTED_ROW_AXIS]) ON ROWS\n"
-            + "from [SteelWheelsSales]",
+            + "from [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1152,19 +1151,19 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
             + "  member [Product].[agg] as \n"
             + "    'Aggregate({[Product].[Line].[Motorcycles]})'\n"
             + "  member [Measures].[rank] as \n"
             + "    'Rank([Product].[agg], [Product].[Line].members, [Measures].[Quantity])'\n"
-            + "select [Measures].[rank] on columns from [SteelWheelsSales]\n",
+            + "select [Measures].[rank] on columns from [SteelWheelsSales]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[rank]}\n"
             + "Row #0: 3\n");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
             + "  member [Product].[agg] as \n"
             + "    'Aggregate({[Product].[Line].[Motorcycles]})'\n"
@@ -1172,7 +1171,7 @@ class SteelWheelsSchemaTest {
             + "    'Rank(([Time].[2003],[Product].[agg]),"
             + "          Crossjoin({[Time].[2003]},[Product].[Line].members),"
             + "          [Measures].[Quantity])'\n"
-            + "select [Measures].[rank] on columns from [SteelWheelsSales]\n",
+            + "select [Measures].[rank] on columns from [SteelWheelsSales]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1192,7 +1191,7 @@ class SteelWheelsSchemaTest {
         database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian1360(Context<?> context) {
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + "SET [*NATIVE_CJ_SET] AS 'FILTER([*BASE_MEMBERS_MyProduct], NOT ISEMPTY ([Measures].[Sales]))' \n"
             + "SET [*SORTED_ROW_AXIS] AS "
@@ -1211,7 +1210,7 @@ class SteelWheelsSchemaTest {
             + "SELECT \n"
             + "[*BASE_MEMBERS_Measures] ON COLUMNS \n"
             + ",UNION({[MyProduct].[Classic Cars].[*TOTAL_MEMBER_SEL~AGG]},[*SORTED_ROW_AXIS]) ON ROWS \n"
-            + "FROM [SteelWheelsSales]",
+            + "FROM [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1236,7 +1235,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + "SET [*NATIVE_CJ_SET] AS '[*BASE_MEMBERS_Time]' \n"
             + "SET [*BASE_MEMBERS_Measures] AS '{[Measures].[*ZERO]}' \n"
@@ -1247,7 +1246,7 @@ class SteelWheelsSchemaTest {
             + "SELECT \n"
             + "[*BASE_MEMBERS_Measures] ON COLUMNS \n"
             + ",ORDER([*CJ_ROW_AXIS],[Time].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time].CURRENTMEMBER,[Time].[Years]).ORDERKEY,BASC) ON ROWS \n"
-            + "FROM [SteelWheelsSales]",
+            + "FROM [SteelWheelsSales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1304,8 +1303,8 @@ class SteelWheelsSchemaTest {
         // [Markets].[Territory].Members would get cached after role filter..
 
         connection.setRole(market_800);
-        assertQueryReturns(connection,
-            nonEmptyMembersQuery,
+        assertThatQuery(connection,
+            nonEmptyMembersQuery).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1318,8 +1317,8 @@ class SteelWheelsSchemaTest {
         // ..and prevent EMEA from appearing in the results
         //connection = context.getConnection();
         connection.setRole(market_800_850);
-        assertQueryReturns(connection,
-            nonEmptyMembersQuery,
+        assertThatQuery(connection,
+            nonEmptyMembersQuery).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1345,14 +1344,14 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[CYQ] as\n"
             + "'Aggregate(CurrentDateMember([Time],\"[Ti\\me]\\.[Year\\s]\\.[yyyy]\", BEFORE), [Quantity])'\n"
             + "select\n"
             + "{[Measures].[Quantity], [Measures].[CYQ]} on columns,\n"
             + "{[Markets].[Territory].Members} on rows\n"
             + "from [SteelWheelsSales]\n"
-            + "where {[Time].[Years].[2004], [Time].[Years].[2005]}\n",
+            + "where {[Time].[Years].[2004], [Time].[Years].[2005]}\n").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[2004]}\n"
             + "{[Time].[Time].[2005]}\n"
@@ -1382,7 +1381,7 @@ class SteelWheelsSchemaTest {
         database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian2411_1(Context<?> context) throws Exception {
         // Tests a user query followed by an admin query
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))),
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1393,7 +1392,7 @@ class SteelWheelsSchemaTest {
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
-            + "FROM [Customers Cube]\n",
+            + "FROM [Customers Cube]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1402,7 +1401,7 @@ class SteelWheelsSchemaTest {
             + "{[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]}\n"
             + "Row #0: 1,701.95\n");
 
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator"))),
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Administrator"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1413,7 +1412,7 @@ class SteelWheelsSchemaTest {
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
-            + "FROM [Customers Cube]\n",
+            + "FROM [Customers Cube]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1622,7 +1621,7 @@ class SteelWheelsSchemaTest {
         database = SteelWheelsDatabaseSupplier.class, data = SteelWheelsData.class)
     void testMondrian2411_2(Context<?> context) throws Exception {
 
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator"))),
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Administrator"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1633,7 +1632,7 @@ class SteelWheelsSchemaTest {
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
-            + "FROM [Customers Cube]\n",
+            + "FROM [Customers Cube]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1836,7 +1835,7 @@ class SteelWheelsSchemaTest {
             + "Row #96: 2,662.14\n"
             + "Row #97: 4,235.63\n");
 
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User"))),
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1847,7 +1846,7 @@ class SteelWheelsSchemaTest {
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
-            + "FROM [Customers Cube]\n",
+            + "FROM [Customers Cube]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1868,7 +1867,7 @@ class SteelWheelsSchemaTest {
         {
             return;
         }
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator Union"))),
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Administrator Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1879,7 +1878,7 @@ class SteelWheelsSchemaTest {
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
-            + "FROM [Customers Cube]\n",
+            + "FROM [Customers Cube]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2082,7 +2081,7 @@ class SteelWheelsSchemaTest {
             + "Row #96: 2,662.14\n"
             + "Row #97: 4,235.63\n");
 
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Power User Union"))),
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Power User Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -2093,7 +2092,7 @@ class SteelWheelsSchemaTest {
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
-            + "FROM [Customers Cube]\n",
+            + "FROM [Customers Cube]\n").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2135,8 +2134,8 @@ class SteelWheelsSchemaTest {
 
         // Report Author gets an exception since
         // he has no access to [Dimension2].[All Customers].[Alpha Cognac].
-        assertQueryThrows(context.getConnection(new ConnectionProps(List.of("Report Author"))),
-            mdxQuery,
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Report Author"))),
+            mdxQuery).throwsMessage(
     "MDX object '[Dimension2].[All Customers].[Alpha Cognac]' not found in cube 'rolesTest'");
 
 
@@ -2144,8 +2143,8 @@ class SteelWheelsSchemaTest {
 
         // Administrator has full access to the data,
         // So he gets the expected result.
-        assertQueryReturns(context.getConnection(new ConnectionProps(List.of("Administrator"))),
-            mdxQuery,
+        assertThatQuery(context.getConnection(new ConnectionProps(List.of("Administrator"))),
+            mdxQuery).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

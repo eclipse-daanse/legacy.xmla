@@ -12,14 +12,14 @@ package mondrian.test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
 
 import java.util.List;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
@@ -58,19 +58,6 @@ class NativeSetEvaluationTest extends BatchTestCase {
 
   @AfterEach
   public void afterEach() {
-  }
-  /**
-   * Checks that a given MDX query results in a particular SQL statement being generated.
-   *
-   * @param mdxQuery MDX query
-   * @param patterns Set of patterns for expected SQL statements
-   */
-  @Override
-protected void assertQuerySql(Connection connection,
-    String mdxQuery,
-          SqlPattern[] patterns ) {
-    assertQuerySqlOrNot(
-      connection, mdxQuery, patterns, false, true, true );
   }
 
   /**
@@ -225,9 +212,9 @@ protected void assertQuerySql(Connection connection,
       NativeTopCountWithAgg.getMysql(connection),
       NativeTopCountWithAgg.getMysql(connection));
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, NativeTopCountWithAgg.result );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid( NativeTopCountWithAgg.result );
   }
 
   /**
@@ -261,9 +248,9 @@ protected void assertQuerySql(Connection connection,
       NativeTopCountWithAgg.getMysql(connection));
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class)
       && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, NativeTopCountWithAgg.result );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid( NativeTopCountWithAgg.result );
   }
 
   @Test
@@ -342,10 +329,10 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery );
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
       && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[x]}\n"
         + "Axis #1:\n"
@@ -459,10 +446,10 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery,
         mysqlQuery.indexOf( "(" ) );
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[Slicer], [Store Type].[Store Type].[Slicer]}\n"
         + "Axis #1:\n"
@@ -564,10 +551,10 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery.indexOf( "(" ) );
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Slicer], [Store Type].[Slicer]}\n"
         + "Axis #1:\n"
@@ -672,10 +659,10 @@ protected void assertQuerySql(Connection connection,
           DatabaseProduct.MYSQL,
           mysqlQuery,
           mysqlQuery.indexOf( "(" ) );
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[Slicer], [Store Type].[Store Type].[Slicer]}\n"
         + "Axis #1:\n"
@@ -699,8 +686,8 @@ protected void assertQuerySql(Connection connection,
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
         + "  FROM [Sales] WHERE [Store Type].[Slicer]\n";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Store Type].[Store Type].[Slicer]}\n"
         + "Axis #1:\n"
@@ -716,9 +703,9 @@ protected void assertQuerySql(Connection connection,
     // will throw an error if native eval is not used
       // native should be used and Canada/Mexico should be returned
     // even though Canada and Mexico have no associated data.
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select TopCount(Customers.Country.members, 2) "
-        + "on 0 from Sales",
+        + "on 0 from Sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -727,9 +714,9 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: \n"
         + "Row #0: \n" );
     // TopCount should return in natural order, not order of measure val
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select TopCount(Product.Drink.Children, 2) "
-        + "on 0 from Sales",
+        + "on 0 from Sales").returnsGrid(
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -794,8 +781,8 @@ protected void assertQuerySql(Connection connection,
         + "SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "  NON EMPTY TOP_COUNTRY ON 1 \n"
         + "FROM [Sales] WHERE [Product].[Top Drinks]";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Top Drinks]}\n"
         + "Axis #1:\n"
@@ -828,7 +815,7 @@ protected void assertQuerySql(Connection connection,
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
         + "  FROM [Sales] where [Time].[Time].[Slicer]\n";
-    assertQueryThrows(context.getConnectionWithDefaultRole(), mdx, "evaluating itself" );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).throwsMessage( "evaluating itself" );
   }
 
   /**
@@ -861,7 +848,7 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: 372.36\n"
         + "Row #1: 365.20\n";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, result );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid( result );
   }
 
   /**
@@ -901,7 +888,7 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: 460.02\n"
         + "Row #1: 420.74\n";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, result );
+    assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid( result );
   }
 
   /**
@@ -969,11 +956,11 @@ protected void assertQuerySql(Connection connection,
 
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Weekly].[x]}\n"
         + "Axis #1:\n"
@@ -1160,8 +1147,8 @@ protected void assertQuerySql(Connection connection,
         null );
     withSchema(context, schema);
      */
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       result );
   }
 
@@ -1219,11 +1206,11 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_NON_EMPTY, ConfigConstants.ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1997].[Q1]}\n"
         + "{[Time].[Time].[1997].[Q2]}\n"
@@ -1311,11 +1298,11 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1997], [Product].[Product].[Drink]}\n"
         + "{[Time].[Time].[1997], [Product].[Product].[Food]}\n"
@@ -1399,11 +1386,11 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
     }
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Weekly].[1997].[48].[17]}\n"
         + "{[Time].[Weekly].[1997].[48].[18]}\n"
@@ -1425,11 +1412,11 @@ protected void assertQuerySql(Connection connection,
   @Test
   void testConstraintCacheIncludesMultiPositionSlicer(Context<?> context) {
     // MONDRIAN-2081
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select non empty [Customers].[USA].[WA].[Spokane].children  on 0, "
         + "Time.[1997].[Q1].[1] * [Store].[USA].[WA].[Spokane] * Gender.F * [Marital Status].M on 1 from sales where\n"
         + "{[Product].[Food].[Snacks].[Candy].[Gum].[Atomic].[Atomic Bubble Gum],\n"
-        + "[Product].[Food].[Snacks].[Candy].[Gum].[Choice].[Choice Bubble Gum]}",
+        + "[Product].[Food].[Snacks].[Candy].[Gum].[Choice].[Choice Bubble Gum]}").returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Food].[Snacks].[Candy].[Gum].[Atomic].[Atomic Bubble Gum]}\n"
         + "{[Product].[Product].[Food].[Snacks].[Candy].[Gum].[Choice].[Choice Bubble Gum]}\n"
@@ -1440,11 +1427,11 @@ protected void assertQuerySql(Connection connection,
         + "{[Time].[Time].[1997].[Q1].[1], [Store].[Store].[USA].[WA].[Spokane], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + "Row #0: 4\n"
         + "Row #0: 3\n" );
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select non empty [Customers].[USA].[WA].[Spokane].children on 0, "
         + "Time.[1997].[Q1].[1] * [Store].[USA].[WA].[Spokane] * Gender.F *"
         + "[Marital Status].M on 1 from sales where "
-        + "   { [Product].[Food], [Product].[Drink] }",
+        + "   { [Product].[Food], [Product].[Drink] }").returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Food]}\n"
         + "{[Product].[Product].[Drink]}\n"
@@ -1735,8 +1722,8 @@ protected void assertQuerySql(Connection connection,
         + "> 1000))'\n"
         + "SELECT [Measures].[TotalVal] ON 0, [Product].[All Products].Children on 1 \n"
         + "FROM [Sales] WHERE {[Time].[1997].[Q1],[Time].[1997].[Q2]}";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1997].[Q1]}\n"
         + "{[Time].[Time].[1997].[Q2]}\n"
@@ -1808,7 +1795,7 @@ protected void assertQuerySql(Connection connection,
       + "    ISNULL(`store`.`store_city`) ASC, `store`.`store_city` ASC" );
     SqlPattern mysqlPattern =
       new SqlPattern( DatabaseProduct.MYSQL, mysql, null );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().expectSql(new SqlPattern[] { mysqlPattern } ).verify();
   }
 
   /**
@@ -1825,8 +1812,8 @@ protected void assertQuerySql(Connection connection,
         + "WHERE {([Product].[Non-Consumable], [Time].[1997].[Q1]),([Product].[Drink], [Time].[1997].[Q2])}";
 
     //TestContext<?> context = getTestContext().withFreshConnection();
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}\n"
         + "{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}\n"
@@ -1849,8 +1836,8 @@ protected void assertQuerySql(Connection connection,
         + "Gender].[SomeSlicer]} on 1 from [Sales]\n"
         + "WHERE {([Product].[Non-Consumable], [Time].[1997].[Q1]),([Product].[Drink], [Time].[1997].[Q2])}";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}\n"
         + "{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}\n"
@@ -1874,8 +1861,8 @@ protected void assertQuerySql(Connection connection,
         + "SELECT [Measures].[TotalVal] ON 0, [Gender].[All Gender].Children on 1 \n"
         + "FROM [Sales]\n"
         + "WHERE CrossJoin({ [Product].[Non-Consumable], [Product].[Drink] }, {[Time].[1997].[Q1],[Time].[1997].[Q2]})";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}\n"
         + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q2]}\n"
@@ -1898,8 +1885,8 @@ protected void assertQuerySql(Connection connection,
       "SELECT [Measures].[Unit Sales] ON 0,\n"
         + " Filter({[Store].[Store City].members},[Measures].[Unit Sales] > 10000) on 1 \n"
         + "FROM [Sales] WHERE {[Time].[1997].[Q1], [Time].[1997].[Q2].[4]}";
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      mdx,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      mdx).returnsGrid(
       "Axis #0:\n"
         + "{[Time].[Time].[1997].[Q1]}\n"
         + "{[Time].[Time].[1997].[Q2].[4]}\n"
@@ -1914,9 +1901,9 @@ protected void assertQuerySql(Connection connection,
 
   @Test
   void testNativeFilterWithCompoundSlicer2049(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] < 200))' "
-        + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)",
+        + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)").returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
         + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
@@ -1936,9 +1923,9 @@ protected void assertQuerySql(Connection connection,
     // tuples where not all combinations of their members are present to
     // fail when nativized.
     // MondrianProperties.instance().EnableNativeFilter.set(true);
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
+    assertThatQuery(context.getConnectionWithDefaultRole(),
       "select [Measures].[Unit Sales] on columns, Filter([Time].[1997].Children, [Measures].[Unit Sales] < 12335) on "
-        + "rows from [Sales] where {([Product].[Drink],[Store].[USA].[CA]),([Product].[Food],[Store].[USA].[OR])}",
+        + "rows from [Sales] where {([Product].[Drink],[Store].[USA].[CA]),([Product].[Food],[Store].[USA].[OR])}").returnsGrid(
       "Axis #0:\n"
         + "{[Product].[Product].[Drink], [Store].[Store].[USA].[CA]}\n"
         + "{[Product].[Product].[Food], [Store].[Store].[USA].[OR]}\n"
@@ -1999,8 +1986,8 @@ protected void assertQuerySql(Connection connection,
     }
     SqlPattern[] patterns = new SqlPattern[] { mysqlPattern };
     if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class) ) {
-      assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
-        mdx, patterns, false, false, false );
+      SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+        mdx).keepCache().expectSql(patterns).verify();
     }
   }
 
@@ -2008,8 +1995,8 @@ protected void assertQuerySql(Connection connection,
    * see {@link #testNativeFilterWithLargeAggSetInSlicerNonNative}). */
   @Test
   void testNativeFilterWithLargeAggSetInSlicer(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_MDX,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_MDX).returnsGrid(
       "Axis #0:\n"
       + "{[Customers].[Customers].[agg]}\n"
       + "Axis #1:\n"
@@ -2025,8 +2012,8 @@ protected void assertQuerySql(Connection connection,
   @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "false", type = Boolean.class)
   @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_TOP_COUNT, value = "false", type = Boolean.class)
   void testNativeFilterWithLargeAggSetInSlicerNonNative(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_MDX,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_MDX).returnsGrid(
       "Axis #0:\n"
       + "{[Customers].[Customers].[agg]}\n"
       + "Axis #1:\n"
@@ -2048,8 +2035,8 @@ protected void assertQuerySql(Connection connection,
    * see {@link #testNativeFilterWithLargeAggSetInSlicerTwoAggsNonNative}). */
   @Test
   void testNativeFilterWithLargeAggSetInSlicerTwoAggs(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_TWO_AGGS_MDX,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_TWO_AGGS_MDX).returnsGrid(
       "Axis #0:\n"
       + "{[Customers].[Customers].[agg], [Store].[Store].[agg]}\n"
       + "Axis #1:\n"
@@ -2065,8 +2052,8 @@ protected void assertQuerySql(Connection connection,
   @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "false", type = Boolean.class)
   @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_TOP_COUNT, value = "false", type = Boolean.class)
   void testNativeFilterWithLargeAggSetInSlicerTwoAggsNonNative(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_TWO_AGGS_MDX,
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_TWO_AGGS_MDX).returnsGrid(
       "Axis #0:\n"
       + "{[Customers].[Customers].[agg], [Store].[Store].[agg]}\n"
       + "Axis #1:\n"
@@ -2100,8 +2087,8 @@ protected void assertQuerySql(Connection connection,
   @Test
   @RolapConfig(key = ConfigConstants.MAX_CONSTRAINTS, value = "24", type = Integer.class)
   void testNativeFilterWithLargeAggSetInSlicerCompoundAggregate(Context<?> context) {
-    assertQueryReturns(context.getConnectionWithDefaultRole(),
-      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_COMPOUND_AGGREGATE_MDX, "CAPTURE_ME");
+    assertThatQuery(context.getConnectionWithDefaultRole(),
+      NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_COMPOUND_AGGREGATE_MDX).returnsGrid( "CAPTURE_ME");
   }
 
   private static final String NATIVE_FILTER_WITH_LARGE_AGG_SET_IN_SLICER_COMPOUND_AGGREGATE_MDX =
@@ -2173,8 +2160,8 @@ protected void assertQuerySql(Connection connection,
   @RolapConfig(key = ConfigConstants.RESULT_LIMIT, value = "400", type = Integer.class)
   void testResultLimitInNativeCJ(Context<?> context) {
       Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisThrows(connection, "NonEmptyCrossjoin({[Product].[All Products].Children}, "
-        + "{ [Customers].[Name].members})",
-      "exceeded limit (400)", "Sales");
+    assertThatAxis(connection, "Sales", "NonEmptyCrossjoin({[Product].[All Products].Children}, "
+        + "{ [Customers].[Name].members})").throwsMessage(
+      "exceeded limit (400)");
   }
 }

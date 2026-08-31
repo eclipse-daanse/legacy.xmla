@@ -53,6 +53,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.Statement;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -69,6 +70,9 @@ import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.common.star.StarPredicate;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.assertions.ConfigOverride;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.eclipse.daanse.sql.model.type.BestFitColumnType;
@@ -77,7 +81,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -138,36 +141,39 @@ class SegmentLoaderTest extends BatchTestCase {
 
     @Disabled //TODO need investigate
     @Test
+    @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "false", type = Boolean.class)
     void testRollup(Context<?> context) {
         prepareContext(context);
         for (boolean rollup : new Boolean[] {true, false}) {
             PrintWriter pw = new PrintWriter(System.out);
             context.getConnectionWithDefaultRole().getCacheControl(pw).flushSchemaCache();
             pw.flush();
-            ((TestContextImpl)context).setDisableCaching(false);
-            ((TestContextImpl)context).setEnableInMemoryRollup(rollup);
+            ConfigOverride.of(context).set(ConfigConstants.ENABLE_IN_MEMORY_ROLLUP, rollup);
             final String queryOracle =
                 "select \"time_by_day\".\"the_year\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" from \"sales_fact_1997\" \"sales_fact_1997\", \"time_by_day\" \"time_by_day\" where \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" group by \"time_by_day\".\"the_year\"";
             final String queryMySQL =
                 "select `time_by_day`.`the_year` as `c0`, sum(`sales_fact_1997`.`unit_sales`) as `m0` from `sales_fact_1997` as `sales_fact_1997`, `time_by_day` as `time_by_day` where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` group by `time_by_day`.`the_year`";
             TestUtil.executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store Country].Members} on rows, {[Time].[Time].[Year].Members} on columns from [Sales]");
-            assertQuerySqlOrNot(
-                context.getConnectionWithDefaultRole(),
-                "select {[Time].[Time].[Year].Members} on columns from [Sales]",
-                new SqlPattern[] {
-                    new SqlPattern(
-                        DatabaseProduct.ORACLE,
-                        queryOracle,
-                        queryOracle.length()),
-                    new SqlPattern(
-                        DatabaseProduct.MYSQL,
-                        queryMySQL,
-                        queryMySQL.length())
-                },
-                rollup,
-                false,
-                false);
+            SqlPattern[] patterns = new SqlPattern[] {
+                new SqlPattern(
+                    DatabaseProduct.ORACLE,
+                    queryOracle,
+                    queryOracle.length()),
+                new SqlPattern(
+                    DatabaseProduct.MYSQL,
+                    queryMySQL,
+                    queryMySQL.length())
+            };
+            SqlAssert.QuerySqlAssert sqlAssert = SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+                "select {[Time].[Time].[Year].Members} on columns from [Sales]")
+                .keepCache();
+            if (rollup) {
+                sqlAssert.expectNoSql(patterns);
+            } else {
+                sqlAssert.expectSql(patterns);
+            }
+            sqlAssert.verify();
         }
     }
 

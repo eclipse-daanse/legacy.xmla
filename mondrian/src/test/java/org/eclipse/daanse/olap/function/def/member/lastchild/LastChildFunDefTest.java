@@ -13,12 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.member.lastchild;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -28,26 +25,22 @@ class LastChildFunDefTest {
 
     @Test
     void testLastChild(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].LastChild", "Sales" );
-        assertEquals( "M", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].LastChild").returns("[Gender].[Gender].[M]");
     }
 
     @Test
     void testLastChildLastInLevel(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].LastChild", "Sales" );
-        assertEquals( "12", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].[Q4].LastChild").returns("[Time].[Time].[1997].[Q4].[12]");
     }
 
     @Test
     void testLastChildAll(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].LastChild", "Sales" );
-        assertEquals( "M", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[All Gender].LastChild").returns("[Gender].[Gender].[M]");
     }
 
     @Test
     void testLastChildOfChildless(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].LastChild", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Gender].[M].LastChild").returns("");
     }
 
 }

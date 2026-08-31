@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
@@ -1184,7 +1185,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
 
                 new SqlPattern(DatabaseProduct.MYSQL, load_mysql, load_mysql), };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
     /**
@@ -1452,16 +1453,15 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 + "\"promotion\".\"media_type\" in ('Radio', 'TV') " + "group by "
                 + "\"time_by_day\".\"the_year\", \"time_by_day\".\"quarter\", " + "\"promotion\".\"media_type\"";
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), "WITH\n"
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), "WITH\n"
                 + "  MEMBER [Promotion Media].[TV plus Radio] AS 'AGGREGATE({[Promotion Media].[TV], [Promotion Media].[Radio]})', solve_order=1\n"
                 + "  MEMBER [Time].[Time].[1997 Q1 plus July] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q3].[7]})', solve_order=1\n"
                 + "SELECT {[Promotion Media].[TV plus Radio],\n" + "        [Promotion Media].[TV],\n"
                 + "        [Promotion Media].[Radio]} ON COLUMNS,\n" + "       {[Time].[1997],\n"
                 + "        [Time].[1997].[Q1],\n" + "        [Time].[1997 Q1 plus July]} ON ROWS\n" + "FROM Sales\n"
-                + "WHERE [Measures].[Customer Count]",
-                new SqlPattern[] { new SqlPattern(DatabaseProduct.ORACLE, oracleSql, oracleSql),
+                + "WHERE [Measures].[Customer Count]").expectSql(new SqlPattern[] { new SqlPattern(DatabaseProduct.ORACLE, oracleSql, oracleSql),
                         new SqlPattern(DatabaseProduct.MYSQL, mysqlSql, mysqlSql),
-                        new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql) });
+                        new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql) }).verify();
     }
 
     /**
@@ -1531,7 +1531,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         SqlPattern[] patterns = { new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql),
                 new SqlPattern(DatabaseProduct.MYSQL, mysqlSql, mysqlSql) };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
     // Test for multiple members on different levels within the same hierarchy.
@@ -1630,7 +1630,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql),
                 new SqlPattern(DatabaseProduct.MYSQL, mysqlSql, mysqlSql) };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
     @Test
@@ -1668,7 +1668,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                 new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql),
                 new SqlPattern(DatabaseProduct.MYSQL, mysqlSql, mysqlSql) };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
     @Test
@@ -1888,7 +1888,7 @@ class FastBatchingCellReaderTest extends BatchTestCase {
         SqlPattern[] patterns = { new SqlPattern(DatabaseProduct.DERBY, derbySql, derbySql),
                 new SqlPattern(DatabaseProduct.MYSQL, mysqlSql, mysqlSql) };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
     }
 
     public static class MyDelegatingInvocationHandler extends DelegatingInvocationHandler {

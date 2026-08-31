@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.correlation;
 
-import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -25,9 +25,9 @@ class CorrelationFunDefTest {
 
     @Test
     void testCorrelation(Context<?> context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
-            "Correlation({[Store].[All Stores].[USA].children}, [Measures].[Unit Sales], [Measures].[Store Sales]) * 1000000",
-            "999,906" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Correlation({[Store].[All Stores].[USA].children}, [Measures].[Unit Sales], [Measures].[Store Sales]) * 1000000")
+            .returns( "999,906" );
     }
 
 }

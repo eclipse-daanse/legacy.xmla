@@ -25,6 +25,9 @@
  */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -157,10 +160,9 @@ class AccessControlTest {
         role.grant(genderDimension, AccessDimension.NONE);
         role.makeImmutable();
         connection.setRole(role);
-        TestUtil.assertAxisThrows(
-    		connection,
-            "[Gender].children",
-            "MDX object '[Gender]' not found in cube 'Sales'", "Sales");
+        assertThatAxis(connection, "Sales",
+            "[Gender].children").throwsMessage(
+            "MDX object '[Gender]' not found in cube 'Sales'");
     }
 
     @Test
@@ -170,9 +172,8 @@ class AccessControlTest {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
 
-        TestUtil.assertQueryReturns(
-    		connection,
-            "SELECT {[Measures].Members} ON COLUMNS FROM [SALES]",
+        assertThatQuery(connection,
+            "SELECT {[Measures].Members} ON COLUMNS FROM [SALES]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -191,9 +192,8 @@ class AccessControlTest {
 
         props =new ConnectionProps(List.of("Role2"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	connection = foodMartContext.getConnection(props);
-    	TestUtil.assertQueryReturns(
-    		connection,
-            "SELECT {[Measures].Members} ON COLUMNS FROM [SALES]",
+    	assertThatQuery(connection,
+            "SELECT {[Measures].Members} ON COLUMNS FROM [SALES]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -212,9 +212,8 @@ class AccessControlTest {
       Connection connection = foodMartContext.getConnection(props);
 
       try {
-	  TestUtil.assertQueryReturns(
-		  connection,
-          "SELECT {[Measures].Members} ON COLUMNS FROM [Warehouse2]",
+	  assertThatQuery(connection,
+          "SELECT {[Measures].Members} ON COLUMNS FROM [Warehouse2]").returnsGrid(
           "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -236,9 +235,8 @@ class AccessControlTest {
       }
 
       try {
-	  TestUtil.assertQueryReturns(
-		  connection,
-          "SELECT {[Measures].Members} ON COLUMNS FROM [Warehouse1]",
+	  assertThatQuery(connection,
+          "SELECT {[Measures].Members} ON COLUMNS FROM [Warehouse1]").returnsGrid(
           "Axis #0:\n"
           + "{}\n"
           + "Axis #1:\n"
@@ -262,6 +260,8 @@ class AccessControlTest {
 
     @Disabled //TODO need investigate
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier33.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRestrictLevelsAnalyzer3283(Context<?> context) {
         /*
         String dimensionsDef =
@@ -365,7 +365,6 @@ class AccessControlTest {
             + "   </SchemaGrant>\n"
             + "</Role>");
          */
-        TestUtil.withSchemaEmf(context, SchemaModifiersEmf.AccessControlTestModifier33::new);
         ConnectionProps props =new ConnectionProps(List.of("MR", "DBPentUsers"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = context.getConnection(props);
 
@@ -374,7 +373,6 @@ class AccessControlTest {
 
         assertEquals(2, hierarchyAccess.getTopLevelDepth());
         assertEquals(3, hierarchyAccess.getBottomLevelDepth());
-        context.getCatalogCache().clear();
     }
 
     @Test
@@ -382,10 +380,8 @@ class AccessControlTest {
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRoleMemberAccessNonExistentMemberFails(Context<?> context) {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
-        TestUtil.assertQueryThrows(
-        	context,
-            props,
-            "select {[Store].[Store].Children} on 0 from [Sales]",
+        assertThatQuery(context.getConnection(props),
+            "select {[Store].[Store].Children} on 0 from [Sales]").throwsMessage(
             "Member '[Store].[Store].[USA].[Non Existent]' not found");
     }
 
@@ -493,9 +489,8 @@ class AccessControlTest {
         // assert: can access USA (rule 3 - parent of allowed member San
         // Francisco)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Store].[Store].level.members",
+        assertThatAxis(connection, "Sales",
+            "[Store].[Store].level.members").returns(
             "[Store].[Store].[Mexico]\n" + "[Store].[Store].[USA]");
     }
 
@@ -506,9 +501,8 @@ class AccessControlTest {
         // assert: can access USA (rule 3 - parent of allowed member San
         // Francisco)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Store].level.allmembers",
+        assertThatAxis(connection, "Sales",
+            "[Store].level.allmembers").returns(
             "[Store].[Store].[Mexico]\n" + "[Store].[Store].[USA]");
     }
 
@@ -517,9 +511,8 @@ class AccessControlTest {
         // can access Mexico (explicitly granted) which is the first accessible
         // one
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Store].defaultMember",
+        assertThatAxis(connection, "Sales",
+            "[Store].defaultMember").returns(
             "[Store].[Store].[Mexico]");
     }
 
@@ -527,9 +520,8 @@ class AccessControlTest {
     void testGrantHierarchy1c(Context<?> foodMartContext) {
         // the root element is All Customers
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Customers].defaultMember",
+        assertThatAxis(connection, "Sales",
+            "[Customers].defaultMember").returns(
             "[Customers].[Customers].[Canada].[BC]");
     }
 
@@ -537,17 +529,14 @@ class AccessControlTest {
     void testGrantHierarchy2(Context<?> foodMartContext) {
         // assert: can access California (parent of allowed member)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Store].[USA].children",
+        assertThatAxis(connection, "Sales",
+            "[Store].[USA].children").returns(
             "[Store].[Store].[USA].[CA]");
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Store].[USA].children",
+        assertThatAxis(connection, "Sales",
+            "[Store].[USA].children").returns(
             "[Store].[Store].[USA].[CA]");
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Store].[USA].[CA].children",
+        assertThatAxis(connection, "Sales",
+            "[Store].[USA].[CA].children").returns(
             "[Store].[Store].[USA].[CA].[Los Angeles]\n"
             + "[Store].[Store].[USA].[CA].[San Francisco]");
     }
@@ -556,25 +545,24 @@ class AccessControlTest {
     void testGrantHierarchy3(Context<?> foodMartContext) {
         // assert: can not access Washington (child of denied member)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(connection, "[Store].[USA].[WA]", "not found", "Sales");
+        assertThatAxis(connection, "Sales", "[Store].[USA].[WA]").throwsMessage("not found");
     }
 
     @Test
     void testGrantHierarchy4(Context<?> foodMartContext) {
         // assert: can not access Oregon (rule 1 - order matters)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(connection,
-            "[Store].[USA].[OR].children", "not found", "Sales");
+        assertThatAxis(connection, "Sales",
+            "[Store].[USA].[OR].children").throwsMessage("not found");
     }
 
     @Test
     void testGrantHierarchy5(Context<?> foodMartContext) {
         // assert: can not access All (above top level)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(connection, "[Store].[All Stores]", "not found", "Sales");
-        TestUtil.assertAxisReturns(connection, "Sales",
-            "[Store].members",
-                // note:
+        assertThatAxis(connection, "Sales", "[Store].[All Stores]").throwsMessage("not found");
+        assertThatAxis(connection, "Sales",
+            "[Store].members").returns(// note:
                 // no: [All Stores] -- above top level
                 // no: [Canada] -- not explicitly allowed
                 // yes: [Mexico] -- explicitly allowed -- and all its children
@@ -616,9 +604,8 @@ class AccessControlTest {
     void testGrantHierarchy6(Context<?> foodMartContext) {
         // assert: parent if at top level is null
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Customers].[USA].[CA].parent",
+        assertThatAxis(connection, "Sales",
+            "[Customers].[USA].[CA].parent").returns(
             "");
     }
 
@@ -626,10 +613,9 @@ class AccessControlTest {
     void testGrantHierarchy7(Context<?> foodMartContext) {
         // assert: members above top level do not exist
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(
-    		connection,
-    		"[Customers].[Canada].children",
-            "MDX object '[Customers].[Canada]' not found in cube 'Sales'", "Sales");
+        assertThatAxis(connection, "Sales",
+    		"[Customers].[Canada].children").throwsMessage(
+            "MDX object '[Customers].[Canada]' not found in cube 'Sales'");
     }
 
     @Test
@@ -637,13 +623,11 @@ class AccessControlTest {
         // assert: can not access Catherine Abel in San Francisco (below bottom
         // level)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(
-    		connection,
-            "[Customers].[USA].[CA].[San Francisco].[Catherine Abel]",
-            "not found", "Sales");
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Customers].[USA].[CA].[San Francisco].children",
+        assertThatAxis(connection, "Sales",
+            "[Customers].[USA].[CA].[San Francisco].[Catherine Abel]").throwsMessage(
+            "not found");
+        assertThatAxis(connection, "Sales",
+            "[Customers].[USA].[CA].[San Francisco].children").returns(
             "");
         Axis axis = TestUtil.executeAxis(connection, "Sales", "[Customers].members");
         // 13 states, 109 cities
@@ -655,13 +639,11 @@ class AccessControlTest {
         // assert: can not access Catherine Abel in San Francisco (below bottom
         // level)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(
-    		connection,
-            "[Customers].[USA].[CA].[San Francisco].[Catherine Abel]",
-            "not found", "Sales");
-        TestUtil.assertAxisReturns(
-    		connection, "Sales",
-            "[Customers].[USA].[CA].[San Francisco].children",
+        assertThatAxis(connection, "Sales",
+            "[Customers].[USA].[CA].[San Francisco].[Catherine Abel]").throwsMessage(
+            "not found");
+        assertThatAxis(connection, "Sales",
+            "[Customers].[USA].[CA].[San Francisco].children").returns(
             "");
         Axis axis = TestUtil.executeAxis(connection, "Sales", "[Customers].allmembers");
         // 13 states, 109 cities
@@ -680,13 +662,12 @@ class AccessControlTest {
         Connection connection = foodMartContext.getConnection(props);
 
         // Must return only 2 [USA].[CA] stores
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  Filter( [Store].[USA].[CA].children,"
             + "          [Measures].[Unit Sales]>0) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -698,13 +679,12 @@ class AccessControlTest {
             + "Row #1: 187\n");
 
         // Must return only 2 [USA].[CA] stores
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  TopCount( [Store].[USA].[CA].children, 20,"
             + "            [Measures].[Unit Sales]) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -717,13 +697,12 @@ class AccessControlTest {
 
 
         // Partial Rollup: [USA].[CA] rolls up only up to 2.801
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  Filter( [Store].[Store State].Members,"
             + "          [Measures].[Unit Sales]>4000) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -738,13 +717,12 @@ class AccessControlTest {
         connection = foodMartContext.getConnection(props);
 
         // Full Rollup: [USA].[CA] rolls up to 6.021
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  Filter( [Store].[Store State].Members,"
             + "          [Measures].[Unit Sales]>4000) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -765,9 +743,8 @@ class AccessControlTest {
     //[Geography].[Country]
       ConnectionProps props =new ConnectionProps(List.of("Sales Ragged"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
       Connection connection = foodMartContext.getConnection(props);
-      TestUtil.assertQueryReturns(
-		  connection,
-        "select {[Measures].[Unit Sales]} ON COLUMNS, {[Geography].[Country].MEMBERS} ON ROWS from [Sales Ragged]",
+      assertThatQuery(connection,
+        "select {[Measures].[Unit Sales]} ON COLUMNS, {[Geography].[Country].MEMBERS} ON ROWS from [Sales Ragged]").returnsGrid(
         "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
@@ -793,13 +770,12 @@ class AccessControlTest {
         Connection connection = foodMartContext.getConnection(props);
 
         // Put query into cache
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  Filter( [Store].[USA].[CA].children,"
             + "          [Measures].[Unit Sales]>0) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -814,13 +790,12 @@ class AccessControlTest {
         connection = foodMartContext.getConnection(props);
 
         // Run same query using another role with different access controls
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  TopCount( [Store].[USA].[CA].children, 20,"
             + "            [Measures].[Unit Sales]) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -837,13 +812,12 @@ class AccessControlTest {
     @Test
     void testBugMondrian1127OneSlicerOnly(Context<?> foodMartContext) {
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  TopCount([Store].[USA].[CA].Children, 10,"
             + "           [Measures].[Unit Sales]) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -854,13 +828,12 @@ class AccessControlTest {
             + "Row #0: 2,614\n"
             + "Row #1: 187\n");
 
-        TestUtil.assertQueryReturns(
-        	foodMartContext.getConnectionWithDefaultRole(),
+        assertThatQuery(foodMartContext.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  NON EMPTY TopCount([Store].[USA].[CA].Children, 10, "
             + "           [Measures].[Unit Sales]) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2])",
+            + "where ([Time].[1997].[Q1].[2])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
@@ -880,13 +853,12 @@ class AccessControlTest {
     @Test
     void testBugMondrian1127MultipleSlicers(Context<?> foodMartContext) {
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  TopCount([Store].[USA].[CA].Children, 10,"
             + "           [Measures].[Unit Sales]) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2] : [Time].[1997].[Q1].[3])",
+            + "where ([Time].[1997].[Q1].[2] : [Time].[1997].[Q1].[3])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "{[Time].[Time].[1997].[Q1].[3]}\n"
@@ -898,13 +870,12 @@ class AccessControlTest {
             + "Row #0: 4,497\n"
             + "Row #1: 337\n");
 
-        TestUtil.assertQueryReturns(
-        	foodMartContext.getConnectionWithDefaultRole(),
+        assertThatQuery(foodMartContext.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  NON EMPTY TopCount([Store].[USA].[CA].Children, 10, "
             + "           [Measures].[Unit Sales]) ON ROWS \n"
             + "from [Sales] \n"
-            + "where ([Time].[1997].[Q1].[2] : [Time].[1997].[Q1].[3])",
+            + "where ([Time].[1997].[Q1].[2] : [Time].[1997].[Q1].[3])").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "{[Time].[Time].[1997].[Q1].[3]}\n"
@@ -939,14 +910,13 @@ class AccessControlTest {
         //   where ([Marital Status].[S], [Store].[SF LA])
     	final Connection connection = getRestrictedConnection(foodMartContext);
     	//Connection connection = foodMartContext.getConnection();
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "with member [Measures].[California Unit Sales] as "
             + " 'Aggregate({[Store].[USA].[CA].children}, [Measures].[Unit Sales])'\n"
             + "select {[Measures].[California Unit Sales]} on columns,\n"
             + " {[Gender].children} on rows\n"
             + "from Sales\n"
-            + "where ([Marital Status].[S])",
+            + "where ([Marital Status].[S])").returnsGrid(
             "Axis #0:\n"
             + "{[Marital Status].[Marital Status].[S]}\n"
             + "Axis #1:\n"
@@ -962,11 +932,10 @@ class AccessControlTest {
     void testGrantHierarchyA(Context<?> foodMartContext) {
     	final Connection connection = getRestrictedConnection(foodMartContext);
         // assert: totals for USA include missing cells
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select {[Unit Sales]} on columns,\n"
             + "{[Store].[USA], [Store].[USA].children} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1003,16 +972,15 @@ class AccessControlTest {
         role.makeImmutable();
         connection.setRole(role);
 
-        TestUtil.assertExprThrows(
-    		connection, "Sales",
-            "[Store].DefaultMember",
+        assertThatExpr(connection, "Sales",
+            "[Store].DefaultMember").throwsMessage(
             "cube 'Sales' not found");
     }
 
     @Test
     void testNoAccessToCube(Context<?> foodMartContext) {
         final Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertQueryThrows(connection, "select from [HR]", "MDX cube 'HR' not found");
+        assertThatQuery(connection, "select from [HR]").throwsMessage("MDX cube 'HR' not found");
     }
 
     private Connection getRestrictedConnection(Context<?> foodMartContext) {
@@ -1115,10 +1083,9 @@ class AccessControlTest {
     void testRollupPolicyBasic(Context<?> foodMartContext) {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "select {[Store].[USA], [Store].[USA].Children} on 0\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1141,9 +1108,8 @@ class AccessControlTest {
     void testRollupPolicyAll(Context<?> foodMartContext) {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertExprReturns(
-    		connection, "Sales",
-            "([Store].[All Stores])",
+        assertThatExpr(connection, "Sales",
+            "([Store].[All Stores])").returns(
             "192,025");
     }
 
@@ -1157,9 +1123,8 @@ class AccessControlTest {
     void testRollupPolicyAllAsDefault(Context<?> foodMartContext) {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertExprReturns(
-    		connection, "Sales",
-            "([Store])",
+        assertThatExpr(connection, "Sales",
+            "([Store])").returns(
             "192,025");
     }
 
@@ -1173,9 +1138,8 @@ class AccessControlTest {
     void testRollupPolicyAllAsParent(Context<?> foodMartContext) {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertExprReturns(
-    		connection, "Sales",
-            "([Store].[USA].Parent)",
+        assertThatExpr(connection, "Sales",
+            "([Store].[USA].Parent)").returns(
             "192,025");
     }
 
@@ -1191,9 +1155,8 @@ class AccessControlTest {
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnusedAccessControlledDimension(Context<?> foodMartContext) {
         Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        TestUtil.assertQueryReturns(
-    		connection,
-            "select [Gender].Children on 0 from [Sales]",
+        assertThatQuery(connection,
+            "select [Gender].Children on 0 from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1204,9 +1167,8 @@ class AccessControlTest {
 
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         connection = foodMartContext.getConnection(props);
-        TestUtil.assertQueryReturns(
-    		connection,
-            "select [Gender].Children on 0 from [Sales]",
+        assertThatQuery(connection,
+            "select [Gender].Children on 0 from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1253,19 +1215,16 @@ class AccessControlTest {
     	Connection connection = context.getConnection(props);
         // All of the children of [San Francisco] are invisible, because [City]
         // is the bottom level, but that shouldn't affect the total.
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
-            "([Customers].[USA].[CA].[San Francisco])", "88");
-    	TestUtil.assertExprThrows(
-			connection, "Sales",
-			"([Customers].[USA].[CA].[Los Angeles])",
+    	assertThatExpr(connection, "Sales",
+            "([Customers].[USA].[CA].[San Francisco])").returns( "88");
+    	assertThatExpr(connection, "Sales",
+			"([Customers].[USA].[CA].[Los Angeles])").throwsMessage(
             "MDX object '[Customers].[USA].[CA].[Los Angeles]' not found in cube 'Sales'");
 
-    	TestUtil.assertExprReturns(connection, "Sales", "([Customers].[USA].[CA])", v1);
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
-            "([Customers].[USA].[CA], [Gender].[F])", v2);
-    	TestUtil.assertExprReturns(connection, "Sales", "([Customers].[USA])", v3);
+    	assertThatExpr(connection, "Sales", "([Customers].[USA].[CA])").returns(v1);
+    	assertThatExpr(connection, "Sales",
+            "([Customers].[USA].[CA], [Gender].[F])").returns(v2);
+    	assertThatExpr(connection, "Sales", "([Customers].[USA])").returns(v3);
 
     	checkQuery(
     			connection,
@@ -1306,6 +1265,8 @@ class AccessControlTest {
      */
     @Disabled //TODO need investigate
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier1.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRollupPolicyNegative(Context<?> foodMartContext) {
 //    	String schema = SchemaUtil.getSchema(baseSchema,
 //                null, null, null, null, null,
@@ -1319,8 +1280,10 @@ class AccessControlTest {
 //                + "    </CubeGrant>\n"
 //                + "  </SchemaGrant>\n"
 //                + "</Role>");
-    	TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.AccessControlTestModifier1::new);
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
+        // Not assertThatQuery: unverified whether the bad rollupPolicy is caught while
+        // resolving the connection itself (schema/role validation) rather than during query
+        // execution -- keep it in the same try/catch as the connection lookup until confirmed.
     	TestUtil.assertQueryThrows(
     			foodMartContext,
                 props,
@@ -1359,14 +1322,10 @@ class AccessControlTest {
     {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	Connection connection = context.getConnection(props);
-    	TestUtil.assertExprReturns(connection, "Sales", "[Measures].[Unit Sales]", v1);
-    	TestUtil.assertExprReturns(
-			connection, "Sales", "([Measures].[Unit Sales], [Customers].[USA])",
-            v1);
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
-            "([Measures].[Unit Sales], [Customers].[USA].[CA])",
-            v2);
+    	assertThatExpr(connection, "Sales", "[Measures].[Unit Sales]").returns(v1);
+    	assertThatExpr(connection, "Sales", "([Measures].[Unit Sales], [Customers].[USA])").returns(v1);
+    	assertThatExpr(connection, "Sales",
+            "([Measures].[Unit Sales], [Customers].[USA].[CA])").returns(v2);
     }
 
     /**
@@ -1402,32 +1361,26 @@ class AccessControlTest {
     {
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	Connection connection = context.getConnection(props);
-    	TestUtil.assertExprReturns(connection, "Sales", "[Measures].[Unit Sales]", v1);
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
-            "([Measures].[Unit Sales], [Customers].[USA])",
-            v1);
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
-            "([Measures].[Unit Sales], [Customers].[USA].[CA])",
-            v2);
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
+    	assertThatExpr(connection, "Sales", "[Measures].[Unit Sales]").returns(v1);
+    	assertThatExpr(connection, "Sales",
+            "([Measures].[Unit Sales], [Customers].[USA])").returns(v1);
+    	assertThatExpr(connection, "Sales",
+            "([Measures].[Unit Sales], [Customers].[USA].[CA])").returns(v2);
+    	assertThatExpr(connection, "Sales",
             "([Measures].[Unit Sales], "
-            + "[Customers].[USA].[CA], [Store].[USA].[CA])",
-            v2);
-    	TestUtil.assertExprReturns(
-			connection, "Sales",
+            + "[Customers].[USA].[CA], [Store].[USA].[CA])").returns(v2);
+    	assertThatExpr(connection, "Sales",
             "([Measures].[Unit Sales], "
             + "[Customers].[USA].[CA], "
-            + "[Store].[USA].[CA].[San Diego])",
-            v3);
+            + "[Store].[USA].[CA].[San Diego])").returns(v3);
     }
 
     // todo: performance test where 1 of 1000 children is not visible
 
     @Disabled //TODO need investigate
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier2.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnionRole(Context<?> foodMartContext) {
     	/*
     	String baseSchema = TestUtil.getRawSchema(foodMartContext);
@@ -1462,8 +1415,6 @@ class AccessControlTest {
                 + "  </SchemaGrant>\n"
                 + "</Role>\n");
         */
-        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.AccessControlTestModifier2::new);
-
         Connection connection;
 
         try {
@@ -1541,9 +1492,8 @@ class AccessControlTest {
             + " [Customers].[USA].[OR].Children}) on 0\n"
             + "from [Sales]";
         connection = foodMartContext.getConnectionWithDefaultRole();
-        TestUtil.assertQueryReturns(
-    		connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1578,16 +1528,12 @@ class AccessControlTest {
 
         props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	connection = foodMartContext.getConnection(props);
-    	TestUtil.assertQueryThrows(
-			connection,
-            mdx,
+    	assertThatQuery(connection, mdx).throwsMessage(
             "MDX object '[Customers].[USA].[OR]' not found in cube 'Sales'");
 
         props =new ConnectionProps(List.of("Role2"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	connection = foodMartContext.getConnection(props);
-    	TestUtil.assertQueryThrows(
-			connection,
-            mdx,
+    	assertThatQuery(connection, mdx).throwsMessage(
             "MDX cube 'Sales' not found");
 
         // Compared to above:
@@ -1595,9 +1541,8 @@ class AccessControlTest {
         // b. total for Oregon = total for Portland
         props =new ConnectionProps(List.of("Role1", "Role2"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	connection = foodMartContext.getConnection(props);
-    	TestUtil.assertQueryReturns(
-			connection,
-            mdx,
+    	assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1676,23 +1621,22 @@ class AccessControlTest {
      */
     @Disabled //TODO need investigate
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier5.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRoleUnionWithLevelRestrictions(Context<?> foodMartContext)  throws Exception {
-        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.AccessControlTestModifier5::new);
         ConnectionProps props =new ConnectionProps(List.of("Role1","Role2"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
 
-    	TestUtil.assertQueryReturns(
-			connection,
-            "select {[Customers].[State Province].Members} on columns from [Sales]",
+    	assertThatQuery(connection,
+            "select {[Customers].[State Province].Members} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Customers].[USA].[CA]}\n"
             + "Row #0: 74,748\n");
 
-    	TestUtil.assertQueryReturns(
-			connection,
-            "select {[Customers].[Country].Members} on columns from [Sales]",
+    	assertThatQuery(connection,
+            "select {[Customers].[Country].Members} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n");
@@ -1764,7 +1708,7 @@ class AccessControlTest {
             + " Crossjoin({[Gender].[All Gender]}, "
             + "[Product].Children) ON ROWS "
             + "from [Sales]";
-        TestUtil.assertQueryReturns(connection,mdx, expected);
+        assertThatQuery(connection,mdx).returnsGrid(expected);
         checkQuery(connection, mdx);
 
         // with bug MONDRIAN-397, non empty crossjoin did not return the correct
@@ -1774,7 +1718,7 @@ class AccessControlTest {
             + "NON EMPTY Crossjoin({[Gender].[All Gender]}, "
             + "[Product].[All Products].Children) ON ROWS "
             + "from [Sales]";
-        TestUtil.assertQueryReturns(connection,mdx2, expected);
+        assertThatQuery(connection,mdx2).returnsGrid(expected);
         checkQuery(connection, mdx2);
     }
 
@@ -1801,7 +1745,7 @@ class AccessControlTest {
             + " Crossjoin({[Gender].[All Gender]}, "
             + "[Product].[Product Family].Members) ON ROWS "
             + "from [Sales]";
-        TestUtil.assertQueryReturns(connection, mdx, expected);
+        assertThatQuery(connection, mdx).returnsGrid(expected);
         checkQuery(connection, mdx);
 
         // with bug MONDRIAN-397, <Level>.members inside non empty crossjoin did
@@ -1811,7 +1755,7 @@ class AccessControlTest {
             + "NON EMPTY Crossjoin({[Gender].[All Gender]}, "
             + "[Product].[Product Family].Members) ON ROWS "
             + "from [Sales]";
-        TestUtil.assertQueryReturns(connection, mdx2, expected);
+        assertThatQuery(connection, mdx2).returnsGrid(expected);
         checkQuery(connection, mdx2);
     }
 
@@ -1838,9 +1782,8 @@ class AccessControlTest {
         // of visible children [Store].[CA] and [Store].[OR].[Portland].
         ConnectionProps props =new ConnectionProps(List.of("California manager"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertQueryReturns(
-    		connection,
-            GOODMAN_QUERY,
+        assertThatQuery(connection,
+            GOODMAN_QUERY).returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -1871,9 +1814,8 @@ class AccessControlTest {
     void testGoodmanFull(Context<?> foodMartContext) {
         ConnectionProps props =new ConnectionProps(List.of("California manager"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertQueryReturns(
-    		connection,
-            GOODMAN_QUERY,
+        assertThatQuery(connection,
+            GOODMAN_QUERY).returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -1904,9 +1846,8 @@ class AccessControlTest {
     void testGoodmanHidden(Context<?> foodMartContext) {
         ConnectionProps props =new ConnectionProps(List.of("California manager"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
-        TestUtil.assertQueryReturns(
-    		connection,
-            GOODMAN_QUERY,
+        assertThatQuery(connection,
+            GOODMAN_QUERY).returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -1965,9 +1906,8 @@ class AccessControlTest {
             + "  {[Measures].[Number of Employees]} on columns,\n"
             + "  {[Store]} on rows\n"
             + "from HR";
-        TestUtil.assertQueryReturns(
-    		connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1981,9 +1921,8 @@ class AccessControlTest {
             + "  {[Measures].[Number of Employees]} on columns,\n"
             + "  {[Employees]} on rows\n"
             + "from HR";
-        TestUtil.assertQueryReturns(
-    		connection,
-            mdx2,
+        assertThatQuery(connection,
+            mdx2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2004,26 +1943,23 @@ class AccessControlTest {
             connection.setRole(
                 new PeopleRole(
                     savedRole, connection.getCatalog(), "Sheri Nowmer"));
-            TestUtil.assertExprReturns(
-        		connection,
+            assertThatExpr(connection,
         		"HR",
-                "[Employees].Members.Count",
+                "[Employees].Members.Count").returns(
                 "1,156");
 
             // Level 2 employee
             connection.setRole(
                 new PeopleRole(
                     savedRole, connection.getCatalog(), "Derrick Whelply"));
-            TestUtil.assertExprReturns(
-        		connection,
+            assertThatExpr(connection,
         		"HR",
-                "[Employees].Members.Count",
+                "[Employees].Members.Count").returns(
                 "605");
-            TestUtil.assertAxisReturns(
-        		connection,
+            assertThatAxis(connection,
         		"HR",
                 "Head([Employees].Members, 4),"
-                + "Tail([Employees].Members, 2)",
+                + "Tail([Employees].Members, 2)").returns(
                 "[Employees].[Employees].[All Employees]\n"
                 + "[Employees].[Employees].[Sheri Nowmer]\n"
                 + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
@@ -2035,15 +1971,13 @@ class AccessControlTest {
             connection.setRole(
                 new PeopleRole(
                     savedRole, connection.getCatalog(), "Ann Weyerhaeuser"));
-            TestUtil.assertExprReturns(
-        		connection,
+            assertThatExpr(connection,
         		"HR",
-                "[Employees].[Employees].Members.Count",
+                "[Employees].[Employees].Members.Count").returns(
                 "7");
-            TestUtil.assertAxisReturns(
-        		connection,
+            assertThatAxis(connection,
         		"HR",
-                "[Employees].Members",
+                "[Employees].Members").returns(
                 "[Employees].[Employees].[All Employees]\n"
                 + "[Employees].[Employees].[Sheri Nowmer]\n"
                 + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
@@ -2076,9 +2010,8 @@ class AccessControlTest {
             + "  {[Warehouse].[Warehouse].[All Warehouses]} ON ROWS\n"
             + "from [Warehouse]";
         checkQuery(connection, mdx);
-        TestUtil.assertQueryReturns(
-    		connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2102,12 +2035,11 @@ class AccessControlTest {
     	Connection connection = foodMartContext.getConnection(props);
 
         // minimal testcase
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select hierarchize("
             + "    crossjoin({[Store Size in SQFT], [Store Size in SQFT].Children}, {[Product]})"
             + ") on 0,"
-            + "[Store Type].Members on 1 from [Warehouse]",
+            + "[Store Type].Members on 1 from [Warehouse]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2122,15 +2054,14 @@ class AccessControlTest {
             + "Row #1: 4,042.96\n");
 
         // explicit tuples, not crossjoin
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select hierarchize("
             + "    { ([Store Size in SQFT], [Product]),\n"
             + "      ([Store Size in SQFT].[20319], [Product].[Food]),\n"
             + "      ([Store Size in SQFT], [Product].[Drink].[Dairy]),\n"
             + "      ([Store Size in SQFT].[20319], [Product]) }\n"
             + ") on 0,"
-            + "[Store Type].Members on 1 from [Warehouse]",
+            + "[Store Type].Members on 1 from [Warehouse]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2152,8 +2083,7 @@ class AccessControlTest {
 
         // extended testcase; note that [Store Size in SQFT].Parent is null,
         // so disappears
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select non empty hierarchize("
             + "union("
             + "  union("
@@ -2165,7 +2095,7 @@ class AccessControlTest {
             + "    crossjoin({[Store Size in SQFT].Children}, {[Product].[Food]}),"
             + "    all),"
             + "  all)) on 0,"
-            + "[Store Type].Members on 1 from [Warehouse]",
+            + "[Store Type].Members on 1 from [Warehouse]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2185,8 +2115,7 @@ class AccessControlTest {
             + "Row #1: 4,042.96\n"
             + "Row #1: 2,696.758\n");
 
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select Hierarchize(\n"
             + "  CrossJoin\n("
             + "    CrossJoin(\n"
@@ -2197,7 +2126,7 @@ class AccessControlTest {
             + "      [Store Type].MEMBERS),\n"
             + "    [Store Size in SQFT].MEMBERS),\n"
             + "  PRE) on 0\n"
-            + "from [Warehouse]",
+            + "from [Warehouse]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2261,8 +2190,7 @@ class AccessControlTest {
         ConnectionProps props =new ConnectionProps(List.of("role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
 
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select non empty {[Measures].[Units Ordered],\n"
             + "            [Measures].[Units Shipped]} on 0,\n"
             + "non empty hierarchize(\n"
@@ -2275,7 +2203,7 @@ class AccessControlTest {
             + "        crossjoin(\n"
             + "            {[Store Size in SQFT].[20319]},\n"
             + "            {[Product].Children}))) on 1\n"
-            + "from [Warehouse]",
+            + "from [Warehouse]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2310,13 +2238,13 @@ class AccessControlTest {
      */
     @Disabled //TODO need investigate
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier10.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testVirtualCube(Context<?> foodMartContext) {
-        TestUtil.withSchemaEmf(foodMartContext, SchemaModifiersEmf.AccessControlTestModifier10::new);
         ConnectionProps props =new ConnectionProps(List.of("VCRole"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
-    	TestUtil.assertQueryReturns(
-			connection,
-            "select [Store].Members on 0 from [Warehouse and Sales]",
+    	assertThatQuery(connection,
+            "select [Store].Members on 0 from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2360,9 +2288,8 @@ class AccessControlTest {
             "select [Measures].[Unit Sales] ON COLUMNS, {[Store].[Store Country].Members} ON ROWS from [Sales]";
 
         checkQuery(connection, firstBrokenMdx);
-        TestUtil.assertQueryReturns(
-    		connection,
-            firstBrokenMdx,
+        assertThatQuery(connection,
+            firstBrokenMdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2375,9 +2302,8 @@ class AccessControlTest {
             "select [Measures].[Unit Sales] ON COLUMNS, "
             + "Descendants([Store],[Store].[Store Name]) ON ROWS from [Sales]";
         checkQuery(connection, secondBrokenMdx);
-        TestUtil.assertQueryReturns(
-    		connection,
-            secondBrokenMdx,
+        assertThatQuery(connection,
+            secondBrokenMdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2419,11 +2345,10 @@ class AccessControlTest {
         // Test case is minimal: doesn't happen without the Crossjoin, or
         // without the NON EMPTY, or with [Employees] as opposed to
         // [Employees].[All Employees], or with [Department].[All Departments].
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Org Salary]} ON COLUMNS,\n"
             + "NON EMPTY Crossjoin({[Department].[14]}, {[Employees].[All Employees]}) ON ROWS\n"
-            + "from [HR]",
+            + "from [HR]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2433,11 +2358,10 @@ class AccessControlTest {
             + "Row #0: $97.20\n");
 
         // This query gave the right answer, even with MONDRIAN-694.
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, \n"
             + "NON EMPTY Hierarchize(Crossjoin({[Department].[14]}, {[Employees].[All Employees], [Employees].Children})) ON ROWS \n"
-            + "from [HR] ",
+            + "from [HR] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2450,11 +2374,10 @@ class AccessControlTest {
 
         // Original test case, not quite minimal. With MONDRIAN-694, returns
         // $874.80 for [All Employees].
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, \n"
             + "NON EMPTY Hierarchize(Union(Crossjoin({[Department].[All Departments].[14]}, {[Employees].[All Employees]}), Crossjoin({[Department].[All Departments].[14]}, [Employees].[All Employees].Children))) ON ROWS \n"
-            + "from [HR]  ",
+            + "from [HR]  ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2465,11 +2388,10 @@ class AccessControlTest {
             + "Row #0: $97.20\n"
             + "Row #1: $97.20\n");
 
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, \n"
             + "NON EMPTY Crossjoin(Hierarchize(Union({[Employees].[All Employees]}, [Employees].[All Employees].Children)), {[Department].[14]}) ON ROWS \n"
-            + "from [HR] ",
+            + "from [HR] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2492,13 +2414,12 @@ class AccessControlTest {
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @RolapConfig(key = ConfigConstants.IGNORE_INVALID_MEMBERS, value = "true", type = Boolean.class)
     void testBugMondrian722(@Roles("CTO") Connection connection) {
-        TestUtil.assertQueryReturns(
-        		connection,
+        assertThatQuery(connection,
                 "select [Measures] on 0,\n"
                 + " Hierarchize(\n"
                 + "   {[Customers].[USA].Children,\n"
                 + "    [Customers].[USA].[CA].Children}) on 1\n"
-                + "from [Sales]",
+                + "from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -2582,11 +2503,10 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier18.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian935(@Roles("Role1") Connection connection) {
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select [Measures] on 0,\n"
             + "[Customers].[USA].Children * [Store Type].Children on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2603,22 +2523,19 @@ class AccessControlTest {
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDimensionGrant(@Roles("Role1") Connection connection, @Roles("Role2") Connection role2Connection,
             @Roles("Role3") Connection role3Connection) throws Exception {
-    	TestUtil.assertAxisReturns(
-			connection, "Sales",
-            "[Education Level].[Education Level].Members",
+    	assertThatAxis(connection, "Sales",
+            "[Education Level].[Education Level].Members").returns(
             "[Education Level].[Education Level].[All Education Levels]\n"
             + "[Education Level].[Education Level].[Bachelors Degree]\n"
             + "[Education Level].[Education Level].[Graduate Degree]\n"
             + "[Education Level].[Education Level].[High School Degree]\n"
             + "[Education Level].[Education Level].[Partial College]\n"
             + "[Education Level].[Education Level].[Partial High School]");
-    	TestUtil.assertAxisThrows(
-			connection,
-            "[Customers].Members",
-            "MDX object '[Customers]' not found in cube 'Sales'", "Sales");
-    	TestUtil.assertQueryReturns(
-			connection,
-            "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
+    	assertThatAxis(connection, "Sales",
+            "[Customers].Members").throwsMessage(
+            "MDX object '[Customers]' not found in cube 'Sales'");
+    	assertThatQuery(connection,
+            "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2636,13 +2553,11 @@ class AccessControlTest {
             + "Row #0: 78,664\n"
             + "Row #0: 24,545\n"
             + "Row #0: 79,155\n");
-    	TestUtil.assertAxisThrows(
-			role2Connection,
-            "[Customers].Members",
-            "MDX object '[Customers]' not found in cube 'Sales'", "Sales");
-    	TestUtil.assertQueryThrows(
-			role3Connection,
-            "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
+    	assertThatAxis(role2Connection, "Sales",
+            "[Customers].Members").throwsMessage(
+            "MDX object '[Customers]' not found in cube 'Sales'");
+    	assertThatQuery(role3Connection,
+            "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales").throwsMessage(
             "MDX object '[Measures].[Unit Sales]' not found in cube 'Sales'");
     }
 
@@ -2739,9 +2654,8 @@ class AccessControlTest {
             + "Non Empty [*BASE_MEMBERS_Product] on rows\n"
             + "From [Sales] \n";
         // Control tests
-        TestUtil.assertQueryReturns(
-    		role1Connection,
-            mdx1,
+        assertThatQuery(role1Connection,
+            mdx1).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2759,9 +2673,8 @@ class AccessControlTest {
             + "Row #3: 551\n"
             + "Row #4: 253\n"
             + "Row #5: 823\n");
-        TestUtil.assertQueryReturns(
-    		role2Connection,
-            mdx1,
+        assertThatQuery(role2Connection,
+            mdx1).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2779,9 +2692,8 @@ class AccessControlTest {
             + "Row #3: 1,029\n"
             + "Row #4: 286\n"
             + "Row #5: 731\n");
-        TestUtil.assertQueryReturns(
-    		role1Role2Connection,
-            mdx1,
+        assertThatQuery(role1Role2Connection,
+            mdx1).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2812,9 +2724,8 @@ class AccessControlTest {
             + "Row #10: 253\n"
             + "Row #11: 823\n");
         // Actual tests
-        TestUtil.assertQueryReturns(
-    		role1Connection,
-            mdx2,
+        assertThatQuery(role1Connection,
+            mdx2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2833,9 +2744,8 @@ class AccessControlTest {
             + "Row #4: 253\n"
             + "Row #5: 823\n");
 
-        TestUtil.assertQueryReturns(
-    		role2Connection,
-            mdx2,
+        assertThatQuery(role2Connection,
+            mdx2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2853,9 +2763,8 @@ class AccessControlTest {
             + "Row #3: 1,029\n"
             + "Row #4: 286\n"
             + "Row #5: 731\n");
-        TestUtil.assertQueryReturns(
-    		role1Role2Connection,
-            mdx2,
+        assertThatQuery(role1Role2Connection,
+            mdx2).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2889,11 +2798,10 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier21.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testBugMondrian1030_2(@Roles("Bacon") Connection connection) {
-    	TestUtil.assertQueryReturns(
-    			connection,
+    	assertThatQuery(connection,
                 "select {[Measures].[Unit Sales]} on 0,\n"
                 + "   {[Customers].[USA]} on 1\n"
-                + "from [Sales]",
+                + "from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -2914,9 +2822,8 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier22.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian1091(@Roles("Role1") Connection connection) throws Exception {
-    	TestUtil.assertQueryReturns(
-			connection,
-            "select {[Store].Members} on columns from [Sales]",
+    	assertThatQuery(connection,
+            "select {[Store].Members} on columns from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -2980,9 +2887,8 @@ class AccessControlTest {
             throws Exception {
         final String mdx =
             "select non empty {[Store].Members} on columns from [Sales]";
-        TestUtil.assertQueryReturns(
-    		role1Connection,
-            mdx,
+        assertThatQuery(role1Connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -3008,9 +2914,8 @@ class AccessControlTest {
             + "Row #0: 25,635\n"
             + "Row #0: 2,117\n"
             + "Row #0: 2,117\n");
-        TestUtil.assertQueryReturns(
-    		role2Connection,
-            mdx,
+        assertThatQuery(role2Connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -3050,19 +2955,15 @@ class AccessControlTest {
             + "From [Sales]\n";
 
         // Control
-        TestUtil
-            .assertQueryReturns(
-        		defaultConnection,
-                "select {[Measures].[Unit Sales]} on columns from [Sales]",
+        assertThatQuery(defaultConnection,
+                "select {[Measures].[Unit Sales]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Row #0: 266,773\n");
-        TestUtil
-            .assertQueryReturns(
-        		connection,
-                "select {[Measures].[Unit Sales]} on columns from [Sales]",
+        assertThatQuery(connection,
+                "select {[Measures].[Unit Sales]} on columns from [Sales]").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -3070,10 +2971,8 @@ class AccessControlTest {
                 + "Row #0: 74,748\n");
 
         // Test
-        TestUtil
-            .assertQueryReturns(
-        		connection,
-                mdx,
+        assertThatQuery(connection,
+                mdx).returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -3087,12 +2986,11 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier25.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian936(@Roles("test") Connection connection) throws Exception {
-        TestUtil.assertQueryReturns(
-			connection,
+        assertThatQuery(connection,
             "select {[Measures].[Unit Sales]} on columns, "
             + "                 {[Product].[Food].[Baked Goods].[Bread]} on rows "
             + "                 from [Sales] "
-            + " where { [Store].[USA].[OR], [Store].[USA].[CA]} ", "Axis #0:\n"
+            + " where { [Store].[USA].[OR], [Store].[USA].[CA]} ").returnsGrid( "Axis #0:\n"
             + "{[Store].[Store].[USA].[OR]}\n"
             + "{[Store].[Store].[USA].[CA]}\n"
             + "Axis #1:\n"
@@ -3103,12 +3001,11 @@ class AccessControlTest {
 
         // changing ordering of members in the slicer should not change
         // result
-    	TestUtil.assertQueryReturns(
-			connection,
+    	assertThatQuery(connection,
             "select {[Measures].[Unit Sales]} on columns, "
             + "                 {[Product].[Food].[Baked Goods].[Bread]} on rows "
             + "                 from [Sales] "
-            + " where { [Store].[USA].[CA], [Store].[USA].[OR]} ", "Axis #0:\n"
+            + " where { [Store].[USA].[CA], [Store].[USA].[OR]} ").returnsGrid( "Axis #0:\n"
             + "{[Store].[Store].[USA].[CA]}\n"
             + "{[Store].[Store].[USA].[OR]}\n"
             + "Axis #1:\n"
@@ -3186,9 +3083,8 @@ class AccessControlTest {
             + "[*BASE_MEMBERS_Measures] on columns,\n"
             + "Non Empty [*SORTED_ROW_AXIS] on rows\n"
             + "From [Sales]\n";
-        TestUtil.assertQueryReturns(
-    		connection,
-            mdx,
+        assertThatQuery(connection,
+            mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -3345,15 +3241,9 @@ class AccessControlTest {
     private void checkRollupPolicyWithNative(Connection connection, RollupPolicy policy, String defaultMember,
             boolean hasAll) {
         // RolapNativeCrossjoin
-        TestUtil.assertQueryReturns(
-                connection,
-                String.format(
-                    "Failure testing RolapNativeCrossJoin with "
-                    + " rollupPolicy=%s, "
-                    +   "defaultMember=%s, hasAll=%s",
-                    policy, defaultMember, hasAll),
+        assertThatQuery(connection,
                 "select NonEmptyCrossJoin([Store2].[Store State].MEMBERS,"
-                + "[Product].[Product Family].MEMBERS) on 0 from tinysales",
+                + "[Product].[Product Family].MEMBERS) on 0 from tinysales").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -3370,17 +3260,11 @@ class AccessControlTest {
                 + "Row #0: 48,537\n"
                 + "Row #0: 13,016\n");
         // RolapNativeFilter
-        TestUtil.assertQueryReturns(
-                connection,
-                String.format(
-                    "Failure testing RolapNativeFilter with "
-                    + "rollupPolicy=%s, "
-                    +   "defaultMember=%s, hasAll=%s",
-                    policy, defaultMember, hasAll),
+        assertThatQuery(connection,
                 "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
                 + "  Filter( [Store2].[USA].children,"
                 + "          [Measures].[Unit Sales]>0) ON ROWS \n"
-                + "from [TinySales] \n",
+                + "from [TinySales] \n").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -3391,17 +3275,11 @@ class AccessControlTest {
                 + "Row #0: 74,748\n"
                 + "Row #1: 67,659\n");
         // RolapNativeTopCount
-        TestUtil.assertQueryReturns(
-                connection,
-                String.format(
-                    "Failure testing RolapNativeTopCount with "
-                    + " rollupPolicy=%s, "
-                    +   "defaultMember=%s, hasAll=%s",
-                    policy, defaultMember, hasAll),
+        assertThatQuery(connection,
                 "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
                 + "  TopCount( [Store2].[USA].children,"
                 + "          2) ON ROWS \n"
-                + "from [TinySales] \n",
+                + "from [TinySales] \n").returnsGrid(
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
@@ -3419,20 +3297,18 @@ class AccessControlTest {
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testValidMeasureWithRestrictedCubes(@Roles("noBaseCubes") Connection connection) {
         //http://jira.pentaho.com/browse/MONDRIAN-1616
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "with member measures.vm as 'validmeasure(measures.[unit sales])' "
-            + "select measures.vm on 0 from [warehouse and sales]",
+            + "select measures.vm on 0 from [warehouse and sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[vm]}\n"
             + "Row #0: 266,773\n");
 
-        TestUtil.assertQueryReturns(
-    		connection,
+        assertThatQuery(connection,
             "with member measures.vm as 'validmeasure(measures.[warehouse cost])' "
-            + "select measures.vm * {gender.f} on 0 from [warehouse and sales]",
+            + "select measures.vm * {gender.f} on 0 from [warehouse and sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

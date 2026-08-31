@@ -15,11 +15,10 @@ package mondrian.test;
 
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 
 import org.eclipse.daanse.olap.api.Context;
@@ -65,7 +64,7 @@ class NamedSetTest {
      */
     @Test
     void testNamedSet(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "    SET [Top Sellers]\n"
             + "AS \n"
@@ -77,7 +76,7 @@ class NamedSetTest {
             + "FROM \n"
             + "    [Warehouse]\n"
             + "WHERE \n"
-            + "    [Time].[Year].[1997]",
+            + "    [Time].[Year].[1997]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -117,7 +116,7 @@ class NamedSetTest {
             // Infobright gives error "'c4' isn't in GROUP BY".
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "    MEMBER [Measures].[Profit]\n"
             + "AS '[Measures].[Warehouse Sales] - [Measures].[Warehouse Cost] '\n"
@@ -131,7 +130,7 @@ class NamedSetTest {
             + "FROM \n"
             + "    [Warehouse]\n"
             + "WHERE \n"
-            + "    [Time].[Year].[1997].[Q2]",
+            + "    [Time].[Year].[1997].[Q2]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q2]}\n"
             + "Axis #1:\n"
@@ -154,7 +153,7 @@ class NamedSetTest {
      */
     @Test
     void testNamedSetAsList(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
             + "   '{[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Good].[Good Chardonnay],\n"
             + "   [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Pearl].[Pearl Chardonnay],\n"
@@ -169,7 +168,7 @@ class NamedSetTest {
             + "SELECT\n"
             + "   [ChardonnayChablis] ON COLUMNS,\n"
             + "   {Measures.[Unit Sales]} ON ROWS\n"
-            + "FROM Sales",
+            + "FROM Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -203,25 +202,25 @@ class NamedSetTest {
     @Test
     @RolapConfig(key = ConfigConstants.CASE_SENSITIVE_MDX_INSTR, value = "true", type = Boolean.class)
     void testIntrinsic(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
             + "   'Filter([Product].Members, (InStr(1, [Product].CurrentMember.Name, \"chardonnay\") <> 0) OR (InStr(1, [Product].CurrentMember.Name, \"chablis\") <> 0))'\n"
             + "SELECT\n"
             + "   [ChardonnayChablis] ON COLUMNS,\n"
             + "   {Measures.[Unit Sales]} ON ROWS\n"
-            + "FROM Sales",
+            + "FROM Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [BeerMilk] AS\n"
             + "   'Filter([Product].Members, (InStr(1, [Product].CurrentMember.Name, \"Beer\") <> 0) OR (InStr(1, LCase([Product].CurrentMember.Name), \"milk\") <> 0))'\n"
             + "SELECT\n"
             + "   [BeerMilk] ON COLUMNS,\n"
             + "   {Measures.[Unit Sales]} ON ROWS\n"
-            + "FROM Sales",
+            + "FROM Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -320,7 +319,7 @@ class NamedSetTest {
      */
     @Test
     void testNamedSetCrossJoin(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "    SET [Store Types by Country]\n"
             + "AS\n"
@@ -332,7 +331,7 @@ class NamedSetTest {
             + "FROM\n"
             + "    [Warehouse]\n"
             + "WHERE\n"
-            + "    [Time].[Time].[1997].[Q2]",
+            + "    [Time].[Time].[1997].[Q2]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q2]}\n"
             + "Axis #1:\n"
@@ -352,14 +351,14 @@ class NamedSetTest {
     @Disabled
     @Test
     public void _testXxx(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store Type].[All Store Type].[oNormal] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Normal\") * {[Store Type].[All Store Type]})'\n"
             + "MEMBER [Store Type].[All Store Type].[oBronze] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Bronze\") * {[Store Type].[All Store Type]})'\n"
             + "MEMBER [Store Type].[All Store Type].[oGolden] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Golden\") * {[Store Type].[All Store Type]})'\n"
             + "MEMBER [Store Type].[All Store Type].[oSilver] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Silver\") * {[Store Type].[All Store Type]})'\n"
             + "SET CardTypes AS '{[oNormal], [oBronze], [oGolden], [oSilver]}'\n"
             + "SELECT {[Unit Sales]} ON COLUMNS, CardTypes ON ROWS\n"
-            + "FROM Sales",
+            + "FROM Sales").returnsGrid(
             "xxxx");
     }
 
@@ -368,12 +367,12 @@ class NamedSetTest {
      */
     @Test
     void testNamedSetUsedInCrossJoin(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [TopMedia] AS 'TopCount([Promotion Media].children, 5, [Measures].[Store Sales])' \n"
             + "SELECT {[Time].[1997].[Q1], [Time].[1997].[Q2]} ON COLUMNS,\n"
             + " {CrossJoin([TopMedia], [Product].children)} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -429,14 +428,14 @@ class NamedSetTest {
 
     @Test
     void testAggOnCalcMember(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [TopMedia] AS 'TopCount([Promotion Media].children, 5, [Measures].[Store Sales])' \n"
             + "  MEMBER [Measures].[California sales for Top Media] AS 'Sum([TopMedia], ([Store].[USA].[CA], [Measures].[Store Sales]))'\n"
             + "SELECT {[Time].[1997].[Q1], [Time].[1997].[Q2]} ON COLUMNS,\n"
             + " {[Product].children} ON ROWS\n"
             + "FROM [Sales]\n"
-            + "WHERE [Measures].[California sales for Top Media]",
+            + "WHERE [Measures].[California sales for Top Media]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[California sales for Top Media]}\n"
             + "Axis #1:\n"
@@ -457,12 +456,11 @@ class NamedSetTest {
     @Test
     void testContextSensitiveNamedSet(Context<?> context) {
         // For reference.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "Order([Promotion Media].Children, [Measures].[Unit Sales], DESC) ON ROWS\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997]",
-
+            + "WHERE [Time].[1997]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
@@ -498,12 +496,11 @@ class NamedSetTest {
             + "Row #13: 2,454\n");
 
         // For reference.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "Order([Promotion Media].Children, [Measures].[Unit Sales], DESC) ON ROWS\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997].[Q2]",
-
+            + "WHERE [Time].[1997].[Q2]").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q2]}\n"
             + "Axis #1:\n"
@@ -542,13 +539,13 @@ class NamedSetTest {
         // The bottom medium in 1997.Q2 is In-Store Coupon, with $35 in sales,
         //  whereas Radio has $40 in sales in 1997.Q2.
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [Bottom Media] AS 'BottomCount([Promotion Media].children, 1, [Measures].[Unit Sales])' \n"
             + "  MEMBER [Measures].[Unit Sales for Bottom Media] AS 'Sum([Bottom Media], [Measures].[Unit Sales])'\n"
             + "SELECT {[Measures].[Unit Sales for Bottom Media]} ON COLUMNS,\n"
             + " {[Time].[1997], [Time].[1997].[Q2]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             // Note that Row #1 gives 40. 35 would be wrong.
             // [In-Store Coupon], which was bottom for 1997.Q2 but not for
             // 1997.
@@ -562,7 +559,7 @@ class NamedSetTest {
             + "Row #0: 2,454\n"
             + "Row #1: 40\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [TopMedia] AS 'TopCount([Promotion Media].children, 3, [Measures].[Store Sales])' \n"
             + "  MEMBER [Measures].[California sales for Top Media] AS 'Sum([TopMedia], [Measures].[Store Sales])'\n"
@@ -571,8 +568,7 @@ class NamedSetTest {
             + "    {[Time].[1997].[Q1], [Time].[1997].[Q2]}) ON COLUMNS,\n"
             + " {[Product], [Product].children} ON ROWS\n"
             + "FROM [Sales]\n"
-            + "WHERE [Measures].[California sales for Top Media]",
-
+            + "WHERE [Measures].[California sales for Top Media]").returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[California sales for Top Media]}\n"
             + "Axis #1:\n"
@@ -606,7 +602,7 @@ class NamedSetTest {
     @Test
     void testOrderedNamedSet(Context<?> context) {
         // From http://www.developersdex.com
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [SET1] AS\n"
             + "'ORDER ({[Education Level].[Education Level].[Education Level].Members}, [Gender].[Gender].[All Gender].[F], ASC)'\n"
             + "MEMBER [Gender].[Gender].[RANK1] AS 'rank([Education Level].[Education Level].[Education Level].currentmember, [SET1])'\n"
@@ -614,7 +610,7 @@ class NamedSetTest {
             + "{[Gender].[Gender].[All Gender].[F], [Gender].[Gender].[RANK1]} on columns,\n"
             + "{[Education Level].[Education Level].[Education Level].Members} on rows\n"
             + "from Sales\n"
-            + "where ([Measures].[Store Sales])",
+            + "where ([Measures].[Store Sales])").returnsGrid(
             // MSAS gives results as below, except ranks are displayed as
             // integers, e.g. '1'.
             "Axis #0:\n"
@@ -639,7 +635,7 @@ class NamedSetTest {
             + "Row #4: 82,177.11\n"
             + "Row #4: 5\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [SET1] AS\n"
             + "'ORDER ({[Education Level].[Education Level].[Education Level].Members}, [Gender].[All Gender].[F], ASC)'\n"
             + "MEMBER [Gender].[Gender].[RANK1] AS 'rank([Education Level].[Education Level].[Education Level].currentmember, [SET1])'\n"
@@ -647,7 +643,7 @@ class NamedSetTest {
             + "{[Gender].[Gender].[All Gender].[F], [Gender].[RANK1]} on columns,\n"
             + "{[Education Level].[Education Level].[Education Level].Members} on rows\n"
             + "from Sales\n"
-            + "where ([Measures].[Profit])",
+            + "where ([Measures].[Profit])").returnsGrid(
             // MSAS gives results as below. The ranks are (correctly) 0
             // because profit is a calc member.
             "Axis #0:\n"
@@ -673,7 +669,7 @@ class NamedSetTest {
             + "Row #4: $0.00\n");
 
         // Solve order fixes the problem.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH SET [SET1] AS\n"
             + "'ORDER ({[Education Level].[Education Level].[Education Level].Members}, [Gender].[F], ASC)'\n"
             + "MEMBER [Gender].[Gender].[RANK1] AS 'rank([Education Level].[Education Level].[Education Level].currentmember, [SET1])', \n"
@@ -682,7 +678,7 @@ class NamedSetTest {
             + "{[Gender].[Gender].[F], [Gender].[Gender].[RANK1]} on columns,\n"
             + "{[Education Level].[Education Level].[Education Level].Members} on rows\n"
             + "from Sales\n"
-            + "where ([Measures].[Profit])",
+            + "where ([Measures].[Profit])").returnsGrid(
             // MSAS gives results as below.
             "Axis #0:\n"
             + "{[Measures].[Profit]}\n"
@@ -709,13 +705,13 @@ class NamedSetTest {
 
     @Test
     void testGenerate(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
             + "  member [Measures].[DateName] as \n"
             + "    'Generate({[Time].[1997].[Q1], [Time].[1997].[Q2]}, [Time].[Time].CurrentMember.Name) '\n"
             + "select {[Measures].[DateName]} on columns,\n"
             + " {[Time].[1997].[Q1], [Time].[1997].[Q2]} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -726,13 +722,13 @@ class NamedSetTest {
             + "Row #0: Q1Q2\n"
             + "Row #1: Q1Q2\n");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
             + "  member [Measures].[DateName] as \n"
             + "    'Generate({[Time].[1997].[Q1], [Time].[1997].[Q2]}, [Time].[Time].CurrentMember.Name, \" and \") '\n"
             + "select {[Measures].[DateName]} on columns,\n"
             + " {[Time].[1997].[Q1], [Time].[1997].[Q2]} on rows\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -751,10 +747,10 @@ class NamedSetTest {
 
         // Set defined against cube, using 'formula' attribute.
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {[CA Cities]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -773,10 +769,10 @@ class NamedSetTest {
 
         // Set defined against cube, in terms of another set, and using
         // '<Formula>' element.
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {[Top CA Cities]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -788,11 +784,11 @@ class NamedSetTest {
             + "Row #1: 25,635\n");
 
         // Override named set in query.
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH SET [CA Cities] AS '{[Store].[USA].[OR].[Portland]}' "
             + "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {[CA Cities]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -804,11 +800,11 @@ class NamedSetTest {
         // When [CA Cities] is overridden, does the named set [Top CA Cities],
         // which is derived from it, use the new definition? No. It stays
         // bound to the original definition.
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH SET [CA Cities] AS '{[Store].[USA].[OR].[Portland]}' "
             + "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {[Top CA Cities]} ON ROWS\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -826,10 +822,10 @@ class NamedSetTest {
     void testNamedSetAgainstSchema(Context<?> context) {
     	Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Store Sales]} on columns,\n"
             + " Intersect([Top CA Cities], [Top USA Stores]) on rows\n"
-            + "FROM [Sales]",
+            + "FROM [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -838,11 +834,10 @@ class NamedSetTest {
             + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
             + "Row #0: 54,545.28\n");
         // Use non-existent set.
-        assertQueryThrows(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Store Sales]} on columns,\n"
             + " Intersect([Top CA Cities], [Top Ukrainian Cities]) on rows\n"
-            + "FROM [Sales]",
-            "MDX object '[Top Ukrainian Cities]' not found in cube 'Sales'");
+            + "FROM [Sales]").throwsMessage("MDX object '[Top Ukrainian Cities]' not found in cube 'Sales'");
     }
 
     @Disabled //TODO need investigate
@@ -880,10 +875,10 @@ class NamedSetTest {
             null);
         withSchema(context, schema);
          */
-        assertQueryThrows(context,
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sales]} on columns,\n"
             + " {[Bad]} on rows\n"
-            + "FROM [Sales]", "Named set 'Bad' has bad formula");
+            + "FROM [Sales]").throwsMessage("Named set 'Bad' has bad formula");
     }
 
     /**
@@ -925,45 +920,44 @@ class NamedSetTest {
             "with set [Foo] as ' [Store].CurrentMember  '"
             + "select {[Foo]} on columns from [Sales]";
         pattern = "Set expression '[Foo]' must be a set";
-        assertQueryThrows(connection, queryString, pattern);
+        assertThatQuery(connection, queryString).throwsMessage(pattern);
 
         // Formula for a named set must not be a dimension.
         queryString =
             "with set [Foo] as ' [Store] '"
             + "select {[Foo]} on columns from [Sales]";
-        assertQueryThrows(connection, queryString, pattern);
+        assertThatQuery(connection, queryString).throwsMessage(pattern);
 
         // Formula for a named set must not be a level.
         queryString =
             "with set [Foo] as ' [Store].[Store Country] '"
             + "select {[Foo]} on columns from [Sales]";
-        assertQueryThrows(connection, queryString, pattern);
+        assertThatQuery(connection, queryString).throwsMessage(pattern);
 
         // Formula for a named set must not be a cube name.
         queryString =
             "with set [Foo] as ' [Sales] '"
             + "select {[Foo]} on columns from [Sales]";
-        assertQueryThrows(connection,
-            queryString,
-            "MDX object '[Sales]' not found in cube 'Sales'");
+        assertThatQuery(connection,
+            queryString).throwsMessage("MDX object '[Sales]' not found in cube 'Sales'");
 
         // Formula for a named set must not be a string.
         queryString =
             "with set [Foo] as ' \"foobar\" '"
             + "select {[Foo]} on columns from [Sales]";
-        assertQueryThrows(connection, queryString, pattern);
+        assertThatQuery(connection, queryString).throwsMessage(pattern);
 
         // Formula for a named set must not be a number.
         queryString =
             "with set [Foo] as ' -1.45 '"
             + "select {[Foo]} on columns from [Sales]";
-        assertQueryThrows(connection, queryString, pattern);
+        assertThatQuery(connection, queryString).throwsMessage(pattern);
 
         // Formula for a named set must not be a tuple.
         queryString =
             "with set [Foo] as ' ([Gender].[M], [Marital Status].[S]) '"
             + "select {[Foo]} on columns from [Sales]";
-        assertQueryThrows(connection, queryString, pattern);
+        assertThatQuery(connection, queryString).throwsMessage(pattern);
 
         // Formula for a named set may be a set of tuples.
         queryString =
@@ -985,7 +979,7 @@ class NamedSetTest {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamedSetsMixedWithCalcMembers(Context<?> context)
     {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {\n"
             + "    [Measures].[Unit Sales],\n"
             + "    [Measures].[CA City Sales]} on columns,\n"
@@ -993,7 +987,7 @@ class NamedSetTest {
             + "    [Time].[1997].Children,\n"
             + "    [Top Products In CA]) on rows\n"
             + "from [Sales]\n"
-            + "where [Marital Status].[S]",
+            + "where [Marital Status].[S]").returnsGrid(
             "Axis #0:\n"
             + "{[Marital Status].[Marital Status].[S]}\n"
             + "Axis #1:\n"
@@ -1040,7 +1034,7 @@ class NamedSetTest {
 
     @Test
     void testNamedSetAndUnion(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Set Education Level] as\n"
             + "   '{([Education Level].[All Education Levels].[Bachelors Degree]),\n"
             + "     ([Education Level].[All Education Levels].[Graduate Degree])}'\n"
@@ -1054,7 +1048,7 @@ class NamedSetTest {
             + "          [Set Education Level]), \n"
             + "      {([Time].[1997].[Q1],\n"
             + "        [Education Level].[All Education Levels].[Graduate Degree])}) ON ROWS\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1090,13 +1084,13 @@ class NamedSetTest {
     void testHierarchizeNamedSetImmutable(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "with set necj as\n"
             + "NonEmptyCrossJoin([Customers].[Name].members,[Store].[Store Name].members)\n"
             + "select\n"
             + "{[Measures].[Unit Sales]} on columns,\n"
             + "Tail(hierarchize(necj),5) on rows\n"
-            + "from sales",
+            + "from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1116,7 +1110,7 @@ class NamedSetTest {
 
     @Test
     void testCurrentAndCurrentOrdinal(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [Gender Marital Status] as\n"
             + " [Gender].members * [Marital Status].members\n"
             + "member [Measures].[GMS Ordinal] as\n"
@@ -1128,7 +1122,7 @@ class NamedSetTest {
             + "  [Measures].[GMS Ordinal],\n"
             + "  [Measures].[GMS Name]} on 0,\n"
             + " {[Gender Marital Status]} on 1\n"
-            + "from [Sales]",
+            + "from [Sales]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1177,11 +1171,11 @@ class NamedSetTest {
     @Test
     void testNamedSetWithCompoundSlicer(Context<?> context) {
         // MONDRIAN-1654
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [FilteredNamedSet] as "
             + "'Filter([Customers].[Name].Members, "
             + "measures.[Unit Sales] > 200)' select FilteredNamedSet on 0 from "
-            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}",
+            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1]}\n"
             + "{[Time].[Time].[1997].[Q2]}\n"
@@ -1213,11 +1207,11 @@ class NamedSetTest {
     @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_TOP_COUNT, value = "false", type = Boolean.class)
     void testNamedSetWithCompoundSlicerNonNative(Context<?> context) {
         // MONDRIAN-1654
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "with set [FilteredNamedSet] as "
             + "'Filter([Customers].[Name].Members, "
             + "measures.[Unit Sales] > 200)' select FilteredNamedSet on 0 from "
-            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}",
+            + "sales where {Time.[1997].Q1, TIme.[1997].Q2}").returnsGrid(
             "Axis #0:\n"
             + "{[Time].[Time].[1997].[Q1]}\n"
             + "{[Time].[Time].[1997].[Q2]}\n"
@@ -1271,40 +1265,40 @@ class NamedSetTest {
             + "Row #0: 344\n"
             + "Row #0: 323\n";
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT\n"
             + "NON EMPTY TopCount([Customers].[Name].Members, 5, [Measures].[Unit Sales]) * [Measures].[Unit Sales] on 0\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]",
+            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]").returnsGrid(
             expected);
         // as above, but remove NON EMPTY
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT\n"
             + "TopCount([Customers].[Name].Members, 5, [Measures].[Unit Sales]) * [Measures].[Unit Sales] on 0\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]",
+            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]").returnsGrid(
             expected);
         // as above, but with DISTINCT
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT\n"
             + "TopCount(Distinct([Customers].[Name].Members), 5, [Measures].[Unit Sales]) * [Measures].[Unit Sales] on 0\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]",
+            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]").returnsGrid(
             expected);
         // As above, but convert TopCount expression to a named set. Named
         // sets are evaluated after the slicer but before any axes. I.e. not
         // in the context of any particular position on ROWS or COLUMNS, nor
         // inheriting the NON EMPTY constraint on the axis.
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH SET [Top Count] AS\n"
             + "  TopCount([Customers].[Name].Members, 5, [Measures].[Unit Sales])\n"
             + "SELECT [Top Count] * [Measures].[Unit Sales] on 0\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]",
+            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]").returnsGrid(
             expected);
         // as above, but with DISTINCT
         if (false)
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "WITH SET [Top Count] AS\n"
             + "{\n"
             + "  TopCount(\n"
@@ -1314,7 +1308,7 @@ class NamedSetTest {
             + "}\n"
             + "SELECT [Top Count] * [Measures].[Unit Sales] on 0\n"
             + "FROM [Sales]\n"
-            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]",
+            + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q4].[10]").returnsGrid(
             expected);
     }
 
@@ -1322,10 +1316,10 @@ class NamedSetTest {
     void testMondrian2424(Context<?> context) {
 
         //SystemWideProperties.instance().SsasCompatibleNaming = false;
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
                 "WITH SET Gender1 as '[Gender].[Gender].[Gender].members' \n" +
-                        "select {Gender1} ON 0 from [Sales]",
-                "Axis #0:\n" +
+                        "select {Gender1} ON 0 from [Sales]").returnsGrid(
+            "Axis #0:\n" +
                         "{}\n" +
                         "Axis #1:\n" +
                         "{[Gender].[Gender].[F]}\n" +

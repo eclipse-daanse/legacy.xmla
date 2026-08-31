@@ -14,17 +14,21 @@
 package org.eclipse.daanse.olap.function.def.member.defaultmember;
 
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
+
+import java.net.URL;
+import java.util.Map;
 
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.core.util.Packages;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Column;
 import org.eclipse.daanse.cwm.model.cwm.resource.relational.Table;
+import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.impl.CatalogImpl;
@@ -45,8 +49,16 @@ import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.Test;
+
 @RolapContextTest(FoodmartTestInstance.class)
 class DefaultMemberFunDefTest {
+
+    public static class FoodmartData implements DataSupplier {
+        @Override
+        public Map<String, URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
     /**
      * EMF version of TestDefaultMemberModifier
@@ -192,7 +204,12 @@ class DefaultMemberFunDefTest {
                     + "from Sales" );
         assertEquals("All Weeklys",
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 ).getName() );
+    }
 
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, TestDefaultMemberModifierEmf.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testExplicitDefaultMember(Context<?> context) {
         final String memberUname ="[Time2].[Weekly].[1997].[23]";
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -307,11 +324,9 @@ class DefaultMemberFunDefTest {
         }
         */
 
-        withSchemaEmf(context, TestDefaultMemberModifierEmf::new);
-
         // In this variant of the schema, Time2.Weekly has an explicit default
         // member.
-        result =
+        Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time2].[Weekly].DefaultMember} on columns\n"
                     + "from Sales" );
@@ -322,8 +337,7 @@ class DefaultMemberFunDefTest {
 
     @Test
     void testDimensionDefaultMember(Context<?> context) {
-      Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Measures].DefaultMember", "Sales");
-      assertEquals( "Unit Sales", member.getName() );
+      assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "[Measures].DefaultMember").returns("[Measures].[Unit Sales]");
     }
 
 }

@@ -14,15 +14,12 @@
 package org.eclipse.daanse.olap.function.def.member.cousin;
 
 import static org.eclipse.daanse.olap.exceptions.CousinHierarchyMismatchException.cousinHierarchyMismatch;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
 
 import java.text.MessageFormat;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -32,32 +29,25 @@ class CousinFunDefTest {
 
     @Test
     void testCousin1(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([1997].[Q4],[1998])", "Sales" );
-        assertEquals( "[Time].[Time].[1998].[Q4]", member.getUniqueName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Cousin([1997].[Q4],[1998])").returns("[Time].[Time].[1998].[Q4]");
     }
 
     @Test
     void testCousin2(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "Cousin([1997].[Q4].[12],[1998].[Q1])", "Sales" );
-        assertEquals( "[Time].[Time].[1998].[Q1].[3]", member.getUniqueName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Cousin([1997].[Q4].[12],[1998].[Q1])").returns("[Time].[Time].[1998].[Q1].[3]");
     }
 
     @Test
     void testCousinOverrun(Context<?> context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "Cousin([Customers].[USA].[CA].[San Jose],"
-                + " [Customers].[USA].[OR])", "Sales" );
         // CA has more cities than OR
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Cousin([Customers].[USA].[CA].[San Jose],"
+                + " [Customers].[USA].[OR])").returns("");
     }
 
     @Test
     void testCousinThreeDown(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "Cousin([Customers].[USA].[CA].[Berkeley].[Barbara Combs],"
-                    + " [Customers].[Mexico])", "Sales" );
         // Barbara Combs is the 6th child
         // of the 4th child (Berkeley)
         // of the 1st child (CA)
@@ -66,23 +56,20 @@ class CousinFunDefTest {
         // of the 4th child (Tixapan)
         // of the 1st child (DF)
         // of Mexico
-        assertEquals(
-            "[Customers].[Customers].[Mexico].[DF].[Tixapan].[Annmarie Hill]",
-            member.getUniqueName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+                "Cousin([Customers].[USA].[CA].[Berkeley].[Barbara Combs],"
+                    + " [Customers].[Mexico])").returns(
+            "[Customers].[Customers].[Mexico].[DF].[Tixapan].[Annmarie Hill]");
     }
 
     @Test
     void testCousinSameLevel(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([Gender].[M], [Gender].[F])", "Sales" );
-        assertEquals( "F", member.getName() );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Cousin([Gender].[M], [Gender].[F])").returns("[Gender].[Gender].[F]");
     }
 
     @Test
     void testCousinHigherLevel(Context<?> context) {
-        Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([Time].[1997], [Time].[1998].[Q1])", "Sales" );
-        assertNull( member );
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Cousin([Time].[1997], [Time].[1998].[Q1])").returns("");
     }
 
     @Test

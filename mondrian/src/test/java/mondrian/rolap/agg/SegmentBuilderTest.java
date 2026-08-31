@@ -14,7 +14,7 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.util.ArrayList;

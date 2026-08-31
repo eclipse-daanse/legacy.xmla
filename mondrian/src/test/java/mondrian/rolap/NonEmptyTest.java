@@ -17,12 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.flushSchemaCache;
+import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -2058,7 +2059,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
   }
 
   /**
@@ -2123,7 +2124,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql( context.getConnectionWithDefaultRole(), query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
   }
 
   /**
@@ -2187,7 +2188,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
   }
 
   /**
@@ -2263,7 +2264,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql( context.getConnectionWithDefaultRole(), query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
   }
 
   @Test
@@ -4313,7 +4314,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    \"time_by_day\".\"the_year\" ASC NULLS LAST,\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       611 );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { oraclePattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectSql(new SqlPattern[] { oraclePattern } ).verify();
   }
 
   @Test
@@ -4360,7 +4361,7 @@ class NonEmptyTest extends BatchTestCase {
         + "order by\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       347 );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { oraclePattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectSql(new SqlPattern[] { oraclePattern } ).verify();
   }
 
   @Test
@@ -4425,7 +4426,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    \"time_by_day\".\"the_year\" ASC NULLS LAST,\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       611 );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectSql(new SqlPattern[] { pattern } ).verify();
   }
 
   @Test
@@ -4492,7 +4493,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    \"time_by_day\".\"the_year\" ASC NULLS LAST,\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       611 );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectSql(new SqlPattern[] { pattern } ).verify();
   }
 
   @Test
@@ -4533,13 +4534,12 @@ class NonEmptyTest extends BatchTestCase {
         + "\"customer\".\"gender\", \"customer\".\"marital_status\", \"customer\".\"education\", \"customer\""
         + ".\"yearly_income\" order by \"customer\".\"country\" ASC NULLS LAST, \"customer\".\"state_province\" ASC "
         + "NULLS LAST, \"customer\".\"city\" ASC NULLS LAST, \"fname\" || ' ' || \"lname\" ASC NULLS LAST";
-    assertQuerySql(context.getConnectionWithDefaultRole(),
-      mdx,
-      new SqlPattern[] {
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(),
+      mdx).expectSql(new SqlPattern[] {
         new SqlPattern(
           DatabaseProduct.ORACLE,
           sqlOracle,
-          sqlOracle.length() ) } );
+          sqlOracle.length() ) } ).verify();
   }
 
   @Test
@@ -4599,7 +4599,7 @@ class NonEmptyTest extends BatchTestCase {
       DatabaseProduct.ORACLE,
       sqlOracle,
       sqlOracle.length() );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectSql(new SqlPattern[] { pattern } ).verify();
   }
 
   @Test
@@ -4648,7 +4648,7 @@ class NonEmptyTest extends BatchTestCase {
         + " \"customer\".\"city\" ASC NULLS LAST, "
         + "\"fname\" || ' ' || \"lname\" ASC NULLS LAST",
       852 );
-    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectSql(new SqlPattern[] { pattern } ).verify();
   }
 
   @Test
@@ -4677,8 +4677,7 @@ class NonEmptyTest extends BatchTestCase {
       DatabaseProduct.ORACLE,
       sqlOracle,
       sqlOracle.length() );
-    assertQuerySqlOrNot(
-      context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern }, true, false, true );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).expectNoSql(new SqlPattern[] { pattern }).verify();
   }
 
   @Test
@@ -4940,11 +4939,9 @@ class NonEmptyTest extends BatchTestCase {
     };
     Connection connection = context.getConnectionWithDefaultRole();
     try {
-      assertQuerySql(
-              connection,
+      SqlAssert.forQuery(connection,
         "select [Product].[Product Family].Members on 0\n"
-          + "from [Sales]",
-        patterns );
+          + "from [Sales]").expectSql(patterns ).verify();
 
       // note that returns an extra member,
       // [Product].[Drink].[Baking Goods]
@@ -5174,14 +5171,14 @@ class NonEmptyTest extends BatchTestCase {
     };
 
     // The filter condition does not require a join to the fact table.
-    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
-    assertQuerySql(role1Connection, query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
+    SqlAssert.forQuery(role1Connection, query).expectSql(patterns ).verify();
 
     // in a non-empty context where a role is in effect, the query
     // will pessimistically join the fact table and apply the
     // constraint, since the filter condition could be influenced by
     // role limitations.
-    assertQuerySql(role1Connection, nonEmptyQuery, patternsWithFactJoin );
+    SqlAssert.forQuery(role1Connection, nonEmptyQuery).expectSql(patternsWithFactJoin ).verify();
   }
 
   /**
@@ -5303,14 +5300,14 @@ class NonEmptyTest extends BatchTestCase {
     };
 
     // The filter condition does not require a join to the fact table.
-    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
-    assertQuerySql(role1Connection, query, patterns );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns ).verify();
+    SqlAssert.forQuery(role1Connection, query).expectSql(patterns ).verify();
 
     // in a non-empty context where a role is in effect, the query
     // will pessimistically join the fact table and apply the
     // constraint, since the filter condition could be influenced by
     // role limitations.
-    assertQuerySql(role1Connection, nonEmptyQuery, patternsWithFactJoin );
+    SqlAssert.forQuery(role1Connection, nonEmptyQuery).expectSql(patternsWithFactJoin ).verify();
   }
 
 
@@ -5460,7 +5457,7 @@ class NonEmptyTest extends BatchTestCase {
         mysqlNativeCrossJoinQuery,
         triggerSql );
 
-    assertQuerySql(context.getConnectionWithDefaultRole(),  mdx, new SqlPattern[] { mysqlPattern } );
+    SqlAssert.forQuery(context.getConnectionWithDefaultRole(),  mdx).expectSql(new SqlPattern[] { mysqlPattern } ).verify();
 
     checkNative(context,
       20,

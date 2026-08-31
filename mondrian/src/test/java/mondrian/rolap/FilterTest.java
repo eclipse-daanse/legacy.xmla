@@ -20,6 +20,7 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSup
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
@@ -1318,8 +1319,8 @@ class FilterTest extends BatchTestCase {
      */
     Connection connection = context.getConnectionWithDefaultRole();
     SqlAssert.forQuery(connection, mdx).bypassSchemaCache().clearCacheFirst().expectNoSql(badPatterns).verify();
-    TestUtil.flushSchemaCache(connection);
-    TestUtil.flushSchemaCache(connection);
+    FlushSchemaCacheModifier.flushSchemaCache(connection);
+    FlushSchemaCacheModifier.flushSchemaCache(connection);
     SqlAssert.forQuery(context.getConnectionWithDefaultRole(), mdx).bypassSchemaCache().clearCacheFirst()
       .expectSql(goodPatterns).verify();
     MdxAssert.assertThatQuery(connection, mdx).returnsGrid(
