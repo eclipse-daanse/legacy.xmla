@@ -38,15 +38,12 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.hierarchy.level.Lev
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.opencube.junit5.MondrianRuntimeExtension;
 /**
  * Tests the CachedExists function.
  *
  * @author Benny Chow
  */
 @RolapContextTest(FoodmartTestInstance.class)
-@ExtendWith(MondrianRuntimeExtension.class)
 class CachedExistsTest{
 
 

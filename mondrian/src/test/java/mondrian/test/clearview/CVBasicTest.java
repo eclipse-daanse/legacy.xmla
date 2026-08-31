@@ -10,10 +10,11 @@
 package mondrian.test.clearview;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.test.DiffRepository;
 
@@ -27,6 +28,8 @@ import mondrian.test.DiffRepository;
  *
  * @author Khanh Vu
  */
+@RolapContextTest(FoodmartTestInstance.class)
+@RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "true", type = Boolean.class)
 public class CVBasicTest extends ClearViewBase {
 
     @Override
@@ -39,8 +42,7 @@ public class CVBasicTest extends ClearViewBase {
     }
 
     @Override
-	@ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
     protected void runTest(Context<?> context) {
         DiffRepository diffRepos = getDiffRepos();
         for (String name : diffRepos.getTestCaseNames()) {

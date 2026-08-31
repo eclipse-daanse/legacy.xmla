@@ -9,16 +9,14 @@
 
 package mondrian.test.clearview;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
+import org.junit.jupiter.api.Test;
 
 import mondrian.test.DiffRepository;
 
@@ -32,6 +30,8 @@ import mondrian.test.DiffRepository;
  *
  * @author Khanh Vu
  */
+@RolapContextTest(FoodmartTestInstance.class)
+@RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "true", type = Boolean.class)
 public class MiscTest extends ClearViewBase {
 
     @Override
@@ -43,24 +43,43 @@ public class MiscTest extends ClearViewBase {
         return DiffRepository.lookup(MiscTest.class);
     }
 
+    /**
+     * Runs every diff-repository case except {@code testSolveOrder}, which
+     * needs the {@link MiscTestModifier} catalog and runs separately below -
+     * the catalog for a {@code @RolapContextTest}-based test is fixed for the
+     * whole test method, so it can no longer be swapped per test case name
+     * the way {@code getModifier} used to.
+     */
     @Override
-	@ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+	@Test
     protected void runTest(Context<?> context) {
         DiffRepository diffRepos = getDiffRepos();
         for (String name : diffRepos.getTestCaseNames()) {
+            if ("testSolveOrder".equals(name)) {
+                continue;
+            }
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
             super.runTest(context);
         }
     }
 
-    @Override
-    protected Optional<Function<Catalog, CatalogMappingSupplier>> getModifier(String currentTestCaseName) {
-        if (currentTestCaseName.equals("testSolveOrder")) {
-            return Optional.of(MiscTestModifier::new);
+    @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, MiscTestModifier.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testSolveOrder(Context<?> context) {
+        DiffRepository diffRepos = getDiffRepos();
+        setName("testSolveOrder");
+        diffRepos.setCurrentTestCaseName("testSolveOrder");
+        super.runTest(context);
+    }
+
+    /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public java.util.Map<String, java.net.URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
         }
-        return Optional.empty();
     }
 
 }

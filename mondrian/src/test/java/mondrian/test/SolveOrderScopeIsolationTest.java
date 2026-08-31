@@ -13,19 +13,19 @@ import static org.eclipse.daanse.olap.common.SolveOrderMode.ABSOLUTE;
 import static org.eclipse.daanse.olap.common.SolveOrderMode.SCOPED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.SolveOrderMode;
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.ConfigOverride;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -48,6 +48,8 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author ajogleka
  * @since Apr 04, 2008
  */
+@RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.SolveOrderScopeIsolationTestModifier.class },
+        database = FoodmartDatabaseSupplier.class, data = SolveOrderScopeIsolationTest.FoodmartData.class)
 class SolveOrderScopeIsolationTest {
     //SolveOrderMode defaultSolveOrderMode;
 
@@ -104,21 +106,19 @@ class SolveOrderScopeIsolationTest {
     }
 
     final void setSolveOrderMode(Context<?> context, SolveOrderMode mode) {
-        ((TestContextImpl)context).setSolveOrderMode(mode.toString());
+        ConfigOverride.of(context).set(ConfigConstants.SOLVE_ORDER_MODE, mode.toString());
     }
 
-    public void prepareContext(Context<?> context) {
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales", null, memberDefs));
-
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.SolveOrderScopeIsolationTestModifier::new);
-
+    /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public java.util.Map<String, java.net.URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(FoodmartTestInstance.class)
     void testAllSolveOrderModesHandled(Context<?> context)
     {
         for (SolveOrderMode mode : SolveOrderMode.values()) {
@@ -134,8 +134,8 @@ class SolveOrderScopeIsolationTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapContextTest(FoodmartTestInstance.class)
     void testSetSolveOrderMode(Context<?> context)
     {
         setSolveOrderMode(context, ABSOLUTE);
@@ -145,10 +145,8 @@ class SolveOrderScopeIsolationTest {
         assertEquals(SCOPED, getSolveOrderMode(context));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverrideCubeMemberDoesNotHappenAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as 'gender.maleMinusFemale', "
@@ -159,8 +157,7 @@ class SolveOrderScopeIsolationTest {
             + "from sales";
 
         setSolveOrderMode(context, SolveOrderMode.ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -178,10 +175,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverrideCubeMemberDoesNotHappenScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as 'gender.maleMinusFemale', "
@@ -192,8 +187,7 @@ class SolveOrderScopeIsolationTest {
             + "from sales";
 
         setSolveOrderMode(context, SolveOrderMode.SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -216,12 +210,10 @@ class SolveOrderScopeIsolationTest {
      * Analysis Services but not yet in Mondrian.
      */
     @Disabled
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     public void _future_testOverrideCubeMemberHappensWithScopeIsolation(Context<?> context) {
-    	prepareContext(context);
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
             "with\n"
             + "member gender.maleMinusFemale as 'Gender.M - gender.f', "
             + "SOLVE_ORDER=3000, FORMAT_STRING='#.##'\n"
@@ -233,7 +225,7 @@ class SolveOrderScopeIsolationTest {
             + "measures.[unit sales],\n"
             + "measures.[sales count]} on 0,\n"
             + "{gender.override, gender.maleMinusFemale} on 1\n"
-            + "from sales",
+            + "from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -251,10 +243,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCubeMemberEvalBeforeQueryMemberAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "WITH MEMBER [Customers].USAByWA AS\n"
             + "'[Customers].[Country].[USA] / [Customers].[State Province].[WA]', "
@@ -263,8 +253,7 @@ class SolveOrderScopeIsolationTest {
             + " {[Measures].[Store Sales], [Measures].[Store Cost], [Measures].[ProfitSolveOrder3000]} ON 1 "
             + "FROM SALES\n";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -286,10 +275,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #2: $0.000518\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testCubeMemberEvalBeforeQueryMemberScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "WITH MEMBER [Customers].USAByWA AS\n"
             + "'[Customers].[Country].[USA] / [Customers].[State Province].[WA]', "
@@ -298,8 +285,7 @@ class SolveOrderScopeIsolationTest {
             + "FROM SALES\n"
             + "WHERE ProfitSolveOrder3000";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{[Measures].[ProfitSolveOrder3000]}\n"
             + "Axis #1:\n"
@@ -311,10 +297,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #0: $2.143076\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverrideCubeMemberInTupleDoesNotHappenAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as "
@@ -325,8 +309,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -344,10 +327,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverrideCubeMemberInTupleDoesNotHappenScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as "
@@ -358,8 +339,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -377,10 +357,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testConditionalCubeMemberEvalBeforeOtherMembersAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as 'iif(1=0,"
@@ -392,8 +370,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -411,10 +388,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testConditionalCubeMemberEvalBeforeOtherMembersScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as 'iif(1=0,"
@@ -426,8 +401,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -445,10 +419,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverrideCubeMemberUsingStrToMemberDoesNotHappenAbsolute(Context<?> context) {
-        prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as 'iif(1=0,[gender].[all gender].[m], "
@@ -460,8 +432,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -479,10 +450,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #1: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testOverrideCubeMemberUsingStrToMemberDoesNotHappenScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "with\n"
             + "member gender.override as 'iif(1=0,[gender].[all gender].[m], "
@@ -494,8 +463,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -520,10 +488,8 @@ class SolveOrderScopeIsolationTest {
      * solve order of the Aggregate member is higher than the calculations it
      * intersects with).
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateMemberEvalAfterOtherMembersAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With\n"
             + "member Time.Time.Total1 as "
@@ -538,8 +504,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -565,10 +530,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #3: 20,368\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAggregateMemberEvalAfterOtherMembersScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With\n"
             + "member Time.Time.Total1 as "
@@ -583,8 +546,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -617,10 +579,8 @@ class SolveOrderScopeIsolationTest {
      * solve order of the Aggregate member is higher than the calculations it
      * intersects with).
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testConditionalAggregateMemberEvalAfterOtherMembersAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With\n"
             + "member Time.Time.Total1 as 'IIF(Measures.CURRENTMEMBER IS Measures.Profit, 1, "
@@ -634,8 +594,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -661,10 +620,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #3: 20,368\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testConditionalAggregateMemberEvalAfterOtherMembersScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With\n"
             + "member Time.Time.Total1 as 'IIF(Measures.CURRENTMEMBER IS Measures.Profit, 1, "
@@ -678,8 +635,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -712,10 +668,8 @@ class SolveOrderScopeIsolationTest {
      * solve order of the Aggregate member is higher than the calculations it
      * intersects with).
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStrToMemberReturningAggEvalAfterOtherMembersAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With\n"
             + "member Time.Time.StrTotal as 'AGGREGATE({[Time].[Time].[1997].[Q1],[Time].[Time].[1997].[Q2]})', "
@@ -730,8 +684,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Time.Total, [Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -753,10 +706,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #2: 20,368\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testStrToMemberReturningAggEvalAfterOtherMembersScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With\n"
             + "member Time.Time.StrTotal as 'AGGREGATE({[Time].[Time].[1997].[Q1],[Time].[Time].[1997].[Q2]})', "
@@ -771,8 +722,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Time.Total, [Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -794,10 +744,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #2: 20,368\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void test2LevelOfOverrideCubeMemberDoesNotHappenAbsolute(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With member gender.override1 as 'gender.maleMinusFemale',\n"
             + "SOLVE_ORDER=20\n"
@@ -810,8 +758,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override1, gender.override2, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -837,10 +784,8 @@ class SolveOrderScopeIsolationTest {
             + "Row #2: 1,175\n");
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void test2LevelOfOverrideCubeMemberDoesNotHappenScoped(Context<?> context) {
-    	prepareContext(context);
         final String mdx =
             "With member gender.override1 as 'gender.maleMinusFemale',\n"
             + "SOLVE_ORDER=20\n"
@@ -853,8 +798,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override1, gender.override2, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            mdx,
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(), mdx).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

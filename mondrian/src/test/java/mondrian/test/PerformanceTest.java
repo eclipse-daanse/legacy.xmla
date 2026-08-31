@@ -41,7 +41,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.context.TestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -547,7 +546,7 @@ public class PerformanceTest {
     //
     // jdk1.7 marmite   main 14770   30,857 ms
     // jdk1.7 marmite   main 14771   29,083 ms
-    assertThatQuery(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))),
+    assertThatQuery(context.getConnection(new ConnectionProps(List.of("Role1"))),
       "with member [Measures].[Foo] as\n"
         + "Aggregate([Gender].Members * [Marital Status].Members * [Time].Members)\n"
         + "select from [Sales] where [Measures].[Foo]").returnsGrid(

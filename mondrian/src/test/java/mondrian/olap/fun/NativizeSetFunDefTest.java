@@ -33,8 +33,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.opencube.junit5.MondrianRuntimeExtension;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -48,7 +46,6 @@ import mondrian.test.SqlPattern;
  */
 @RolapContextTest(FoodmartTestInstance.class)
 @RolapConfig(key = ConfigConstants.ENABLE_NON_EMPTY_ON_ALL_AXIS, value = "true", type = Boolean.class)
-@ExtendWith(MondrianRuntimeExtension.class)
 class NativizeSetFunDefTest extends BatchTestCase {
 
     @BeforeEach

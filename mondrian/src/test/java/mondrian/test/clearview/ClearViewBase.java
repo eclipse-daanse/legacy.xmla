@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.common.Util;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -103,11 +102,9 @@ import mondrian.test.SqlPattern;
 
             }
              */
-             updateSchemaIfNeed(context, diffRepos.getCurrentTestCaseName(true));
 
-            // Set some properties to match the way we configure them
-            // for ClearView.
-            ((TestContextImpl)context).setExpandNonNative(true);
+            // ExpandNonNative=true is supplied per subclass via
+            // @RolapConfig, to match the way we configure it for ClearView.
 
             String mdx = diffRepos.expand(null, "${mdx}");
             String result = Util.NL + TestUtil.toString(
