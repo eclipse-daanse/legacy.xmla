@@ -30,11 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertExprReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushCache;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -64,6 +61,7 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
@@ -76,15 +74,16 @@ import org.eclipse.daanse.rolap.common.member.SmartMemberReader;
 import org.eclipse.daanse.rolap.element.RolapBaseCubeMeasure;
 import org.eclipse.daanse.rolap.element.RolapCubeMember;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.context.TestContextImpl;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import org.opencube.junit5.propupdator.DisableRolapCubeMemberCache;
 import org.slf4j.Logger;
 
 import mondrian.test.DiffRepository;
@@ -101,6 +100,9 @@ import mondrian.test.DiffRepository;
  * @author mberkowitz
  * @since Jan 2008
  */
+@RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.MemberCacheControlTestModifier.class },
+        database = FoodmartDatabaseSupplier.class, data = MemberCacheControlTest.FoodmartData.class)
+@RolapConfig(key = ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE, value = "false", type = Boolean.class)
 class MemberCacheControlTest {
     private ExecutionContext executionContext;
 
@@ -110,9 +112,16 @@ class MemberCacheControlTest {
     // TODO: edit a different member not known to be in cache -- will it be
     //       fetched?
 
-    // The cube member cache is switched off on each test's own context by the
-    // DisableRolapCubeMemberCache updater in @ContextSource; @BeforeEach cannot do
-    // it, the Context only arrives as a parameter of the test method.
+    // The cube member cache is switched off for the whole class by the
+    // @RolapConfig above; testMemberOpsFailIfCacheEnabled overrides it back on.
+
+    /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public java.util.Map<String, java.net.URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
 
     @AfterEach
     public void afterEach() {
@@ -134,32 +143,9 @@ class MemberCacheControlTest {
         ExecutionMetadata metadata = ExecutionMetadata.of("MemberCacheControlTest", "MemberCacheControlTest", null, 0);
         executionContext = execution.asContext().createChild(metadata, Optional.empty());
         // Note: ExecutionContext.push() removed. Wrap operations in ExecutionContext.where() if needed.
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            // Reduced size Store dimension. Omits the 'Store Country' level,
-            // and adds properties to non-leaf levels.
-            "  <Dimension name=\"Retail\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"store_id\">\n"
-            + "      <Table name=\"store\"/>\n"
-            + "      <Level name=\"State\" column=\"store_state\" uniqueMembers=\"true\">\n"
-            + "        <Property name=\"Country\" column=\"store_country\"/>\n"
-            + "      </Level>\n"
-            + "      <Level name=\"City\" column=\"store_city\" uniqueMembers=\"true\">\n"
-            + "        <Property name=\"Population\" column=\"store_postal_code\"/>\n"
-            + "      </Level>\n"
-            + "      <Level name=\"Name\" column=\"store_name\" uniqueMembers=\"true\">\n"
-            + "        <Property name=\"Store Type\" column=\"store_type\"/>\n"
-            + "        <Property name=\"Store Manager\" column=\"store_manager\"/>\n"
-            + "        <Property name=\"Store Sqft\" column=\"store_sqft\" type=\"Numeric\"/>\n"
-            + "        <Property name=\"Has coffee bar\" column=\"coffee_bar\" type=\"Boolean\"/>\n"
-            + "        <Property name=\"Street address\" column=\"store_street_address\" type=\"String\"/>\n"
-            + "      </Level>\n"
-            + "    </Hierarchy>\n"
-            + "   </Dimension>"));
-         */
-        withSchemaEmf(context, SchemaModifiersEmf.MemberCacheControlTestModifier::new);
-
+        // The reduced-size "Retail" dimension (MemberCacheControlTestModifier)
+        // is now applied via the class-level @RolapContextTest catalog instead
+        // of withSchemaEmf.
     }
 
     /**
@@ -321,8 +307,7 @@ class MemberCacheControlTest {
      * Tests operations on member sets, in particular the
      * {@link CacheControl#filter} method.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFilter(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -341,11 +326,10 @@ class MemberCacheControlTest {
     /**
      * Tests that member operations fail if cache is enabled.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
+    @RolapConfig(key = ConfigConstants.ENABLE_ROLAP_CUBE_MEMBER_CACHE, value = "true", type = Boolean.class)
     void testMemberOpsFailIfCacheEnabled(Context<?> context) {
     	context.getCatalogCache().clear();
-        ((TestContextImpl) context).setEnableRolapCubeMemberCache(true);
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -366,8 +350,7 @@ class MemberCacheControlTest {
     /**
      * Test that edits the properties of a single leaf Member.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetPropertyCommandOnLeafMember(Context<?> context) {
     	context.getCatalogCache().clear();
     	prepareTestContext(context);
@@ -424,8 +407,7 @@ class MemberCacheControlTest {
      * Test that edits properties of Members at various Levels (use Retail
      * Dimension), but leaves grouping unchanged, so results not changed.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testSetPropertyCommandOnNonLeafMember(Context<?> context) {
     	context.getCatalogCache().clear();
     	prepareTestContext(context);
@@ -495,8 +477,7 @@ class MemberCacheControlTest {
             TestUtil.toString(r));
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddCommand(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -579,9 +560,9 @@ class MemberCacheControlTest {
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n");
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[Retail].[CA].Children",
-            "[Retail].[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[Retail].[CA].Children").returns(
+"[Retail].[Retail].[CA].[Alameda]\n"
             + "[Retail].[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[Retail].[CA].[San Diego]\n"
@@ -617,9 +598,9 @@ class MemberCacheControlTest {
                 ((AggregationManager)aggMgr).getCellFromAllCaches(
                 AggregationManager.makeRequest(cacheRegionMembers), conn));
     	});
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[Retail].[CA].Children",
-            "[Retail].[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[Retail].[CA].Children").returns(
+"[Retail].[Retail].[CA].[Alameda]\n"
             + "[Retail].[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[Retail].[CA].[San Diego]\n"
@@ -716,8 +697,7 @@ class MemberCacheControlTest {
         }
     }
 
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testDeleteCommand(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -741,9 +721,9 @@ class MemberCacheControlTest {
                 yearCubeMember
             };
 
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].Children").returns(
+"[Retail].[Retail].[CA].[Alameda]\n"
             + "[Retail].[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[Retail].[CA].[San Diego]\n"
@@ -786,17 +766,16 @@ class MemberCacheControlTest {
                 AggregationManager.makeRequest(cacheRegionMembers), conn));
         });
         // The list of children should be updated.
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[Retail].[CA].Children",
-            "[Retail].[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[Retail].[CA].Children").returns(
+"[Retail].[Retail].[CA].[Alameda]\n"
             + "[Retail].[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[Retail].[CA].[San Diego]");
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMoveCommand(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -829,19 +808,19 @@ class MemberCacheControlTest {
                 null);
 
         // test axis contents
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].Children").returns(
+"[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[CA].[San Diego]\n"
             + "[Retail].[CA].[San Francisco]");
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].[Alameda].Children",
-            "[Retail].[CA].[Alameda].[HQ]");
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].[San Francisco].Children",
-            "[Retail].[CA].[San Francisco].[Store 14]");
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].[Alameda].Children").returns(
+"[Retail].[CA].[Alameda].[HQ]");
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].[San Francisco].Children").returns(
+"[Retail].[CA].[San Francisco].[Store 14]");
 
         List<RolapMember> sfChildren =
             memberCache.getChildrenFromCache(sfMember, null);
@@ -869,12 +848,12 @@ class MemberCacheControlTest {
         assertEquals(2, alamedaChildren.size());
 
         // test axis contents
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].[San Francisco].Children",
-            "");
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].[Alameda].Children",
-            "[Retail].[CA].[Alameda].[HQ]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].[San Francisco].Children").returns(
+"");
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].[Alameda].Children").returns(
+"[Retail].[CA].[Alameda].[HQ]\n"
             + "[Retail].[CA].[Alameda].[Store 14]");
 
         // Test parent object
@@ -883,8 +862,7 @@ class MemberCacheControlTest {
     }
 
     @Disabled //TODO need investigate
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testMoveFailBadLevel(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -911,16 +889,16 @@ class MemberCacheControlTest {
                 null);
 
         // test axis contents
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].Children").returns(
+"[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[CA].[San Diego]\n"
             + "[Retail].[CA].[San Francisco]");
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].[San Francisco].Children",
-            "[Retail].[CA].[San Francisco].[Store 14]");
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].[San Francisco].Children").returns(
+"[Retail].[CA].[San Francisco].[Store 14]");
 
         List<RolapMember> sfChildren =
             memberCache.getChildrenFromCache(sfMember, null);
@@ -946,12 +924,12 @@ class MemberCacheControlTest {
             memberCache.getChildrenFromCache(sfMember, null).size());
 
         // test axis contents. should not have been modified
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].[San Francisco].Children",
-            "[Retail].[CA].[San Francisco].[Store 14]");
-        assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].[San Francisco].Children").returns(
+"[Retail].[CA].[San Francisco].[Store 14]");
+        MdxAssert.assertThatAxis(conn, "Sales",
+"[Retail].[CA].Children").returns(
+"[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[CA].[San Diego]\n"
@@ -966,8 +944,7 @@ class MemberCacheControlTest {
      * Tests a variety of negative cases including add/delete/move null members
      * add/delete/move members in parent-child hierarchies.
      */
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testAddCommandNegative(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -1079,8 +1056,7 @@ class MemberCacheControlTest {
      * "Add CacheControl API to flush members from dimension cache"</a>.
      */
     @Disabled //disabled for CI build
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = {AppandFoodMartCatalog.class, DisableRolapCubeMemberCache.class}, dataloader = FastFoodmardDataLoader.class)
+    @Test
     void testFlushHierarchy(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
@@ -1135,9 +1111,9 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to an 'all' member.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "[Store].Children",
-                            "[Store].[Canada]\n"
+                        MdxAssert.assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+"[Store].Children").returns(
+"[Store].[Canada]\n"
                             + "[Store].[Mexico]\n"
                             + "[Store].[USA]");
                     }
@@ -1149,9 +1125,9 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to regular member.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "[Store].[USA].[CA].Children",
-                            "[Store].[USA].[CA].[Alameda]\n"
+                        MdxAssert.assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+"[Store].[USA].[CA].Children").returns(
+"[Store].[USA].[CA].[Alameda]\n"
                             + "[Store].[USA].[CA].[Beverly Hills]\n"
                             + "[Store].[USA].[CA].[Los Angeles]\n"
                             + "[Store].[USA].[CA].[San Diego]\n"
@@ -1168,9 +1144,9 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to regular member.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "[Store].[USA].[CA].Children",
-                            "[Store].[USA].[CA].[Alameda]\n"
+                        MdxAssert.assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+"[Store].[USA].[CA].Children").returns(
+"[Store].[USA].[CA].[Alameda]\n"
                             + "[Store].[USA].[CA].[Beverly Hills]\n"
                             + "[Store].[USA].[CA].[Los Angeles]\n"
                             + "[Store].[USA].[CA].[San Diego]\n"
@@ -1183,8 +1159,9 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Hierarchy>.Members uses cache.
-                        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "Count([Store].Members)", "63");
+                        MdxAssert.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+"Count([Store].Members)").returns(
+"63");
                     }
                 });
             checkFlushHierarchy(
@@ -1192,8 +1169,9 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "Count([Store].[Store Name].Members)", "25");
+                        MdxAssert.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+"Count([Store].[Store Name].Members)").returns(
+"25");
                     }
                 });
 
@@ -1221,9 +1199,9 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "Count([Time].[Month].Members)",
-                            "24");
+                        MdxAssert.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+"Count([Time].[Month].Members)").returns(
+"24");
                     }
                 });
             checkFlushHierarchy(
@@ -1232,9 +1210,9 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-                            "[Time].[1997].[Q2].Children",
-                            "[Time].[1997].[Q2].[4]\n"
+                        MdxAssert.assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+"[Time].[1997].[Q2].Children").returns(
+"[Time].[1997].[Q2].[4]\n"
                             + "[Time].[1997].[Q2].[5]\n"
                             + "[Time].[1997].[Q2].[6]");
                     }

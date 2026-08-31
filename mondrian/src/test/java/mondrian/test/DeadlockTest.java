@@ -14,30 +14,21 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.concurrent.Semaphore;
-
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class DeadlockTest {
 
-	public static class QueryLimitFoodMart extends AppandFoodMartCatalog{
-
-		@Override
-		public void updateContext(Context<?> context) {
-			super.updateContext(context);
-			Semaphore queryLimimitSemaphore=new Semaphore(20);
-            ((TestContext)context).setQueryLimitSemaphore(queryLimimitSemaphore);
-		}
-	}
-
-
     @Test
+    // Cap the query-limit semaphore at 20 (default 40) so the 20
+    // concurrent segment loads below reliably exceed it and reproduce
+    // the deadlock this test guards against.
+    @RolapConfig(key = ConfigConstants.QUERY_LIMIT, value = "20", type = Integer.class)
     void testSegmentLoadDeadlock(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1726
         // Deadlock can occur if a cardinality query is fired after

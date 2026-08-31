@@ -8609,7 +8609,11 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public TestAggregationManagerModifier2(Catalog catalogMapping, final String colName) {
+        public TestAggregationManagerModifier2(Catalog catalogMapping) {
+            // Raw, unquoted identifier: valid on every dialect this suite
+            // targets, and colName can no longer be dialect-quoted here since
+            // this constructor runs before any connection/dialect exists.
+            final String colName = "promotion_name";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()
@@ -8679,7 +8683,11 @@ public class SchemaModifiersEmf {
          */
         private Catalog catalog;
 
-        public TestAggregationManagerModifier10(Catalog catalogMapping, final String colName) {
+        public TestAggregationManagerModifier10(Catalog catalogMapping) {
+            // Raw, unquoted identifier: valid on every dialect this suite
+            // targets, and colName can no longer be dialect-quoted here since
+            // this constructor runs before any connection/dialect exists.
+            final String colName = "promotion_name";
             EcoreUtil.Copier copier = EmfUtil.copier((CatalogImpl) catalogMapping);
             this.catalog = (CatalogImpl) copier.get(catalogMapping);
             Optional<Cube> oCube = Packages.available(catalog, Cube.class).stream()

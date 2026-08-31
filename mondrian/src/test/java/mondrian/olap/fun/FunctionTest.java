@@ -45,8 +45,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.opencube.junit5.MondrianRuntimeExtension;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +60,6 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author gjohnson
  */
 @RolapContextTest(FoodmartTestInstance.class)
-@ExtendWith(MondrianRuntimeExtension.class)
 public class FunctionTest {//extends FoodMartTestCase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );

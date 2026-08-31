@@ -59,7 +59,6 @@ import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
-import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
 import org.eclipse.daanse.rolap.common.agg.ValueColumnPredicate;
@@ -79,7 +78,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opencube.junit5.context.TestContext;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -1960,57 +1958,40 @@ class TestAggregationManager extends BatchTestCase {
      * element would make aggregate tables fail to be used.
      */
     @Disabled // schema depends on a runtime-computed dialect-quoted column name and needs two sequential schema states within one test — incompatible with eager, static catalog composition
+    /**
+     * The error half of what used to be a single test that swapped the
+     * catalog mid-test (see {@link #testLevelKeyAsSqlExpWithAgg}) - split
+     * because a {@code @RolapContextTest}-based test's catalog is fixed for
+     * the whole method.
+     */
     @Test
     @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
     @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
-    void testLevelKeyAsSqlExpWithAgg(Context<?> context) {
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestAggregationManagerModifier2.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testLevelKeyAsSqlExpWithAggError(Context<?> context) {
         prepareContext(context);
-        Connection connection = context.getConnectionWithDefaultRole();
-        final String mdxQuery =
+        // Provoke an error in the key resolution to prove it uses it.
+        assertQueryThrows(context,
             "select non empty{[Promotions].[All Promotions].Children} ON rows, "
             + "non empty {[Store].[All Stores]} ON columns "
             + "from [Sales] "
-            + "where {[Measures].[Unit Sales]}";
-        // Provoke an error in the key resolution to prove it uses it.
-        final String colName =
-            getDialect(connection)
-                .quoteIdentifier("promotion_name");
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Promotions\" foreignKey=\"promotion_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" allMemberName=\"All Promotions\" primaryKey=\"promotion_id\" defaultMember=\"[All Promotions]\">\n"
-            + "    <Table name=\"promotion\"/>\n"
-            + "    <Level name=\"Promotion Name\" column=\"promotion_name\" uniqueMembers=\"true\">\n"
-            + "      <KeyExpression><SQL>ERROR_TEST_FUNCTION_NAME("
-            + colName + ")</SQL></KeyExpression>\n"
-            + "    </Level>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>", false));
-         */
-        context.getCatalogCache().clear();
-        Catalog catalog = ((RolapContext) context).getCatalogMapping();
-        ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.TestAggregationManagerModifier2(catalog, colName));
-        assertQueryThrows(context,
-            mdxQuery,
+            + "where {[Measures].[Unit Sales]}",
             "ERROR_TEST_FUNCTION_NAME");
-        // Run for real this time
-        /*
-        ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
-            "Sales",
-            "<Dimension name=\"Promotions\" foreignKey=\"promotion_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" allMemberName=\"All Promotions\" primaryKey=\"promotion_id\" defaultMember=\"[All Promotions]\">\n"
-            + "    <Table name=\"promotion\"/>\n"
-            + "    <Level name=\"Promotion Name\" column=\"promotion_name\" uniqueMembers=\"true\">\n"
-            + "      <KeyExpression><SQL>RTRIM("
-            + colName + ")</SQL></KeyExpression>\n"
-            + "    </Level>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>", false));
-         */
-        context.getCatalogCache().clear();
-        catalog = new CatalogSupplier().get();
-        ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiersEmf.TestAggregationManagerModifier10(catalog, colName));
+    }
+
+    /**
+     * Test case for
+     * <a href="http://jira.pentaho.com/browse/MONDRIAN-1120">MONDRIAN-1120</a>
+     * run for real this time (see {@link #testLevelKeyAsSqlExpWithAggError}).
+     */
+    @Test
+    @RolapConfig(key = ConfigConstants.USE_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapConfig(key = ConfigConstants.READ_AGGREGATES, value = "true", type = Boolean.class)
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.TestAggregationManagerModifier10.class },
+        database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
+    void testLevelKeyAsSqlExpWithAgg(Context<?> context) {
+        prepareContext(context);
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select non empty{[Promotions].[All Promotions].Children} ON rows, "
             + "non empty {[Store].[All Stores]} ON columns "

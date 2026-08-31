@@ -9,22 +9,18 @@
 
 package mondrian.test;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
-import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
@@ -37,6 +33,15 @@ import mondrian.rolap.SchemaModifiersEmf;
  */
 @RolapContextTest(FoodmartTestInstance.class)
 class MultipleHierarchyTest {
+
+    /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
+    public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
+        @Override
+        public java.util.Map<String, java.net.URL> csvResources() {
+            return new FoodmartTestInstance().dataSupplier().csvResources();
+        }
+    }
+
     private static final String timeWeekly =
         hierarchyName("Time", "Weekly");
     private static final String timeTime =
@@ -47,20 +52,20 @@ class MultipleHierarchyTest {
         Connection connection = context.getConnectionWithDefaultRole();
 
         // [Time.Weekly] has an 'all' member, but [Time] does not.
-        assertAxisReturns(connection, "Sales",
-            "{[Time].[Time].CurrentMember}",
-            "[Time].[Time].[1997]");
-        assertAxisReturns(connection, "Sales",
-            "{[Time].[Weekly].CurrentMember}",
-            "[Time].[Weekly].[All Weeklys]");
+        MdxAssert.assertThatAxis(connection, "Sales",
+"{[Time].[Time].CurrentMember}").returns(
+"[Time].[Time].[1997]");
+        MdxAssert.assertThatAxis(connection, "Sales",
+"{[Time].[Weekly].CurrentMember}").returns(
+"[Time].[Weekly].[All Weeklys]");
     }
 
     @Test
     void testWeekly2(Context<?> context) {
         // When the context is one hierarchy,
         // the current member of other hierarchy must be its default member.
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "with\n"
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
+"with\n"
             + "  member [Measures].[Foo] as ' "
             + timeWeekly + ".CurrentMember.UniqueName '\n"
             + "  member [Measures].[Foo2] as ' "
@@ -68,8 +73,8 @@ class MultipleHierarchyTest {
             + "select\n"
             + "  {[Measures].[Unit Sales], [Measures].[Foo], [Measures].[Foo2]} on columns,\n"
             + "  {" + timeTime + ".children} on rows\n"
-            + "from [Sales]",
-            "Axis #0:\n"
+            + "from [Sales]").returnsGrid(
+"Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
@@ -106,14 +111,14 @@ class MultipleHierarchyTest {
 
     @Test
     void testMembersOfHierarchiesInSameDimensionInSlicer(Context<?> context) {
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Measures].[Unit Sales]} on columns,\n"
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
+"select {[Measures].[Unit Sales]} on columns,\n"
             + " {[Store].children} on rows\n"
             + "from [Sales]\n"
             + "where ([Gender].[M], "
             + hierarchyName("Time", "Weekly")
-            + ".[1997], [Time].[1997].[Q1])",
-            "Axis #0:\n"
+            + ".[1997], [Time].[1997].[Q1])").returnsGrid(
+"Axis #0:\n"
             + "{[Gender].[Gender].[M], [Time].[Weekly].[1997], [Time].[Time].[1997].[Q1]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
@@ -129,14 +134,14 @@ class MultipleHierarchyTest {
     @Test
     void testCalcMember(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryReturns(connection,
-            "with member [Measures].[Sales to Date] as \n"
+        MdxAssert.assertThatQuery(connection,
+"with member [Measures].[Sales to Date] as \n"
             + " ' Sum(PeriodsToDate([Time].[Year], [Time].[Time].CurrentMember), [Measures].[Unit Sales])'\n"
             + "select {[Measures].[Sales to Date]} on columns,\n"
             + " {[Time].[1997].[Q2].[4],"
             + "  [Time].[1997].[Q2].[5]} on rows\n"
-            + "from [Sales]",
-            // msas give 86740, 107551
+            + "from [Sales]").returnsGrid(
+// msas give 86740, 107551
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -147,15 +152,15 @@ class MultipleHierarchyTest {
             + "Row #0: 86,470\n"
             + "Row #1: 107,551\n");
 
-        assertQueryReturns(connection,
-            "with member [Measures].[Sales to Date] as \n"
+        MdxAssert.assertThatQuery(connection,
+"with member [Measures].[Sales to Date] as \n"
             + " ' Sum(PeriodsToDate(" + timeWeekly + ".[Year], "
             + timeWeekly + ".CurrentMember), [Measures].[Unit Sales])'\n"
             + "select {[Measures].[Sales to Date]} on columns,\n"
             + " {" + timeWeekly + ".[1997].[14] : "
             + timeWeekly + ".[1997].[16]} on rows\n"
-            + "from [Sales]",
-            "Axis #0:\n"
+            + "from [Sales]").returnsGrid(
+"Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Sales to Date]}\n"
@@ -173,6 +178,8 @@ class MultipleHierarchyTest {
      * bug MONDRIAN-191, "Properties not working with multiple hierarchies"</a>.
      */
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.MultipleHierarchyTestModifier1.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testProperty(Context<?> context) {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -210,11 +217,10 @@ class MultipleHierarchyTest {
             + "</Hierarchy>\n"
             + "</Dimension>"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.MultipleHierarchyTestModifier1::new);
 
         final String nuStore = hierarchyName("NuStore", "NuStore");
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "with member [Measures].[Store level] as '" + nuStore
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
+"with member [Measures].[Store level] as '" + nuStore
             + ".CurrentMember.Level.Name'\n"
             + "member [Measures].[Store type] as 'IIf((" + nuStore
             + ".CurrentMember.Level.Name = \"NuStore Name\"), CAST(" + nuStore
@@ -241,8 +247,8 @@ class MultipleHierarchyTest {
             + nuStore + ".[USA]"
             + "} ON ROWS\n"
             + "from [Sales]\n"
-            + "where [Time].[1997] ",
-            "Axis #0:\n"
+            + "where [Time].[1997] ").returnsGrid(
+"Axis #0:\n"
             + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
@@ -329,9 +335,9 @@ class MultipleHierarchyTest {
                 query,
                 "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly.");
         } else {
-            assertQueryReturns(connection,
-                query,
-                "Axis #0:\n"
+            MdxAssert.assertThatQuery(connection,
+query).returnsGrid(
+"Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Time Child Count]}\n"
@@ -345,6 +351,8 @@ class MultipleHierarchyTest {
      * throws exception"</a>.
      */
     @Test
+    @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.MultipleHierarchyTestModifier2.class },
+            database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testDefaultNamedHierarchy(Context<?> context) {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -364,11 +372,10 @@ class MultipleHierarchyTest {
             + "</Hierarchy>\n"
             + "</Dimension>"));
          */
-        withSchemaEmf(context, SchemaModifiersEmf.MultipleHierarchyTestModifier2::new);
         final String nuStore = hierarchyName("NuStore", "NuStore");
 
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "with set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_NuStore]' "
+        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
+"with set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_NuStore]' "
             + "set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], "
             + nuStore + ".CurrentMember.OrderKey, BASC)' "
             + "set [*BASE_MEMBERS_NuStore] as '"
@@ -380,8 +387,8 @@ class MultipleHierarchyTest {
             + "member [Measures].[*ZERO] as '0.0', SOLVE_ORDER = 0.0 "
             + "select [*BASE_MEMBERS_Measures] ON COLUMNS, "
             + "[*SORTED_ROW_AXIS] ON ROWS "
-            + "from [Sales]",
-            "Axis #0:\n"
+            + "from [Sales]").returnsGrid(
+"Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[*ZERO]}\n"

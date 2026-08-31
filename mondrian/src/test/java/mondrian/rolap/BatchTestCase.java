@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Future;
-import java.util.function.Function;
 
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
@@ -60,8 +57,6 @@ import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.element.RolapLevel;
-import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContextImpl;
@@ -600,17 +595,6 @@ public class BatchTestCase{
             builder.constrain(aggConstraint.delegate);
         }
         return builder.build();
-    }
-
-    protected void updateSchemaIfNeed(Context<?> context, String currentTestCaseName){
-        Optional<Function<Catalog, CatalogMappingSupplier>> oModifier = getModifier(currentTestCaseName);
-        if (oModifier.isPresent()) {
-            withSchemaEmf(context, oModifier.get());
-        }
-    }
-
-    protected Optional<Function<Catalog, CatalogMappingSupplier>> getModifier(String currentTestCaseName) {
-        return Optional.empty();
     }
 
     /**
