@@ -36,11 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertSqlEquals;
-import static org.opencube.junit5.TestUtil.assertSqlEqualsIgnoreFormatting;
-import static org.opencube.junit5.TestUtil.checkThrowable;
-import static org.opencube.junit5.TestUtil.executeStatement;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,6 +70,7 @@ import org.eclipse.daanse.rolap.element.RolapLevel;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
@@ -230,7 +229,7 @@ class DrillThroughTest {
                 : "`time_by_day`.`the_year` ASC,"
                 + " `product_class`.`product_family` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
 
         // Can drill through a trivial calc member.
         final Cell calcCell = result.getCell(new int[]{1, 0});
@@ -267,7 +266,7 @@ class DrillThroughTest {
                 : "`time_by_day`.`the_year` ASC,"
                 + " `product_class`.`product_family` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
 
         assertEquals(7978, calcCell.getDrillThroughCount() );
     }
@@ -352,7 +351,7 @@ class DrillThroughTest {
         assertEquals(3584, cell.getDrillThroughCount());
         // The generic statement builder emits compact single-line SQL (token-equal to the
         // legacy pretty-printed output); compare whitespace-insensitively.
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(),
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(),
             "select\n"
             + "    time_by_day.the_year as Year,\n"
             + "    promotion.media_type as Media Type,\n"
@@ -433,7 +432,7 @@ class DrillThroughTest {
                 : "order by `time_by_day`.`the_year` ASC,"
                 + " `product_class`.`product_family` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
 
         // Cannot drill through a calc member.
         final Cell calcCell = result.getCell(new int[]{1, 1});
@@ -616,7 +615,7 @@ class DrillThroughTest {
                 + " `customer`.`education` ASC,"
                 + " `customer`.`yearly_income` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
 
         // Drillthrough SQL is null for cell based on calc member
         sql = result.getCell(new int[]{1, 1}).getDrillThroughSQL(true);
@@ -766,7 +765,7 @@ class DrillThroughTest {
                 + " `customer`.`education` ASC,"
                 + " `customer`.`yearly_income` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 141);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 141);
     }
 
     /**
@@ -919,7 +918,7 @@ class DrillThroughTest {
                 + " `customer`.`education` ASC,"
                 + " `customer`.`yearly_income` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 6815);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 6815);
     }
 
     /**
@@ -985,7 +984,7 @@ class DrillThroughTest {
             break;
         }
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 7978);
     }
 
     /**
@@ -1063,7 +1062,7 @@ class DrillThroughTest {
                 ? "`Year` ASC, `Store Id` ASC, `Store Id_0` ASC"
                 : "`time_by_day`.`the_year` ASC, `store_ragged`.`store_id` ASC, `store`.`store_id` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 0);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 0);
     }
 
     @Test
@@ -1092,7 +1091,7 @@ class DrillThroughTest {
        final String sql =
            result.getCell(new int[]{0, 0}).getDrillThroughSQL(true);
 
-       assertSqlEquals(context.getConnectionWithDefaultRole(),
+       SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(),
            "select store.frozen_sqft as Frozen sqft, store.grocery_sqft as Grocery sqft, store.meat_sqft as Meat sqft, store.store_sqft as Store sqft, store.store_sqft as Store sqft_0 from store as store where store.frozen_sqft = 2452 order by Frozen sqft ASC, Grocery sqft ASC, Meat sqft ASC, Store sqft ASC",
            sql,
            1);
@@ -1191,7 +1190,7 @@ class DrillThroughTest {
                 + " `customer`.`city` ASC,"
                 + " `customer`.`gender` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 73);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 73);
     }
 
     /**
@@ -1359,7 +1358,7 @@ class DrillThroughTest {
                 + " `customer`.`education` ASC,"
                 + " `customer`.`yearly_income` ASC");
 
-        assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 86837);
+        SqlAssert.assertSqlEquals(context.getConnectionWithDefaultRole(), expectedSql, sql, 86837);
     }
 
     /**
@@ -1504,7 +1503,7 @@ class DrillThroughTest {
     private void assertMaxRows(Connection connection, String firstMaxRow, int expectedCount)
         throws SQLException
     {
-        final ResultSet resultSet = executeStatement(connection,
+        final ResultSet resultSet = connection.createStatement().executeQuery(
             "drillthrough\n"
             + firstMaxRow
             + " select\n"
@@ -1512,7 +1511,7 @@ class DrillThroughTest {
             + "non empty {[Product].[Drink].[Beverages].[Pure Juice Beverages].[Juice]} on 1\n"
             + "from\n"
             + "[Sales]\n"
-            + "where([Measures].[Sales Count], [Time].[1997].[Q3].[8])");
+            + "where([Measures].[Sales Count], [Time].[1997].[Q3].[8])", Optional.empty(), null);
         int actualCount = 0;
         while (resultSet.next()) {
             ++actualCount;
@@ -1526,11 +1525,11 @@ class DrillThroughTest {
     void  testDrillthroughNegativeMaxRowsFails(Context<?> context) throws SQLException {
         Connection connection = context.getConnectionWithDefaultRole();
         try {
-            final ResultSet resultSet = executeStatement(connection,
+            final ResultSet resultSet = connection.createStatement().executeQuery(
                 "DRILLTHROUGH MAXROWS -3\n"
                 + "SELECT {[Customers].[USA].[CA].[Berkeley]} ON 0,\n"
                 + "{[Time].[1997]} ON 1\n"
-                + "FROM Sales");
+                + "FROM Sales", Optional.empty(), null);
             fail("expected error, got " + resultSet);
         } catch (Exception e) {
             checkThrowable(
@@ -1542,12 +1541,12 @@ class DrillThroughTest {
     void  testDrillThroughCalculatedMemberMeasure(Context<?> context) throws SQLException {
         Connection connection = context.getConnectionWithDefaultRole();
         try {
-            final ResultSet resultSet = executeStatement(connection,
+            final ResultSet resultSet = connection.createStatement().executeQuery(
                 "DRILLTHROUGH\n"
                 + "SELECT {[Customers].[USA].[CA].[Berkeley]} ON 0,\n"
                 + "{[Time].[1997]} ON 1\n"
                 + "FROM Sales\n"
-                + "RETURN  [Measures].[Profit]");
+                + "RETURN  [Measures].[Profit]", Optional.empty(), null);
             fail("expected error, got " + resultSet);
         } catch (Exception e) {
             checkThrowable(
@@ -1560,7 +1559,7 @@ class DrillThroughTest {
     void testDrillThroughNotDrillableFails(Context<?> context) throws SQLException {
         Connection connection = context.getConnectionWithDefaultRole();
         try {
-            final ResultSet resultSet = executeStatement(connection,
+            final ResultSet resultSet = connection.createStatement().executeQuery(
                 "DRILLTHROUGH\n"
                 + "WITH MEMBER [Measures].[Foo] "
                 + " AS [Measures].[Unit Sales]\n"
@@ -1568,7 +1567,7 @@ class DrillThroughTest {
                 + "SELECT {[Customers].[USA].[CA].[Berkeley]} ON 0,\n"
                 + "{[Time].[1997]} ON 1\n"
                 + "FROM Sales\n"
-                + "WHERE [Measures].[Foo]");
+                + "WHERE [Measures].[Foo]", Optional.empty(), null);
             fail("expected error, got " + resultSet);
         } catch (Exception e) {
             checkThrowable(
@@ -1694,7 +1693,7 @@ class DrillThroughTest {
                 return;
         }
         // Builder emits compact single-line SQL; compare whitespace-insensitively.
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 41956);
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 41956);
 
         // A query with a slightly more complex multi-position compound slicer
         result =
@@ -1774,7 +1773,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 10430);
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 10430);
 
         // A query with an even more complex multi-position compound slicer
         // (gender must be in the slicer predicate along with time)
@@ -1836,7 +1835,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 20971);
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 20971);
 
         // A query with a simple multi-position compound slicer with
         // different levels (overlapping)
@@ -1889,7 +1888,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 21588);
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 21588);
 
         // A query with a simple multi-position compound slicer with
         // different levels (non-overlapping)
@@ -1939,7 +1938,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 27402);
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 27402);
     }
 
     @Test
@@ -2067,7 +2066,7 @@ class DrillThroughTest {
         default:
             return;
         }
-        assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 11);
+        SqlAssert.assertSqlEqualsIgnoreFormatting(context.getConnectionWithDefaultRole(), expectedSql, sql, 11);
     }
 
     @Test
@@ -2080,7 +2079,7 @@ class DrillThroughTest {
         // columns.
         ResultSet rs = null;
         try {
-            rs = executeStatement(context.getConnectionWithDefaultRole(),
+            rs = context.getConnectionWithDefaultRole().createStatement().executeQuery(
                 "DRILLTHROUGH \n"
                 + "// Request ID: d73ea21c-2a29-11e5-ba1d-d4bed923da37 - RUN_REPORT\n"
                 + "WITH\n"
@@ -2092,7 +2091,8 @@ class DrillThroughTest {
                 + "SELECT\n"
                 + "FILTER([*BASE_MEMBERS__Measures_],([Measures].CurrentMember Is [Measures].[*FORMATTED_MEASURE_0])) ON COLUMNS\n"
                 + "FROM [Warehouse and Sales]\n"
-                + "WHERE ([*CJ_SLICER_AXIS]) RETURN [Gender].[Gender], [Measures].[Unit Sales], [Measures].[Warehouse Sales], [Time].[Year], [Warehouse].[Country]");
+                + "WHERE ([*CJ_SLICER_AXIS]) RETURN [Gender].[Gender], [Measures].[Unit Sales], [Measures].[Warehouse Sales], [Time].[Year], [Warehouse].[Country]",
+                Optional.empty(), null);
             assertEquals(
                 5, rs.getMetaData().getColumnCount());
             Object expectedYear;
@@ -2144,8 +2144,8 @@ class DrillThroughTest {
         ResultSet rs = null;
         int rowCount = 0;
         try {
-            rs = executeStatement(context.getConnectionWithDefaultRole(),
-                DRILLTHROUGH_QUERY_WITH_CUSTOMER_FULL_NAME);
+            rs = context.getConnectionWithDefaultRole().createStatement().executeQuery(
+                DRILLTHROUGH_QUERY_WITH_CUSTOMER_FULL_NAME, Optional.empty(), null);
             assertEquals(
                 5, rs.getMetaData().getColumnCount());
             assertEquals(
@@ -2200,8 +2200,8 @@ class DrillThroughTest {
         ResultSet rs = null;
         int rowCount = 0;
         try {
-            rs = executeStatement(context.getConnectionWithDefaultRole(),
-                DRILLTHROUGH_QUERY_WITH_CUSTOMER_ID);
+            rs = context.getConnectionWithDefaultRole().createStatement().executeQuery(
+                DRILLTHROUGH_QUERY_WITH_CUSTOMER_ID, Optional.empty(), null);
             assertEquals(
                 3, rs.getMetaData().getColumnCount());
             assertEquals(
@@ -2245,7 +2245,7 @@ class DrillThroughTest {
         int rowCount = 0;
         ResultSet rs = null;
         try {
-            rs = executeStatement(context.getConnectionWithDefaultRole(),
+            rs = context.getConnectionWithDefaultRole().createStatement().executeQuery(
                 "DRILLTHROUGH \n"
                 + "WITH\n"
                 + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER({[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[All Store Types].[Small Grocery]}, NOT ISEMPTY ([Measures].[Store Sales]))'\n"
@@ -2257,7 +2257,7 @@ class DrillThroughTest {
                 + "SELECT\n"
                 + "FILTER([*BASE_MEMBERS__Measures_],([Measures].CurrentMember Is [Measures].[*FORMATTED_MEASURE_0])) ON COLUMNS\n"
                 + "FROM [Sales]\n"
-                + "WHERE ([*CJ_SLICER_AXIS]) RETURN [Store Type].[Store Type]");
+                + "WHERE ([*CJ_SLICER_AXIS]) RETURN [Store Type].[Store Type]", Optional.empty(), null);
             assertEquals(
                 1, rs.getMetaData().getColumnCount(),
                     "This DRILLTHROUGH Result should contain only one column - ");
@@ -2276,5 +2276,26 @@ class DrillThroughTest {
                 rs.close();
             }
         }
+    }
+
+    private static void checkThrowable(Throwable throwable, String pattern) {
+        if (throwable == null) {
+            fail("query did not yield an exception");
+        }
+        String stackTrace = getStackTrace(throwable);
+        if (stackTrace.indexOf(pattern) < 0) {
+            fail(
+                "query's error does not match pattern '" + pattern
+                + "'; error is [" + stackTrace + "]");
+        }
+    }
+
+    /**
+     * Converts a {@link Throwable} to a stack trace.
+     */
+    private static String getStackTrace(Throwable e) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        e.printStackTrace(new PrintStream(out));
+        return new String(out.toByteArray());
     }
 }

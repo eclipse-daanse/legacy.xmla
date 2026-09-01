@@ -9,6 +9,8 @@
 */
 package mondrian.rolap;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import static mondrian.rolap.RolapNativeTopCountTestCases.NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_QUERY;
 import static mondrian.rolap.RolapNativeTopCountTestCases.TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_QUERY;
@@ -22,7 +24,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * According to
@@ -58,8 +59,8 @@ class TopCountWithTwoParamsVersusHeadTest extends BatchTestCase {
         flushSchemaCache(connection);
         Result headResult = executeQuery(headQuery, connection);
         assertEquals(
-                TestUtil.toString(topCountResult),
-                TestUtil.toString(headResult),
+                toString(topCountResult),
+                toString(headResult),
                 String.format(
                         "[%s]: TOPCOUNT() and HEAD() results of the query differ. The query:\n\t\t%s",
                         testCase,
@@ -92,5 +93,19 @@ class TopCountWithTwoParamsVersusHeadTest extends BatchTestCase {
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "Does not ignore NON EMPTY",
             NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_QUERY);
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }

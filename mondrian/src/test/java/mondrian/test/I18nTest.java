@@ -9,8 +9,10 @@
 
 package mondrian.test;
 
-import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +26,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * Test suite for internalization and localization.
@@ -76,14 +77,28 @@ class I18nTest {
             + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
             + "FROM [Sales]");
         Result result = connection.execute(query);
-        String actual = TestUtil.toString(result);
-        assertEqualsVerbose(
+        String actual = toString(result);
+        assertEquals(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Foo]}\n"
             + "Row #0: " + resultString + "\n",
             actual);
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }
 

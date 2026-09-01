@@ -24,27 +24,36 @@
 
 package mondrian.olap.fun;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
+import org.eclipse.daanse.olap.api.result.CellSetAxis;
 import org.eclipse.daanse.olap.api.result.Position;
+import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.impl.CellImpl;
+import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsFunDef;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * <code>VisualTotalsTest</code> tests the internal functions defined in
@@ -65,7 +74,7 @@ class VisualTotalsTest {
     void testDrillthroughVisualTotal(Context<?> foodMartContext) throws SQLException {
         Connection conn = foodMartContext.getConnectionWithDefaultRole();
         CellSet cellSet =
-    		TestUtil.executeQueryWithCellSetResult(conn,
+    		executeQueryWithCellSetResult(conn,
                 "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
                 + "    {[Product].[Food].[Baked Goods].[Bread],"
@@ -102,7 +111,7 @@ class VisualTotalsTest {
     @Test
     void testVisualTotalCaptionBug(Context<?> foodMartContext) throws SQLException {
         CellSet cellSet =
-    		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
+    		executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
                 "select {[Measures].[Unit Sales]} on columns, "
                 + "VisualTotals("
                 + "    {[Product].[Food].[Baked Goods].[Bread],"
@@ -128,17 +137,14 @@ class VisualTotalsTest {
      */
     @Test
     void testVisualTotalsAggregatedMemberBug(Context<?> foodMartContext) throws SQLException {
-        CellSet cellSet =
-    		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
+        MdxAssert.assertThatQuery(foodMartContext.getConnectionWithDefaultRole(),
                 " with  member [Gender].[YTD] as 'AGGREGATE(YTD(),[Gender].[M])'"
             	+ "  select "
             	+ " {[Time].[1997],"
             	+ " [Time].[1997].[Q1],[Time].[1997].[Q2],[Time].[1997].[Q3],[Time].[1997].[Q4]} ON COLUMNS, "
             	+ " {[Gender].[M],[Gender].[YTD]} ON ROWS"
-            	+ " FROM [Sales]");
-        //fail("Not yet implemented");
-        String s = TestUtil.toString(cellSet);
-        TestUtil.assertEqualsVerbose(
+            	+ " FROM [Sales]")
+            .returnsGrid(
         	     "Axis #0:\n"
         	     + "{}\n"
         	     + "Axis #1:\n"
@@ -159,8 +165,89 @@ class VisualTotalsTest {
         	     + "Row #1: 33,381\n"
         	     + "Row #1: 64,999\n"
         	     + "Row #1: 98,248\n"
-        	     + "Row #1: 135,215\n"
-        		,s);
+        	     + "Row #1: 135,215\n");
     }
 
+    private static CellSet executeQueryWithCellSetResult(Connection connection, String queryString) throws SQLException {
+
+        assertThat(connection).isNotNull();
+        assertThat(queryString).isNotNull().isNotBlank();
+
+        Statement stmt = connection.createStatement();
+
+        assertThat(stmt).isNotNull();
+
+        final CellSet cellSet = stmt.executeQuery(queryString);
+
+        assertThat(cellSet).isNotNull();
+
+        // If we're deep testing, check that we never return the dummy null
+        // value when cells are null. TestExpDependencies isn't the perfect
+        // switch to enable this, but it will do for now.
+        //TODO: activate this for all tests
+        if (connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) == 1) {
+            assertCellSetValid(cellSet);
+        }
+        return cellSet;
+    }
+
+    /**
+     * Checks that a {@link CellSet} is valid.
+     */
+    private static void assertCellSetValid(CellSet cellSet) {
+        for (Cell cell : cellIter(cellSet)) {
+            // A NULL cell surfaces as Java null, and only then:
+            // (value == null) == isNull().
+            if (cell.getValue() == null) {
+                assertTrue(cell.isNull());
+            } else {
+                assertFalse(cell.isNull());
+            }
+        }
+    }
+
+    /**
+     * Returns an iterator over cells in an olap4j cell set.
+     */
+    private static Iterable<Cell> cellIter(final CellSet cellSet) {
+        return new Iterable<>() {
+            @Override
+            public Iterator<Cell> iterator() {
+                int[] axisDimensions = new int[cellSet.getAxes().size()];
+                int k = 0;
+                for (CellSetAxis axis : cellSet.getAxes()) {
+                    axisDimensions[k++] = axis.getPositions().size();
+                }
+                final CoordinateIterator coordIter = new CoordinateIterator(axisDimensions);
+                return new Iterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return coordIter.hasNext();
+                    }
+
+                    @Override
+                    public Cell next() {
+                        final int[] ints = coordIter.next();
+                        final List<Integer> list = new AbstractList<>() {
+                            @Override
+                            public Integer get(int index) {
+                                return ints[index];
+                            }
+
+                            @Override
+                            public int size() {
+                                return ints.length;
+                            }
+                        };
+                        return cellSet.getCell(list);
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
 }

@@ -21,17 +21,12 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatEx
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.assertSimpleQuery;
-import static org.opencube.junit5.TestUtil.assertSize;
-import static org.opencube.junit5.TestUtil.checkThrowable;
-import static org.opencube.junit5.TestUtil.executeAxis;
-import static org.opencube.junit5.TestUtil.executeExpr;
-import static org.opencube.junit5.TestUtil.executeQueryTimeoutTest;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -86,6 +81,7 @@ import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
 import org.eclipse.daanse.rolap.sql.SqlStatisticsProviderNew;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
@@ -95,7 +91,6 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTe
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
@@ -123,7 +118,7 @@ public class BasicQueryTest {
 
   static final String EmptyResult = "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "Axis #2:\n";
 
-  private static final String timeWeekly = TestUtil.hierarchyName( "Time", "Weekly" );
+  private static final String timeWeekly = "[Time].[Weekly]";
   public static final int MAX_EVAL_DEPTH_VALUE = 5000;
   private static final QueryAndResult[] sampleQueries = {
     // 0
@@ -1001,14 +996,12 @@ public class BasicQueryTest {
 
     @Test
   void testConstantString(Context<?> context) {
-    String s = executeExpr(context.getConnectionWithDefaultRole(), "Sales", " \"a string\" " );
-    assertEquals( "a string", s );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " \"a string\" " ).returns( "a string" );
   }
 
     @Test
   void testConstantNumber(Context<?> context) {
-    String s = executeExpr(context.getConnectionWithDefaultRole(), "Sales", " 1234 " );
-    assertEquals( "1,234", s );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " 1234 " ).returns( "1,234" );
   }
 
     @Test
@@ -1030,8 +1023,7 @@ public class BasicQueryTest {
       assertThatExpr(connection, "Sales", "[Time].[1997].[Q4]")
             .throwsMessage( "infinite loop" );
     } else {
-      String s = executeExpr(connection, "Sales", "[Time].[1997].[Q4]" );
-      assertEquals( "72,024", s );
+      assertThatExpr(connection, "Sales", "[Time].[1997].[Q4]" ).returns( "72,024" );
     }
   }
 
@@ -1109,8 +1101,8 @@ public class BasicQueryTest {
   }
 
   public void _testProduct2(Context<?> context) {
-    final Axis axis = executeAxis(context.getConnectionWithDefaultRole(), "Sales", "{[Product2].members}" );
-    System.out.println( TestUtil.toString( axis.getPositions() ) );
+    final Axis axis = executeQuery(context.getConnectionWithDefaultRole(), "select {{[Product2].members}} on columns from Sales").getAxes()[0];
+    System.out.println( toString( axis.getPositions() ) );
   }
 
   private static final List<QueryAndResult> taglibQueries = Arrays.asList(
@@ -2302,14 +2294,11 @@ public class BasicQueryTest {
    */
     @Test
   void testMemberWithNullKey(Context<?> context) {
-    if ( !isDefaultNullMemberRepresentation(context) ) {
-      return;
-    }
     Connection connection = context.getConnectionWithDefaultRole();
     Result result =
         executeQuery(connection,  "select {[Measures].[Unit Sales]} on columns,\n" + "{[Store Size in SQFT].members} on rows\n"
             + "from Sales" );
-    String resultString = TestUtil.toString( result );
+    String resultString = toString( result );
     resultString = Pattern.compile( "\\.0\\]" ).matcher( resultString ).replaceAll( "]" );
 
     // The members function hierarchizes its results, so nulls should
@@ -2345,7 +2334,7 @@ public class BasicQueryTest {
             + ": 35,257\n" + "Row #" + row++ + ": \n" + "Row #" + row++ + ": \n" + "Row #" + row++ + ": \n" + "Row #"
             + row++ + ": \n" + "Row #" + row++ + ": 24,576\n" + ( nullsSortHigh ? "Row #" + row++ + ": 39,329\n"
                 : "" );
-    assertEqualsVerbose(expected, resultString );
+    assertEquals(expected, resultString );
   }
 
   /**
@@ -2414,7 +2403,7 @@ public class BasicQueryTest {
     // Parentheses are added to reflect operator precedence, but that's ok.
     // Note that the doubled parentheses in line #2 of the query have been
     // reduced to a single level.
-    assertEqualsVerbose(
+    assertEquals(
         "with member [Measures].[Rendite] as '(([Measures].[Store Sales] - [Measures].[Store Cost]) / [Measures].[Store"
             + " Cost])', "
             + "format_string = IIf((((([Measures].[Store Sales] - [Measures].[Store Cost]) / [Measures].[Store Cost]) * "
@@ -2436,7 +2425,7 @@ public class BasicQueryTest {
     // double-quotes. This won't work in MSOLAP, but for Mondrian it's
     // consistent with the fact that property values are expressions,
     // not enclosed in single-quotes.
-    assertEqualsVerbose( "with member [Measures].[Foo] as '1', " + "format_string = \"##0.00\", "
+    assertEquals( "with member [Measures].[Foo] as '1', " + "format_string = \"##0.00\", "
         + "funny = IIf((1 = 1), \"x\"\"y\", \"foo\")\n" + "select {[Measures].[Foo]} ON COLUMNS\n" + "from [Sales]\n",
         s );
   }
@@ -3798,10 +3787,10 @@ public class BasicQueryTest {
             "<DimensionUsage name=\"Other Store\" source=\"Store\" foreignKey=\"unit_sales\" />" ));
      */
 
-      Axis axis = executeAxis(connection, "Sales", "[Other Store].members" );
+      Axis axis = executeQuery(connection, "select {[Other Store].members} on columns from Sales").getAxes()[0];
     assertEquals( 63, axis.getPositions().size() );
 
-    axis = executeAxis(connection, "Sales", "[Store].members" );
+    axis = executeQuery(connection, "select {[Store].members} on columns from Sales").getAxes()[0];
     assertEquals( 63, axis.getPositions().size() );
 
     final String q1 =
@@ -4052,26 +4041,22 @@ public class BasicQueryTest {
 
     @Test
   void testNullMember(Context<?> context) {
-    if ( isDefaultNullMemberRepresentation(context) ) {
-      assertThatQuery( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
-          + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null]} ON rows \n" + "FROM [Sales] \n"
-          + "WHERE [Time].[1997]")
-            .returnsGrid( "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
-              + "Axis #2:\n" + "{[Store Size in SQFT].[Store Size in SQFT].[#null]}\n" + "Row #0: 33,307.69\n" );
-    }
+    assertThatQuery( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
+        + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null]} ON rows \n" + "FROM [Sales] \n"
+        + "WHERE [Time].[1997]")
+          .returnsGrid( "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
+            + "Axis #2:\n" + "{[Store Size in SQFT].[Store Size in SQFT].[#null]}\n" + "Row #0: 33,307.69\n" );
   }
 
     @Test
   void testNullMemberWithOneNonNull(Context<?> context) {
-    if ( isDefaultNullMemberRepresentation(context) ) {
-      assertThatQuery( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
-          + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null],"
-          + "[Store Size in SQFT].[ALL Store Size in SQFTs].[39696]} ON rows \n" + "FROM [Sales] \n"
-          + "WHERE [Time].[1997]")
-            .returnsGrid( "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
-              + "Axis #2:\n" + "{[Store Size in SQFT].[Store Size in SQFT].[#null]}\n" + "{[Store Size in SQFT].[Store Size in SQFT].[39696]}\n"
-              + "Row #0: 33,307.69\n" + "Row #1: 21,121.96\n" );
-    }
+    assertThatQuery( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
+        + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null],"
+        + "[Store Size in SQFT].[ALL Store Size in SQFTs].[39696]} ON rows \n" + "FROM [Sales] \n"
+        + "WHERE [Time].[1997]")
+          .returnsGrid( "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
+            + "Axis #2:\n" + "{[Store Size in SQFT].[Store Size in SQFT].[#null]}\n" + "{[Store Size in SQFT].[Store Size in SQFT].[39696]}\n"
+            + "Row #0: 33,307.69\n" + "Row #1: 21,121.96\n" );
   }
 
   /**
@@ -4120,31 +4105,19 @@ public class BasicQueryTest {
             + "  <Measure name=\"Bad Measure\" aggregator=\"sum\"\n" + "      formatString=\"Standard\"/>\n"
             + "</Cube>", null, null, null, null );
        */
-    Throwable throwable = null;
-    try {
-      assertSimpleQuery(context.getConnectionWithDefaultRole());
-    } catch ( Throwable e ) {
-      throwable = e;
-    }
     // neither a source column or source expression specified
-    checkThrowable( throwable,
-        "must contain either a source column or a source expression, but not both" );
+    assertThatQuery(context, "select from [Sales]")
+        .throwsMessage( "must contain either a source column or a source expression, but not both" );
   }
 
   @Test
   @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.BasicQueryTestModifier24.class },
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testBadMeasure2(Context<?> context) {
-    Throwable throwable = null;
-    try {
-      assertSimpleQuery(context.getConnectionWithDefaultRole());
-    } catch ( Throwable e ) {
-      throwable = e;
-    }
     // both a source column and source expression specified
     //right now we can define only one column or expression. Test not have sense
-    //checkThrowable( throwable,
-    //    "must contain either a source column or a source expression, but not both" );
+    assertThatQuery(context.getConnectionWithDefaultRole(), "select from [Sales]")
+        .returnsGrid( "Axis #0:\n{}\n266,773" );
   }
 
   @Test
@@ -4577,13 +4550,10 @@ public class BasicQueryTest {
     String query =
         "WITH\n" + "  MEMBER [Measures].[Sleepy]\n" + "    AS 'SleepUdf([Measures].[Unit Sales])'\n"
             + "SELECT {[Measures].[Sleepy]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
-    Throwable throwable = null;
-    try {
-    	executeQueryTimeoutTest(context.getConnectionWithDefaultRole(), query);
-    } catch ( Throwable ex ) {
-      throwable = ex;
-    }
-    checkThrowable( throwable, "Query timeout of 2 seconds reached" );
+    // Duration must match the @RolapConfig(QUERY_TIMEOUT) value above.
+    assertThatQuery(context.getConnectionWithDefaultRole(), query)
+        .withTimeout(Duration.ofSeconds(2))
+        .throwsMessage("Query timeout of 2 seconds reached");
   }
 
     @Test
@@ -5388,7 +5358,8 @@ public class BasicQueryTest {
 //            + SqlStatisticsProvider.class.getName() );
     //final TestContext<?> testContext<?> = getTestContext().withFreshConnection();
     try {
-      assertSimpleQuery(connection);
+      assertThatQuery(connection, "select from [Sales]")
+          .returnsGrid( "Axis #0:\n{}\n266,773" );
       // bypass dialect cache and always get a fresh dialect instance
       // with our custom providers
       Dialect dialect = context.getDialect();
@@ -6083,4 +6054,104 @@ public class BasicQueryTest {
       }
     }
   }
+
+  /**
+   * Executes query1 and query2 and Compares the obtained measure values.
+   */
+  private static void assertQueriesReturnSimilarResults(
+      Connection connection, String query1, String query2)
+  {
+      String resultString1 = toString(executeQuery(connection, query1));
+      String resultString2 = toString(executeQuery(connection, query2));
+      assertEquals(measureValues(resultString1), measureValues(resultString2));
+  }
+
+  /**
+   * Truncates the query result to return only measure values.
+   */
+  private static String measureValues(String resultString) {
+      int index = resultString.indexOf("}");
+      return index != -1 ? resultString.substring(index) : resultString;
+  }
+
+  /**
+   * Runs a query, and asserts that the result has a given number of columns
+   * and rows.
+   */
+  private static void assertSize(
+      Connection connection,
+      String queryString,
+      int columnCount,
+      int rowCount)
+  {
+      Result result = executeQuery(connection, queryString);
+      Axis[] axes = result.getAxes();
+      Assertions.assertTrue(axes.length == 2);
+      Assertions.assertTrue(axes[0].getPositions().size() == columnCount);
+      Assertions.assertTrue(axes[1].getPositions().size() == rowCount);
+  }
+
+  private static void checkThrowable(Throwable throwable, String pattern) {
+      if (throwable == null) {
+          fail("query did not yield an exception");
+      }
+      String stackTrace = getStackTrace(throwable);
+      if (stackTrace.indexOf(pattern) < 0) {
+          fail(
+              "query's error does not match pattern '" + pattern
+              + "'; error is [" + stackTrace + "]");
+      }
+  }
+
+  /**
+   * Converts a {@link Throwable} to a stack trace.
+   */
+  private static String getStackTrace(Throwable e) {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      e.printStackTrace(new PrintStream(out));
+      return new String(out.toByteArray());
+  }
+
+  /**
+   * Converts a set of positions into a string. Useful if you want to check that
+   * an axis has the results you expected.
+   */
+  private static String toString(List<Position> positions) {
+      StringBuilder buf = new StringBuilder();
+      int i = 0;
+      for (Position position : positions) {
+          if (i > 0) {
+              buf.append(Util.NL);
+          }
+          if (position.size() != 1) {
+              buf.append("{");
+          }
+          for (int j = 0; j < position.size(); j++) {
+              Member member = position.get(j);
+              if (j > 0) {
+                  buf.append(", ");
+              }
+              buf.append(member.getUniqueName());
+          }
+          if (position.size() != 1) {
+              buf.append("}");
+          }
+          i++;
+      }
+      return buf.toString();
+  }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

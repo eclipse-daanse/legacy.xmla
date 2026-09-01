@@ -17,7 +17,6 @@ import static mondrian.olap.fun.FunctionTest.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
@@ -70,7 +69,7 @@ class StrToTupleFunDefTest {
                 + "[Time].[1997].[Q2], "
                 + "[Time].[Weekly].[1997].[10])\","
                 + " [Gender], "
-                + hierarchyName( "Time", "Weekly" )
+                + "[Time].[Weekly]"
                 + ", [Gender])}")
             .throwsMessage( "Tuple contains more than one member of hierarchy '[Gender].[Gender]'." );
     }

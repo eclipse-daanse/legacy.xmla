@@ -16,10 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.checkThrowable;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -31,13 +33,14 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.rolap.SchemaModifiersEmf;
 import mondrian.test.CaptionTest.FoodmartData;
@@ -457,7 +460,7 @@ class ScenarioTest {
                 + "from [Sales]\n"
                 + "where ([Customers].[All Customers].[USA].[CA].[San Francisco],\n"
                 + " [Time].[1997], " + scenarioUniqueName + ")");
-        assertEqualsVerbose(
+        assertEquals(
             "Axis #0:\n"
             + "{[Customers].[Customers].[USA].[CA].[San Francisco], [Time].[Time].[1997], "
             + scenarioUniqueName
@@ -475,36 +478,36 @@ class ScenarioTest {
             + "Row #1: 4\n"
             + "Row #1: 2\n"
             + "Row #1: 2\n",
-            TestUtil.toString(cellSet));
+            toString(cellSet));
         cellSet.getCell(Arrays.asList(0, 1))
             .setValue(scenario, 10, AllocationPolicy.EQUAL_ALLOCATION);
         cellSet.getCell(Arrays.asList(1, 0))
             .setValue(scenario, 999, AllocationPolicy.EQUAL_ALLOCATION);
-        final CellSet cellSet2 = pstmt.executeQuery("select NON EMPTY [Gender].Members ON COLUMNS,\n"
-            + "NON EMPTY Order([Product].[All Products].[Drink].Children,\n"
-            + "[Gender].[All Gender].[F], ASC) ON ROWS\n"
-            + "from [Sales]\n"
-            + "where ([Customers].[All Customers].[USA].[CA].[San Francisco],\n"
-            + " [Time].[1997], " + scenarioUniqueName + ")");
-        assertEqualsVerbose(
-            "Axis #0:\n"
-            + "{[Customers].[Customers].[USA].[CA].[San Francisco], [Time].[Time].[1997], "
-            + scenarioUniqueName
-            + "}\n"
-            + "Axis #1:\n"
-            + "{[Gender].[Gender].[All Gender]}\n"
-            + "{[Gender].[Gender].[F]}\n"
-            + "{[Gender].[Gender].[M]}\n"
-            + "Axis #2:\n"
-            + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
-            + "{[Product].[Product].[Drink].[Beverages]}\n"
-            + "Row #0: 10\n"
-            + "Row #0: 5\n"
-            + "Row #0: 5\n"
-            + "Row #1: 1,001\n"
-            + "Row #1: 999\n"
-            + "Row #1: 2\n",
-            TestUtil.toString(cellSet2));
+        MdxAssert.assertThatQuery(connection,
+            "select NON EMPTY [Gender].Members ON COLUMNS,\n"
+                + "NON EMPTY Order([Product].[All Products].[Drink].Children,\n"
+                + "[Gender].[All Gender].[F], ASC) ON ROWS\n"
+                + "from [Sales]\n"
+                + "where ([Customers].[All Customers].[USA].[CA].[San Francisco],\n"
+                + " [Time].[1997], " + scenarioUniqueName + ")")
+            .returnsGrid(
+                "Axis #0:\n"
+                + "{[Customers].[Customers].[USA].[CA].[San Francisco], [Time].[Time].[1997], "
+                + scenarioUniqueName
+                + "}\n"
+                + "Axis #1:\n"
+                + "{[Gender].[Gender].[All Gender]}\n"
+                + "{[Gender].[Gender].[F]}\n"
+                + "{[Gender].[Gender].[M]}\n"
+                + "Axis #2:\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Product].[Product].[Drink].[Beverages]}\n"
+                + "Row #0: 10\n"
+                + "Row #0: 5\n"
+                + "Row #0: 5\n"
+                + "Row #1: 1,001\n"
+                + "Row #1: 999\n"
+                + "Row #1: 2\n");
     }
 
     @Test
@@ -542,4 +545,33 @@ class ScenarioTest {
     // TODO: test that EQUAL_ALLOCATION assigns to (a) cells that were
     // already empty, (b) cells that were null, (c) cells that are not visible
     // to the caller. I'm not sure that (c) works right now.
+
+    private static void checkThrowable(Throwable throwable, String pattern) {
+        if (throwable == null) {
+            fail("query did not yield an exception");
+        }
+        String stackTrace = getStackTrace(throwable);
+        if (stackTrace.indexOf(pattern) < 0) {
+            fail(
+                "query's error does not match pattern '" + pattern
+                + "'; error is [" + stackTrace + "]");
+        }
+    }
+
+    /**
+     * Converts a {@link Throwable} to a stack trace.
+     */
+    private static String getStackTrace(Throwable e) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        e.printStackTrace(new PrintStream(out));
+        return new String(out.toByteArray());
+    }
+
+    private static String toString(CellSet cellSet) {
+        final StringWriter sw = new StringWriter();
+        new TraditionalCellSetFormatter().format(
+            cellSet,
+            new PrintWriter(sw));
+        return sw.toString();
+    }
 }

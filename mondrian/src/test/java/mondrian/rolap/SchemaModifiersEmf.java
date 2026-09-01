@@ -12759,8 +12759,8 @@ public class SchemaModifiersEmf {
             catalog.setName("custom");
             catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             catalog.getImportedElement().add(store5Cube);
-            org.opencube.junit5.TestUtil.describe(catalog, measureGrocerySqft, "Grocery Sqft Description...");
-            org.opencube.junit5.TestUtil.describe(catalog, calcMemberConstant1, "Constant 1 Description...");
+            describe(catalog, measureGrocerySqft, "Grocery Sqft Description...");
+            describe(catalog, calcMemberConstant1, "Constant 1 Description...");
         }
 
         @Override
@@ -17645,8 +17645,8 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMartSalesOnly");
             catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             catalog.getImportedElement().add(salesShortCube);
-            org.opencube.junit5.TestUtil.describe(catalog, customerLevel, "Customer Level Description");
-            org.opencube.junit5.TestUtil.describe(catalog, productLevel, "Product Level Description");
+            describe(catalog, customerLevel, "Customer Level Description");
+            describe(catalog, productLevel, "Product Level Description");
         }
 
         @Override
@@ -17755,8 +17755,8 @@ public class SchemaModifiersEmf {
             catalog.setName("FoodMartSalesOnly");
             catalog.getImportedElement().addAll(Packages.available(catalog2, Schema.class));
             catalog.getImportedElement().add(salesShortCube);
-            org.opencube.junit5.TestUtil.describe(catalog, customerLevel, "Customer Level Description");
-            org.opencube.junit5.TestUtil.describe(catalog, productLevel, "Product Level Description");
+            describe(catalog, customerLevel, "Customer Level Description");
+            describe(catalog, productLevel, "Product Level Description");
         }
 
         @Override
@@ -17838,7 +17838,7 @@ public class SchemaModifiersEmf {
             fooCube.getMeasureGroups().add(measureGroup);
 
             this.catalog.getImportedElement().add(fooCube);
-            org.opencube.junit5.TestUtil.describe(this.catalog, barProp, "BaconDesc");
+            describe(this.catalog, barProp, "BaconDesc");
 
         }
 
@@ -20029,7 +20029,7 @@ public class SchemaModifiersEmf {
             Catalog catalog2Copy = (Catalog) copier.get(catalog2);
             catalog.getImportedElement()
                     .addAll(Packages.available(catalog2Copy, Schema.class));
-            org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
+            describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
             customersDimension.setName("Customers Dimension");
@@ -20216,7 +20216,7 @@ public class SchemaModifiersEmf {
             Catalog catalog2Copy = (Catalog) copier.get(catalog2);
             catalog.getImportedElement()
                     .addAll(Packages.available(catalog2Copy, Schema.class));
-            org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
+            describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
 
             // Create Customers Dimension
             StandardDimension customersDimension = DimensionFactory.eINSTANCE.createStandardDimension();
@@ -20745,6 +20745,23 @@ public class SchemaModifiersEmf {
 
         }
         return set;
+    }
+
+    /**
+     * Attaches a 'documentation' Description to the element, adopting its
+     * root into the catalog if needed.
+     */
+    private static void describe(org.eclipse.daanse.rolap.mapping.model.catalog.Catalog catalog,
+            org.eclipse.daanse.cwm.model.cwm.objectmodel.core.ModelElement element, String text) {
+        try {
+            org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions.describe(element,
+                    org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper.TYPE_DOCUMENTATION, null, text);
+        } catch (IllegalStateException detached) {
+            catalog.getOwnedElement().add((org.eclipse.daanse.cwm.model.cwm.objectmodel.core.ModelElement)
+                    org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer(element));
+            org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions.describe(element,
+                    org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper.TYPE_DOCUMENTATION, null, text);
+        }
     }
 
 }

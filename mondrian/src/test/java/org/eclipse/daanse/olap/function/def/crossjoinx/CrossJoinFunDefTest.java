@@ -16,7 +16,6 @@ package org.eclipse.daanse.olap.function.def.crossjoinx;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -461,7 +460,7 @@ class CrossJoinFunDefTest {
                 + "Axis #2:\n"
                 + "{[Time].[Time].[1997].[Q1], [Time].[Weekly].[1997].[10]}\n"
                 + "Row #0: 4,395\n";
-        final String timeWeekly = hierarchyName( "Time", "Weekly" );
+        final String timeWeekly = "[Time].[Weekly]";
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {"

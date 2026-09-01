@@ -12,15 +12,16 @@ import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.opencube.junit5.TestUtil.cubeByName;
-import static org.opencube.junit5.TestUtil.productMembersPotScrubbersPotsAndPans;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.calc.tuple.TupleList;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.evaluator.Evaluator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
@@ -32,6 +33,7 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.common.result.RolapResult;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -53,6 +55,65 @@ class CancellationTest {
 
     @AfterEach
     public void afterEach() {
+    }
+
+    private Cube cubeByName(Connection connection, String cubeName) {
+        CatalogReader reader = connection.getCatalogReader().withLocus();
+        List<Cube> cubes = reader.getCubes();
+        Cube resultCube = null;
+        for (Cube cube : cubes) {
+            if (cubeName.equals(cube.getName())) {
+                resultCube = cube;
+                break;
+            }
+        }
+        return resultCube;
+    }
+
+    private TupleList productMembersPotScrubbersPotsAndPans(
+            CatalogReader salesCubeCatalogReader)
+    {
+        return new UnaryTupleList(Arrays.asList(
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pot Scrubbers", "Cormorant"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pot Scrubbers", "Denny"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pot Scrubbers", "Red Wing"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Cormorant"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Denny"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "High Quality"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Red Wing"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Sunset"),
+                true)));
     }
 
     /**

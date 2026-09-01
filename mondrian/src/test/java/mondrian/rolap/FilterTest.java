@@ -10,8 +10,6 @@
 package mondrian.rolap;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
-import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -27,7 +25,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -525,9 +522,6 @@ class FilterTest extends BatchTestCase {
   @RolapContextTest(catalog = { CatalogSupplier.class, TestNotInMultiLevelMemberConstraintMixedNullNonNullParentModifier.class },
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   public void  testNotInMultiLevelMemberConstraintMixedNullNonNullParent(Context<?> context) {
-    if ( !isDefaultNullMemberRepresentation(context) ) {
-      return;
-    }
     if ( context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
@@ -729,9 +723,6 @@ class FilterTest extends BatchTestCase {
   @RolapContextTest(catalog = { CatalogSupplier.class, TestNotInMultiLevelMemberConstraintSingleNullParentModifier.class },
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   public void  testNotInMultiLevelMemberConstraintSingleNullParent(Context<?> context) {
-    if ( !isDefaultNullMemberRepresentation(context) ) {
-      return;
-    }
     if ( context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
@@ -1174,7 +1165,7 @@ class FilterTest extends BatchTestCase {
       20,
       "select Filter(CrossJoin([Store].[Store Name].members, "
         + "                        "
-        + hierarchyName( "Store Type", "Store Type" )
+        + "[Store Type].[Store Type]"
         + ".[Store Type].members), "
         + "                        Not IsEmpty([Measures].[Store Sqft])) on rows, "
         + "{[Measures].[Store Sqft]} on columns "

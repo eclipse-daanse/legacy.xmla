@@ -9,6 +9,8 @@
 
 package mondrian.rolap.aggmatcher;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -18,7 +20,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.DbScope;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.rolap.BatchTestCase;
 
@@ -62,12 +63,26 @@ class Checkin_7634Test extends BatchTestCase {
         // test), so this is preserved as a determinism check: the same query
         // against the same config must return the same result twice.
         Result result1 = executeQuery(mdx, connection);
-        String resultString1 = TestUtil.toString(result1);
+        String resultString1 = toString(result1);
 
         Result result2 = executeQuery(mdx, connection);
-        String resultString2 = TestUtil.toString(result2);
+        String resultString2 = toString(result2);
 
         assertEquals(resultString1, resultString2);
     }
 
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

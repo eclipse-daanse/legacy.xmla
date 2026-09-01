@@ -13,16 +13,18 @@
  */
 package org.eclipse.daanse.olap.function.def.udf.nullvalue;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Cell;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class NullValueFunDefTest {
@@ -30,19 +32,25 @@ class NullValueFunDefTest {
     @Test
     void testNullValue(Context<?> context) {
         Connection connection=context.getConnectionWithDefaultRole();
+        MdxAssert.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "NullValue()/NullValue()")
+        .returns("");
+
         String cubeName="Sales";
-        Cell c=  TestUtil.executeExprRaw(connection,cubeName," NullValue()/NullValue() ");
+        Cell c=  executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" NullValue()/NullValue() ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         String s=c.getFormattedValue();
         assertEquals("", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," NullValue()/NullValue() = NULL ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" NullValue()/NullValue() = NULL ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
 
         assertEquals("false", s);
 
         boolean hasException = false;
         try {
-            c = TestUtil.executeExprRaw(connection,cubeName," NullValue() IS NULL ");
+            c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" NullValue() IS NULL ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
             s=c.getFormattedValue();
         } catch (Exception ex) {
             hasException = true;
@@ -51,7 +59,8 @@ class NullValueFunDefTest {
 
         // MDX NULL is represented as Java null in the calc layer; IsEmpty of
         // a NULL-valued expression is therefore true - which matches MSAS.
-        c = TestUtil.executeExprRaw(connection,cubeName," IsEmpty(NullValue()) ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" IsEmpty(NullValue()) ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
 
         assertEquals("true", s);
@@ -62,27 +71,33 @@ class NullValueFunDefTest {
         // s = executeExpr(" IsEmpty(NullValue()/NullValue()) ");
         // assertEquals("false", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," 4 + NullValue() ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" 4 + NullValue() ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
         assertEquals("4", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," NullValue() - 4 ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" NullValue() - 4 ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
         assertEquals("-4", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," 4*NullValue() ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" 4*NullValue() ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
         assertEquals("", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," NullValue()*4 ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" NullValue()*4 ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
         assertEquals("", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," 4/NullValue() ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" 4/NullValue() ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
         assertEquals("Infinity", s);
 
-        c = TestUtil.executeExprRaw(connection,cubeName," NullValue()/4 ");
+        c = executeQuery(connection, "with member [Measures].[Foo] as " + Util.singleQuoteString(" NullValue()/4 ")
+            + " select {[Measures].[Foo]} on columns from " + cubeName).getCell(new int[] { 0 });
         s=c.getFormattedValue();
         assertEquals("", s);
         /*

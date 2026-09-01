@@ -38,7 +38,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
@@ -121,11 +120,10 @@ class CompatibilityTest {
      */
     @Test
     void testReservedWord(Connection connection) {
-    	TestUtil.assertAxisThrows(
-    		connection,
+    	assertThatAxis(connection, "Sales",
             "with member [Measures].ordinal as '1'\n"
-            + " select {[Measures].ordinal} on columns from Sales",
-            "Encountered an error at (or somewhere around) input:1:9", "Sales");
+            + " select {[Measures].ordinal} on columns from Sales")
+            .throwsMessage("Encountered an error at (or somewhere around) input:1:9");
     	assertThatQuery(
     		connection,
             "with member [Measures].[ordinal] as '1'\n"
@@ -319,10 +317,6 @@ class CompatibilityTest {
         assertThatAxis(connection, "Sales", expression).returns(result);
     }
 
-    protected boolean isDefaultNullMemberRepresentation(Context<?> context) {
-        return TestUtil.isDefaultNullMemberRepresentation(context);
-    }
-
     /**
      * Tests that a #null member on a Hiearchy Level of type String can
      * still be looked up when case sensitive is off.
@@ -338,10 +332,6 @@ class CompatibilityTest {
             // types to apply a CAST.
             return;
         }
-        if (!isDefaultNullMemberRepresentation(context)) {
-            return;
-        }
-
         // This test should work irrespective of the case-sensitivity setting.
         //props.CaseSensitive;
 //        discard();
@@ -391,9 +381,6 @@ class CompatibilityTest {
             // order by
             //   CASE WHEN "alt_promotion"."promo_id" IS NULL THEN 1 ELSE 0 END,
             //   "alt_promotion"."promo_id" ASC
-            return;
-        }
-        if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
         final String cubeName = "Sales_inline";

@@ -13,7 +13,6 @@ package mondrian.rolap;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
@@ -70,9 +69,6 @@ class CellKeyTest  {
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "false", type = Boolean.class)
     void testCellLookup(Context<?> context) {
-        if (!isDefaultNullMemberRepresentation(context)) {
-            return;
-        }
         String query =
             "With Set [*NATIVE_CJ_SET] as NonEmptyCrossJoin([Gender].Children, [Address2].Children) "
             + "Select Generate([*NATIVE_CJ_SET], {([Gender].CurrentMember, [Address2].CurrentMember)}) on columns "

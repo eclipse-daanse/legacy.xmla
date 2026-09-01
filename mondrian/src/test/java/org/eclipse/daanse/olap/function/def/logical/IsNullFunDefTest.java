@@ -13,8 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.logical;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
 
 
 import org.eclipse.daanse.olap.api.Context;
@@ -27,9 +27,9 @@ class IsNullFunDefTest {
 
     @Test
     void testIsNull(Context<?> context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Measures.[Profit] IS NULL ", false );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores] IS NULL ", false );
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores].parent IS NULL ", true );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " Measures.[Profit] IS NULL " ).isFalse();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores] IS NULL " ).isFalse();
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores].parent IS NULL " ).isTrue();
     }
 
     @Test

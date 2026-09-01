@@ -32,8 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +54,7 @@ import org.eclipse.daanse.olap.api.cache.CacheCommand;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.Statement;
+import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.execution.ExecutionImpl;
@@ -88,6 +90,7 @@ import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionConnector;
 import org.eclipse.daanse.rolap.mapping.model.olap.dimension.DimensionFactory;
 import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
+import org.eclipse.daanse.rolap.testkit.assertions.Mdx;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
@@ -2065,11 +2068,44 @@ class FastBatchingCellReaderTest extends BatchTestCase {
                         + "Row #0: 79,155\n");
     }
 
+    /**
+     * Executes query1 and query2 and Compares the obtained measure values.
+     */
+    private static void assertQueriesReturnSimilarResults(
+        Connection connection, String query1, String query2)
+    {
+        String resultString1 = toString(Mdx.executeQuery(connection, query1));
+        String resultString2 = toString(Mdx.executeQuery(connection, query2));
+        assertEquals(measureValues(resultString1), measureValues(resultString2));
+    }
+
+    /**
+     * Truncates the query result to return only measure values.
+     */
+    private static String measureValues(String resultString) {
+        int index = resultString.indexOf("}");
+        return index != -1 ? resultString.substring(index) : resultString;
+    }
+
     /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
     public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
         @Override
         public java.util.Map<String, java.net.URL> csvResources() {
             return new FoodmartTestInstance().dataSupplier().csvResources();
         }
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }

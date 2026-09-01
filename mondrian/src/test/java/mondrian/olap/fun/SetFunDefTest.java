@@ -13,7 +13,7 @@
 
 package mondrian.olap.fun;
 
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -49,9 +49,8 @@ class SetFunDefTest {
     }
 
     private void assertQueryFailsInSetValidation(Connection connection, String query) {
-        assertQueryThrows(connection,
-            query,
-            "All arguments to function '{}' "
+        assertThatQuery(connection, query)
+            .throwsMessage("All arguments to function '{}' "
             + "must have same hierarchy");
     }
 }

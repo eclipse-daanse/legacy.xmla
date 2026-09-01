@@ -20,7 +20,6 @@ import static mondrian.olap.fun.FunctionTest.year1997;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import javax.sql.DataSource;
 
@@ -587,11 +586,9 @@ class DescendantsByLevelFunDefTest {
             .returns( "[Time].[Time].[1997].[Q1].[2]" );
 
         // Access beyond the list yields the Null member.
-        if ( isDefaultNullMemberRepresentation(context) ) {
-            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-                "[Time].[1997].Children.Item(6).UniqueName").returns( "[Time].[Time].[#null]" );
-            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-                "[Time].[1997].Children.Item(-1).UniqueName").returns( "[Time].[Time].[#null]" );
-        }
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].Children.Item(6).UniqueName").returns( "[Time].[Time].[#null]" );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Time].[1997].Children.Item(-1).UniqueName").returns( "[Time].[Time].[#null]" );
     }
 }

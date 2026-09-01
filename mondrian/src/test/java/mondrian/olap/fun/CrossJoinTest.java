@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.api.calc.tuple.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.tuple.TupleList;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
 import org.eclipse.daanse.olap.api.execution.ExecutionMetadata;
@@ -54,6 +55,7 @@ import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinIterCalc;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -63,7 +65,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 
 /**
@@ -120,6 +121,65 @@ public class CrossJoinTest {
   protected void afterEach() throws Exception {
   }
 
+  private Cube cubeByName(Connection connection, String cubeName) {
+    CatalogReader reader = connection.getCatalogReader().withLocus();
+    List<Cube> cubes = reader.getCubes();
+    Cube resultCube = null;
+    for (Cube cube : cubes) {
+      if (cubeName.equals(cube.getName())) {
+        resultCube = cube;
+        break;
+      }
+    }
+    return resultCube;
+  }
+
+  private TupleList productMembersPotScrubbersPotsAndPans(
+          CatalogReader salesCubeCatalogReader)
+  {
+      return new UnaryTupleList(Arrays.asList(
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pot Scrubbers", "Cormorant"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pot Scrubbers", "Denny"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pot Scrubbers", "Red Wing"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pots and Pans", "Cormorant"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pots and Pans", "Denny"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pots and Pans", "High Quality"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pots and Pans", "Red Wing"),
+              true),
+          salesCubeCatalogReader.getMemberByUniqueName(
+              IdImpl.toList(
+                  "Product", "All Products", "Non-Consumable", "Household",
+                  "Kitchen Products", "Pots and Pans", "Sunset"),
+              true)));
+  }
+
   ////////////////////////////////////////////////////////////////////////
   // Iterable
   ////////////////////////////////////////////////////////////////////////
@@ -133,12 +193,12 @@ public class CrossJoinTest {
   void testCrossJoinIterCalc_IterationCancellationOnForward(Connection con) {
     // Get product members as TupleList
     RolapCube salesCube =
-      (RolapCube) TestUtil.cubeByName( con, SALES_CUBE );
+      (RolapCube) cubeByName( con, SALES_CUBE );
     CatalogReader salesCubeCatalogReader =
       salesCube.getCatalogReader( con.getRole() )
         .withLocus();
     TupleList productMembers =
-    		TestUtil.productMembersPotScrubbersPotsAndPans( salesCubeCatalogReader );
+    		productMembersPotScrubbersPotsAndPans( salesCubeCatalogReader );
     // Get genders members as TupleList
     Result genders = executeQuery(con, SELECT_GENDER_MEMBERS );
     TupleList genderMembers = getGenderMembers( genders );

@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -145,8 +144,7 @@ class RolapCatalogReaderTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, Reg1AccessRoleModifier.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testGetCubeDimensions(@Roles("REG1") Connection connection) {
-        final String timeWeekly =
-            hierarchyName("Time", "Weekly");
+        final String timeWeekly = "[Time].[Weekly]";
 
         CatalogReader reader = connection.getCatalogReader().withLocus();
         final Map<String, org.eclipse.daanse.olap.api.element.Cube> cubes = new HashMap<>();

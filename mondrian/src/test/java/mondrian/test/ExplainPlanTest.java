@@ -12,11 +12,9 @@
 */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertStubbedEqualsVerbose;
-import static org.opencube.junit5.TestUtil.checkThrowable;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
@@ -97,7 +96,7 @@ mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarc
         org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc(type=NUMERIC, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
 
 		""";
-	assertStubbedEqualsVerbose( expected, s );
+	assertEquals(stubAnonymousClasses(expected), stubAnonymousClasses(s));
     //Util.setLevel( RolapUtil.PROFILE_LOGGER, originalLevel );
   }
 
@@ -157,7 +156,7 @@ mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarc
 				        org.eclipse.daanse.olap.calc.base.constant.ConstantHierarchyCalc(type=HierarchyType<hierarchy=[Marital Status]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
 
 				""";
-		assertStubbedEqualsVerbose(expected, s);
+		assertEquals(stubAnonymousClasses(expected), stubAnonymousClasses(s));
 
 		// Plan after execution, including profiling.
 		final ArrayList<String> strings = new ArrayList<>();
@@ -186,7 +185,7 @@ mondrian.olap.fun.FilterFunDef$MutableIterCalc(type=SetType<MemberType<member=[P
                 org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=nnn)
         org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc(type=NUMERIC, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=nnn)
         """;
-		assertStubbedEqualsVerbose(expected, actual);
+		assertEquals(stubAnonymousClasses(expected), stubAnonymousClasses(actual));
 
 		assertTrue(strings.get(1).contains("FilterFunDef invoked 6 times for total of"), strings.get(1));
 
@@ -201,7 +200,7 @@ mondrian.olap.fun.SetFunDef$SetListCalc(type=SetType<MemberType<member=[Measures
         org.eclipse.daanse.olap.calc.base.type.tuple.MemberCalcToTupleCalc(type=MemberType<member=[Measures].[Store Margin]>, resultStyle=VALUE, callCount=0, callMillis=nnn)
             org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Store Margin]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=nnn)
 				""";
-		assertStubbedEqualsVerbose(expected2, actual);
+		assertEquals(stubAnonymousClasses(expected2), stubAnonymousClasses(actual));
 
 		actual = strings.get(4).replaceAll("callMillis=[0-9]+", "callMillis=nnn").replaceAll("[0-9]+ms", "nnnms");
 		String expected3 = """
@@ -211,10 +210,10 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     mondrian.olap.fun.BuiltinFunTable$22$1(type=SetType<MemberType<hierarchy=[Marital Status]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=nnn)
         org.eclipse.daanse.olap.calc.base.constant.ConstantHierarchyCalc(type=HierarchyType<hierarchy=[Marital Status]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=nnn)
 				""";
-		assertStubbedEqualsVerbose(expected3, actual);
+		assertEquals(stubAnonymousClasses(expected3), stubAnonymousClasses(actual));
 
 		actual = strings.get(6).replaceAll("callMillis=[0-9]+", "callMillis=nnn").replaceAll("[0-9]+ms", "nnnms");
-		assertStubbedEqualsVerbose("QueryBody:\n", actual);
+		assertEquals(stubAnonymousClasses("QueryBody:\n"), stubAnonymousClasses(actual));
 
 		assertTrue(strings.get(3).contains("SqlStatement-SqlTupleReader.readTuples [[Product].[Product "
 				+ "Category]] invoked 1 times for total of "), strings.get(3));
@@ -224,16 +223,10 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
   @Test
   void testExplainInvalid(Context<?> context) throws SQLException {
     Connection connection = context.getConnectionWithDefaultRole();
-    final Statement statement = connection.createStatement();
-    try {
-      final ResultSet resultSet =
-          statement.executeQuery( "select\n" + "  {[Measures].[Unit Sales], [Measures].[Store Margin]} on 0,\n"
-              + "  [Hi Val Products] * [Marital Status].Members on 1\n" + "from [Sales]\n" + "where [Gender].[F]",
-              Optional.empty(), null );
-      fail( "expected error, got " + resultSet );
-    } catch ( Exception e ) {
-      checkThrowable( e, "MDX object '[Measures].[Store Margin]' not found in cube 'Sales'" );
-    }
+    assertThatQuery(connection,
+        "select\n" + "  {[Measures].[Unit Sales], [Measures].[Store Margin]} on 0,\n"
+            + "  [Hi Val Products] * [Marital Status].Members on 1\n" + "from [Sales]\n" + "where [Gender].[F]")
+        .throwsMessage("MDX object '[Measures].[Store Margin]' not found in cube 'Sales'");
   }
 
   /**
@@ -424,5 +417,33 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     CellSet cellSet = statement.executeQuery( mdx );
     cellSet.close();
     return strings;
+  }
+
+  /**
+   * Replaces anonymous class names (/\$\d+/) with a stub "$-anonymous-class-" in constructions
+   * "class&nbsp;mondrian.rest.package.name.ClassName$InnerClassNames". <br/> e.g. <br/>
+   * <code>stubAnonymousClasses("class mondrian.fun.Fun$21$1")</code>
+   * results
+   * <code>
+   * "class mondrian.fun.Fun$-anonymous-class-$-anonymous-class-"
+   * </code>.
+   * <br/> Within a Strings comparison <br/> applying this to both compared <code>String</code>s makes the comparison
+   * independent on anonymous class names.
+   * </br>
+   */
+  private static String stubAnonymousClasses( String str ) {
+    if ( !str.contains( "$" ) ) {
+      return str;
+    }
+    final String regex =
+        "(class mondrian(?:\\.\\w+)*(?:\\$(?:\\w+|-anonymous-class-))*?)(?:\\$\\d+)\\b";
+    final String replacement = "$1\\$-anonymous-class-";
+    Pattern p = Pattern.compile( regex );
+    String str1 = p.matcher( str ).replaceAll( replacement );
+    while ( !str.equals( str1 ) ) {
+      str = str1;
+      str1 = p.matcher( str ).replaceAll( replacement );
+    }
+    return str1;
   }
 }

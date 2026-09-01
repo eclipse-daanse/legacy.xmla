@@ -13,12 +13,13 @@
  */
 package org.eclipse.daanse.olap.function.def.numeric.ordinal;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.executeExprRaw;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Cell;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,18 @@ class OrdinalFunDefTest {
         //  getContext().withCube( "Sales Ragged" );
         Connection connection = context.getConnectionWithDefaultRole();
         Cell cell =
-            executeExprRaw(connection, "Sales Ragged",
-                "[Store].[All Stores].[Vatican].ordinal" );
+            executeQuery(connection, "with member [Measures].[Foo] as "
+                + Util.singleQuoteString("[Store].[All Stores].[Vatican].ordinal")
+                + " select {[Measures].[Foo]} on columns from [Sales Ragged]")
+                .getCell(new int[] { 0 });
         assertEquals(
             1,
             ( (Number) cell.getValue() ).intValue(), "Vatican is at level 1.");
 
-        cell = executeExprRaw(connection, "Sales Ragged",
-            "[Store].[All Stores].[USA].[Washington].ordinal" );
+        cell = executeQuery(connection, "with member [Measures].[Foo] as "
+                + Util.singleQuoteString("[Store].[All Stores].[USA].[Washington].ordinal")
+                + " select {[Measures].[Foo]} on columns from [Sales Ragged]")
+                .getCell(new int[] { 0 });
         assertEquals(
             3,
             ( (Number) cell.getValue() ).intValue(), "Washington is at level 3.");

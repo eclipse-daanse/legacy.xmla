@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.databaseIsValid;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -43,9 +42,11 @@ import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Catalog;
+import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.olap.common.Util;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsDatabaseSupplier;
@@ -57,7 +58,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -84,12 +84,26 @@ class SteelWheelsSchemaTest {
     public void afterEach() {
     }
 
+    private static boolean databaseIsValid(Connection connection, String cubeName) {
+        try {
+            if ( cubeName.indexOf( ' ' ) >= 0 ) {
+                cubeName = Util.quoteMdxIdentifier( cubeName );
+            }
+            Query query = connection.parseQuery( "select from " + cubeName );
+            Result result = connection.execute( query );
+            connection.close();
+            return true;
+        } catch ( RuntimeException e ) {
+            return false;
+        }
+    }
+
     /**
      * Sanity check, that enumerates the Measures dimension.
      */
     @Test
     void testMeasures(Context<?> context) {
-        if (!TestUtil.databaseIsValid(context.getConnectionWithDefaultRole(), "Sales")) {
+        if (!databaseIsValid(context.getConnectionWithDefaultRole(), "Sales")) {
             return;
         }
         assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",

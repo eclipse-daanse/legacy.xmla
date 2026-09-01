@@ -15,7 +15,6 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertSqlEqualsIgnoreFormatting;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.result.RolapCell;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
@@ -118,7 +118,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 21588;
 
-    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
+    SqlAssert.assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @Test
@@ -195,7 +195,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 21588;
 
-    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
+    SqlAssert.assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @Test
@@ -283,7 +283,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 7;
 
-    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
+    SqlAssert.assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @Test
@@ -329,7 +329,7 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 25;
 
-    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
+    SqlAssert.assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 
   @Test
@@ -398,6 +398,6 @@ class DrillThroughFieldListTest {
     String actual = rCell.getDrillThroughSQL(attributes, true);
     int expectedRowsNumber = 42831;
 
-    assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
+    SqlAssert.assertSqlEqualsIgnoreFormatting(connection, expectedSql, actual, expectedRowsNumber);
   }
 }

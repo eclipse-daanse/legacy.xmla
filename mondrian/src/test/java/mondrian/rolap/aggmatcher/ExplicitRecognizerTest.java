@@ -9,9 +9,9 @@
 */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.poc.SqlAssert.mysqlPattern;
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opencube.junit5.TestUtil;
 
 /**
  * Each test method builds its own FoodMart-based "ExtraCol" cube with a

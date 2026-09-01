@@ -13,8 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.member;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -123,9 +123,9 @@ class AncestorsFunDefTest {
                 + "{[Measures].[Depth]}\n"
                 + "Row #0: 7\n" );
         // test depth argument not a level
-        assertAxisThrows(connection,
-            "Ancestors([Store].[USA].[CA].[Los Angeles],[Store])",
-            "Error while executing query", "Sales");
+        assertThatAxis(connection, "Sales",
+            "Ancestors([Store].[USA].[CA].[Los Angeles],[Store])")
+            .throwsMessage("Error while executing query");
     }
 
 }

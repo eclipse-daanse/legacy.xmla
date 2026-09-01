@@ -15,7 +15,6 @@ package org.eclipse.daanse.olap.function.def.member.cousin;
 
 import static org.eclipse.daanse.olap.exceptions.CousinHierarchyMismatchException.cousinHierarchyMismatch;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
 
 import java.text.MessageFormat;
 
@@ -74,11 +73,11 @@ class CousinFunDefTest {
 
     @Test
     void testCousinWrongHierarchy(Context<?> context) {
-        assertAxisThrows(context.getConnectionWithDefaultRole(),
-            "Cousin([Time].[1997], [Gender].[M])",
-            MessageFormat.format(cousinHierarchyMismatch,
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
+            "Cousin([Time].[1997], [Gender].[M])")
+            .throwsMessage(MessageFormat.format(cousinHierarchyMismatch,
                 "[Time].[Time].[1997]",
-                "[Gender].[Gender].[M]" ), "Sales" );
+                "[Gender].[Gender].[M]" ));
     }
 
 }

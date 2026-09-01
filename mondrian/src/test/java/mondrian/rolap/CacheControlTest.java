@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.flushCache;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -35,6 +34,7 @@ import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.common.CacheControlImpl;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -395,7 +395,7 @@ class CacheControlTest {
             return;
         }
 
-        flushCache(connection);
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
 
         // Execute a query, to bring data into the cache.
         standardQuery(connection);
@@ -432,7 +432,7 @@ class CacheControlTest {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        flushCache(connection);
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
 
         // Execute a query.
         StringWriter sw = new StringWriter();
@@ -510,7 +510,7 @@ class CacheControlTest {
         final CellRegion regionM =
             createCellRegionMale(connection, cacheControl);
 
-        flushCache(connection);
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
 
         executeQuery(connection,
             "select {[Measures].[Unit Sales]} on columns, {[Gender].[M]} on rows from [Sales]");
@@ -537,7 +537,7 @@ class CacheControlTest {
         }
 
         Connection connection = context.getConnectionWithDefaultRole();
-        flushCache(connection);
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
 
         // Execute a query.
         StringWriter sw = new StringWriter();
@@ -1175,7 +1175,7 @@ class CacheControlTest {
     @Test
     void testFlushNonPrimedContent(Context<?> context) throws Exception {
         Connection connection = context.getConnectionWithDefaultRole();
-        flushCache(connection);
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
         final CacheControl cacheControl = connection.getCacheControl(null);
         final Cube cube =
             connection
@@ -1198,7 +1198,7 @@ class CacheControlTest {
             + "NON EMPTY {[Store].[All Stores].Children} ON ROWS \n"
             + "from [Sales] \n";
         Connection connection = context.getConnectionWithDefaultRole();
-        flushCache(connection);
+        FlushSchemaCacheModifier.flushSchemaCache(connection);
 
         assertThatQuery(connection, query).returnsGrid(
             "Axis #0:\n"

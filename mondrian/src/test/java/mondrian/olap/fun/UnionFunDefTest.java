@@ -9,7 +9,6 @@
 package mondrian.olap.fun;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -59,7 +58,7 @@ class UnionFunDefTest {
         + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[Partial College], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[Partial High School], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, "Sales", tupleSet, expected);
+    assertThatAxis(connection, "Sales", tupleSet).returns(expected);
 
     assertThatAxis(connection, "Sales", "Union( " + tupleSet + ", " + tupleSet + ")").returns(expected);
   }

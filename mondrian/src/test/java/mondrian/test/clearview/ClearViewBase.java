@@ -13,11 +13,14 @@
 
 package mondrian.test.clearview;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
@@ -26,7 +29,6 @@ import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
@@ -133,7 +135,7 @@ import mondrian.test.SqlPattern;
             // @RolapConfig, to match the way we configure it for ClearView.
 
             String mdx = diffRepos.expand(null, "${mdx}");
-            String result = Util.NL + TestUtil.toString(
+            String result = Util.NL + toString(
                     executeQuery(mdx, context.getConnectionWithDefaultRole()));
             diffRepos.assertEquals("result", "${result}", result);
     }
@@ -189,5 +191,19 @@ import mondrian.test.SqlPattern;
 
     protected String getName() {
         return this.name;
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }

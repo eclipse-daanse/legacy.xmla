@@ -14,7 +14,6 @@
 package org.eclipse.daanse.olap.function.def.uniquename.member;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -35,11 +34,9 @@ class UniqueNameFunDefTest {
 
     @Test
     void testMemberUniqueNameOfNull(Context<?> context) {
-        if ( isDefaultNullMemberRepresentation(context) ) {
-            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-                "[Measures].[Unit Sales].FirstChild.UniqueName")
-                .returns( "[Measures].[#null]" ); // MSOLAP gives "" here
-        }
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Measures].[Unit Sales].FirstChild.UniqueName")
+            .returns( "[Measures].[#null]" ); // MSOLAP gives "" here
     }
 
 }

@@ -10,14 +10,16 @@
 package mondrian.test;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.NativeVerify.assertSameNativeAndNot;
-import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
 
@@ -34,6 +36,7 @@ import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.Mdx;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
@@ -2121,4 +2124,37 @@ class NativeSetEvaluationTest extends BatchTestCase {
         + "{ [Customers].[Name].members})").throwsMessage(
       "exceeded limit (400)");
   }
+
+  /**
+   * Executes query1 and query2 and Compares the obtained measure values.
+   */
+  private static void assertQueriesReturnSimilarResults(
+      Connection connection, String query1, String query2)
+  {
+      String resultString1 = toString(Mdx.executeQuery(connection, query1));
+      String resultString2 = toString(Mdx.executeQuery(connection, query2));
+      assertEquals(measureValues(resultString1), measureValues(resultString2));
+  }
+
+  /**
+   * Truncates the query result to return only measure values.
+   */
+  private static String measureValues(String resultString) {
+      int index = resultString.indexOf("}");
+      return index != -1 ? resultString.substring(index) : resultString;
+  }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

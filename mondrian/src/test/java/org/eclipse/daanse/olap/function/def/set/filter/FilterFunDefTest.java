@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.executeAxis;
 
 import java.net.URL;
 import java.util.List;
@@ -131,11 +130,12 @@ class FilterFunDefTest {
         database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testFilterWillTimeout(Context<?> context) {
         try {
-            executeAxis(context.getConnectionWithDefaultRole(), "Sales",
-                "Filter("
+            executeQuery(context.getConnectionWithDefaultRole(), "select {"
+                + "Filter("
                     + "Filter(CrossJoin([Customers].[Name].members, [Product].[Product Name].members), SleepUdf([Measures]"
                     + ".[Unit Sales]) > 0),"
-                    + " SleepUdf([Measures].[Sales Count]) > 5) " );
+                    + " SleepUdf([Measures].[Sales Count]) > 5) "
+                + "} on columns from Sales" );
         } catch ( QueryTimeoutException e ) {
             return;
         }

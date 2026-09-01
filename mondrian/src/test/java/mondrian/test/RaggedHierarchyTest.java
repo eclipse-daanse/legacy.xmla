@@ -12,8 +12,8 @@ package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
 
 import java.net.URL;
 import java.util.Map;
@@ -49,7 +49,7 @@ class RaggedHierarchyTest {
 
     private void assertRaggedReturns(Connection connection, String expression, String expected) {
         //getTestContext().withCube("[Sales Ragged]")
-        assertAxisReturns(connection, "[Sales Ragged]", expression, expected);
+        assertThatAxis(connection, "Sales Ragged", expression).returns(expected);
     }
 
     // ~ The tests ------------------------------------------------------------

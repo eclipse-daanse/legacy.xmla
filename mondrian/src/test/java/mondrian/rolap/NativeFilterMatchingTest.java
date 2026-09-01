@@ -14,6 +14,8 @@ import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
@@ -68,7 +70,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.opencube.junit5.EmfUtil;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -210,7 +211,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             query).bypassSchemaCache().clearCacheFirst().expectSql(patterns).verify();
 
         final Result result = executeQuery(query, context.getConnectionWithDefaultRole());
-        final String resultString = TestUtil.toString(result);
+        final String resultString = toString(result);
         assertFalse(resultString.contains("Jeanne"));
         NativeVerify.assertSameNativeAndNot(context, query, null);
     }
@@ -911,5 +912,19 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Axis #1:\n"
             + "{[Measures].[avgQtrs]}\n"
             + "Row #0: 1,281\n");
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }
