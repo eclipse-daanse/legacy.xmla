@@ -10,20 +10,18 @@
 package mondrian.test;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
-import static org.opencube.junit5.TestUtil.getCubeByNameFromArray;
-import static org.opencube.junit5.TestUtil.getDimensionByNameFromArray;
-import static org.opencube.junit5.TestUtil.getHierarchyByNameFromArray;
-import static org.opencube.junit5.TestUtil.getLevelByNameFromArray;
-import static org.opencube.junit5.TestUtil.hierarchyName;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.daanse.cwm.testkit.api.DataSupplier;
 import org.eclipse.daanse.olap.api.Context;
@@ -43,7 +41,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -104,10 +101,26 @@ class Ssas2005CompatibilityTest {
     public void afterEach() {
     }
 
+    private static Optional<Cube> getCubeByNameFromArray(List<Cube> cubes, String name) {
+        return cubes.stream().filter(c -> name.equals(c.getName())).findFirst();
+    }
+
+    private static Optional<? extends Dimension> getDimensionByNameFromArray(List<? extends Dimension> dimensions, String name) {
+        return dimensions.stream().filter(d -> name.equals(d.getName())).findFirst();
+    }
+
+    private static Optional<? extends Hierarchy> getHierarchyByNameFromArray(List<? extends Hierarchy> hierarchies, String name) {
+        return hierarchies.stream().filter(h -> name.equals(h.getName())).findFirst();
+    }
+
+    private static Optional<? extends Level> getLevelByNameFromArray(List<? extends Level> hierarchies, String name) {
+        return hierarchies.stream().filter(l -> name.equals(l.getName())).findFirst();
+    }
+
     private void runQ(Context<?> context, String s) {
         context.getCatalogCache().clear();
         Result result = executeQuery(context.getConnectionWithDefaultRole(), s);
-        TestUtil.toString(result);
+        toString(result);
 //        discard();
     }
 
@@ -366,10 +379,9 @@ class Ssas2005CompatibilityTest {
         //   Query (1, 8) The 'Product' dimension contains more than
         //   one hierarchy, therefore the hierarchy must be explicitly
         //   specified.
-        TestUtil.assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Product].Members on 0\n"
-            + "from [Warehouse and Sales]",
-            "It may contains more than one hierarchy. Specify the hierarchy explicitly.");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Product].Members on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("It may contains more than one hierarchy. Specify the hierarchy explicitly.");
     }
 
     /**
@@ -396,9 +408,8 @@ class Ssas2005CompatibilityTest {
             + " WHERE ([Measures].[ProfitPercent])";
         //if (SystemWideProperties.instance().SsasCompatibleNaming) {
         if (true) {
-            assertQueryThrows(context.getConnectionWithDefaultRole(),
-                mdx,
-                "Hierarchy for calculated member '[Time].[First Half 97]' not found");
+            assertThatQuery(context.getConnectionWithDefaultRole(), mdx)
+                .throwsMessage("Hierarchy for calculated member '[Time].[First Half 97]' not found");
         } else {
             assertThatQuery(context.getConnectionWithDefaultRole(),
                 mdx).returnsGrid(
@@ -532,10 +543,9 @@ class Ssas2005CompatibilityTest {
         //    Query (1, 8) The 'Time' dimension contains more than one
         //    hierarchy, therefore the hierarchy must be explicitly
         //    specified.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Time].Members on 0\n"
-            + "from [Warehouse and Sales]",
-            "It may contains more than one hierarchy. Specify the hierarchy explicitly.");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Time].Members on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("It may contains more than one hierarchy. Specify the hierarchy explicitly.");
     }
 
     @Disabled //TODO need investigate
@@ -564,18 +574,15 @@ class Ssas2005CompatibilityTest {
             "The 'Product' dimension contains more than one hierarchy, "
             + "therefore the hierarchy must be explicitly specified.";
         Connection connection = context.getConnectionWithDefaultRole();
-        assertQueryThrows(connection,
-            "select [Product].CurrentMember on 0\n"
-            + "from [Warehouse and Sales]",
-            expectedException);
-        assertQueryThrows(connection,
-            "select [Product].DefaultMember on 0\n"
-            + "from [Warehouse and Sales]",
-            expectedException);
-        assertQueryThrows(connection,
-            "select [Product].AllMembers on 0\n"
-            + "from [Warehouse and Sales]",
-            expectedException);
+        assertThatQuery(connection, "select [Product].CurrentMember on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage(expectedException);
+        assertThatQuery(connection, "select [Product].DefaultMember on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage(expectedException);
+        assertThatQuery(connection, "select [Product].AllMembers on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage(expectedException);
 
         // The following are OK because Dimensions(<n>) returns a hierarchy.
         final String expectedResult =
@@ -618,10 +625,9 @@ class Ssas2005CompatibilityTest {
         //   Query (1, 8) The 'Product' dimension contains more than
         //   one hierarchy, therefore the hierarchy must be explicitly
         //   specified.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select Ascendants([Product]) on 0\n"
-            + "from [Warehouse and Sales]",
-            "It may contains more than one hierarchy. Specify the hierarchy explicitly");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select Ascendants([Product]) on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("It may contains more than one hierarchy. Specify the hierarchy explicitly");
         // Works for [Store], which has only one hierarchy.
         // TODO: check SSAS
         assertThatQuery(context.getConnectionWithDefaultRole(),
@@ -654,10 +660,9 @@ class Ssas2005CompatibilityTest {
         // SSAS2005 gives error:
         //   Parser: The statement dialect could not be resolved due
         //   to ambiguity.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Time].Members\n"
-            + "from [Warehouse and Sales]",
-            "Encountered an error at (or somewhere around) input:2:6");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Time].Members\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Encountered an error at (or somewhere around) input:2:6");
     }
 
     @Test
@@ -1011,10 +1016,9 @@ class Ssas2005CompatibilityTest {
         //   Query (1, 8) The dimension '[Time.Time2.Quarter]' was not
         //   found in the cube when the string, [Time.Time2.Quarter],
         //   was parsed.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Time.Time2.Quarter].Members on 0\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Time.Time2.Quarter]' not found in cube 'Warehouse and Sales'");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Time.Time2.Quarter].Members on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Time.Time2.Quarter]' not found in cube 'Warehouse and Sales'");
     }
 
     @Test
@@ -1024,10 +1028,9 @@ class Ssas2005CompatibilityTest {
         //  Query (1, 9) The dimension '[Time.Time By Week55]' was not
         //  found in the cube when the string, [Time.Time By Week55],
         //  was parsed.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select {[Time.Time By Week55].Members} on 0\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Time.Time By Week55]' not found in cube 'Warehouse and Sales'");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select {[Time.Time By Week55].Members} on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Time.Time By Week55]' not found in cube 'Warehouse and Sales'");
     }
 
     @Test
@@ -1035,10 +1038,9 @@ class Ssas2005CompatibilityTest {
         // [dimension.dimension] is invalid.  SSAS2005 gives similar
         // error to above.  (The Time dimension has hierarchies called
         // [Time2] and [Time By Day]. but no hierarchy [Time].)
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select {[Time.Time].Members} on 0\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Time.Time]' not found in cube 'Warehouse and Sales'");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select {[Time.Time].Members} on 0\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Time.Time]' not found in cube 'Warehouse and Sales'");
     }
 
     @Test
@@ -1089,11 +1091,10 @@ class Ssas2005CompatibilityTest {
         //   select [Products] on 0,
         //     [Products] on 1
         //   from [Warehouse and Sales]
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select {[Products]} on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select {[Products]} on 0,\n"
             + "  {[Products]} on 1\n"
-            + "from [Warehouse and Sales]",
-            "Hierarchy '[Product].[Products]' appears in more than one independent axis.");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Hierarchy '[Product].[Products]' appears in more than one independent axis.");
     }
 
     @Test
@@ -1315,11 +1316,10 @@ class Ssas2005CompatibilityTest {
     @Test
     void testCompoundKeySyntaxError(Context<?> context) {
         // without [] fails on SSAS (syntax error because a number)
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0,\n"
             + "[Product].[Products].[Brand Name].&43&[Walrus] on 1\n"
-            + "from [Warehouse and Sales]",
-            "Encountered an error at (or somewhere around) input:2:35");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Encountered an error at (or somewhere around) input:2:35");
     }
 
     @Disabled //TODO need investigate
@@ -1331,25 +1331,22 @@ class Ssas2005CompatibilityTest {
         //    return;
         //}
         // too few values in key
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0,\n"
             + "[Product].[Products].[Brand Name].&[43]&Walrus&Foo on 1\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Product].[Products].[Brand Name].[43].Walrus.Foo' not found in cube 'Warehouse and Sales'.");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Product].[Products].[Brand Name].[43].Walrus.Foo' not found in cube 'Warehouse and Sales'.");
 
         // too few values in key
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0,\n"
             + "[Time].[Time2].[Quarter].&Q3 on 1\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Time].[Time2].[Quarter].&Q3' not found in cube 'Warehouse and Sales'.");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Time].[Time2].[Quarter].&Q3' not found in cube 'Warehouse and Sales'.");
 
         // too many values in key
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0,\n"
             + "[Time].[Time2].[Quarter].&Q3&[1997]&ABC on 1\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Time].[Time2].[Quarter].&Q3&[1997]&ABC' not found in cube 'Warehouse and Sales'.");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Time].[Time2].[Quarter].&Q3&[1997]&ABC' not found in cube 'Warehouse and Sales'.");
     }
 
     @Disabled //TODO need investigate
@@ -1388,7 +1385,7 @@ class Ssas2005CompatibilityTest {
     void testNameAfterKey(Context<?> context) {
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
-            + hierarchyName("Store", "Stores")
+            + "[Store].[Stores]"
             + ".[Store State].&CA.[San Francisco].[Store 14] on 1\n"
             + "from [Warehouse and Sales]").returnsGrid(
             "Axis #0:\n"
@@ -1397,7 +1394,7 @@ class Ssas2005CompatibilityTest {
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
             + "{"
-            + hierarchyName("Store", "Stores")
+            + "[Store].[Stores]"
             + ".[USA].[CA].[San Francisco].[Store 14]}\n"
             + "Row #0: 2,117\n");
     }
@@ -1438,11 +1435,10 @@ class Ssas2005CompatibilityTest {
         assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
                 "[Customer].Level.Name").returns(
                 "(All)");
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0,\n"
             + "[Customer].[(All)].&All on 1\n"
-            + "from [Warehouse and Sales]",
-            "Wrong number of values in member key; &All has 1 values, whereas level's key has 0 columns [].");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Wrong number of values in member key; &All has 1 values, whereas level's key has 0 columns [].");
     }
 
     @Disabled //TODO need investigate
@@ -1453,9 +1449,9 @@ class Ssas2005CompatibilityTest {
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
         //}
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Warehouse and Sales]",
-                "[Store].[Stores].[Store City].&[San Francisco]&CA.Parent",
-                "[Store].[Stores].[USA].[CA]");
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
+                "[Store].[Stores].[Store City].&[San Francisco]&CA.Parent")
+                .returns("[Store].[Stores].[USA].[CA]");
     }
 
     @Test
@@ -1524,11 +1520,10 @@ class Ssas2005CompatibilityTest {
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n");
 
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0,\n"
             + "[Time].[Time2].[Quarter].&Q5&[1997] on 1\n"
-            + "from [Warehouse and Sales]",
-            "MDX object '[Time].[Time2].[Quarter].&Q5&[1997]' not found in cube 'Warehouse and Sales'");
+            + "from [Warehouse and Sales]")
+            .throwsMessage("MDX object '[Time].[Time2].[Quarter].&Q5&[1997]' not found in cube 'Warehouse and Sales'");
     }
 
     @Test
@@ -1562,11 +1557,10 @@ class Ssas2005CompatibilityTest {
         // SSAS gives error:
         //   Query (1, 8) Axis numbers specified in a query must be sequentially
         //   specified, and cannot contain gaps.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 1,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 1,\n"
             + "[Product].[Products].Children on 2\n"
-            + "from [Warehouse and Sales]",
-            "Axis numbers specified in a query must be sequentially "
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Axis numbers specified in a query must be sequentially "
             + "specified, and cannot contain gaps. Axis 0 (COLUMNS) is missing.");
     }
 
@@ -1596,28 +1590,25 @@ class Ssas2005CompatibilityTest {
         // axes(n) is not an acceptable alternative to axis(n)
         // SSAS gives:
         //   Query (1, 35) Parser: The syntax for 'axes' is incorrect.
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on axes(0)\n"
-            + "from [Warehouse and Sales]",
-            "Found string \"axes\" of type ID");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on axes(0)\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Found string \"axes\" of type ID");
     }
 
     @Test
     void testOnExpression(Context<?> context) {
         // SSAS gives syntax error
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0 + 1\n"
-            + "from [Warehouse and Sales]",
-            "Encountered an error at (or somewhere around) input:1:37");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0 + 1\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Encountered an error at (or somewhere around) input:1:37");
     }
 
     @Test
     void testOnFractionFails(Context<?> context) {
         // SSAS gives syntax error
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select [Measures].[Unit Sales] on 0.4\n"
-            + "from [Warehouse and Sales]",
-            "Found string \"0.4\" of type DECIMAL_NUMERIC_LITERAL");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select [Measures].[Unit Sales] on 0.4\n"
+            + "from [Warehouse and Sales]")
+            .throwsMessage("Found string \"0.4\" of type DECIMAL_NUMERIC_LITERAL");
     }
 
     @Test
@@ -1680,13 +1671,12 @@ class Ssas2005CompatibilityTest {
         if (!AXIS_IMPL) {
             return;
         }
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "WITH MEMBER MEASURES.AXISDEMO AS\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "WITH MEMBER MEASURES.AXISDEMO AS\n"
             + "  SUM(AXIS(1), [Measures].CurrentMember)\n"
             + "SELECT {[Measures].[Store Sales],MEASURES.AXISDEMO} ON 0,\n"
             + "{Filter([Time].[Time by Week].Members, Measures.AxisDemo > 0)} ON 1\n"
-            + "FROM [Warehouse and Sales]",
-            "xxx");
+            + "FROM [Warehouse and Sales]")
+            .throwsMessage("xxx");
     }
 
     @Test
@@ -1698,13 +1688,12 @@ class Ssas2005CompatibilityTest {
         if (!AXIS_IMPL) {
             return;
         }
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "WITH MEMBER MEASURES.AXISDEMO AS\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "WITH MEMBER MEASURES.AXISDEMO AS\n"
             + "  SUM(AXIS(0), [Measures].CurrentMember)\n"
             + "SELECT {[Measures].[Store Sales],MEASURES.AXISDEMO} ON 1,\n"
             + "{Filter([Time].[Time by Week].Members, Measures.AxisDemo > 0)} ON 0\n"
-            + "FROM [Warehouse and Sales]",
-            "xxx");
+            + "FROM [Warehouse and Sales]")
+            .throwsMessage("xxx");
     }
 
     @Test
@@ -1737,11 +1726,10 @@ class Ssas2005CompatibilityTest {
         if (!AXIS_IMPL) {
             return;
         }
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "SELECT [Measures].[Store Sales] ON 1,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "SELECT [Measures].[Store Sales] ON 1,\n"
             + "{Filter([Time].[Time by Week].Members, SUM(AXIS(0), [Measures].CurrentMember) > 0)} ON 0\n"
-            + "FROM [Warehouse and Sales]",
-            "xxx cyclic something");
+            + "FROM [Warehouse and Sales]")
+            .throwsMessage("xxx cyclic something");
     }
 
     @Test
@@ -1807,11 +1795,10 @@ class Ssas2005CompatibilityTest {
             "[SameName].[SameName].[SameName]",
             member.getUniqueName());
 
-        assertQueryThrows(context.getConnectionWithDefaultRole(),
-            "select {"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select {"
             + "[SameName].[SameName].[SameName]"
-            + "} on 0 from Sales",
-            "Mondrian Error:No function matches signature '{<Level>}'");
+            + "} on 0 from Sales")
+            .throwsMessage("Mondrian Error:No function matches signature '{<Level>}'");
 
             assertThatQuery(context.getConnectionWithDefaultRole(),
                 "select {[SameName].[SameName].[SameName].[SameName]} on 0 from Sales").returnsGrid(
@@ -1844,14 +1831,14 @@ class Ssas2005CompatibilityTest {
                 + "    </Hierarchy>\n"
                 + "  </Dimension>\n"));
     	 */
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "head(\n"
             + "  filter(\n"
             + "    [Customer Last Name].[Last Name].Members,"
             + "    Left([Customer Last Name].[Last Name].CurrentMember.Name, "
             + "1) = \"M\"),\n"
-            + "  10)",
-            "[Customer Last Name].[Mabe]\n"
+            + "  10)")
+            .returns("[Customer Last Name].[Mabe]\n"
             + "[Customer Last Name].[Macaluso]\n"
             + "[Customer Last Name].[MacBride]\n"
             + "[Customer Last Name].[Maccietto]\n"
@@ -1862,15 +1849,15 @@ class Ssas2005CompatibilityTest {
             + "[Customer Last Name].[Mackin]\n"
             + "[Customer Last Name].[Maddalena]");
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
+        assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "order(\n"
             + "  head(\n"
             + "    filter(\n"
             + "      [Customer Last Name].[Last Name].Members,"
             + "      Left([Customer Last Name].[Last Name].CurrentMember.Name, 1) = \"M\"),\n"
             + "  10),\n"
-            + " [Customer Last Name].[Last Name].CurrentMember.Name)",
-            "[Customer Last Name].[Mabe]\n"
+            + " [Customer Last Name].[Last Name].CurrentMember.Name)")
+            .returns("[Customer Last Name].[Mabe]\n"
             + "[Customer Last Name].[Macaluso]\n"
             + "[Customer Last Name].[MacBride]\n"
             + "[Customer Last Name].[Maccietto]\n"
@@ -1891,8 +1878,7 @@ class Ssas2005CompatibilityTest {
         database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRootMembers(Context<?> context) {
         // for member defined in the database
-        final String timeByWeek =
-            hierarchyName("Time", "Time By Week");
+        final String timeByWeek = "[Time].[Time By Week]";
         assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
             "[Time].[1997].Level.UniqueName").returns(timeByWeek + ".[Year2]");
 
@@ -1912,4 +1898,18 @@ class Ssas2005CompatibilityTest {
             + "Row #0: 332,621\n");
     }
 
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

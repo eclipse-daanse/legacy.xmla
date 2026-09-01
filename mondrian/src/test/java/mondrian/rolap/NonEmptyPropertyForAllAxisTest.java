@@ -20,7 +20,7 @@
 package mondrian.rolap;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -225,6 +225,6 @@ class NonEmptyPropertyForAllAxisTest {
             + "where [Time].[Time].[1997]\n";
         Connection connection = context.getConnectionWithDefaultRole();
         Query query = connection.parseQuery(mdxQuery);
-        assertEqualsVerbose(mdxQuery, query.toString());
+        assertEquals(mdxQuery, query.toString());
      }
 }

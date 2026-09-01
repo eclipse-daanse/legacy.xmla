@@ -16,7 +16,6 @@ package org.eclipse.daanse.olap.function.def.member.strtomember;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
@@ -100,7 +99,7 @@ class StrToMemberFunDefTest {
 
         // Use longest valid prefix, so get [Time].[Weekly] rather than just
         // [Time].
-        final String timeWeekly = hierarchyName( "Time", "Weekly" );
+        final String timeWeekly = "[Time].[Weekly]";
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"" + timeWeekly
                 + ".[1996].[Q1]\").Hierarchy.UniqueName")

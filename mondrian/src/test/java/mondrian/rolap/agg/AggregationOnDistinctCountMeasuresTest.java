@@ -15,14 +15,9 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.allMember;
-import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.cubeByName;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
-import static org.opencube.junit5.TestUtil.member;
-import static org.opencube.junit5.TestUtil.productMembersPotScrubbersPotsAndPans;
-import static org.opencube.junit5.TestUtil.upgradeActual;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,11 +27,13 @@ import java.util.Optional;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.agg.Segment;
 import org.eclipse.daanse.olap.api.calc.tuple.TupleList;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.execution.Execution;
 import org.eclipse.daanse.olap.api.execution.ExecutionContext;
@@ -60,7 +57,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiersEmf;
@@ -81,6 +77,91 @@ class AggregationOnDistinctCountMeasuresTest {
     private CatalogReader salesCubeCatalogReader = null;
     private CatalogReader catalogReader = null;
     private RolapCube salesCube;
+
+    private static Member member(
+            List<Segment> segmentList,
+            CatalogReader salesCubeCatalogReader)
+    {
+        return salesCubeCatalogReader.getMemberByUniqueName(segmentList, true);
+    }
+
+    private static Member allMember(String dimensionName, Cube salesCube) {
+        Dimension dimension = getDimensionWithName(dimensionName, salesCube.getDimensions());
+        return dimension.getHierarchy().getAllMember();
+    }
+
+    private static Dimension getDimensionWithName(
+            String name,
+            List<? extends Dimension> dimensions)
+    {
+        Dimension resultDimension = null;
+        for (Dimension dimension : dimensions) {
+            if (dimension.getName().equals(name)) {
+                resultDimension = dimension;
+                break;
+            }
+        }
+        return resultDimension;
+    }
+
+    private static Cube cubeByName(Connection connection, String cubeName) {
+        CatalogReader reader = connection.getCatalogReader().withLocus();
+        List<Cube> cubes = reader.getCubes();
+        Cube resultCube = null;
+        for (Cube cube : cubes) {
+            if (cubeName.equals(cube.getName())) {
+                resultCube = cube;
+                break;
+            }
+        }
+        return resultCube;
+    }
+
+    private static TupleList productMembersPotScrubbersPotsAndPans(
+            CatalogReader salesCubeCatalogReader)
+    {
+        return new UnaryTupleList(Arrays.asList(
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pot Scrubbers", "Cormorant"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pot Scrubbers", "Denny"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pot Scrubbers", "Red Wing"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Cormorant"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Denny"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "High Quality"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Red Wing"),
+                true),
+            salesCubeCatalogReader.getMemberByUniqueName(
+                IdImpl.toList(
+                    "Product", "All Products", "Non-Consumable", "Household",
+                    "Kitchen Products", "Pots and Pans", "Sunset"),
+                true)));
+    }
 
     /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */
     public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
@@ -603,9 +684,6 @@ class AggregationOnDistinctCountMeasuresTest {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMultiLevelMembersNullParents(Context<?> context) {
       prepareContext(context);
-        if (!isDefaultNullMemberRepresentation(context)) {
-            return;
-        }
         /*
         String dimension =
             "<Dimension name=\"Warehouse2\">\n"
@@ -742,9 +820,6 @@ class AggregationOnDistinctCountMeasuresTest {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMultiLevelMembersMixedNullNonNullParent(Context<?> context) {
       prepareContext(context);
-        if (!isDefaultNullMemberRepresentation(context)) {
-            return;
-        }
         /*
         String dimension =
             "<Dimension name=\"Warehouse2\">\n"
@@ -859,9 +934,6 @@ class AggregationOnDistinctCountMeasuresTest {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMultiLevelsMixedNullNonNullChild(Context<?> context) {
       prepareContext(context);
-        if (!isDefaultNullMemberRepresentation(context)) {
-            return;
-        }
         /*
         String dimension =
             "<Dimension name=\"Warehouse2\">\n"
@@ -2189,14 +2261,14 @@ class AggregationOnDistinctCountMeasuresTest {
             + " SELECT\r\n" + " {[Measures].[Customer Count]} ON COLUMNS\r\n" + " , NON EMPTY\r\n"
             + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].[Gender].CURRENTMEMBER)}),{[Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*CJ_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" );
-    String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
+    String resultString = toString( result );
+    assertEquals( "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
         + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
         + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
         + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 519\n" + "Row #3: 1,896\n" + "Row #4: 540\n"
-        + "Row #5: 1,945\n", upgradeActual( resultString ) );
+        + "Row #5: 1,945\n", resultString );
     Execution e = ( (ResultBase) result ).getExecution();
     assertEquals( 2, e.getExpCacheHitCount() );
     assertEquals( 10, e.getExpCacheMissCount() );
@@ -2224,15 +2296,15 @@ class AggregationOnDistinctCountMeasuresTest {
             + " SELECT\r\n" + " [*BASE_MEMBERS__Measures_] ON COLUMNS\r\n" + " , NON EMPTY\r\n"
             + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].[Gender].CURRENTMEMBER)}),{[Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" + " WHERE ([*CJ_SLICER_AXIS])\r\n" );
-    String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
+    String resultString = toString( result );
+    assertEquals( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
         + "{[Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
         + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
         + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
         + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
         + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 512\n" // Less than 519 above because slicer was applied
-        + "Row #3: 1,884\n" + "Row #4: 531\n" + "Row #5: 1,929\n", upgradeActual( resultString ) );
+        + "Row #3: 1,884\n" + "Row #4: 531\n" + "Row #5: 1,929\n", resultString );
     Execution e = ( (ResultBase) result ).getExecution();
     assertEquals( 1, e.getExpCacheHitCount() );
     assertEquals( 15, e.getExpCacheMissCount() );
@@ -2264,14 +2336,14 @@ class AggregationOnDistinctCountMeasuresTest {
             + " SELECT\r\n" + " [*BASE_MEMBERS__Measures_] ON COLUMNS\r\n" + " , NON EMPTY\r\n"
             + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" + " WHERE ([*CJ_SLICER_AXIS])" );
-    String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
+    String resultString = toString( result );
+    assertEquals( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
         + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
         + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
         + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 512\n" + "Row #3: 1,884\n" + "Row #4: 531\n"
-        + "Row #5: 1,929\n", upgradeActual( resultString ) );
+        + "Row #5: 1,929\n", resultString );
     Execution e = ( (ResultBase) result ).getExecution();
     assertEquals( 13, e.getExpCacheHitCount() );
     assertEquals( 23, e.getExpCacheMissCount() );
@@ -2421,5 +2493,19 @@ class AggregationOnDistinctCountMeasuresTest {
             members = new Member[] {usaMember, canadaMember};
         }
         return new UnaryTupleList(Arrays.asList(members));
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }

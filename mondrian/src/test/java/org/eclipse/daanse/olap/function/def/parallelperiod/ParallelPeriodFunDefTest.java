@@ -18,7 +18,6 @@ import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assert
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -193,20 +192,18 @@ class ParallelPeriodFunDefTest {
             .returns( "" );
 
         // one parameter, level 2 above member
-        if ( isDefaultNullMemberRepresentation(context) ) {
-            assertThatQuery(context.getConnectionWithDefaultRole(),
-                "WITH MEMBER [Measures].[Foo] AS \n"
-                    + " ' ParallelPeriod([Time].[Year]).UniqueName '\n"
-                    + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
-                    + "FROM [Sales]\n"
-                    + "WHERE [Time].[1997].[Q3].[8]")
-            .returnsGrid(
-                "Axis #0:\n"
-                    + "{[Time].[Time].[1997].[Q3].[8]}\n"
-                    + "Axis #1:\n"
-                    + "{[Measures].[Foo]}\n"
-                    + "Row #0: [Time].[Time].[#null]\n" );
-        }
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "WITH MEMBER [Measures].[Foo] AS \n"
+                + " ' ParallelPeriod([Time].[Year]).UniqueName '\n"
+                + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
+                + "FROM [Sales]\n"
+                + "WHERE [Time].[1997].[Q3].[8]")
+        .returnsGrid(
+            "Axis #0:\n"
+                + "{[Time].[Time].[1997].[Q3].[8]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Foo]}\n"
+                + "Row #0: [Time].[Time].[#null]\n" );
 
         // one parameter, level 1 above member
         assertThatQuery(context.getConnectionWithDefaultRole(),
@@ -237,20 +234,18 @@ class ParallelPeriodFunDefTest {
                 + "Row #0: [Time].[Time].[1997].[Q3].[7]\n" );
 
         //  one parameter, level below member
-        if ( isDefaultNullMemberRepresentation(context) ) {
-            assertThatQuery(context.getConnectionWithDefaultRole(),
-                "WITH MEMBER [Measures].[Foo] AS \n"
-                    + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"
-                    + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
-                    + "FROM [Sales]\n"
-                    + "WHERE [Time].[1997].[Q3]")
-            .returnsGrid(
-                "Axis #0:\n"
-                    + "{[Time].[Time].[1997].[Q3]}\n"
-                    + "Axis #1:\n"
-                    + "{[Measures].[Foo]}\n"
-                    + "Row #0: [Time].[Time].[#null]\n" );
-        }
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "WITH MEMBER [Measures].[Foo] AS \n"
+                + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"
+                + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
+                + "FROM [Sales]\n"
+                + "WHERE [Time].[1997].[Q3]")
+        .returnsGrid(
+            "Axis #0:\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Foo]}\n"
+                + "Row #0: [Time].[Time].[#null]\n" );
     }
 
     @Test

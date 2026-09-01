@@ -13,18 +13,28 @@
 package org.eclipse.daanse.rolap.poc;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.common.RolapUtil;
+import org.eclipse.daanse.rolap.common.member.MemberCacheHelper;
+import org.eclipse.daanse.rolap.common.member.SmartMemberReader;
 import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
-import org.opencube.junit5.TestUtil;
 import org.opentest4j.AssertionFailedError;
 
 import mondrian.enums.DatabaseProduct;
@@ -54,6 +64,205 @@ public final class SqlAssert {
     /** Starts a fluent SQL-generation assertion for {@code mdxQuery} run over {@code connection}. */
     public static QuerySqlAssert forQuery(Connection connection, String mdxQuery) {
         return new QuerySqlAssert(connection, mdxQuery);
+    }
+
+    /**
+     * Checks that {@code actualSql} - typically a drill-through SQL string, not one captured via
+     * {@link #forQuery} - matches {@code expectedSql} once both are dialectized and stripped of
+     * quotes, then runs {@code actualSql} against {@code connection}'s datasource and checks it
+     * returns {@code expectedRows} rows. Replaces the legacy {@code TestUtil.assertSqlEquals}.
+     */
+    public static void assertSqlEquals(Connection connection,
+            String expectedSql,
+            String actualSql,
+            int expectedRows) {
+        assertSqlEquals(connection, expectedSql, actualSql, expectedRows, false);
+    }
+
+    /**
+     * Like {@link #assertSqlEquals(Connection, String, String, int)}, but compares the SQL
+     * whitespace-insensitively (every run of whitespace - including newlines - collapsed to a
+     * single space, then trimmed). Use this for queries produced by the generic statement
+     * builder, whose {@code DialectSqlRenderer} emits compact single-line SQL that is
+     * token-for-token equal to the legacy {@code SqlSelectQuery} output but not format-equal. The
+     * datasource row-count check still runs against the actual SQL.
+     */
+    public static void assertSqlEqualsIgnoreFormatting(Connection connection,
+            String expectedSql,
+            String actualSql,
+            int expectedRows) {
+        assertSqlEquals(connection, expectedSql, actualSql, expectedRows, true);
+    }
+
+    /** Wraps {@code sql} as a single-dialect {@link SqlPattern} for the MySQL/MariaDB dialect. */
+    public static SqlPattern[] mysqlPattern(String sql) {
+        return sqlPattern(DatabaseProduct.MYSQL, sql);
+    }
+
+    private static SqlPattern[] sqlPattern(DatabaseProduct db, String sql) {
+        return new SqlPattern[]{new SqlPattern(db, sql, sql.length())};
+    }
+
+    private static void assertSqlEquals(Connection connection,
+            String expectedSql,
+            String actualSql,
+            int expectedRows,
+            boolean ignoreFormatting) {
+        // if the actual SQL isn't in the current dialect we have some
+        // problems... probably with the dialectize method
+        assertEquals(dialectize(connection, actualSql), actualSql);
+
+        String transformedExpectedSql = removeQuotes(dialectize(connection, expectedSql));
+        String transformedActualSql = removeQuotes(actualSql);
+        if (ignoreFormatting) {
+            transformedExpectedSql = normalizeWhitespace(transformedExpectedSql);
+            transformedActualSql = normalizeWhitespace(transformedActualSql);
+        } else {
+            transformedExpectedSql = transformedExpectedSql.replaceAll("\r\n", "\n");
+            transformedActualSql = transformedActualSql.replaceAll("\r\n", "\n");
+        }
+        assertEquals(transformedExpectedSql, transformedActualSql);
+
+        checkSqlAgainstDatasource(connection, actualSql, expectedRows);
+    }
+
+    private static String normalizeWhitespace(String sql) {
+        return sql.replaceAll("\\s+", " ").trim();
+    }
+
+    /**
+     * Converts a SQL string into the current dialect.
+     *
+     * <p>
+     * This is not intended to be a general purpose method: it looks for specific patterns known to
+     * occur in tests, in particular "=as=" and "fname + ' ' + lname".
+     *
+     * @param sql SQL string in generic dialect
+     * @return SQL string converted into current dialect
+     */
+    private static String dialectize(Connection connection, String sql) {
+        final String search = "fname \\+ ' ' \\+ lname";
+        final Dialect dialect = connection.getContext().getDialect();
+        final DatabaseProduct databaseProduct = getDatabaseProduct(dialect.name());
+        switch (databaseProduct) {
+            case MYSQL:
+            case MARIADB:
+                // Mysql would generate "CONCAT(...)"
+                sql = sql.replaceAll(
+                        search,
+                        "CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)");
+                break;
+            case POSTGRES:
+            case ORACLE:
+            case LUCIDDB:
+            case TERADATA:
+                sql = sql.replaceAll(
+                        search,
+                        "`fname` || ' ' || `lname`");
+                break;
+            case DERBY:
+                sql = sql.replaceAll(
+                        search,
+                        "`customer`.`fullname`");
+                break;
+            case INGRES:
+                sql = sql.replaceAll(
+                        search,
+                        "fullname");
+                break;
+            case DB2:
+            case DB2_AS400:
+            case DB2_OLD_AS400:
+                sql = sql.replaceAll(
+                        search,
+                        "CONCAT(CONCAT(`customer`.`fname`, ' '), `customer`.`lname`)");
+                break;
+            default:
+                break;
+        }
+
+        if (databaseProduct == DatabaseProduct.ORACLE) {
+            // " + tableQualifier + "
+            sql = sql.replaceAll(" =as= ", " ");
+        } else {
+            sql = sql.replaceAll(" =as= ", " as ");
+        }
+        return sql;
+    }
+
+    private static String removeQuotes(String actualSql) {
+        String transformedActualSql = actualSql.replaceAll("`", "");
+        transformedActualSql = transformedActualSql.replaceAll("\"", "");
+        return transformedActualSql;
+    }
+
+    private static void checkSqlAgainstDatasource(Connection connection,
+            String actualSql,
+            int expectedRows) {
+
+        java.sql.Connection jdbcConn = null;
+        java.sql.Statement stmt = null;
+        java.sql.ResultSet rs = null;
+
+        try {
+            jdbcConn = connection.getDataSource().getConnection();
+            stmt = jdbcConn.createStatement();
+
+            if (RolapUtil.SQL_LOGGER.isDebugEnabled()) {
+                StringBuffer sqllog = new StringBuffer();
+                sqllog.append("mondrian.test.TestContext: executing sql [");
+                if (actualSql.indexOf('\n') >= 0) {
+                    // SQL appears to be formatted as multiple lines. Make it
+                    // start on its own line.
+                    sqllog.append("\n");
+                }
+                sqllog.append(actualSql);
+                sqllog.append(']');
+                RolapUtil.SQL_LOGGER.debug(sqllog.toString());
+            }
+
+            long startTime = System.currentTimeMillis();
+            rs = stmt.executeQuery(actualSql);
+            long time = System.currentTimeMillis();
+            final long execMs = time - startTime;
+
+            RolapUtil.SQL_LOGGER.debug(", exec " + execMs + " ms");
+
+            int rows = 0;
+            while (rs.next()) {
+                rows++;
+            }
+
+            assertEquals(expectedRows, rows, "row count");
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(
+                    "ERROR in SQL - invalid for database: "
+                            + ""
+                            + "\n" + actualSql,
+                    e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception e1) {
+                // ignore
+            }
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (Exception e1) {
+                // ignore
+            }
+            try {
+                if (jdbcConn != null) {
+                    jdbcConn.close();
+                }
+            } catch (Exception e1) {
+                // ignore
+            }
+        }
     }
 
     public static final class QuerySqlAssert {
@@ -157,8 +366,8 @@ public final class SqlAssert {
         }
 
         private void verifyOne(SqlPattern sqlPattern, DatabaseProduct databaseProduct) {
-            String sql = TestUtil.dialectize(databaseProduct, sqlPattern.getSql());
-            String trigger = TestUtil.dialectize(databaseProduct, sqlPattern.getTriggerSql());
+            String sql = dialectize(databaseProduct, sqlPattern.getSql());
+            String trigger = dialectize(databaseProduct, sqlPattern.getTriggerSql());
 
             TriggerHook hook = new TriggerHook(trigger);
             RolapUtil.setHook(connection.getContext(), hook);
@@ -166,7 +375,7 @@ public final class SqlAssert {
             try {
                 Query query = connection.parseQuery(mdxQuery);
                 if (clearCacheFirst) {
-                    TestUtil.clearCache(connection, (RolapCube) query.getCube());
+                    clearCache(connection, (RolapCube) query.getCube());
                 }
                 connection.execute(query);
             } catch (Bomb caught) {
@@ -270,4 +479,92 @@ public final class SqlAssert {
             return seen;
         }
     }
+
+    private static String dialectize(DatabaseProduct d, String sql) {
+        sql = sql.replaceAll("\r\n", "\n");
+        switch (d) {
+            case ORACLE:
+                return sql.replaceAll(" =as= ", " ");
+            case GREENPLUM:
+            case POSTGRES:
+            case TERADATA:
+                return sql.replaceAll(" =as= ", " as ");
+            case DERBY:
+                return sql.replaceAll("`", "\"");
+            case ACCESS:
+                return sql.replaceAll(
+                        "ISNULL\\(([^)]*)\\)",
+                        "Iif($1 IS NULL, 1, 0)");
+            default:
+                return sql;
+        }
+    }
+
+    public static void clearCache(Connection connection, RolapCube cube) {
+        // Clear the cache for the Sales cube, so the query runs as if
+        // for the first time. (TODO: Cleaner way to do this.)
+        final Cube salesCube =
+                connection.getCatalog().lookupCube(cube.getName()).orElseThrow();
+        RolapHierarchy hierarchy =
+                (RolapHierarchy) salesCube.lookupHierarchy(
+                        new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED),
+                        false);
+        if (hierarchy != null) {
+            SmartMemberReader memberReader =
+                    (SmartMemberReader) hierarchy.getMemberReader();
+            MemberCacheHelper cacheHelper = memberReader.cacheHelper;
+            cacheHelper.mapLevelToMembers.cache.clear();
+            cacheHelper.mapMemberToChildren.cache.clear();
+        }
+        // Flush the cache, to ensure that the query gets executed.
+        cube.clearCachedAggregations(true);
+
+        CacheControl cacheControl = connection.getCacheControl(null);
+        final CacheControl.CellRegion measuresRegion =
+                cacheControl.createMeasuresRegion(cube);
+        cacheControl.flush(measuresRegion);
+        waitForFlush(cacheControl, measuresRegion, cube.getName());
+    }
+
+    private static void waitForFlush(
+            final CacheControl cacheControl,
+            final CacheControl.CellRegion measuresRegion,
+            final String cubeName)
+    {
+        int i = 100;
+        while (true) {
+            try {
+                Thread.sleep(i);
+            } catch (InterruptedException e) {
+                fail(e.getMessage());
+            }
+            String cacheState = getCacheState(cacheControl, measuresRegion);
+            if (regionIsEmpty(cacheState, cubeName)) {
+                break;
+            }
+            i *= 2;
+            if (i > 6400) {
+                fail(
+                        "Cache didn't flush in sufficient time\nCache Was: \n"
+                                + cacheState);
+                break;
+            }
+        }
+    }
+
+    private static String getCacheState(
+            final CacheControl cacheControl,
+            final CacheControl.CellRegion measuresRegion)
+    {
+        StringWriter out = new StringWriter();
+        cacheControl.printCacheState(new PrintWriter(out), measuresRegion);
+        return out.toString();
+    }
+
+    private static boolean regionIsEmpty(
+            final String cacheState, final String cubeName)
+    {
+        return !cacheState.contains("Cube:[" + cubeName + "]");
+    }
+
 }

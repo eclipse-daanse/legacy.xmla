@@ -18,7 +18,6 @@ import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assert
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -158,29 +157,28 @@ class OpeningClosingPeriodFunDefTest {
             // ClosingPeriod(<member>)
             assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
                 "ClosingPeriod([Time].[1997].[Q3].[8])").returns( "" );
-        } else if ( isDefaultNullMemberRepresentation(context) ) {
-            assertThatQuery(context.getConnectionWithDefaultRole(),
-                "with member [Measures].[Foo] as ClosingPeriod().uniquename\n"
-                    + "select {[Measures].[Foo]} on columns,\n"
-                    + "  {[Time].[1997],\n"
-                    + "   [Time].[1997].[Q2],\n"
-                    + "   [Time].[1997].[Q2].[4]} on rows\n"
-                    + "from Sales")
-                .returnsGrid(
-                "Axis #0:\n"
-                    + "{}\n"
-                    + "Axis #1:\n"
-                    + "{[Measures].[Foo]}\n"
-                    + "Axis #2:\n"
-                    + "{[Time].[Time].[1997]}\n"
-                    + "{[Time].[Time].[1997].[Q2]}\n"
-                    + "{[Time].[Time].[1997].[Q2].[4]}\n"
-                    + "Row #0: [Time].[Time].[1997].[Q4]\n"
-                    + "Row #1: [Time].[Time].[1997].[Q2].[6]\n"
-                    + "Row #2: [Time].[Time].[#null]\n"
-                    // MSAS returns "" here.
-                    + "" );
         }
+        assertThatQuery(context.getConnectionWithDefaultRole(),
+            "with member [Measures].[Foo] as ClosingPeriod().uniquename\n"
+                + "select {[Measures].[Foo]} on columns,\n"
+                + "  {[Time].[1997],\n"
+                + "   [Time].[1997].[Q2],\n"
+                + "   [Time].[1997].[Q2].[4]} on rows\n"
+                + "from Sales")
+            .returnsGrid(
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Foo]}\n"
+                + "Axis #2:\n"
+                + "{[Time].[Time].[1997]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n"
+                + "{[Time].[Time].[1997].[Q2].[4]}\n"
+                + "Row #0: [Time].[Time].[1997].[Q4]\n"
+                + "Row #1: [Time].[Time].[1997].[Q2].[6]\n"
+                + "Row #2: [Time].[Time].[#null]\n"
+                // MSAS returns "" here.
+                + "" );
     }
 
     @Test

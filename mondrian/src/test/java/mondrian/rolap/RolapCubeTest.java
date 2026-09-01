@@ -16,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.cubeByName;
-import static org.opencube.junit5.TestUtil.getDimensionWithName;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -352,6 +350,33 @@ class RolapCubeTest {
             CatalogReader salesCubeCatalogReader)
     {
         return salesCubeCatalogReader.getMemberByUniqueName(segmentList, true);
+    }
+
+    private Dimension getDimensionWithName(
+            String name,
+            List<? extends Dimension> dimensions)
+    {
+        Dimension resultDimension = null;
+        for (Dimension dimension : dimensions) {
+            if (dimension.getName().equals(name)) {
+                resultDimension = dimension;
+                break;
+            }
+        }
+        return resultDimension;
+    }
+
+    private Cube cubeByName(Connection connection, String cubeName) {
+        CatalogReader reader = connection.getCatalogReader().withLocus();
+        List<Cube> cubes = reader.getCubes();
+        Cube resultCube = null;
+        for (Cube cube : cubes) {
+            if (cubeName.equals(cube.getName())) {
+                resultCube = cube;
+                break;
+            }
+        }
+        return resultCube;
     }
 
     private TupleList storeMembersCAAndOR(

@@ -13,8 +13,6 @@ import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.executeAxis;
-import static org.opencube.junit5.TestUtil.hierarchyName;
 
 
 import java.util.ArrayList;
@@ -244,7 +242,7 @@ public class PerformanceTest {
     Statistician[] statisticians) {
     Result result;
     long start = System.currentTimeMillis();
-    final Axis axis = executeAxis(connection, "Sales", "Customers.Members" );
+    final Axis axis = executeQuery(connection, "select {Customers.Members} on columns from Sales").getAxes()[0];
     statisticians[ 0 ].record( start );
     final List<Position> positionList = axis.getPositions();
     assertEquals( 10407, positionList.size() );
@@ -335,7 +333,7 @@ public class PerformanceTest {
     Result result = executeQuery(connection,
       "WITH SET [cjoin] AS "
         + "crossjoin(customers.members, "
-        + hierarchyName( "store type", "store type" )
+        + "[store type].[store type]"
         + ".[store type].members) "
         + "MEMBER [Measures].[total_available_count] "
         + "AS Format(COUNT([cjoin]), \"#####\") "

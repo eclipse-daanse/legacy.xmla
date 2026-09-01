@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 
 import java.net.URL;
@@ -1907,12 +1906,11 @@ class TestAggregationManager extends BatchTestCase {
     void testLevelKeyAsSqlExpWithAggError(Context<?> context) {
         prepareContext(context);
         // Provoke an error in the key resolution to prove it uses it.
-        assertQueryThrows(context,
-            "select non empty{[Promotions].[All Promotions].Children} ON rows, "
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select non empty{[Promotions].[All Promotions].Children} ON rows, "
             + "non empty {[Store].[All Stores]} ON columns "
             + "from [Sales] "
-            + "where {[Measures].[Unit Sales]}",
-            "ERROR_TEST_FUNCTION_NAME");
+            + "where {[Measures].[Unit Sales]}")
+            .throwsMessage("ERROR_TEST_FUNCTION_NAME");
     }
 
     /**

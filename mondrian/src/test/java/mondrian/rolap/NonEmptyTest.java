@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import java.util.Collection;
 import java.util.List;
@@ -2073,9 +2072,6 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testMultiLevelMemberConstraintNullParent(Context<?> context)  {
-    if ( !isDefaultNullMemberRepresentation(context) ) {
-      return;
-    }
     if ( !context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ){
       return;
     }
@@ -2139,9 +2135,6 @@ class NonEmptyTest extends BatchTestCase {
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   @RolapConfig(key = ConfigConstants.GENERATE_FORMATTED_SQL, value = "true", type = Boolean.class)
   void testMultiLevelMemberConstraintMixedNullNonNullParent(Context<?> context)  {
-    if ( !isDefaultNullMemberRepresentation(context) ) {
-      return;
-    }
     if ( !context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
@@ -2202,9 +2195,6 @@ class NonEmptyTest extends BatchTestCase {
           database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   @RolapConfig(key = ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, value = "0", type = Integer.class)
   void testMultiLevelMemberConstraintWithMixedNullNonNullChild(Context<?> context)  {
-    if ( !isDefaultNullMemberRepresentation(context) ) {
-      return;
-    }
     if ( !context.getConfigValue(ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS, ConfigConstants.FILTER_CHILDLESS_SNOWFLAKE_MEMBERS_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }

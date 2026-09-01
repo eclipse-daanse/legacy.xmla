@@ -10,7 +10,6 @@
 package mondrian.test;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -689,9 +688,8 @@ class CompoundSlicerTest {
             // Mondrian gives an error. This is not unreasonable. It is very
             // low priority to make Mondrian consistent with SSAS 2005 in this
             // behavior.
-            assertQueryThrows(context.getConnectionWithDefaultRole(),
-                    mdx,
-                    "Function does not support NULL member parameter");
+            assertThatQuery(context.getConnectionWithDefaultRole(), mdx)
+                .throwsMessage("Function does not support NULL member parameter");
         }
     }
 

@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -57,7 +59,6 @@ import org.eclipse.daanse.sql.model.type.Datatype;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.PerformanceTest;
@@ -294,7 +295,7 @@ class SegmentBuilderTest {
 
         assertThatQuery(connection,
                 query).returnsGrid(
-                TestUtil.toString(result));
+                toString(result));
         configOverride.close();
     }
 
@@ -340,7 +341,7 @@ class SegmentBuilderTest {
 
         assertThatQuery(connection,
             query).returnsGrid(
-            TestUtil.toString(result));
+            toString(result));
     }
 
     @Test
@@ -804,4 +805,18 @@ class SegmentBuilderTest {
       return data;
   }
 
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

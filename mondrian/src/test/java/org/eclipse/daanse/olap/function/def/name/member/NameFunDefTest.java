@@ -14,7 +14,6 @@
 package org.eclipse.daanse.olap.function.def.name.member;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -32,10 +31,8 @@ class NameFunDefTest {
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].Name").returns( "Store" );
         // member name
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].DefaultMember.Name").returns( "All Stores" );
-        if ( isDefaultNullMemberRepresentation(context) ) {
-            // name of null member
-            assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].Parent.Name").returns( "#null" );
-        }
+        // name of null member
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Store].Parent.Name").returns( "#null" );
     }
 
 }

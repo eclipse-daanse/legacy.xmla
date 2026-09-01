@@ -15,10 +15,10 @@ package org.eclipse.daanse.olap.function.def.generate;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.executeAxis;
 
 import java.util.concurrent.CancellationException;
 
@@ -164,10 +164,11 @@ class GenerateFunDefTest {
     @RolapConfig(key = ConfigConstants.ENABLE_NATIVE_NON_EMPTY, value = "false", type = Boolean.class)
     void testGenerateWillTimeout(Context<?> context) {
         try {
-            executeAxis(context.getConnectionWithDefaultRole(), "Sales",
-                "Generate([Product].[Product Name].members,"
+            executeQuery(context.getConnectionWithDefaultRole(), "select {"
+                + "Generate([Product].[Product Name].members,"
                     + "  Generate([Customers].[Name].members, "
-                    + "    {([Store].CurrentMember, [Product].CurrentMember, [Customers].CurrentMember)}))" );
+                    + "    {([Store].CurrentMember, [Product].CurrentMember, [Customers].CurrentMember)}))"
+                + "} on columns from Sales" );
         } catch ( QueryTimeoutException e ) {
             return;
         } catch ( CancellationException e ) {

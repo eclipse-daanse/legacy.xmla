@@ -14,9 +14,9 @@ import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.Mdx;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
@@ -220,9 +221,8 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        assertQueryThrows(context,
-            "select from [Sales vs Warehouse]",
-            "Cube 'Bad cube' not found");
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select from [Sales vs Warehouse]")
+            .throwsMessage("Cube 'Bad cube' not found");
     }
 
     @Test
@@ -1915,6 +1915,25 @@ class VirtualCubeTest extends BatchTestCase {
             + "Axis #1:\n");
     }
 
+    /**
+     * Executes query1 and query2 and Compares the obtained measure values.
+     */
+    private static void assertQueriesReturnSimilarResults(
+        Connection connection, String query1, String query2)
+    {
+        String resultString1 = toString(Mdx.executeQuery(connection, query1));
+        String resultString2 = toString(Mdx.executeQuery(connection, query2));
+        assertEquals(measureValues(resultString1), measureValues(resultString2));
+    }
+
+    /**
+     * Truncates the query result to return only measure values.
+     */
+    private static String measureValues(String resultString) {
+        int index = resultString.indexOf("}");
+        return index != -1 ? resultString.substring(index) : resultString;
+    }
+
     /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */
     public static class FoodmartData implements org.eclipse.daanse.cwm.testkit.api.DataSupplier {
         @Override
@@ -1923,4 +1942,18 @@ class VirtualCubeTest extends BatchTestCase {
         }
     }
 
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

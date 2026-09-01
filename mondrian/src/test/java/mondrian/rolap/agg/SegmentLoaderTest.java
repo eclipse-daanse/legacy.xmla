@@ -82,7 +82,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;

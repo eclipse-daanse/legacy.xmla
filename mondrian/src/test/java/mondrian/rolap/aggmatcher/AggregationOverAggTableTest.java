@@ -9,8 +9,8 @@
  */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.poc.SqlAssert.mysqlPattern;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;

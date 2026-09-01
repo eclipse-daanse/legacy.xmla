@@ -15,7 +15,6 @@ package org.eclipse.daanse.olap.function.def.ancestor;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -32,8 +31,8 @@ public class AncestorTest {
 		assertThatAxis(con, "Sales",
 				"Ancestor([Store].[USA].[CA].[Los Angeles],[Store Country])").returns("[Store].[Store].[USA]");
 
-		assertAxisThrows(con, "Ancestor([Store].[USA].[CA].[Los Angeles],[Promotions].[Promotion Name])",
-				"Error while executing query", "Sales");
+		assertThatAxis(con, "Sales", "Ancestor([Store].[USA].[CA].[Los Angeles],[Promotions].[Promotion Name])")
+				.throwsMessage("Error while executing query");
 	}
 
 	@Test
@@ -75,8 +74,8 @@ public class AncestorTest {
 	void testAncestorWrongHierarchy(Context<?> context) {
 		// MSOLAP gives error "Formula error - dimensions are not
 		// valid (they do not match) - in the Ancestor function"
-		assertAxisThrows(context.getConnectionWithDefaultRole(), "Ancestor([Gender].[M],[Store].[Store Country])",
-				"Error while executing query", "Sales");
+		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ancestor([Gender].[M],[Store].[Store Country])")
+				.throwsMessage("Error while executing query");
 	}
 
 	@Test

@@ -13,6 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.topbottomcount;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import static mondrian.olap.fun.FunctionTest.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
@@ -25,7 +27,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,8 +176,22 @@ class TopBottomCountFunDefTest {
         assertThatQuery(context.getConnectionWithDefaultRole(),
             queryWithAlias)
             .returnsGrid(
-            TestUtil.toString(result));
+            toString(result));
     }
 
 
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }

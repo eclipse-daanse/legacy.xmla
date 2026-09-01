@@ -25,7 +25,6 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTe
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class OrOperatorDefTest {

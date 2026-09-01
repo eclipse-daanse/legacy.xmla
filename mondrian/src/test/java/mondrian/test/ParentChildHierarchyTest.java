@@ -17,9 +17,9 @@ import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertSqlEquals;
-import static org.opencube.junit5.TestUtil.unfold;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Duration;
 import java.util.List;
 
@@ -37,11 +37,11 @@ import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.poc.SqlAssert;
 import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -2971,7 +2971,7 @@ expected);
             + " {[Measures].[Unit Sales], [Measures].[Foo]} on Columns,\n"
             + " { [Time].[1997].[Q2]} on rows\n"
             + "from [Sales]");
-        String resultString = TestUtil.toString(result);
+        String resultString = toString(result);
 
         // The precise moment when the cycle is detected depends upon the state
         // of the cache, so this test can throw various errors. Here are come
@@ -3210,7 +3210,7 @@ expected);
         assertEquals(expectedCell, cell.getFormattedValue());
         String sql = cell.getDrillThroughSQL(extendedContext);
 
-        assertSqlEquals(connection, expectedSql, sql, expectedRows);
+        SqlAssert.assertSqlEquals(connection, expectedSql, sql, expectedRows);
     }
 
     /**
@@ -3371,8 +3371,8 @@ expected);
                         + " NON EMPTY {[Employees].AllMembers} ON ROWS\n"
                         + "from [HR4C]";
         expected =
-                TestUtil.toString(executeQuery(context.getConnectionWithDefaultRole(), mdx));
-        assertTrue(unfold(expected).contains("Row #0: 21,252\n"), expected);
+                toString(executeQuery(context.getConnectionWithDefaultRole(), mdx));
+        assertTrue(expected.contains("Row #0: 21,252\n"), expected);
 
         // 2. Run a small query with known results on both contexts.
         // Note in particular the total for [All] is 21,252, same as for
@@ -3453,12 +3453,6 @@ expected);
                         + "Row #6: 60\n"
                         + "Row #7: 168\n"
                         + "Row #8: 60\n";
-
-        // Need to unfold because 'expect' has platform-specific line-endings,
-        // yet MdxAssert assumes that it contains linefeeds.
-        MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
-mdx).returnsGrid(
-unfold(expected));
 
         MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
 mdx).returnsGrid(
@@ -3677,5 +3671,19 @@ mdx).returnsGrid(
             executeQuery(context.getConnectionWithDefaultRole(), mdx)
                 .getAxes()[1].getPositions().get(2).iterator().next()
                     .getParentMember());
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }

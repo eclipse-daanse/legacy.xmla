@@ -83,7 +83,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.rolap.SchemaModifiersEmf;
 
@@ -110,6 +109,10 @@ class AccessControlTest {
         public Map<String, URL> csvResources() {
             return new FoodmartTestInstance().dataSupplier().csvResources();
         }
+    }
+
+    private static Optional<Cube> getCubeByNameFromArray(List<Cube> cubes, String name) {
+        return cubes.stream().filter(c -> name.equals(c.getName())).findFirst();
     }
 
     /*
@@ -528,7 +531,7 @@ class AccessControlTest {
         assertThatAxis(connection, "Sales",
             "[Customers].[USA].[CA].[San Francisco].children").returns(
             "");
-        Axis axis = TestUtil.executeAxis(connection, "Sales", "[Customers].members");
+        Axis axis = executeQuery(connection, "select {[Customers].members} on columns from Sales").getAxes()[0];
         // 13 states, 109 cities
         assertEquals(122, axis.getPositions().size());
     }
@@ -544,7 +547,7 @@ class AccessControlTest {
         assertThatAxis(connection, "Sales",
             "[Customers].[USA].[CA].[San Francisco].children").returns(
             "");
-        Axis axis = TestUtil.executeAxis(connection, "Sales", "[Customers].allmembers");
+        Axis axis = executeQuery(connection, "select {[Customers].allmembers} on columns from Sales").getAxes()[0];
         // 13 states, 109 cities
         assertEquals(122, axis.getPositions().size());
     }
@@ -1180,14 +1183,8 @@ class AccessControlTest {
 //                + "  </SchemaGrant>\n"
 //                + "</Role>");
         ConnectionProps props =new ConnectionProps(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
-        // Not assertThatQuery: unverified whether the bad rollupPolicy is caught while
-        // resolving the connection itself (schema/role validation) rather than during query
-        // execution -- keep it in the same try/catch as the connection lookup until confirmed.
-    	TestUtil.assertQueryThrows(
-    			foodMartContext,
-                props,
-    			"select from [Sales]",
-    			"Illegal rollupPolicy value 'bad'");
+        assertThatQuery(foodMartContext, props, "select from [Sales]")
+            .throwsMessage("Illegal rollupPolicy value 'bad'");
     }
 
     /**
@@ -2720,7 +2717,7 @@ class AccessControlTest {
             + "Row #0: 2,117\n"
             + "Row #0: 2,117\n");
         Cube cube =
-        		TestUtil.getCubeByNameFromArray(connection
+        		getCubeByNameFromArray(connection
                 .getCatalog().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
 
         Member allMember =

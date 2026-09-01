@@ -24,7 +24,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 /**
  * Testcase for non-collapsed levels in agg tables.

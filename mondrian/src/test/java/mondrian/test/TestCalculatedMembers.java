@@ -16,14 +16,11 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
-import static org.opencube.junit5.TestUtil.executeExprRaw;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
-import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.ConfigConstants;
@@ -102,8 +99,8 @@ import mondrian.test.PropertiesTest.FoodmartData;
             + "  dimension='Measures'"
             + "  formula='[Measures].[Store Sales]-[Measures].[Store Cost]'/>"));
          */
-        Cell s = executeExprRaw(context.getConnectionWithDefaultRole(), "Warehouse and Sales", "[Measures].[Profit With Spaces]");
-        assertEquals("339,610.90", s.getFormattedValue());
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Warehouse and Sales", "[Measures].[Profit With Spaces]")
+            .returns("339,610.90");
     }
 
     @Test
@@ -359,7 +356,8 @@ import mondrian.test.PropertiesTest.FoodmartData;
         String pattern =
             "Member expression 'Filter([Product].Members, (1 <> 0))' must "
             + "not be a set";
-        assertQueryThrows(context, queryString, pattern);
+        assertThatQuery(context.getConnectionWithDefaultRole(), queryString)
+            .throwsMessage(pattern);
 
         // A tuple is OK, because it can be converted to a scalar expression.
         queryString =
@@ -476,11 +474,10 @@ import mondrian.test.PropertiesTest.FoodmartData;
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testBracketInCubeCalcMemberName(Context<?> context) {
         final String cubeName = "Sales_BracketInCubeCalcMemberName";
-        assertQueryThrows(context,
-            "select {[Measures].[With a [bracket] inside it]} on columns,\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[With a [bracket] inside it]} on columns,\n"
             + " {[Gender].Members} on rows\n"
-            + "from [" + cubeName + "]",
-            "Encountered an error at (or somewhere around) input:1:38");
+            + "from [" + cubeName + "]")
+            .throwsMessage("Encountered an error at (or somewhere around) input:1:38");
 
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[With a [bracket]] inside it]} on columns,\n"
@@ -540,11 +537,10 @@ import mondrian.test.PropertiesTest.FoodmartData;
 
         // single-quote inside double-quoted string literal
         // MSAS does not allow this
-        assertQueryThrows(context,
-            "with member [Measures].[Foo] as ' \"quoted string with 'apostrophe' in it\" ' "
+        assertThatQuery(context.getConnectionWithDefaultRole(), "with member [Measures].[Foo] as ' \"quoted string with 'apostrophe' in it\" ' "
             + "select {[Measures].[Foo]} on columns "
-            + "from [Sales]",
-            "Found string \"\\\"\" of type INVALID");
+            + "from [Sales]")
+            .throwsMessage("Found string \"\\\"\" of type INVALID");
 
         // Escaped single quote in double-quoted string literal inside
         // single-quoted member declaration.
@@ -833,13 +829,12 @@ import mondrian.test.PropertiesTest.FoodmartData;
 
     @Test
      void testCalcMemberCustomFormatterInQueryNegative(Context<?> context) {
-        assertQueryThrows(context,
-            "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',\n"
             + " CELL_FORMATTER='mondrian.test.NonExistentCellFormatter' \n"
             + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
             + " {[Store].Children} on rows\n"
-            + "from [Sales]",
-            "Failed to load formatter class 'mondrian.test.NonExistentCellFormatter' for member '[Measures].[Foo]'.");
+            + "from [Sales]")
+            .throwsMessage("Failed to load formatter class 'mondrian.test.NonExistentCellFormatter' for member '[Measures].[Foo]'.");
     }
 
     @Test
@@ -850,9 +845,8 @@ import mondrian.test.PropertiesTest.FoodmartData;
             + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
             + " {[Store].Children} on rows\n"
             + "from [Sales]";
-        assertQueryThrows(context,
-            query,
-            "Failed to load formatter class 'java.lang.String' for member '[Measures].[Foo]'.");
+        assertThatQuery(context.getConnectionWithDefaultRole(), query)
+            .throwsMessage("Failed to load formatter class 'java.lang.String' for member '[Measures].[Foo]'.");
     }
 
     @Test
@@ -938,11 +932,10 @@ import mondrian.test.PropertiesTest.FoodmartData;
                 + "  <CalculatedMemberProperty name=\"CELL_FORMATTER\" value=\"mondrian.test.NonExistentCellFormatter\"/>\n"
                 + "</CalculatedMember>\n"));
          */
-        assertQueryThrows(context,
-            "select {[Measures].[Unit Sales], [Measures].[Profit Formatted]} on 0,\n"
+        assertThatQuery(context, "select {[Measures].[Unit Sales], [Measures].[Profit Formatted]} on 0,\n"
             + " {[Store].Children} on rows\n"
-            + "from [Sales]",
-            "Failed to load formatter class 'mondrian.test.NonExistentCellFormatter' for member '[Measures].[Profit Formatted]'.");
+            + "from [Sales]")
+            .throwsMessage("Failed to load formatter class 'mondrian.test.NonExistentCellFormatter' for member '[Measures].[Profit Formatted]'.");
     }
 
     /**
@@ -1654,12 +1647,11 @@ import mondrian.test.PropertiesTest.FoodmartData;
      void testCalcMemberParentOfCalcMember(Context<?> context) {
         // SSAS fails with "The X calculated member cannot be used as a parent
         // of another calculated member."
-        assertQueryThrows(context,
-            "with member [Gender].[X] as 4\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "with member [Gender].[X] as 4\n"
             + " member [Gender].[X].[Y] as 5\n"
             + " select [Gender].[X].[Y] on 0\n"
-            + " from [Sales]",
-            "The '[Gender].[Gender].[X]' calculated member cannot be used as a parent "
+            + " from [Sales]")
+            .throwsMessage("The '[Gender].[Gender].[X]' calculated member cannot be used as a parent "
             + "of another calculated member.");
     }
 
@@ -1682,11 +1674,10 @@ import mondrian.test.PropertiesTest.FoodmartData;
      void testCalcMemberTooDeep(Context<?> context) {
         // SSAS fails with "The X calculated member cannot be created because
         // its parent is at the lowest level in the Gender hierarchy."
-        assertQueryThrows(context,
-            "with member [Gender].[M].[X] as 4\n"
+        assertThatQuery(context.getConnectionWithDefaultRole(), "with member [Gender].[M].[X] as 4\n"
             + " select [Gender].[M].[X] on 0\n"
-            + " from [Sales]",
-            "The '[X]' calculated member cannot be created because its parent is "
+            + " from [Sales]")
+            .throwsMessage("The '[X]' calculated member cannot be created because its parent is "
             + "at the lowest level in the [Gender].[Gender] hierarchy.");
     }
 }

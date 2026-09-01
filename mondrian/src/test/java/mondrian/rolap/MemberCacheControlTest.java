@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.flushCache;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -77,13 +76,13 @@ import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier;
 import org.eclipse.daanse.rolap.testkit.assertions.MdxAssert;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 import org.slf4j.Logger;
 
 import mondrian.test.DiffRepository;
@@ -371,7 +370,7 @@ class MemberCacheControlTest {
             "props before",
             "${props before}",
             getRowMemberPropertiesAsString(r));
-        final String resultString = TestUtil.toString(r);
+        final String resultString = toString(r);
         dr.assertEquals(
             "result before",
             "${result before}",
@@ -400,7 +399,7 @@ class MemberCacheControlTest {
             getRowMemberPropertiesAsString(r));
         assertEquals(
             resultString,
-            TestUtil.toString(r));
+            toString(r));
     }
 
     /**
@@ -424,7 +423,7 @@ class MemberCacheControlTest {
             "props before",
             "${props before}",
             getRowMemberPropertiesAsString(r));
-        final String resultString = TestUtil.toString(r);
+        final String resultString = toString(r);
         dr.assertEquals(
             "result before",
             "${result before}",
@@ -474,7 +473,7 @@ class MemberCacheControlTest {
             getRowMemberPropertiesAsString(r));
         assertEquals(
             resultString,
-            TestUtil.toString(r));
+            toString(r));
     }
 
     @Test
@@ -1060,7 +1059,7 @@ class MemberCacheControlTest {
     void testFlushHierarchy(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareTestContext(context);
-        flushCache(context.getConnectionWithDefaultRole());
+        FlushSchemaCacheModifier.flushSchemaCache(context.getConnectionWithDefaultRole());
         final CacheControl cacheControl =
             context.getConnectionWithDefaultRole().getCacheControl(null);
         final Cube salesCube =
@@ -1259,5 +1258,19 @@ class MemberCacheControlTest {
         if (affected) {
             assertNotSame("", since2);
         }
+    }
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
     }
 }

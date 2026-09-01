@@ -200,7 +200,7 @@ class SteelWheelsAggregationTest {
 
         Catalog catalog = CatalogFactory.eINSTANCE.createCatalog();
         catalog.setName("SteelWheels");
-        org.opencube.junit5.TestUtil.describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
+        describe(catalog, catalog, "1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2");
         catalog.getImportedElement().add(customersCube);
         catalog.getImportedElement().addAll(roles);
         // Copy, don't steal: CatalogSupplier.DATABASE_SCHEMA_STEELWHEELS is contained by the
@@ -441,6 +441,23 @@ class SteelWheelsAggregationTest {
             powerUserRole.getReferencedAccessRoles().add(fooRole);
 
             return getSchemaWith(List.of(fooRole, powerUserRole, powerUserUnionRole));
+        }
+    }
+
+    /**
+     * Attaches a 'documentation' Description to the element, adopting its
+     * root into the catalog if needed.
+     */
+    private static void describe(Catalog catalog,
+            org.eclipse.daanse.cwm.model.cwm.objectmodel.core.ModelElement element, String text) {
+        try {
+            org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions.describe(element,
+                    org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper.TYPE_DOCUMENTATION, null, text);
+        } catch (IllegalStateException detached) {
+            catalog.getOwnedElement().add((org.eclipse.daanse.cwm.model.cwm.objectmodel.core.ModelElement)
+                    EcoreUtil.getRootContainer(element));
+            org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Descriptions.describe(element,
+                    org.eclipse.daanse.rolap.mapping.model.provider.util.CwmHelper.TYPE_DOCUMENTATION, null, text);
         }
     }
 }

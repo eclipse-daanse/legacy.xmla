@@ -11,11 +11,11 @@
 
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.poc.SqlAssert.mysqlPattern;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -27,7 +27,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.opencube.junit5.TestUtil;
 
 /**
  * Tests {@code AggName}/{@code AggPattern} recognition of {@code AggMeasureFactCount}

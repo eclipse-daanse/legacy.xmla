@@ -47,7 +47,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.opencube.junit5.TestUtil;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @RolapContextTest(FoodmartTestInstance.class)

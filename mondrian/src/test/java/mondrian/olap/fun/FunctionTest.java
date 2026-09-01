@@ -12,29 +12,31 @@
 package mondrian.olap.fun;
 
 import static org.eclipse.daanse.olap.common.Util.assertTrue;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertStubbedEqualsVerbose;
-import static org.opencube.junit5.TestUtil.compileExpression;
-import static org.opencube.junit5.TestUtil.executeExpr;
-import static org.opencube.junit5.TestUtil.executeExprRaw;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.function.FunctionService;
+import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.common.ConfigConstants;
+import org.eclipse.daanse.olap.common.Util;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
@@ -224,15 +226,13 @@ public class FunctionTest {
     assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Children.Count").returns( "0" );
 
-    if ( isDefaultNullMemberRepresentation(context) ) {
-      // MSAS returns "" here.
-      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-        "[Gender].[All Gender].Parent.UniqueName").returns( "[Gender].[Gender].[#null]" );
+    // MSAS returns "" here.
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "[Gender].[All Gender].Parent.UniqueName").returns( "[Gender].[Gender].[#null]" );
 
-      // MSAS returns "" here.
-      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-        "[Gender].[All Gender].Parent.Name").returns( "#null" );
-    }
+    // MSAS returns "" here.
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "[Gender].[All Gender].Parent.Name").returns( "#null" );
   }
 
   /**
@@ -651,12 +651,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "Filter([Store].members, 0 = 0).Item(0).Item(0))").returns(
       "266,773" );
 
-    if ( isDefaultNullMemberRepresentation(context) ) {
-      // MSAS returns error here.
-      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-        "Filter([Gender].members, 1 = 0).Item(0).Name").returns(
-        "#null" );
-    }
+    // MSAS returns error here.
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "Filter([Gender].members, 1 = 0).Item(0).Name").returns(
+      "#null" );
   }
 
   @Test
@@ -685,17 +683,15 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + " ([Gender].[M], [Marital Status])").returns( // not null
       "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status]}" );
 
-    if ( isDefaultNullMemberRepresentation(context) ) {
-      // The tuple constructor returns a null tuple if one of its
-      // arguments is null -- and the Item function returns null if the
-      // tuple is null.
-      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-        "([Gender].parent, [Marital Status]).Item(0).Name").returns(
-        "#null" );
-      assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
-        "([Gender].parent, [Marital Status]).Item(1).Name").returns(
-        "#null" );
-    }
+    // The tuple constructor returns a null tuple if one of its
+    // arguments is null -- and the Item function returns null if the
+    // tuple is null.
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Gender].parent, [Marital Status]).Item(0).Name").returns(
+      "#null" );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+      "([Gender].parent, [Marital Status]).Item(1).Name").returns(
+      "#null" );
   }
 
   public static void checkDataResults(
@@ -961,8 +957,15 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void assertExprCompilesTo(Connection connection,
     String expr,
     String expectedCalc ) {
-    final String actualCalc =
-      compileExpression(connection, expr, true, "Sales");
+    Query query = connection.parseQuery(
+        "with member [Measures].[Foo] as " + Util.singleQuoteString(expr)
+            + " select {[Measures].[Foo]} on columns from Sales");
+    Calc calc = query.compileExpression(query.getFormulas()[0].getExpression(), true, null);
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    new SimpleCalculationProfileWriter(pw).write(calc.getCalculationProfile());
+    pw.flush();
+    final String actualCalc = sw.toString();
     final int expDeps =
       connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
     if ( expDeps > 0 ) {
@@ -971,7 +974,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       // 'DependencyTestingCalc' instances embedded in it.
       return;
     }
-    assertStubbedEqualsVerbose( expectedCalc, actualCalc );
+    assertEquals(stubAnonymousClasses(expectedCalc), stubAnonymousClasses(actualCalc));
   }
 
   /**
@@ -980,8 +983,13 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   public static void assertAxisCompilesTo(Connection connection,
     String expr,
     String expectedCalc ) {
-    final String actualCalc =
-      compileExpression(connection, expr, false, "Sales");
+    Query query = connection.parseQuery("SELECT {" + expr + "} ON COLUMNS FROM Sales");
+    Calc calc = query.compileExpression(query.getAxes()[0].getSet(), false, null);
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    new SimpleCalculationProfileWriter(pw).write(calc.getCalculationProfile());
+    pw.flush();
+    final String actualCalc = sw.toString();
     final int expDeps =
       connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
     if ( expDeps > 0 ) {
@@ -990,7 +998,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       // 'DependencyTestingCalc' instances embedded in it.
       return;
     }
-    assertStubbedEqualsVerbose( expectedCalc, actualCalc );
+    assertEquals(stubAnonymousClasses(expectedCalc), stubAnonymousClasses(actualCalc));
   }
 
 
@@ -1001,7 +1009,10 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     // -- jhyde, 2006/9/3
 
     // From double to integer.  MONDRIAN-1631
-    Cell cell = executeExprRaw(context.getConnectionWithDefaultRole(), "Sales", "Cast(1.4 As Integer)" );
+    Cell cell = executeQuery(context.getConnectionWithDefaultRole(),
+        "with member [Measures].[Foo] as " + Util.singleQuoteString("Cast(1.4 As Integer)")
+        + " select {[Measures].[Foo]} on columns from Sales")
+        .getCell(new int[] { 0 });
     assertEquals(Integer.class, cell.getValue().getClass(),
             "Cast to Integer resulted in wrong datatype\n"
                     + cell.getValue().getClass().toString());
@@ -2133,6 +2144,34 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     return java.util.Arrays.stream( AllHiers )
       .filter( hier -> !contains( hiers, hier ) )
       .toArray( String[]::new );
+  }
+
+  /**
+   * Replaces anonymous class names (/\$\d+/) with a stub "$-anonymous-class-" in constructions
+   * "class&nbsp;mondrian.rest.package.name.ClassName$InnerClassNames". <br/> e.g. <br/>
+   * <code>stubAnonymousClasses("class mondrian.fun.Fun$21$1")</code>
+   * results
+   * <code>
+   * "class mondrian.fun.Fun$-anonymous-class-$-anonymous-class-"
+   * </code>.
+   * <br/> Within a Strings comparison <br/> applying this to both compared <code>String</code>s makes the comparison
+   * independent on anonymous class names.
+   * </br>
+   */
+  private static String stubAnonymousClasses( String str ) {
+    if ( !str.contains( "$" ) ) {
+      return str;
+    }
+    final String regex =
+        "(class mondrian(?:\\.\\w+)*(?:\\$(?:\\w+|-anonymous-class-))*?)(?:\\$\\d+)\\b";
+    final String replacement = "$1\\$-anonymous-class-";
+    Pattern p = Pattern.compile( regex );
+    String str1 = p.matcher( str ).replaceAll( replacement );
+    while ( !str.equals( str1 ) ) {
+      str = str1;
+      str1 = p.matcher( str ).replaceAll( replacement );
+    }
+    return str1;
   }
 
   /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */

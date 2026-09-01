@@ -14,7 +14,6 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -52,7 +51,6 @@ import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.element.RolapLevel;
 import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
-import org.opencube.junit5.TestUtil;
 import org.slf4j.LoggerFactory;
 
 import mondrian.enums.DatabaseProduct;
@@ -537,12 +535,11 @@ public class BatchTestCase{
         Result result = c.run();
 
         if (expectedResult != null) {
-            String nonNativeResult = TestUtil.toString(result);
+            String nonNativeResult = toString(result);
             if (!nonNativeResult.equals(expectedResult)) {
-                assertEqualsVerbose(
+                assertEquals(
                     expectedResult,
                     nonNativeResult,
-                    false,
                     "Non Native implementation returned different result than "
                     + "expected; MDX=" + mdx);
             }
@@ -626,7 +623,7 @@ public class BatchTestCase{
             reg.setEnabled(true);
             TestCase c = new TestCase(con, resultLimit, rowCount, mdx);
             Result result = c.run();
-            String nativeResult = TestUtil.toString(result);
+            String nativeResult = toString(result);
             if (!listener.isFoundEvaluator()) {
                 fail("expected native execution of " + mdx);
             }
@@ -657,31 +654,28 @@ public class BatchTestCase{
             // disable RolapNativeSet
             reg.setEnabled(false);
             result = executeQuery(mdx, con);
-            String interpretedResult = TestUtil.toString(result);
+            String interpretedResult = toString(result);
             if (listener.isFoundEvaluator()) {
                 fail("did not expect native executions of " + mdx);
             }
 
             if (expectedResult != null) {
-                assertEqualsVerbose(
+                assertEquals(
                     expectedResult,
                     nativeResult,
-                    false,
                     "Native implementation returned different result than "
                     + "expected; MDX=" + mdx);
-                assertEqualsVerbose(
+                assertEquals(
                     expectedResult,
                     interpretedResult,
-                    false,
                     "Interpreter implementation returned different result than "
                     + "expected; MDX=" + mdx);
             }
 
             if (!nativeResult.equals(interpretedResult)) {
-                assertEqualsVerbose(
+                assertEquals(
                     interpretedResult,
                     nativeResult,
-                    false,
                     "Native implementation returned different result than "
                     + "interpreter; MDX=" + mdx);
             }
@@ -716,7 +710,7 @@ public class BatchTestCase{
         test.checkNotNative(context,
                 getRowCount(expectedResult),
                 mdx,
-                TestUtil.toString(expectedResult));
+                toString(expectedResult));
     }
 
     public static void checkNative(Context<?> context, String mdx, Result expectedResult) {
@@ -725,7 +719,7 @@ public class BatchTestCase{
                 0,
                 getRowCount(expectedResult),
                 mdx,
-                TestUtil.toString(expectedResult),
+                toString(expectedResult),
                 true);
     }
     /**
@@ -898,6 +892,20 @@ public class BatchTestCase{
         }
     }
 
+
+    /**
+     * Converts a {@link Result} to text in traditional format.
+     *
+     * @param result Query result
+     * @return Result as text
+     */
+    private static String toString(Result result) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        result.print(pw);
+        pw.flush();
+        return sw.toString();
+    }
 }
 
 // End BatchTestCase.java

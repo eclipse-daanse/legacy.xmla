@@ -12,7 +12,6 @@ import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.executeAxis;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.result.Axis;
@@ -232,9 +231,10 @@ class MultipleColsInTupleAggTest {
                       + "    ISNULL(`test_lp_xx2_fact`.`prodname`) ASC, "
                       + "`test_lp_xx2_fact`.`prodname` ASC"), null)}).verify();
         }
-        Axis axis = executeAxis(connection, "Fact",
-            "Filter([Product].[Product].[Product Name].members, "
-            + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )");
+        Axis axis = executeQuery(connection, "select {"
+            + "Filter([Product].[Product].[Product Name].members, "
+            + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
+            + "} on columns from Fact").getAxes()[0];
         assertEquals(
             "Black",
             ((RolapAxis) axis).getTupleList().get(0).get(0)
