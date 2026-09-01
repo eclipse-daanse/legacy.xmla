@@ -10,6 +10,8 @@
 */
 package mondrian.rolap.sql;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.POSTGRES;
@@ -17,8 +19,6 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.ArrayList;

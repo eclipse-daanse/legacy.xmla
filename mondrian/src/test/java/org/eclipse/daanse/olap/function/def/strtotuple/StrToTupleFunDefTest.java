@@ -13,10 +13,10 @@
  */
 package org.eclipse.daanse.olap.function.def.strtotuple;
 
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
@@ -77,22 +77,22 @@ class StrToTupleFunDefTest {
 
     @Test
     void testStrToTupleDepends(Context<?> context) {
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "StrToTuple(\"[Time].[1997].[Q2]\", [Time])",
-            "{}" );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "StrToTuple(\"[Time].[1997].[Q2]\", [Time])")
+            .dependsOn();
 
         // converted to scalar, depends set is larger
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "StrToTuple(\"[Time].[1997].[Q2]\", [Time])",
-            allHiersExcept( "[Time].[Time]" ) );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "StrToTuple(\"[Time].[1997].[Q2]\", [Time])")
+            .dependsOn( hiersExcept( "[Time].[Time]" ) );
 
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])",
-            "{}" );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])")
+            .dependsOn();
 
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])",
-            allHiersExcept( "[Time].[Time]", "[Gender].[Gender]" ) );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])")
+            .dependsOn( hiersExcept( "[Time].[Time]", "[Gender].[Gender]" ) );
     }
 
 }

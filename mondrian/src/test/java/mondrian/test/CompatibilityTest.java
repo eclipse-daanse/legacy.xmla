@@ -12,8 +12,10 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -89,10 +91,10 @@ class CompatibilityTest {
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n";
 
-        TestUtil.assertQueryReturns(connection, queryFrom + "[Sales]", result);
-        TestUtil.assertQueryReturns(connection, queryFrom + "[SALES]", result);
-        TestUtil.assertQueryReturns(connection, queryFrom + "[sAlEs]", result);
-        TestUtil.assertQueryReturns(connection, queryFrom + "[sales]", result);
+        assertThatQuery(connection, queryFrom + "[Sales]").returnsGrid(result);
+        assertThatQuery(connection, queryFrom + "[SALES]").returnsGrid(result);
+        assertThatQuery(connection, queryFrom + "[sAlEs]").returnsGrid(result);
+        assertThatQuery(connection, queryFrom + "[sales]").returnsGrid(result);
     }
 
     /**
@@ -108,10 +110,10 @@ class CompatibilityTest {
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n";
 
-        TestUtil.assertQueryReturns(connection, queryFrom + "Sales", result);
-        TestUtil.assertQueryReturns(connection, queryFrom + "SALES", result);
-        TestUtil.assertQueryReturns(connection, queryFrom + "sAlEs", result);
-        TestUtil.assertQueryReturns(connection, queryFrom + "sales", result);
+        assertThatQuery(connection, queryFrom + "Sales").returnsGrid(result);
+        assertThatQuery(connection, queryFrom + "SALES").returnsGrid(result);
+        assertThatQuery(connection, queryFrom + "sAlEs").returnsGrid(result);
+        assertThatQuery(connection, queryFrom + "sales").returnsGrid(result);
     }
 
     /**
@@ -124,10 +126,10 @@ class CompatibilityTest {
             "with member [Measures].ordinal as '1'\n"
             + " select {[Measures].ordinal} on columns from Sales",
             "Encountered an error at (or somewhere around) input:1:9", "Sales");
-    	TestUtil.assertQueryReturns(
+    	assertThatQuery(
     		connection,
             "with member [Measures].[ordinal] as '1'\n"
-            + " select {[Measures].[ordinal]} on columns from Sales",
+            + " select {[Measures].[ordinal]} on columns from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -198,28 +200,28 @@ class CompatibilityTest {
     @Test
     @RolapConfig(key = ConfigConstants.CASE_SENSITIVE, value = "false", type = Boolean.class)
     void testCalculatedMemberCase(Connection connection) {
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "with member [Measures].[CaLc] as '1'\n"
-            + " select {[Measures].[CaLc]} on columns from Sales",
+            + " select {[Measures].[CaLc]} on columns from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[CaLc]}\n"
             + "Row #0: 1\n");
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "with member [Measures].[CaLc] as '1'\n"
-            + " select {[Measures].[cAlC]} on columns from Sales",
+            + " select {[Measures].[cAlC]} on columns from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[CaLc]}\n"
             + "Row #0: 1\n");
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "with member [mEaSuReS].[CaLc] as '1'\n"
-            + " select {[MeAsUrEs].[cAlC]} on columns from Sales",
+            + " select {[MeAsUrEs].[cAlC]} on columns from Sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -238,7 +240,7 @@ class CompatibilityTest {
     }
 
     private void checkSolveOrder(Connection connection, String keyword) {
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "WITH\n"
             + "   MEMBER [Store].[StoreCalc] as '0', " + keyword + "=0\n"
@@ -246,7 +248,7 @@ class CompatibilityTest {
             + "SELECT\n"
             + "   { [Product].[ProdCalc] } ON columns,\n"
             + "   { [Store].[StoreCalc] } ON rows\n"
-            + "FROM Sales",
+            + "FROM Sales").returnsGrid(
 
             "Axis #0:\n"
             + "{}\n"
@@ -339,55 +341,16 @@ class CompatibilityTest {
         if (!isDefaultNullMemberRepresentation(context)) {
             return;
         }
-        /*
-        final String cubeName = "Sales_inline";
-        String baseSchema = TestUtil.getRawSchema(foodMartContext);
-        String schema = SchemaUtil.getSchema(
-    		baseSchema,
-            null,
-            "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <Dimension name=\"Alternative Promotion\" foreignKey=\"promotion_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"promo_id\">\n"
-            + "      <InlineTable alias=\"alt_promotion\">\n"
-            + "        <ColumnDefs>\n"
-            + "          <ColumnDef name=\"promo_id\" type=\"Numeric\"/>\n"
-            + "          <ColumnDef name=\"promo_name\" type=\"String\"/>\n"
-            + "        </ColumnDefs>\n"
-            + "        <Rows>\n"
-            + "          <Row>\n"
-            + "            <Value column=\"promo_id\">0</Value>\n"
-            + "            <Value column=\"promo_name\">Promo0</Value>\n"
-            + "          </Row>\n"
-            + "          <Row>\n"
-            + "            <Value column=\"promo_id\">1</Value>\n"
-            + "          </Row>\n"
-            + "        </Rows>\n"
-            + "      </InlineTable>\n"
-            + "      <Level name=\"Alternative Promotion\" column=\"promo_name\" uniqueMembers=\"true\"/> \n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-         */
 
         // This test should work irrespective of the case-sensitivity setting.
         //props.CaseSensitive;
 //        discard();
 
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "select {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "  {[Alternative Promotion].[#null]} ON ROWS \n"
-            + "  from [Sales_inline]",
+            + "  from [Sales_inline]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -467,12 +430,12 @@ class CompatibilityTest {
             + "      formatString=\"#,###.00\"/>\n"
             + "</Cube>", null, null, null, null);
         */
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "select {"
             + "[Alternative Promotion].[#null], "
             + "[Alternative Promotion].[Promo1]} ON COLUMNS\n"
-            + "from [" + cubeName + "] ",
+            + "from [" + cubeName + "] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -498,14 +461,14 @@ class CompatibilityTest {
             return;
         }
         final String cubeName = "Store_NullsCollation";
-        TestUtil.assertQueryReturns(
+        assertThatQuery(
     		connection,
             "select { [Measures].[Store Sqft] } on columns,\n"
             + " NON EMPTY topcount(\n"
             + "    {[Store].[Store Name].members},\n"
             + "    5,\n"
             + "    [measures].[store sqft]) on rows\n"
-            + "from [" + cubeName + "] ",
+            + "from [" + cubeName + "] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -566,7 +529,7 @@ class CompatibilityTest {
         }
 
         // Cell properties.
-        Result result = TestUtil.executeQuery(
+        Result result = executeQuery(
     		connection,
             "select {[Measures].[Unit Sales],[Measures].[Store Sales]} on columns,\n"
             + " {[Gender].[M]} on rows\n"

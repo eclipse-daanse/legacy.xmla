@@ -13,14 +13,14 @@
  */
 package org.eclipse.daanse.olap.function.def.aggregatex.count;
 
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
@@ -29,15 +29,14 @@ class CountFunDefTest {
 
     @Test
     void testCount(Context<?> context) {
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)",
-            "{[Gender].[Gender]}" );
+        FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)")
+            .dependsOn( "[Gender].[Gender]" );
 
-        String s1 = allHiersExcept( "[Store].[Store]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
+        FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "count(Crossjoin([Store].[All Stores].[USA].Children, "
-                + "{[Gender].children}), EXCLUDEEMPTY)",
-            s1 );
+                + "{[Gender].children}), EXCLUDEEMPTY)")
+            .dependsOn( hiersExcept( "[Store].[Store]" ) );
 
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "count({[Promotion Media].[Media Type].members})").returns("14" );
@@ -48,10 +47,9 @@ class CountFunDefTest {
 
     @Test
     void testCountExcludeEmpty(Context<?> context) {
-        String s1 = allHiersExcept( "[Store].[Store]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "count(Crossjoin([Store].[USA].Children, {[Gender].children}), EXCLUDEEMPTY)",
-            s1 );
+        FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "count(Crossjoin([Store].[USA].Children, {[Gender].children}), EXCLUDEEMPTY)")
+            .dependsOn( hiersExcept( "[Store].[Store]" ) );
 
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Promo Count] as \n"

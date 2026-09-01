@@ -9,9 +9,8 @@
 */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -369,9 +368,7 @@ class ExplicitRecognizerTest {
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_cty`) ASC, `exp_agg_test_distinct_count`.`store_cty` ASC,\n"
                     + "    ISNULL(`exp_agg_test_distinct_count`.`store_name`) ASC, `exp_agg_test_distinct_count`.`store_name` ASC"))).verify();
 
-        assertQueryReturns(connection,
-            "Store Address Property should be '5922 La Salle Ct'",
-            query,
+        assertThatQuery(connection, query).returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

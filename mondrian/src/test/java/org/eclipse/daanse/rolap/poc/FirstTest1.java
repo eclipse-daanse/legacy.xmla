@@ -13,11 +13,11 @@
  */
 package org.eclipse.daanse.rolap.poc;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

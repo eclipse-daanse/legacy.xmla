@@ -12,6 +12,8 @@ package mondrian.test;
 import static mondrian.enums.DatabaseProduct.MYSQL;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,8 +26,6 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQu
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.opencube.junit5.TestUtil.assertSimpleQuery;
 import static org.opencube.junit5.TestUtil.checkThrowable;
-import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -2519,56 +2519,6 @@ class SchemaTest {
         // EMF version of TestSnowflakeHierarchyValidationNotNeededModifier
         // Note: This is a complex snowflake schema test with multiple JOINs
 
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
-            + "          <Table name=\"region\"/>\n"
-            + "          <Table name=\"promotion\"/>\n"
-            + "        </Join>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "    <Hierarchy name=\"MyHierarchy\" hasAll=\"true\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "      <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"customer\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "      <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"customer\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[MyHierarchy].[Mexico]} on rows,"
             + "{[Customers].[Customers].[USA].[South West]} on columns"
@@ -3012,57 +2962,6 @@ class SchemaTest {
         */
         // EMF version of TestSnowflakeHierarchyValidationNotNeeded2Modifier
         // Note: Similar to previous but with slightly different join paths
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-            + "  </Table>"
-            + "  <Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Join leftKey=\"sales_district_id\" rightKey=\"promotion_id\">\n"
-            + "          <Table name=\"region\"/>\n"
-            + "          <Table name=\"promotion\"/>\n"
-            + "        </Join>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "    <Hierarchy name=\"MyHierarchy\" hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"store\" column=\"store_country\"/>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_region\" />\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" />\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + "    <Level name=\"Country\" table=\"customer\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "    <Level name=\"Region\" table=\"region\" column=\"sales_region\" uniqueMembers=\"true\"/>\n"
-            + "    <Level name=\"City\" table=\"customer\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "    <Level name=\"Name\" table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[MyHierarchy].[USA].[South West]} on rows,"
             + "{[Customers].[Customers].[USA].[South West]} on columns"
@@ -3464,47 +3363,6 @@ class SchemaTest {
         }
         */
         // EMF version of TestDimensionsShareJoinTableModifier
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-            + "  </Table>"
-            + "<Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-
-            + "<Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "    <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"store\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + " <Level name=\"Store Country\" table=\"store\"  column=\"store_country\" uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Region\"  table=\"region\" column=\"sales_region\"  uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Name\"    table=\"store\"  column=\"store_name\"    uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "<Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + "  <Level name=\"Country\" table=\"customer\" column=\"country\"                      uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Region\"  table=\"region\"   column=\"sales_region\"                 uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"City\"    table=\"customer\" column=\"city\"                         uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Name\"    table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "<Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\" formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
@@ -3858,46 +3716,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-            + "  </Table>"
-            + "<Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "    <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"store\"/>\n"
-            + "      <Table name=\"region\"/>\n"
-            + "    </Join>\n"
-            + " <Level name=\"Store Country\" table=\"store\"  column=\"store_country\" uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Region\"  table=\"region\" column=\"sales_region\"  uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Name\"    table=\"store\"  column=\"store_name\"    uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "<Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Table name=\"region\" alias=\"customer_region\"/>\n"
-            + "    </Join>\n"
-            + "  <Level name=\"Country\" table=\"customer\" column=\"country\"                      uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Region\"  table=\"customer_region\"   column=\"sales_region\"                 uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"City\"    table=\"customer\" column=\"city\"                         uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Name\"    table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "<Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\" formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
@@ -4257,46 +4075,6 @@ class SchemaTest {
                 }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_lc_06_sales_fact_1997\"/>\n"
-            + "  </Table>"
-            + "<Dimension name=\"Store\" foreignKey=\"store_id\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "    <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"store\"/>\n"
-            + "      <Table name=\"region\" alias=\"store_region\"/>\n"
-            + "    </Join>\n"
-            + " <Level name=\"Store Country\" table=\"store\"  column=\"store_country\" uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Region\"  table=\"store_region\" column=\"sales_region\"  uniqueMembers=\"true\"/>\n"
-            + " <Level name=\"Store Name\"    table=\"store\"  column=\"store_name\"    uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "<Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKeyTable=\"customer\" primaryKey=\"customer_id\">\n"
-            + "    <Join leftKey=\"customer_region_id\" rightKey=\"region_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Table name=\"region\" alias=\"customer_region\"/>\n"
-            + "    </Join>\n"
-            + "  <Level name=\"Country\" table=\"customer\" column=\"country\"                      uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Region\"  table=\"customer_region\"   column=\"sales_region\"                 uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"City\"    table=\"customer\" column=\"city\"                         uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Name\"    table=\"customer\" column=\"customer_id\" type=\"Numeric\" uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "<Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\" formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
@@ -4630,40 +4408,6 @@ class SchemaTest {
                 }
          }
          */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n"
-            + "  <Dimension name=\"StoreA\" foreignKey=\"store_id\">"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"store_id\">"
-            + "      <Table name=\"store\" alias=\"storea\"/>"
-            + "      <Level name=\"Store Country\" column=\"store_country\" uniqueMembers=\"true\"/>"
-            + "      <Level name=\"Store Name\"  column=\"store_name\" uniqueMembers=\"true\"/>"
-            + "    </Hierarchy>"
-            + "  </Dimension>"
-
-            + "  <Dimension name=\"StoreB\" foreignKey=\"warehouse_id\">"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"store_id\">"
-            + "      <Table name=\"store\"  alias=\"storeb\"/>"
-            + "      <Level name=\"Store Country\" column=\"store_country\" uniqueMembers=\"true\"/>"
-            + "      <Level name=\"Store Name\" column=\"store_name\" uniqueMembers=\"true\"/>"
-            + "    </Hierarchy>"
-            + "  </Dimension>"
-            + "  <Measure name=\"Store Invoice\" column=\"store_invoice\" "
-            + "aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Supply Time\" column=\"supply_time\" "
-            + "aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
-            + "aggregator=\"sum\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
@@ -4926,40 +4670,6 @@ class SchemaTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"AliasedDimensionsTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n"
-            + "  <Dimension name=\"StoreA\" foreignKey=\"store_id\">"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"store_id\">"
-            + "      <Table name=\"store\" alias=\"storea\"/>"
-            + "      <Level name=\"Store Country\" column=\"store_country\" uniqueMembers=\"true\"/>"
-            + "      <Level name=\"Store Name\" column=\"store_name\" uniqueMembers=\"true\"/>"
-            + "    </Hierarchy>"
-            + "  </Dimension>"
-
-            + "  <Dimension name=\"StoreB\" foreignKey=\"store_id\">"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"store_id\">"
-            + "      <Table name=\"store\"  alias=\"storeb\"/>"
-            + "      <Level name=\"Store Country\" column=\"store_country\" uniqueMembers=\"true\"/>"
-            + "      <Level name=\"Store Name\" column=\"store_name\" uniqueMembers=\"true\"/>"
-            + "    </Hierarchy>"
-            + "  </Dimension>"
-            + "  <Measure name=\"Store Invoice\" column=\"store_invoice\" "
-            + "aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Supply Time\" column=\"supply_time\" "
-            + "aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
-            + "aggregator=\"sum\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
@@ -5155,25 +4865,6 @@ class SchemaTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"Sales Two Dimensions\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_c_10_sales_fact_1997\"/>\n"
-            + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
-            + "  </Table>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Time2\" source=\"Time\" foreignKey=\"product_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" "
-            + "   formatString=\"Standard\"/>\n"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\""
-            + "   formatString=\"#,###.00\"/>\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time2].[1997]} on columns,\n"
@@ -5329,25 +5020,6 @@ class SchemaTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"Sales Two Dimensions\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_c_10_sales_fact_1997\"/>\n"
-            + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
-            + "  </Table>\n"
-            + "  <DimensionUsage name=\"Time\" caption=\"TimeOne\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Time2\" caption=\"TimeTwo\" source=\"Time\" foreignKey=\"product_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" "
-            + "   formatString=\"Standard\"/>\n"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\""
-            + "   formatString=\"#,###.00\"/>\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         String query =
             "select\n"
             + " {[Time2].[1997]} on columns,\n"
@@ -5631,20 +5303,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-
-            "<Cube name=\"Customer Usage Level\">\n"
-            + "  <Table name=\"customer\"/>\n"
-            // + alias=\"sales_fact_1997_multi\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" level=\"Store State\" foreignKey=\"state_province\"/>\n"
-            + "  <Measure name=\"Cars\" column=\"num_cars_owned\" aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Children\" column=\"total_children\" aggregator=\"sum\"/>\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store State].members} on columns \n"
@@ -5807,25 +5465,6 @@ class SchemaTest {
                 return result;
             }
         }
-         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"Sales Two Sales Dimensions\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Store\" caption=\"First Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <DimensionUsage name=\"Store2\" caption=\"Second Store\" source=\"Store\" foreignKey=\"product_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" "
-            + "   formatString=\"Standard\"/>\n"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\""
-            + "   formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
          */
 
         // If SsasCompatibleNaming (the new behavior), the usages of the
@@ -5993,22 +5632,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-
-            "<Cube name=\"Sales Two Dimensions\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time2\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" "
-            + "   formatString=\"Standard\"/>\n"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\""
-            + "   formatString=\"#,###.00\"/>\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         final String query = "select\n"
                              + " {[Time2].[Time].[1997]} on columns \n"
                              + "From [Sales Two Dimensions]";
@@ -6190,56 +5813,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-
-            // Warehouse cube where the default member in the Warehouse
-            // dimension is USA.
-            "<Cube name=\"Warehouse (based on view)\">\n"
-            + "  <View alias=\"FACT\">\n"
-            + "    <SQL dialect=\"generic\">\n"
-            + "     <![CDATA[select * from \"inventory_fact_1997\" as \"FOOBAR\"]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"oracle\">\n"
-            + "     <![CDATA[select * from \"inventory_fact_1997\" \"FOOBAR\"]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"mysql\">\n"
-            + "     <![CDATA[select * from `inventory_fact_1997` as `FOOBAR`]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"infobright\">\n"
-            + "     <![CDATA[select * from `inventory_fact_1997` as `FOOBAR`]]>\n"
-            + "    </SQL>\n"
-            + "  </View>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Product\" source=\"Product\" foreignKey=\"product_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Dimension name=\"Warehouse\">\n"
-            + "    <Hierarchy hasAll=\"true\"> \n"
-            + "      <View alias=\"FACT\">\n"
-            + "        <SQL dialect=\"generic\">\n"
-            + "         <![CDATA[select * from \"inventory_fact_1997\" as \"FOOBAR\"]]>\n"
-            + "        </SQL>\n"
-            + "        <SQL dialect=\"oracle\">\n"
-            + "         <![CDATA[select * from \"inventory_fact_1997\" \"FOOBAR\"]]>\n"
-            + "        </SQL>\n"
-            + "        <SQL dialect=\"mysql\">\n"
-            + "         <![CDATA[select * from `inventory_fact_1997` as `FOOBAR`]]>\n"
-            + "        </SQL>\n"
-            + "        <SQL dialect=\"infobright\">\n"
-            + "         <![CDATA[select * from `inventory_fact_1997` as `FOOBAR`]]>\n"
-            + "        </SQL>\n"
-            + "      </View>\n"
-            + "      <Level name=\"Warehouse ID\" column=\"warehouse_id\"\n"
-            + "          uniqueMembers=\"true\" type=\"Numeric\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Warehouse Sales\" column=\"warehouse_sales\" aggregator=\"sum\"/>\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " NON EMPTY {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
@@ -6528,46 +6101,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-
-            // Warehouse cube where the default member in the Warehouse
-            // dimension is USA.
-            "<Cube name=\"Warehouse (based on view)\">\n"
-            + "  <View alias=\"FACT\">\n"
-            + "    <SQL dialect=\"generic\">\n"
-            + "     <![CDATA[select * from \"inventory_fact_1997\" as \"FOOBAR\"]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"oracle\">\n"
-            + "     <![CDATA[select * from \"inventory_fact_1997\" \"FOOBAR\"]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"mysql\">\n"
-            + "     <![CDATA[select * from `inventory_fact_1997` as `FOOBAR`]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"infobright\">\n"
-            + "     <![CDATA[select * from `inventory_fact_1997` as `FOOBAR`]]>\n"
-            + "    </SQL>\n"
-            + "  </View>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Product\" source=\"Product\" foreignKey=\"product_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Dimension name=\"Warehouse\" foreignKey=\"warehouse_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" defaultMember=\"[USA]\" primaryKey=\"warehouse_id\"> \n"
-            + "      <Table name=\"warehouse\"/>\n"
-            + "      <Level name=\"Country\" column=\"warehouse_country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"State Province\" column=\"warehouse_state_province\"\n"
-            + "          uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" column=\"warehouse_city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Warehouse Name\" column=\"warehouse_name\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" aggregator=\"sum\"/>\n"
-            + "  <Measure name=\"Warehouse Sales\" column=\"warehouse_sales\" aggregator=\"sum\"/>\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
@@ -6827,42 +6360,6 @@ class SchemaTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            // Similar to "Store" cube in FoodMart.xml.
-            "<Cube name=\"Store2\">\n"
-            + "  <View alias=\"FACT\">\n"
-            + "    <SQL dialect=\"generic\">\n"
-            + "     <![CDATA[select * from \"store\" as \"FOOBAR\"]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"oracle\">\n"
-            + "     <![CDATA[select * from \"store\" \"FOOBAR\"]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"mysql\">\n"
-            + "     <![CDATA[select * from `store` as `FOOBAR`]]>\n"
-            + "    </SQL>\n"
-            + "    <SQL dialect=\"infobright\">\n"
-            + "     <![CDATA[select * from `store` as `FOOBAR`]]>\n"
-            + "    </SQL>\n"
-            + "  </View>\n"
-            + "  <!-- We could have used the shared dimension \"Store Type\", but we\n"
-            + "     want to test private dimensions without primary key. -->\n"
-            + "  <Dimension name=\"Store Type\">\n"
-            + "    <Hierarchy hasAll=\"true\">\n"
-            + "      <Level name=\"Store Type\" column=\"store_type\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "\n"
-            + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###\"/>\n"
-            + "  <Measure name=\"Grocery Sqft\" column=\"grocery_sqft\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###\"/>\n"
-            + "\n"
-            + "</Cube>", null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Store Type].Children} on columns from [Store2]").returnsGrid(
             "Axis #0:\n"
@@ -8510,24 +8007,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"OneDim\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Promotion Media\" foreignKey=\"promotion_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Media\" primaryKey=\"promotion_id\" defaultMember=\"All Media\">\n"
-            + "      <Table name=\"promotion\"/>\n"
-            + "      <Level name=\"Media Type\" column=\"media_type\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Promotion Media]} on columns from [OneDim]").returnsGrid(
             "Axis #0:\n"
@@ -8651,19 +8130,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"OneDimUsage\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Product\" source=\"Product\" foreignKey=\"product_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null, null, null, null);
-        withSchema(context, schema);
-        */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Product].Children} on columns from [OneDimUsage]").returnsGrid(
             "Axis #0:\n"
@@ -8747,14 +8213,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"Cube with caption\" caption=\"Cube with name\"/>\n",
-            null, null, null, null);
-        withSchema(context, schema);
-         */
         Throwable throwable = null;
         try {
             assertSimpleQuery(context.getConnectionWithDefaultRole());
@@ -8825,21 +8283,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"Cube with caption\" caption=\"Cube with name\">"
-            + "  <Table name='sales_fact_1997'/>"
-            + "</Cube>\n",
-            "<VirtualCube name=\"Warehouse and Sales with caption\" "
-            + " caption=\"Warehouse and Sales with name\" "
-            + "defaultMeasure=\"Store Sales\">\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-            + "</VirtualCube>",
-            null, null, null);
-        withSchema(context, schema);
-         */
         final List<Cube> cubes =
             context.getConnectionWithDefaultRole().getCatalog().getCubes();
         Optional<Cube> optionalCube1 = cubes.stream().filter(c -> "Cube with caption".equals(c.getName())).findFirst();
@@ -9038,22 +8481,6 @@ class SchemaTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"NoMeasures\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Promotion Media\" foreignKey=\"promotion_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Media\" primaryKey=\"promotion_id\" defaultMember=\"All Media\">\n"
-            + "      <Table name=\"promotion\"/>\n"
-            + "      <Level name=\"Media Type\" column=\"media_type\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "</Cube>",
-            null, null, null, null);
-        withSchema(context, schema);
-         */
         // Does not fail with
         //    "Hierarchy '[Measures]' is invalid (has no members)"
         // because of the implicit [Fact Count] measure.
@@ -9188,26 +8615,6 @@ class SchemaTest {
             }
 
         }
-        */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"OneCalcMeasure\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Promotion Media\" foreignKey=\"promotion_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Media\" primaryKey=\"promotion_id\" defaultMember=\"All Media\">\n"
-            + "      <Table name=\"promotion\"/>\n"
-            + "      <Level name=\"Media Type\" column=\"media_type\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <CalculatedMember\n"
-            + "      name=\"One\"\n"
-            + "      dimension=\"Measures\"\n"
-            + "      formula=\"1\"/>\n"
-            + "</Cube>",
-            null, null, null, null);
-        withSchema(context, schema);
         */
 
         // Because there are no explicit stored measures, the default measure is
@@ -10133,27 +9540,6 @@ class SchemaTest {
         }
         */
         if (Bug.Bug361Fixed) {
-            /*
-            String baseSchema = TestUtil.getRawSchema(context);
-            String schema = SchemaUtil.getSchema(baseSchema,
-                null,
-                "<Cube name=\"Sales Two Dimensions\">\n"
-                + "  <Table name=\"sales_fact_1997\"/>\n"
-                + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-                + "  <DimensionUsage name=\"Time2\" source=\"Time\" foreignKey=\"product_id\"/>\n"
-                + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-                + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" "
-                + "   formatString=\"Standard\"/>\n"
-                + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\""
-                + "   formatString=\"#,###.00\"/>\n"
-                + "</Cube>",
-                null,
-                null,
-                null,
-                null);
-
-            withSchema(context, schema);
-             */
             assertThatQuery(context.getConnectionWithDefaultRole(),
                 "select\n"
                 + " {[Time2].[1997]} on columns,\n"
@@ -10381,51 +9767,6 @@ class SchemaTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"GenderCube\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude pattern=\"agg_g_ms_pcat_sales_fact_1997\"/>\n"
-            + "  </Table>\n"
-            + "<Dimension name=\"Gender2\" foreignKey=\"customer_id\">\n"
-            + "  <Hierarchy hasAll=\"true\" allMemberName=\"All Gender\" primaryKey=\"customer_id\">\n"
-            + "    <View alias=\"gender2\">\n"
-            + "      <SQL dialect=\"generic\">\n"
-            + "        <![CDATA[SELECT * FROM customer]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"oracle\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"derby\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"hsqldb\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"luciddb\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"neoview\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"netezza\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "      <SQL dialect=\"db2\">\n"
-            + "        <![CDATA[SELECT * FROM \"customer\"]]>\n"
-            + "      </SQL>\n"
-            + "    </View>\n"
-            + "    <Level name=\"Gender\" table=\"gender2\" column=\"gender\" uniqueMembers=\"true\"/>\n"
-            + "  </Hierarchy>\n"
-            + "</Dimension>"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>",
-            null, null, null, null);
-        withSchema(context, schema);
-         */
 
         if (!getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery()) {
             return;
@@ -10465,15 +9806,6 @@ class SchemaTest {
         /**
          * EMF version of TestInvalidSchemaAccess
          * Creates access role 'Role1' with catalog grant that has null access (invalid)
-         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, null, null, null, null,
-            "<Role name=\"Role1\">\n"
-            + "  <SchemaGrant access=\"invalid\"/>\n"
-            + "</Role>");
-        withSchema(context, schema);
          */
         assertQueryThrows(context, List.of("Role1"),
             "select from [Sales]",
@@ -10792,30 +10124,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, null, null, null, null,
-            "<Role name=\"Role1\">\n"
-            + "  <SchemaGrant access=\"all\"/>\n"
-            + "</Role>\n"
-            + "<Role name=\"Role2\">\n"
-            + "  <SchemaGrant access=\"all\"/>\n"
-            + "</Role>\n"
-            + "<Role name=\"Role1Plus2\">\n"
-            + "  <Union>\n"
-            + "    <RoleUsage roleName=\"Role1\"/>\n"
-            + "    <RoleUsage roleName=\"Role2\"/>\n"
-            + "  </Union>\n"
-            + "</Role>\n"
-            + "<Role name=\"Role1Plus2Plus1\">\n"
-            + "  <Union>\n"
-            + "    <RoleUsage roleName=\"Role1Plus2\"/>\n"
-            + "    <RoleUsage roleName=\"Role1\"/>\n"
-            + "  </Union>\n"
-            + "</Role>\n");
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnection(new ConnectionProps(List.of("Role1Plus2Plus1"))),
             "select from [Sales]").returnsGrid(
             "Axis #0:\n"
@@ -10890,22 +10198,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, null, null, null, null,
-            "<Role name=\"Role1\">\n"
-            + "  <SchemaGrant access=\"all\"/>\n"
-            + "</Role>\n"
-            + "<Role name=\"Role1Plus2\">\n"
-            + "  <SchemaGrant access=\"all\"/>\n"
-            + "  <Union>\n"
-            + "    <RoleUsage roleName=\"Role1\"/>\n"
-            + "    <RoleUsage roleName=\"Role1\"/>\n"
-            + "  </Union>\n"
-            + "</Role>\n");
-        withSchema(context, schema);
-         */
         assertQueryThrows(context, List.of("Role1Plus2"),
             "select from [Sales]", "Union role must not contain grants");
     }
@@ -10994,24 +10286,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, null, null, null, null,
-            "<Role name=\"Role1\">\n"
-            + "  <SchemaGrant access=\"all\"/>\n"
-            + "</Role>\n"
-            + "<Role name=\"Role1Plus2\">\n"
-            + "  <Union>\n"
-            + "    <RoleUsage roleName=\"Role1\"/>\n"
-            + "    <RoleUsage roleName=\"Role2\"/>\n"
-            + "  </Union>\n"
-            + "</Role>\n"
-            + "<Role name=\"Role2\">\n"
-            + "  <SchemaGrant access=\"all\"/>\n"
-            + "</Role>");
-        withSchema(context, schema);
-         */
         assertQueryThrows(context, List.of("Role1Plus2"),
             "select from [Sales]", "Unknown role 'Role2'");
     }
@@ -11355,14 +10629,6 @@ class SchemaTest {
         }
         */
         //String schema = TestContext.getRawFoodMartSchema();
-        /*
-        String schema = TestUtil.getRawSchema(context);
-        schema =
-            schema.replaceFirst(
-                "<Schema name=\"FoodMart\"",
-                "<Schema name=\"FoodMart\" defaultRole=\"Unknown\"");
-        withSchema(context, schema);
-         */
         try {
         	TestUtil.getSchemaWarnings(context);
         	fail("should be exception with \"Role 'Unknown'\" ");
@@ -12679,30 +11945,6 @@ class SchemaTest {
         // In order to reproduce the problem it was necessary to only have one
         // non empty member under USA. In the cube definition below we create a
         // cube with only CA data to achieve this.
-        /*
-        String salesCube1 =
-            "<Cube name=\"Sales2\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\" >\n"
-            + "    <SQL dialect=\"default\">\n"
-            + "     <![CDATA[`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")]]>\n"
-            + "    </SQL>\n"
-            + "  </Table>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <DimensionUsage name=\"Product\" source=\"Product\" foreignKey=\"product_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
-            + "</Cube>\n";
-
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            salesCube1,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
 
         // First query all children of the USA. This should only return CA since
         // all the other states were filtered out. CA will be put in the member
@@ -16768,54 +16010,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        final String cube =
-            "<Cube name=\"Foo\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude name=\"agg_g_ms_pcat_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_c_14_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_pl_01_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_ll_01_sales_fact_1997\"/>"
-            + "    <AggName name=\"agg_l_05_sales_fact_1997\">"
-            + "        <AggFactCount column=\"fact_count\"/>\n"
-            + "        <AggIgnoreColumn column=\"customer_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"promotion_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_sales\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_cost\"/>\n"
-            + "        <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
-            + "        <AggLevel name=\"[Product].[Product Id]\" column=\"product_id\" collapsed=\"false\"/>\n"
-            + "    </AggName>\n"
-            + "</Table>\n"
-            + "<Dimension foreignKey=\"product_id\" name=\"Product\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
-            + "  <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
-            + " <Table name=\"product\"/>\n"
-            + " <Table name=\"product_class\"/>\n"
-            + "  </Join>\n"
-            + "  <Level name=\"Product Family\" table=\"product_class\" column=\"product_family\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Department\" table=\"product_class\" column=\"product_department\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Subcategory\" table=\"product_class\" column=\"product_subcategory\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Id\" table=\"product\" column=\"product_id\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>\n";
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]").returnsGrid(
             "Axis #0:\n"
@@ -18610,54 +17804,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        final String cube =
-            "<Cube name=\"Foo\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude name=\"agg_g_ms_pcat_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_c_14_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_pl_01_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_ll_01_sales_fact_1997\"/>"
-            + "    <AggName name=\"agg_l_05_sales_fact_1997\">"
-            + "        <AggFactCount column=\"fact_count\"/>\n"
-            + "        <AggIgnoreColumn column=\"customer_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"promotion_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_sales\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_cost\"/>\n"
-            + "        <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
-            + "        <AggLevel name=\"[Product].[Product Name]\" column=\"product_id\" collapsed=\"false\"/>\n"
-            + "    </AggName>\n"
-            + "</Table>\n"
-            + "<Dimension foreignKey=\"product_id\" name=\"Product\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
-            + "  <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
-            + " <Table name=\"product\"/>\n"
-            + " <Table name=\"product_class\"/>\n"
-            + "  </Join>\n"
-            + "  <Level name=\"Product Family\" table=\"product_class\" column=\"product_family\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Department\" table=\"product_class\" column=\"product_department\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Subcategory\" table=\"product_class\" column=\"product_subcategory\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Id\" table=\"product\" column=\"product_id\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>\n";
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
         assertQueryThrows(context,
             "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "mondrian.olap.MondrianException: Mondrian Error:Too many errors, '1', while loading/reloading aggregates.");
@@ -18844,68 +17990,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        final String cube =
-            "<Cube name=\"Foo\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude name=\"agg_g_ms_pcat_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_c_14_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_pl_01_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_ll_01_sales_fact_1997\"/>"
-            + "    <AggName name=\"agg_l_05_sales_fact_1997\">"
-            + "        <AggFactCount column=\"fact_count\"/>\n"
-            + "        <AggIgnoreColumn column=\"customer_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"promotion_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_sales\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_cost\"/>\n"
-            + "        <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
-            + "        <AggLevel name=\"[Product].[Product Id]\" column=\"product_id\" collapsed=\"false\"/>\n"
-            + "        <AggLevel name=\"[Store].[Store Id]\" column=\"store_id\" collapsed=\"false\"/>\n"
-            + "    </AggName>\n"
-            + "</Table>\n"
-            + "<Dimension foreignKey=\"product_id\" name=\"Product\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
-            + "  <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
-            + " <Table name=\"product\"/>\n"
-            + " <Table name=\"product_class\"/>\n"
-            + "  </Join>\n"
-            + "  <Level name=\"Product Family\" table=\"product_class\" column=\"product_family\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Department\" table=\"product_class\" column=\"product_department\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Subcategory\" table=\"product_class\" column=\"product_subcategory\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Id\" table=\"product\" column=\"product_id\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "  <Dimension name=\"Store\" foreignKey=\"store_id\" >\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"store_id\"\n"
-            + "        primaryKeyTable=\"store\">\n"
-            + "      <Join leftKey=\"region_id\" rightKey=\"region_id\">\n"
-            + "        <Table name=\"store\"/>\n"
-            + "        <Table name=\"region\"/>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Region\" table=\"region\" column=\"sales_city\"\n"
-            + "          uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Store Id\" table=\"store\" column=\"store_id\"\n"
-            + "          uniqueMembers=\"true\">\n"
-            + "      </Level>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>\n";
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {Crossjoin([Product].[Product Family].Members, [Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]").returnsGrid(
             "Axis #0:\n"
@@ -19200,54 +18284,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        final String cube =
-            "<Cube name=\"Foo\" defaultMeasure=\"Unit Sales\">\n"
-            + "  <Table name=\"sales_fact_1997\">\n"
-            + "    <AggExclude name=\"agg_g_ms_pcat_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_c_14_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_pl_01_sales_fact_1997\"/>"
-            + "    <AggExclude name=\"agg_ll_01_sales_fact_1997\"/>"
-            + "    <AggName name=\"agg_l_05_sales_fact_1997\">"
-            + "        <AggFactCount column=\"fact_count\"/>\n"
-            + "        <AggIgnoreColumn column=\"customer_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"promotion_id\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_sales\"/>\n"
-            + "        <AggIgnoreColumn column=\"store_cost\"/>\n"
-            + "        <AggMeasure name=\"[Measures].[Unit Sales]\" column=\"unit_sales\" />\n"
-            + "        <AggLevel name=\"[Product].[Product Id]\" column=\"product_id\" collapsed=\"true\"/>\n"
-            + "    </AggName>\n"
-            + "</Table>\n"
-            + "<Dimension foreignKey=\"product_id\" name=\"Product\">\n"
-            + "<Hierarchy hasAll=\"true\" primaryKey=\"product_id\" primaryKeyTable=\"product\">\n"
-            + "  <Join leftKey=\"product_class_id\" rightKey=\"product_class_id\">\n"
-            + " <Table name=\"product\"/>\n"
-            + " <Table name=\"product_class\"/>\n"
-            + "  </Join>\n"
-            + "  <Level name=\"Product Family\" table=\"product_class\" column=\"product_family\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Department\" table=\"product_class\" column=\"product_department\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Category\" table=\"product_class\" column=\"product_category\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Subcategory\" table=\"product_class\" column=\"product_subcategory\"\n"
-            + "   uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Brand Name\" table=\"product\" column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "  <Level name=\"Product Name\" table=\"product\" column=\"product_name\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "  <Level name=\"Product Id\" table=\"product\" column=\"product_id\"\n"
-            + "   uniqueMembers=\"true\"/>\n"
-            + "</Hierarchy>\n"
-            + "</Dimension>\n"
-            + "<Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\"/>\n"
-            + "</Cube>\n";
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
         assertQueryThrows(context,
             "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "Too many errors, '1', while loading/reloading aggregates.");
@@ -20177,13 +19213,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                    null, CUBES_AB,
-                    null, null, null, null);
-        withSchema(context, schema);
-        */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT [Measures].[Fantastic Count for Different Types of Promotion] ON COLUMNS\n"
             + "FROM [CubeB]").returnsGrid(
@@ -20216,24 +19245,6 @@ class SchemaTest {
             }
         }
         */
-        /*
-        String rawSchema = TestUtil.getRawSchema(context).replace(
-            "<Hierarchy hasAll=\"true\" allMemberName=\"All Gender\" primaryKey=\"customer_id\">",
-            "<Hierarchy name=\"地域\" hasAll=\"true\" allMemberName=\"All Gender\" primaryKey=\"customer_id\">");
-        File schemaFile = File.createTempFile("multiByteSchema", ",xml");
-        schemaFile.deleteOnExit();
-        FileOutputStream output = new FileOutputStream(schemaFile);
-        output.write(rawSchema.getBytes());
-        output.close();
-
-        //final Util.PropertyList properties =
-        //    getConnectionProperties().clone();
-        //properties.put(
-        //    RolapConnectionProperties.Catalog.name(),
-        //    schemaFile.getAbsolutePath());
-        context.setProperty(RolapConnectionProperties.Catalog.name(),
-                schemaFile.getAbsolutePath());
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select [Gender].members on 0 from sales").returnsGrid(
             "Axis #0:\n"
@@ -20318,34 +19329,6 @@ class SchemaTest {
                 // Default member [Measures].[Unit Sales] is denied for the current role.
       // Before the fix ClassCastException was thrown on query.
 
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-          null, null, null, null, null,
-          "<Role name=\"admin\">\n"
-          + "  <SchemaGrant access=\"all\">\n"
-          + "  </SchemaGrant>\n"
-          + "</Role>\n"
-          + "<Role name=\"dev\">\n"
-          + "  <SchemaGrant access=\"all\">\n"
-          + "    <CubeGrant cube=\"Sales\" access=\"all\">\n"
-          + "      <HierarchyGrant hierarchy=\"[Measures]\""
-          + " access=\"custom\">\n"
-          + "        <MemberGrant member=\"[Measures].[Store Cost]\""
-          + " access=\"all\">\n"
-          + "        </MemberGrant>\n"
-          + "        <MemberGrant member=\"[Measures].[Store Sales]\""
-          + " access=\"all\">\n"
-          + "        </MemberGrant>\n"
-          + "        <MemberGrant member=\"[Measures].[Sales Count]\""
-          + " access=\"all\">\n"
-          + "        </MemberGrant>\n"
-          + "      </HierarchyGrant>\n"
-          + "    </CubeGrant>\n"
-          + "  </SchemaGrant>\n"
-          + "</Role>\n");
-        withSchema(context, schema);
-       */
 
       assertThatQuery(context.getConnection(new ConnectionProps(List.of("dev"))),
           "SELECT\n"

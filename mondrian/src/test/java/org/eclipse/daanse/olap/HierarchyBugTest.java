@@ -12,6 +12,7 @@
 */
 package org.eclipse.daanse.olap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -134,7 +135,7 @@ class HierarchyBugTest {
        Connection conn= foodMartContext.getConnectionWithDefaultRole();
 
 
-        Result resultTime = TestUtil.executeQuery(conn, mdxTime);
+        Result resultTime = executeQuery(conn, mdxTime);
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultTime.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
@@ -157,7 +158,7 @@ FlushSchemaCacheModifier.flushSchemaCache(conn);
             List.of("Administrator"), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
         ));
 
-        Result resultWeekly =TestUtil.executeQuery(conn, mdxWeekly);
+        Result resultWeekly =executeQuery(conn, mdxWeekly);
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultWeekly.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
@@ -173,7 +174,7 @@ FlushSchemaCacheModifier.flushSchemaCache(conn);
             + "FROM [Sales]";
 
         Connection conn=foodMartContext.getConnectionWithDefaultRole();
-        Result resultTime =TestUtil.executeQuery(conn, mdxTime);
+        Result resultTime =executeQuery(conn, mdxTime);
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultTime.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
@@ -188,7 +189,7 @@ FlushSchemaCacheModifier.flushSchemaCache(conn);
             + "FROM [Sales]";
 
         Connection conn=foodMartContext.getConnectionWithDefaultRole();
-        Result resultWeekly =TestUtil.executeQuery(conn, mdxWeekly);
+        Result resultWeekly =executeQuery(conn, mdxWeekly);
 
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultWeekly.getAxes()[0], "[Measures]");

@@ -86,12 +86,6 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testTopCount_CountMeasure(Context<?> context) throws Exception {
 
-       /*
-       String baseSchema = TestUtil.getRawSchema(context);
-       String schema = SchemaUtil.getSchema(baseSchema,null, CUSTOM_COUNT_MEASURE_CUBE, null, null, null, null);
-       withSchema(context, schema);
-       //withCube(CUSTOM_COUNT_MEASURE_CUBE_NAME);
-       */
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "Custom Count Measure", CUSTOM_COUNT_MEASURE_QUERY);
     }
@@ -128,13 +122,6 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RoleRestrictionWorksWaRoleDef.class },
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRoleRestrictionWorks_ForRowWithData(@Roles(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME) Connection connection) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                ROLE_RESTRICTION_WORKS_WA_ROLE_DEF);
-        withSchema(context, schema);
-         */
         assertResultsAreEqual(connection,
             "Role restriction works - For WA state",
             ROLE_RESTRICTION_WORKS_WA_QUERY);
@@ -144,13 +131,6 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.RoleRestrictionWorksDfRoleDef.class },
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRoleRestrictionWorks_ForRowWithOutData(@Roles(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME) Connection connection) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                ROLE_RESTRICTION_WORKS_DF_ROLE_DEF);
-        withSchema(context, schema);
-         */
         assertResultsAreEqual(connection,
             "Role restriction works - For DF state",
             ROLE_RESTRICTION_WORKS_DF_QUERY);

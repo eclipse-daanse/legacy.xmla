@@ -9,6 +9,7 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 import static org.opencube.junit5.TestUtil.checkThrowable;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 
 import java.sql.SQLException;

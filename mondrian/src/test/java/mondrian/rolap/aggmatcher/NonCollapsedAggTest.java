@@ -8,6 +8,7 @@
 */
 package mondrian.rolap.aggmatcher;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import java.net.URL;
 import java.util.Map;
@@ -158,7 +159,7 @@ class NonCollapsedAggTest {
             + "non empty Descendants([Time].[Time].[Year].Members, Time.Time.Month, SELF_AND_BEFORE) on 1\n"
             + "FROM [Sales]";
 
-        TestUtil.executeQuery(connection, query);
+        executeQuery(connection, query);
     }
 
     /** Named bridge onto the FoodMart CSVs (for the {@code data =} supplier form). */

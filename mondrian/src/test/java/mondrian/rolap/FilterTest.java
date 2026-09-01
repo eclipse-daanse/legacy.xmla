@@ -9,7 +9,7 @@
  */
 package mondrian.rolap;
 
-import static org.opencube.junit5.TestUtil.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.opencube.junit5.TestUtil.hierarchyName;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
@@ -718,17 +718,6 @@ class FilterTest extends BatchTestCase {
           }
       }
       */
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema,
-        dimension,
-        cube,
-        null,
-        null,
-        null,
-        null );
-    withSchema(context, schema);
-    */
       SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
   }
 
@@ -925,17 +914,6 @@ class FilterTest extends BatchTestCase {
           }
       }
       */
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema,
-        dimension,
-        cube,
-        null,
-        null,
-        null,
-        null );
-    withSchema(context, schema);
-    */
       SqlAssert.forQuery(context.getConnectionWithDefaultRole(), query).expectSql(patterns).verify();
   }
 

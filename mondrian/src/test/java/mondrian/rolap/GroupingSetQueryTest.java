@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
@@ -84,14 +85,11 @@ class GroupingSetQueryTest extends BatchTestCase{
     @RolapConfig(key = ConfigConstants.ENABLE_GROUPING_SETS, value = "true", type = Boolean.class)
     void testGroupingSetForSingleColumnConstraint(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2, measureUnitSales, null, "", "");
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
 
         SqlPattern[] patternsWithGsets = {
             new SqlPattern(
@@ -135,14 +133,11 @@ class GroupingSetQueryTest extends BatchTestCase{
     @Test
     void testGroupingSetForSingleColumnConstraintGroupingSetsDisabled(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2, measureUnitSales, null, "", "");
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
 
         SqlPattern[] patternsWithAggs = {
             new SqlPattern(
@@ -197,17 +192,11 @@ class GroupingSetQueryTest extends BatchTestCase{
         }
 
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales,
-            measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales,
-            measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales,
-            measureUnitSales, null, "", "");
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).build();
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -237,13 +226,9 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
 
         SqlPattern[] patternsWithGsets = {
             new SqlPattern(
@@ -264,13 +249,9 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "M");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "F");
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -298,24 +279,12 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "M");
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "F");
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, null, "", "");
-        CellRequest request4 = createRequest(connection,
-            cubeNameSales2,
-            measureStoreSales, tableCustomer, fieldGender, "M");
-        CellRequest request5 = createRequest(connection,
-            cubeNameSales2,
-            measureStoreSales, tableCustomer, fieldGender, "F");
-        CellRequest request6 = createRequest(connection,
-            cubeNameSales2,
-            measureStoreSales, null, "", "");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
+        CellRequest request4 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureStoreSales).where(tableCustomer, fieldGender, "M").build();
+        CellRequest request5 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureStoreSales).where(tableCustomer, fieldGender, "F").build();
+        CellRequest request6 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureStoreSales).build();
 
         SqlPattern[] patternsWithGsets = {
             new SqlPattern(
@@ -339,24 +308,12 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "M");
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "F");
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, null, "", "");
-        CellRequest request4 = createRequest(connection,
-            cubeNameSales2,
-            measureStoreSales, tableCustomer, fieldGender, "M");
-        CellRequest request5 = createRequest(connection,
-            cubeNameSales2,
-            measureStoreSales, tableCustomer, fieldGender, "F");
-        CellRequest request6 = createRequest(connection,
-            cubeNameSales2,
-            measureStoreSales, null, "", "");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
+        CellRequest request4 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureStoreSales).where(tableCustomer, fieldGender, "M").build();
+        CellRequest request5 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureStoreSales).where(tableCustomer, fieldGender, "F").build();
+        CellRequest request6 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureStoreSales).build();
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -388,24 +345,12 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "M");
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "F");
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, null, "", "");
-        CellRequest request4 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldNameMaritalStatus, "M");
-        CellRequest request5 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldNameMaritalStatus, "S");
-        CellRequest request6 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, null, "", "");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
+        CellRequest request4 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldNameMaritalStatus, "M").build();
+        CellRequest request5 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldNameMaritalStatus, "S").build();
+        CellRequest request6 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
 
         SqlPattern[] patternWithGsets = {
             new SqlPattern(
@@ -439,24 +384,12 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "M");
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldGender, "F");
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, null, "", "");
-        CellRequest request4 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldNameMaritalStatus, "M");
-        CellRequest request5 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableCustomer, fieldNameMaritalStatus, "S");
-        CellRequest request6 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, null, "", "");
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").build();
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").build();
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
+        CellRequest request4 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldNameMaritalStatus, "M").build();
+        CellRequest request5 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldNameMaritalStatus, "S").build();
+        CellRequest request6 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).build();
 
         SqlPattern[] patternWithoutGsets = {
             new SqlPattern(
@@ -484,21 +417,11 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"M", "1997"});
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").where(tableTime, fieldYear, "1997").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"F", "1997"});
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").where(tableTime, fieldYear, "1997").build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableTime, fieldYear, "1997");
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableTime, fieldYear, "1997").build();
 
         SqlPattern[] patternsWithGsets = {
             new SqlPattern(
@@ -532,21 +455,11 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"M", "1997"});
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "M").where(tableTime, fieldYear, "1997").build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"F", "1997"});
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableCustomer, fieldGender, "F").where(tableTime, fieldYear, "1997").build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureUnitSales, tableTime, fieldYear, "1997");
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureUnitSales).where(tableTime, fieldYear, "1997").build();
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -588,24 +501,14 @@ class GroupingSetQueryTest extends BatchTestCase{
         List<String[]> compoundMembers = new ArrayList<>();
         compoundMembers.add(new String[] {"USA", "OR"});
         compoundMembers.add(new String[] {"CANADA", "BC"});
-        CellRequestConstraint constraint =
-            makeConstraintCountryState(compoundMembers);
+        CellRequestFixture.Constraint constraint =
+            CellRequestFixture.Constraint.countryState(compoundMembers.toArray(new String[0][]));
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureCustomerCount, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"M", "1997"}, constraint);
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureCustomerCount).where(tableCustomer, fieldGender, "M").where(tableTime, fieldYear, "1997").constrain(constraint).build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureCustomerCount, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"F", "1997"}, constraint);
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureCustomerCount).where(tableCustomer, fieldGender, "F").where(tableTime, fieldYear, "1997").constrain(constraint).build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureCustomerCount, tableTime, fieldYear, "1997", constraint);
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureCustomerCount).where(tableTime, fieldYear, "1997").constrain(constraint).build();
 
         String sqlWithoutGS =
             "select \"time_by_day\".\"the_year\" as \"c0\", \"customer\".\"gender\" as \"c1\", "
@@ -640,24 +543,14 @@ class GroupingSetQueryTest extends BatchTestCase{
         List<String[]> compoundMembers = new ArrayList<>();
         compoundMembers.add(new String[] {"USA", "OR"});
         compoundMembers.add(new String[] {"CANADA", "BC"});
-        CellRequestConstraint constraint =
-            makeConstraintCountryState(compoundMembers);
+        CellRequestFixture.Constraint constraint =
+            CellRequestFixture.Constraint.countryState(compoundMembers.toArray(new String[0][]));
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            cubeNameSales2,
-            measureCustomerCount, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"M", "1997"}, constraint);
+        CellRequest request1 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureCustomerCount).where(tableCustomer, fieldGender, "M").where(tableTime, fieldYear, "1997").constrain(constraint).build();
 
-        CellRequest request2 = createRequest(connection,
-            cubeNameSales2,
-            measureCustomerCount, new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[]{"F", "1997"}, constraint);
+        CellRequest request2 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureCustomerCount).where(tableCustomer, fieldGender, "F").where(tableTime, fieldYear, "1997").constrain(constraint).build();
 
-        CellRequest request3 = createRequest(connection,
-            cubeNameSales2,
-            measureCustomerCount, tableTime, fieldYear, "1997", constraint);
+        CellRequest request3 = CellRequestFixture.of(connection).request().cube(cubeNameSales2).measure(measureCustomerCount).where(tableTime, fieldYear, "1997").constrain(constraint).build();
 
         String sqlWithoutGS =
             "select \"time_by_day\".\"the_year\" as \"c0\", \"customer\".\"gender\" as \"c1\", "

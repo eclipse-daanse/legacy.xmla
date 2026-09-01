@@ -13,11 +13,11 @@
  */
 package org.eclipse.daanse.olap.function.def.topbottomcount;
 
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -101,18 +101,16 @@ class TopBottomCountFunDefTest {
     }
 
     private void checkTopBottomCountPercentDepends(Connection connection, String fun) {
-        String s1 =
-            allHiersExcept( "[Measures]", "[Promotion Media].[Promotion Media]" );
-        assertSetExprDependsOn(connection,
+        assertThatSetExpr(connection, "Sales",
             fun
                 + "({[Promotion Media].[Promotion Media].[Media Type].members}, "
-                + "2, [Measures].[Unit Sales])",
-            s1 );
+                + "2, [Measures].[Unit Sales])")
+            .dependsOn( hiersExcept( "[Measures]", "[Promotion Media].[Promotion Media]" ) );
 
         if ( fun.endsWith( "Count" ) ) {
-            assertSetExprDependsOn(connection,
-                fun + "({[Promotion Media].[Promotion Media].[Media Type].members}, 2)",
-                "{}" );
+            assertThatSetExpr(connection, "Sales",
+                fun + "({[Promotion Media].[Promotion Media].[Media Type].members}, 2)")
+                .dependsOn();
         }
     }
 

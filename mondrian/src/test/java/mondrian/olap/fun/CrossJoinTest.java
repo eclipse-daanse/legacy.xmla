@@ -8,6 +8,7 @@
 */
 package mondrian.olap.fun;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.mockito.Mockito.mock;
@@ -139,7 +140,7 @@ public class CrossJoinTest {
     TupleList productMembers =
     		TestUtil.productMembersPotScrubbersPotsAndPans( salesCubeCatalogReader );
     // Get genders members as TupleList
-    Result genders = TestUtil.executeQuery(con, SELECT_GENDER_MEMBERS );
+    Result genders = executeQuery(con, SELECT_GENDER_MEMBERS );
     TupleList genderMembers = getGenderMembers( genders );
 
     // Test execution to track cancellation/timeout calls

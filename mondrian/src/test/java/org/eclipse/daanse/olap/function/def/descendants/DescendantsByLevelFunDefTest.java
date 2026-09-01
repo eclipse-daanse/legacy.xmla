@@ -17,9 +17,9 @@ import static mondrian.olap.fun.FunctionTest.hierarchized1997;
 import static mondrian.olap.fun.FunctionTest.months;
 import static mondrian.olap.fun.FunctionTest.quarters;
 import static mondrian.olap.fun.FunctionTest.year1997;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import javax.sql.DataSource;
@@ -47,9 +47,9 @@ class DescendantsByLevelFunDefTest {
 
     @Test
     void testDescendantsDepends(Context<?> context) {
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "Descendants([Time].[Time].CurrentMember)",
-            "{[Time].[Time]}" );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Descendants([Time].[Time].CurrentMember)")
+            .dependsOn( "[Time].[Time]" );
     }
 
     @Test

@@ -14,10 +14,10 @@
 package org.eclipse.daanse.olap.function.def.numeric.value;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +33,9 @@ class ValueFunDefTest {
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].VALUE").returns( "565,238.13" );
 
         // Depends upon almost everything.
-        String s1 = FunctionTest.allHiersExcept( "[Measures]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "[Measures].[Store Sales].VALUE", s1 );
+        FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "[Measures].[Store Sales].VALUE")
+            .dependsOn( FunctionTest.hiersExcept( "[Measures]" ) );
 
         // We do not allow FORMATTED_VALUE.
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",

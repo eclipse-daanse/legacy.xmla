@@ -9,8 +9,8 @@
 
 package mondrian.test;
 
-import static org.opencube.junit5.TestUtil.executeQuery;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels.SteelWheelsTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;

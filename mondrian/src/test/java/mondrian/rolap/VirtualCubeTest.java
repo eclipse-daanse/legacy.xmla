@@ -10,12 +10,12 @@
 */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.List;
@@ -99,21 +99,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\">\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Unit Sales]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         checkXxx(context.getConnectionWithDefaultRole());
     }
 
@@ -153,25 +138,6 @@ class VirtualCubeTest extends BatchTestCase {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\" defaultMeasure=\"Profit\">\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" "
-            + "name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Unit Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Profit]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         String query1 = "select from [Sales vs Warehouse]";
         String query2 =
             "select from [Sales vs Warehouse] where measures.profit";
@@ -214,25 +180,6 @@ class VirtualCubeTest extends BatchTestCase {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\" defaultMeasure=\"Profit Error\">\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" "
-            + "name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Unit Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Profit]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         String query1 = "select from [Sales vs Warehouse]";
         String query2 =
             "select from [Sales vs Warehouse] "
@@ -273,23 +220,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\">\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" "
-            + "name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Bad cube\" "
-            + "name=\"[Measures].[Unit Sales]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertQueryThrows(context,
             "select from [Sales vs Warehouse]",
             "Cube 'Bad cube' not found");
@@ -331,25 +261,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\" defaultMeasure=\"PROFIT\">\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" "
-            + "name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Unit Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Profit]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         String queryWithoutFilter = "select from [Sales vs Warehouse]";
         String queryWithFirstMeasure =
             "select from [Sales vs Warehouse] "
@@ -407,22 +318,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\">\n"
-            + "<VirtualCubeDimension name=\"Time\"/>\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Unit Sales]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         checkXxx(context.getConnectionWithDefaultRole());
     }
 
@@ -555,29 +450,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Warehouse and Sales Member Visibility\">\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Sales Count]\" visible=\"true\" />\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Cost]\" visible=\"false\" />\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Profit last Period]\" visible=\"true\" />\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Units Shipped]\" visible=\"false\" />\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse\" name=\"[Measures].[Average Warehouse Sale]\" visible=\"false\" />\n"
-            + "  <CalculatedMember name=\"Profit\" dimension=\"Measures\" visible=\"false\" >\n"
-            + "    <Formula>[Measures].[Store Sales] - [Measures].[Store Cost]</Formula>\n"
-            + "  </CalculatedMember>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         //withSchemaEmf(context, TestMemberVisibilityModifier::new);
         Result result = executeQuery(
             "select {[Measures].[Sales Count],\n"
@@ -718,37 +590,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<Cube name=\"Warehouse No Cache\" cache=\"false\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n"
-            + "\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Store\" source=\"Store\" foreignKey=\"store_id\"/>\n"
-            + "  <Measure name=\"Units Shipped\" column=\"units_shipped\" aggregator=\"sum\" formatString=\"#.0\"/>\n"
-            + "</Cube>\n"
-            + "<VirtualCube name=\"Warehouse and Sales Format Expression Cube No Cache\">\n"
-            + "  <VirtualCubeDimension name=\"Store\"/>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Cost]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Warehouse No Cache\" name=\"[Measures].[Units Shipped]\"/>\n"
-            + "  <CalculatedMember name=\"Profit\" dimension=\"Measures\">\n"
-            + "    <Formula>[Measures].[Store Sales] - [Measures].[Store Cost]</Formula>\n"
-            + "  </CalculatedMember>\n"
-            + "  <CalculatedMember name=\"Profit Per Unit Shipped\" dimension=\"Measures\">\n"
-            + "    <Formula>[Measures].[Profit] / [Measures].[Units Shipped]</Formula>\n"
-            + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" expression=\"IIf(([Measures].[Profit Per Unit Shipped] > 2.0), '|0.#|style=green', '|0.#|style=red')\"/>\n"
-            + "  </CalculatedMember>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Profit Per Unit Shipped]} ON COLUMNS, "
             + "{[Store].[All Stores].[USA].[CA], [Store].[All Stores].[USA].[OR], [Store].[All Stores].[USA].[WA]} ON ROWS "
@@ -1187,21 +1028,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs HR\">\n"
-            + "<VirtualCubeDimension name=\"Store\"/>\n"
-            + "<VirtualCubeDimension cubeName=\"HR\" name=\"Position\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"HR\" name=\"[Measures].[Org Salary]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Org Salary]} on columns, "
             + "non empty "
@@ -1268,25 +1094,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Sales vs Warehouse\" defaultMeasure=\"Unit Sales\">\n"
-            + "<VirtualCubeDimension name=\"Product\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Warehouse\" "
-            + "name=\"[Measures].[Warehouse Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Unit Sales]\"/>\n"
-            + "<VirtualCubeMeasure cubeName=\"Sales\" "
-            + "name=\"[Measures].[Profit]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         String queryWithoutFilter =
             "select"
             + " from [Sales vs Warehouse]";
@@ -1462,23 +1269,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Warehouse and Sales2\" defaultMeasure=\"Store Sales\">\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Warehouse\" name=\"Warehouse\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Customer Count]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
 
 //       This test case does not actually reject the dimension constraint from
 //       an unrelated base cube. The reason is that the constraint contains an
@@ -1541,23 +1331,6 @@ class VirtualCubeTest extends BatchTestCase {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Warehouse and Sales2\" defaultMeasure=\"Store Sales\">\n"
-            + "  <VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-            + "  <VirtualCubeDimension name=\"Time\"/>\n"
-            + "  <VirtualCubeDimension cubeName=\"Warehouse\" name=\"Warehouse\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Customer Count]\"/>\n"
-            + "  <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Warehouse].[x] as 'Aggregate({[Warehouse].[Canada], [Warehouse].[USA]})'\n"
             + "member [Measures].[foo] AS '([Warehouse].[x],[Measures].[Customer Count])'\n"
@@ -1642,30 +1415,6 @@ class VirtualCubeTest extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"TestStore\">\n"
-            + "  <Table name=\"store\"/>\n"
-            + "  <Dimension name=\"HCB\" caption=\"Has coffee bar caption\">\n"
-            + "    <Hierarchy hasAll=\"true\">\n"
-            + "      <Level name=\"Has coffee bar\" column=\"coffee_bar\" uniqueMembers=\"true\"\n"
-            + "          type=\"Boolean\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Store Sqft\" caption=\"Store Sqft Caption\" column=\"store_sqft\" aggregator=\"sum\" formatString=\"#,###\"/>\n"
-            + "</Cube>\n",
-
-            "<VirtualCube name=\"VirtualTestStore\">\n"
-            + "  <VirtualCubeDimension cubeName=\"TestStore\" name=\"HCB\"/>\n"
-            + "  <VirtualCubeMeasure   cubeName=\"TestStore\" name=\"[Measures].[Store Sqft]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         Result result = executeQuery(
             "select {[Measures].[Store Sqft]} ON COLUMNS,"
             + "{[HCB]} ON ROWS "

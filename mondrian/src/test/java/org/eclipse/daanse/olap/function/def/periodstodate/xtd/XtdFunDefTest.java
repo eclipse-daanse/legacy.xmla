@@ -25,16 +25,15 @@
  */
 package org.eclipse.daanse.olap.function.def.periodstodate.xtd;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-
-import mondrian.olap.fun.FunctionTest;
 
 @RolapContextTest(FoodmartTestInstance.class)
 public class XtdFunDefTest {
@@ -63,9 +62,9 @@ public class XtdFunDefTest {
 		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Store])")
 				.throwsMessage("Argument to function 'Ytd' must belong to Time hierarchy");
 
-		assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "Ytd()", "{[Time].[Time], " + TimeWeekly + "}");
+		assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales", "Ytd()").dependsOn("[Time].[Time]", TimeWeekly);
 
-		assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "Ytd([Time].[1997].[Q2])", "{}");
+		assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q2])").dependsOn();
 	}
 
 	/**
@@ -104,11 +103,11 @@ public class XtdFunDefTest {
 				[Time].[Time].[1997].[Q2].[6]
 				[Time].[Time].[1997].[Q3].[7]""");
 
-		FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
-				"count(generate({[Time].[1997].[Q4].[11]}, {Qtd( [Time].[Time].currentMember)}))", 2, 0);
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+				"count(generate({[Time].[1997].[Q4].[11]}, {Qtd( [Time].[Time].currentMember)}))").returns( 2, 0);
 
-		FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
-				"count(generate({[Time].[1997].[Q4].[11]}, {Mtd( [Time].[Time].currentMember)}))", 1, 0);
+		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+				"count(generate({[Time].[1997].[Q4].[11]}, {Mtd( [Time].[Time].currentMember)}))").returns( 1, 0);
 	}
 
 	@Test

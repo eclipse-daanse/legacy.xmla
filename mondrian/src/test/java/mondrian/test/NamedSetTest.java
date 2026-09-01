@@ -15,11 +15,11 @@ package mondrian.test;
 
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -864,17 +864,6 @@ class NamedSetTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            null,
-            "<NamedSet name=\"Bad\" formula=\"{[Store].[USA].[WA].Children}}\"/>",
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sales]} on columns,\n"
             + " {[Bad]} on rows\n"
@@ -1073,7 +1062,7 @@ class NamedSetTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, NamedSetsInCubeModifierEmf.class },
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testNamedSetDependencies(Context<?> context) {
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "[Top CA Cities]", "{}");
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales", "[Top CA Cities]").dependsOn();
     }
 
     /**

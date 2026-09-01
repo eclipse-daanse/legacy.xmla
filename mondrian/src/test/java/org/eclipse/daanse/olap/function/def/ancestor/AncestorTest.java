@@ -13,9 +13,9 @@
 */
 package org.eclipse.daanse.olap.function.def.ancestor;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -95,13 +95,13 @@ public class AncestorTest {
 	@Test
 	void testAncestorDepends(Context<?> context) {
 		Connection con = context.getConnectionWithDefaultRole();
-		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, [Store].[Store Country]).Name", "{[Store].[Store]}");
+		assertThatExpr(con, "Sales", "Ancestor([Store].CurrentMember, [Store].[Store Country]).Name").dependsOn("[Store].[Store]");
 
-		assertExprDependsOn(con, "Ancestor([Store].[All Stores].[USA], [Store].CurrentMember.Level).Name", "{[Store].[Store]}");
+		assertThatExpr(con, "Sales", "Ancestor([Store].[All Stores].[USA], [Store].CurrentMember.Level).Name").dependsOn("[Store].[Store]");
 
-		assertExprDependsOn(con, "Ancestor([Store].[All Stores].[USA], [Store].[Store Country]).Name", "{}");
+		assertThatExpr(con, "Sales", "Ancestor([Store].[All Stores].[USA], [Store].[Store Country]).Name").dependsOn();
 
-		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, 2+1).Name", "{[Store].[Store]}");
+		assertThatExpr(con, "Sales", "Ancestor([Store].CurrentMember, 2+1).Name").dependsOn("[Store].[Store]");
 	}
 
 }

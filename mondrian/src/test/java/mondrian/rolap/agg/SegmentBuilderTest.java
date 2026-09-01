@@ -10,12 +10,12 @@ package mondrian.rolap.agg;
 
 import static java.util.Arrays.asList;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.util.ArrayList;
 import java.util.Arrays;

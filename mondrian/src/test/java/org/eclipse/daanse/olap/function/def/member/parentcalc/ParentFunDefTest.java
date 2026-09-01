@@ -13,10 +13,10 @@
  */
 package org.eclipse.daanse.olap.function.def.member.parentcalc;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -32,10 +32,10 @@ class ParentFunDefTest {
     @Test
     void testParent(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertMemberExprDependsOn(connection,
-            "[Gender].Parent",
-            "{[Gender].[Gender]}" );
-        assertMemberExprDependsOn(connection, "[Gender].[M].Parent", "{}" );
+        assertThatMemberExpr(connection, "Sales",
+            "[Gender].Parent")
+            .dependsOn( "[Gender].[Gender]" );
+        assertThatMemberExpr(connection, "Sales", "[Gender].[M].Parent").dependsOn();
         assertThatAxis(connection, "Sales",
             "{[Store].[USA].[CA].Parent}").returns( "[Store].[Store].[USA]" );
         // root member has null parent

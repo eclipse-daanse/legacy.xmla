@@ -71,7 +71,9 @@ import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.common.star.StarPredicate;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
 import org.eclipse.daanse.rolap.testkit.assertions.ConfigOverride;
+import org.eclipse.daanse.rolap.testkit.assertions.Mdx;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
@@ -153,7 +155,7 @@ class SegmentLoaderTest extends BatchTestCase {
                 "select \"time_by_day\".\"the_year\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" from \"sales_fact_1997\" \"sales_fact_1997\", \"time_by_day\" \"time_by_day\" where \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" group by \"time_by_day\".\"the_year\"";
             final String queryMySQL =
                 "select `time_by_day`.`the_year` as `c0`, sum(`sales_fact_1997`.`unit_sales`) as `m0` from `sales_fact_1997` as `sales_fact_1997`, `time_by_day` as `time_by_day` where `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` group by `time_by_day`.`the_year`";
-            TestUtil.executeQuery(context.getConnectionWithDefaultRole(),
+            Mdx.executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Store].[Store Country].Members} on rows, {[Time].[Time].[Year].Members} on columns from [Sales]");
             SqlPattern[] patterns = new SqlPattern[] {
                 new SqlPattern(
@@ -494,17 +496,12 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     private GroupingSet getGroupingSetRollupOnGender(Connection connection) {
-        return
-            getGroupingSet(connection,
-                new String[]{tableTime, tableProductClass, tableProductClass},
-                new String[]{
-                    fieldYear, fieldProductFamily, fieldProductDepartment},
-                new String[][]{
-                    fieldValuesYear,
-                    fieldValuesProductFamily,
-                    fieldValueProductDepartment},
-                cubeNameSales,
-                measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableTime, fieldYear, fieldValuesYear)
+            .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+            .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+            .build();
     }
 
     @Test
@@ -822,11 +819,11 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     private GroupingSet getGroupingSetRollupOnGenderAndProductFamily(Connection connection) {
-        return getGroupingSet(connection,
-            new String[]{tableTime, tableProductClass},
-            new String[]{fieldYear, fieldProductDepartment},
-            new String[][]{fieldValuesYear, fieldValueProductDepartment},
-            cubeNameSales, measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableTime, fieldYear, fieldValuesYear)
+            .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+            .build();
     }
 
     @Test
@@ -877,44 +874,39 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     private GroupingSet getGroupingSetRollupOnGenderAndProductDepartment(Connection connection) {
-        return getGroupingSet(connection,
-            new String[]{tableProductClass, tableTime},
-            new String[]{fieldProductFamily, fieldYear},
-            new String[][]{fieldValuesProductFamily, fieldValuesYear},
-            cubeNameSales,
-            measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+            .where(tableTime, fieldYear, fieldValuesYear)
+            .build();
     }
 
     private GroupingSet
         getGroupingSetRollupOnProductFamilyAndProductDepartment(Connection connection)
     {
-        return getGroupingSet(connection,
-            new String[]{tableCustomer, tableTime},
-            new String[]{fieldGender, fieldYear},
-            new String[][]{fieldValuesGender, fieldValuesYear},
-            cubeNameSales,
-            measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableCustomer, fieldGender, fieldValuesGender)
+            .where(tableTime, fieldYear, fieldValuesYear)
+            .build();
     }
 
     private GroupingSet
         getGroupingSetRollupOnGenderAndProductDepartmentAndYear(Connection connection)
     {
-        return getGroupingSet(connection,
-            new String[]{tableProductClass},
-            new String[]{fieldProductFamily},
-            new String[][]{fieldValuesProductFamily},
-            cubeNameSales,
-            measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+            .build();
     }
 
     private GroupingSet getGroupingSetRollupOnProductDepartment(Connection connection) {
-        return getGroupingSet(connection,
-            new String[]{tableCustomer, tableProductClass, tableTime},
-            new String[]{fieldGender, fieldProductFamily, fieldYear},
-            new String[][]{
-                fieldValuesGender, fieldValuesProductFamily, fieldValuesYear},
-            cubeNameSales,
-            measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableCustomer, fieldGender, fieldValuesGender)
+            .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+            .where(tableTime, fieldYear, fieldValuesYear)
+            .build();
     }
 
     @Test
@@ -1019,15 +1011,13 @@ class SegmentLoaderTest extends BatchTestCase {
     }
 
     private GroupingSet getDefaultGroupingSet(Connection connection) {
-        return getGroupingSet(connection,
-            new String[]{tableCustomer, tableProductClass,
-                tableProductClass, tableTime},
-            new String[]{fieldGender, fieldProductDepartment,
-                fieldProductFamily, fieldYear},
-            new String[][]{fieldValuesGender, fieldValueProductDepartment,
-                fieldValuesProductFamily, fieldValuesYear},
-            cubeNameSales,
-            measureUnitSales);
+        return CellRequestFixture.of(connection).groupingSet()
+            .cube(cubeNameSales).measure(measureUnitSales)
+            .where(tableCustomer, fieldGender, fieldValuesGender)
+            .where(tableProductClass, fieldProductDepartment, fieldValueProductDepartment)
+            .where(tableProductClass, fieldProductFamily, fieldValuesProductFamily)
+            .where(tableTime, fieldYear, fieldValuesYear)
+            .build();
     }
 
     private void verifyYearAxis(SegmentAxis axis) {

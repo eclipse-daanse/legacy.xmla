@@ -12,12 +12,12 @@
 */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.assertSqlEquals;
-import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.unfold;
 
 import java.time.Duration;
@@ -3261,40 +3261,6 @@ expected);
         if (Bug.avoidSlowTestOnLucidDB(getDialect(context.getConnectionWithDefaultRole()))) {
             return;
         }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null,
-            "<Cube name=\"HR-ordered\">\n"
-            + "  <Table name=\"salary\"/>\n"
-            + "  <Dimension name=\"Employees\" foreignKey=\"employee_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Employees\"\n"
-            + "        primaryKey=\"employee_id\">\n"
-            + "      <Table name=\"employee\"/>\n"
-            + "      <Level name=\"Employee Id\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-            + "          column=\"employee_id\" parentColumn=\"supervisor_id\"\n"
-            + "          nameColumn=\"full_name\" nullParentValue=\"0\""
-            // Original "HR" cube has no ordinalColumn.
-            + "          ordinalColumn=\"last_name\" >\n"
-            + "        <Closure parentColumn=\"supervisor_id\" childColumn=\"employee_id\">\n"
-            + "          <Table name=\"employee_closure\"/>\n"
-            + "        </Closure>\n"
-            + "        <Property name=\"First Name\" column=\"first_name\"/>\n"
-            + "      </Level>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "\n"
-            + "  <Measure name=\"Org Salary\" column=\"salary_paid\" aggregator=\"sum\"\n"
-            + "      formatString=\"Currency\"/>\n"
-            + "  <Measure name=\"Count\" column=\"employee_id\" aggregator=\"count\"\n"
-            + "      formatString=\"#,#\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
 
         // Make sure <Member>.CHILDREN is sorted.
         MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
@@ -3367,46 +3333,6 @@ expected);
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.ParentChildHierarchyTestModifier8.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testClosureTableInVirtualCube(Context<?> context) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                "<Dimension name=\"Employees\" >"
-            + "   <Hierarchy hasAll=\"true\" allMemberName=\"All Employees\""
-            + "      primaryKey=\"employee_id\" primaryKeyTable=\"employee\">"
-            + "      <Table name=\"employee\"/>"
-            + "      <Level name=\"Employee Name\" type=\"Numeric\" uniqueMembers=\"true\""
-            + "         column=\"employee_id\" parentColumn=\"supervisor_id\""
-            + "         nameColumn=\"full_name\" nullParentValue=\"0\">"
-            + "         <Closure parentColumn=\"supervisor_id\" childColumn=\"employee_id\">"
-            + "            <Table name=\"employee_closure\"/>"
-            + "         </Closure>"
-            + "      </Level>"
-            + "   </Hierarchy>"
-            + "</Dimension>",
-            null,
-            "<Cube name=\"CustomSales\">"
-            + "   <Table name=\"sales_fact_1997\"/>"
-            + "   <DimensionUsage name=\"Employees\" source=\"Employees\" foreignKey=\"time_id\"/>"
-            + "   <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"/>"
-            + "</Cube>"
-            + "<Cube name=\"CustomHR\">"
-            + "   <Table name=\"salary\"/>"
-            + "   <DimensionUsage name=\"Employees\" source=\"Employees\" foreignKey=\"employee_id\"/>"
-            + "   <Measure name=\"Org Salary\" column=\"salary_paid\" aggregator=\"sum\"/>"
-            + "</Cube>"
-            + "<VirtualCube name=\"CustomSalesAndHR\" >"
-            + "<VirtualCubeDimension name=\"Employees\"/>"
-            + "<VirtualCubeMeasure cubeName=\"CustomSales\" name=\"[Measures].[Store Sales]\"/>"
-            + "<VirtualCubeMeasure cubeName=\"CustomHR\" name=\"[Measures].[Org Salary]\"/>"
-            + "<CalculatedMember name=\"HR Cost per Sale\" dimension=\"Measures\">"
-            + "<Formula>[Measures].[Store Sales] / [Measures].[Org Salary]</Formula>"
-            + "</CalculatedMember>"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-        */
         MdxAssert.assertThatQuery(context.getConnectionWithDefaultRole(),
 "select "
             + "[Employees].[All Employees].[Sheri Nowmer].[Rebecca Kanagaki].Children"
@@ -3435,34 +3361,6 @@ expected);
         if (Bug.avoidSlowTestOnLucidDB(getDialect(context.getConnectionWithDefaultRole()))) {
             return;
         }
-        /*
-        String cubestart =
-                "<Cube name=\"HR4C\">\n"
-                        + "  <Table name=\"salary\"/>\n"
-                        + "  <Dimension name=\"Employees\" foreignKey=\"employee_id\">\n"
-                        + "    <Hierarchy hasAll=\"true\" allMemberName=\"All\"\n"
-                        + "        primaryKey=\"employee_id\">\n"
-                        + "      <Table name=\"employee\"/>\n"
-                        + "      <Level name=\"Employee Id\" type=\"Numeric\" uniqueMembers=\"true\"\n"
-                        + "          column=\"employee_id\" parentColumn=\"supervisor_id\"\n"
-                        + "          nameColumn=\"full_name\" nullParentValue=\"0\">\n";
-        String closure =
-                "        <Closure parentColumn=\"supervisor_id\" childColumn=\"employee_id\">\n"
-                        + "          <Table name=\"employee_closure\"/>\n"
-                        + "        </Closure>\n";
-        String cubeend =
-                "      </Level>\n"
-                        + "    </Hierarchy>\n"
-                        + "  </Dimension>\n"
-                        + "\n"
-                        + "  <Measure name=\"Count\" column=\"employee_id\" aggregator=\"count\" />\n"
-                        + "</Cube>\n";
-
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cubestart + closure + cubeend, null, null, null, null);
-        withSchema(context, schema);
-         */
 
         String mdx;
         String expected;

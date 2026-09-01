@@ -9,13 +9,9 @@
 
 package mondrian.test.clearview;
 
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
-import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import mondrian.test.DiffRepository;
 
@@ -29,8 +25,8 @@ import mondrian.test.DiffRepository;
  *
  * @author Khanh Vu
  */
-@RolapContextTest(FoodmartTestInstance.class)
 @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "true", type = Boolean.class)
+@Tag("cacheHitSuit1Test")
 class MultiLevelVCTest extends ClearViewBase {
 
     @Override
@@ -40,17 +36,5 @@ class MultiLevelVCTest extends ClearViewBase {
 
     private static DiffRepository getDiffReposStatic() {
         return DiffRepository.lookup(MultiLevelVCTest.class);
-    }
-
-    @Override
-	@Tag("cacheHitSuit1Test")
-    @Test
-    protected void runTest(Context<?> context) {
-        DiffRepository diffRepos = getDiffRepos();
-        for (String name : diffRepos.getTestCaseNames()) {
-            setName(name);
-            diffRepos.setCurrentTestCaseName(name);
-            super.runTest(context);
-        }
     }
 }

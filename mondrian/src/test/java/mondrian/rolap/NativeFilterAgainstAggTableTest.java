@@ -8,8 +8,8 @@
 */
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;

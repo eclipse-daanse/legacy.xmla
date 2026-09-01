@@ -24,9 +24,9 @@
 
 package mondrian.rolap.agg;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 import java.util.ArrayList;
 import java.util.List;

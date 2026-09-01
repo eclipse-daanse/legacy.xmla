@@ -18,9 +18,9 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQu
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.olap.fun.FunctionTest;
 
@@ -124,19 +124,18 @@ class ValidMeasureFunDefTest {
     @Test
     void testValidMeasureDepends(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        String s12 = FunctionTest.allHiersExcept( "[Measures]" );
-        TestUtil.assertExprDependsOn(connection,
-            "ValidMeasure([Measures].[Unit Sales])", s12 );
+        FunDependencies.assertThatExpr(connection, "Sales",
+            "ValidMeasure([Measures].[Unit Sales])")
+            .dependsOn( FunctionTest.hiersExcept( "[Measures]" ) );
 
-        String s11 = FunctionTest.allHiersExcept( "[Measures]", "[Time].[Time]" );
-        TestUtil.assertExprDependsOn(connection,
-            "ValidMeasure(([Measures].[Unit Sales], [Time].[1997].[Q1]))", s11 );
+        FunDependencies.assertThatExpr(connection, "Sales",
+            "ValidMeasure(([Measures].[Unit Sales], [Time].[1997].[Q1]))")
+            .dependsOn( FunctionTest.hiersExcept( "[Measures]", "[Time].[Time]" ) );
 
-        String s1 = FunctionTest.allHiersExcept( "[Measures]" );
-        TestUtil.assertExprDependsOn(connection,
+        FunDependencies.assertThatExpr(connection, "Sales",
             "ValidMeasure(([Measures].[Unit Sales], "
-                + "[Time].[Time].CurrentMember.Parent))",
-            s1 );
+                + "[Time].[Time].CurrentMember.Parent))")
+            .dependsOn( FunctionTest.hiersExcept( "[Measures]" ) );
     }
 
     @Test

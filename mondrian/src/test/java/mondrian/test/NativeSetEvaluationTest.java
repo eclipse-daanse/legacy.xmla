@@ -9,14 +9,14 @@
 */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+import static org.eclipse.daanse.rolap.testkit.assertions.NativeVerify.assertSameNativeAndNot;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
 
 import java.util.List;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
@@ -1136,17 +1136,6 @@ class NativeSetEvaluationTest extends BatchTestCase {
           }
       }
       */
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema,
-        null,
-        multiHierarchyCube,
-        null,
-        null,
-        null,
-        null );
-    withSchema(context, schema);
-     */
     assertThatQuery(context.getConnectionWithDefaultRole(),
       mdx).returnsGrid(
       result );
@@ -1539,32 +1528,6 @@ class NativeSetEvaluationTest extends BatchTestCase {
           }
       }
       */
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema,
-      null, null, null, null, null,
-      "  <Role name=\"F-MIS-BE-CLIENT\">\n"
-        + "    <SchemaGrant access=\"none\">\n"
-        + "      <CubeGrant cube=\"Warehouse and Sales\" access=\"all\">\n"
-        + "        <HierarchyGrant hierarchy=\"[Store]\" rollupPolicy=\"partial\" access=\"custom\">\n"
-        + "          <MemberGrant member=\"[Store].[All Stores]\" access=\"none\">\n"
-        + "          </MemberGrant>\n"
-        + "          <MemberGrant member=\"[Store].[USA]\" access=\"all\">\n"
-        + "          </MemberGrant>\n"
-        + "        </HierarchyGrant>\n"
-        + "      </CubeGrant>\n"
-        + "      <CubeGrant cube=\"Warehouse\" access=\"all\">\n"
-        + "        <HierarchyGrant hierarchy=\"[Store]\" rollupPolicy=\"partial\" access=\"custom\">\n"
-        + "          <MemberGrant member=\"[Store].[All Stores]\" access=\"none\">\n"
-        + "          </MemberGrant>\n"
-        + "          <MemberGrant member=\"[Store].[USA]\" access=\"all\">\n"
-        + "          </MemberGrant>\n"
-        + "        </HierarchyGrant>\n"
-        + "      </CubeGrant>\n"
-        + "    </SchemaGrant>\n"
-        + "  </Role>\n" );
-    withSchema(context, schema);
-    */
     Result result = executeQuery(
       "With\n"
         + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Store],[*BASE_MEMBERS_Warehouse])'\n"
@@ -1687,21 +1650,15 @@ class NativeSetEvaluationTest extends BatchTestCase {
           }
       }
       */
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema,
-      null, null, null, null, null, roleDef );
-    withSchema(context, schema);
-     */
 
       Connection connection = context.getConnection(new ConnectionProps(List.of("Test")));
-    verifySameNativeAndNot(connection,
+    assertSameNativeAndNot(connection,
       "select non empty crossjoin([Store].[USA],[Product].[Product Name].members) on 0 from sales",
       "Native crossjoin mismatch");
-    verifySameNativeAndNot(connection,
+    assertSameNativeAndNot(connection,
       "select topcount([Product].[Product Name].members, 6, Measures.[Unit Sales]) on 0 from sales",
       "Native topcount mismatch");
-    verifySameNativeAndNot(connection,
+    assertSameNativeAndNot(connection,
       "select filter([Product].[Product Name].members, Measures.[Unit Sales] > 0) on 0 from sales",
       "Native native filter mismatch");
 

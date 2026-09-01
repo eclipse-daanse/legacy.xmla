@@ -15,6 +15,7 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQu
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.opencube.junit5.TestUtil.mysqlPattern;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -27,9 +28,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.opencube.junit5.TestUtil;
-
-import mondrian.enums.DatabaseProduct;
-import mondrian.test.SqlPattern;
 
 /**
  * Tests {@code AggName}/{@code AggPattern} recognition of {@code AggMeasureFactCount}
@@ -109,7 +107,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`the_year`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
-        assertQuerySql(connection, sqlMysql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(sqlMysql)).verify();
         assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
@@ -145,7 +143,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`the_year`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
-        assertQuerySql(connection, aggSql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(aggSql)).verify();
         assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
@@ -207,7 +205,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`the_year`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
-        assertQuerySql(connection, aggSql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(aggSql)).verify();
     }
 
     // aggregation table is used, but falls back to the general fact_count
@@ -235,7 +233,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`the_year`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
-        assertQuerySql(connection, aggSql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(aggSql)).verify();
     }
 
     // no AggMeasureFactCount elements at all -- falls back to the general
@@ -262,7 +260,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`the_year`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
-        assertQuerySql(connection, aggSql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(aggSql)).verify();
     }
 
     @Test
@@ -305,7 +303,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_csv_different_column_names`.`the_year`,\n"
                 + "    `agg_csv_different_column_names`.`quarter`";
 
-        assertQuerySql(connection, aggSql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(aggSql)).verify();
         assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
@@ -376,7 +374,7 @@ class AggMeasureFactCountTest {
                 + "    `agg_c_6_fact_csv_2016`.`the_year`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter`";
 
-        assertQuerySql(connection, aggSql);
+        SqlAssert.forQuery(connection, QUERY).expectSql(mysqlPattern(aggSql)).verify();
         assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
     }
 
@@ -388,9 +386,5 @@ class AggMeasureFactCountTest {
     @RolapConfig(key = ConfigConstants.DISABLE_CACHING, value = "true", type = Boolean.class)
     void testAggPatternWithoutAggregates(Connection connection) {
         assertThatQuery(connection, QUERY).returnsGrid(CLEAN_RESULT);
-    }
-
-    private void assertQuerySql(Connection connection, String sql) {
-        SqlAssert.forQuery(connection, QUERY).expectSql(new SqlPattern[] { new SqlPattern(DatabaseProduct.MYSQL, sql, sql.length()) }).verify();
     }
 }

@@ -20,7 +20,6 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTe
 import org.eclipse.daanse.rolap.testkit.assertions.ConfigOverride;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,15 +33,6 @@ import org.junit.jupiter.api.Test;
 @RolapContextTest(FoodmartTestInstance.class)
 class IgnoreMeasureForNonJoiningDimensionInAggregationTest
 {
-
-
-    // EnableNonEmptyOnAllAxis is set on each test's own context by the
-    // EnableNonEmptyOnAllAxis updater in @ContextSource; @BeforeEach cannot do it,
-    // the Context only arrives as a parameter of the test method.
-    @AfterEach
-    public void afterEach() {
-    }
-
 
     @Test
     @RolapConfig(key = ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, value = "true", type = Boolean.class)

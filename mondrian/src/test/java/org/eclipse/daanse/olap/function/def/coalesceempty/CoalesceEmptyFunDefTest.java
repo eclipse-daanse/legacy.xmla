@@ -13,12 +13,11 @@
  */
 package org.eclipse.daanse.olap.function.def.coalesceempty;
 
-import static mondrian.olap.fun.FunctionTest.allHiers;
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
 import static mondrian.olap.fun.FunctionTest.checkDataResults;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeQuery;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -30,14 +29,13 @@ class CoalesceEmptyFunDefTest {
 
     @Test
     void testCoalesceEmptyDepends(Context<?> context) {
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "coalesceempty([Time].[1997], [Gender].[M])",
-            allHiers() );
-        String s1 = allHiersExcept( "[Measures]", "[Time].[Time]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "coalesceempty([Time].[1997], [Gender].[M])")
+            .dependsOn( hiersExcept() );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "coalesceempty(([Measures].[Unit Sales], [Time].[1997]),"
-                + " ([Measures].[Store Sales], [Time].[1997].[Q2]))",
-            s1 );
+                + " ([Measures].[Store Sales], [Time].[1997].[Q2]))")
+            .dependsOn( hiersExcept( "[Measures]", "[Time].[Time]" ) );
     }
 
     @Test

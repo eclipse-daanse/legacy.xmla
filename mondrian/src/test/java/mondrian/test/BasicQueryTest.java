@@ -14,6 +14,8 @@ package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.eclipse.daanse.olap.common.Util.assertTrue;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
@@ -26,10 +28,8 @@ import static org.opencube.junit5.TestUtil.assertSize;
 import static org.opencube.junit5.TestUtil.checkThrowable;
 import static org.opencube.junit5.TestUtil.executeAxis;
 import static org.opencube.junit5.TestUtil.executeExpr;
-import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.executeQueryTimeoutTest;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import java.net.URL;
@@ -379,7 +379,7 @@ public class BasicQueryTest {
   @Test
   void testSample8(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    if (getDatabaseProduct(TestUtil.getDialect(connection).name()) == DatabaseProduct.INFOBRIGHT ) {
+    if (getDatabaseProduct(getDialect(connection).name()) == DatabaseProduct.INFOBRIGHT ) {
       // Skip this test on Infobright, because [Promotion Sales] is
       // defined wrong.
       return;
@@ -1817,7 +1817,7 @@ public class BasicQueryTest {
                 + "</Dimension>", null ));
      */
         Connection connection = context.getConnectionWithDefaultRole();
-    if ( !TestUtil.getDialect(connection).allowsFromQuery() ) {
+    if ( !getDialect(connection).allowsFromQuery() ) {
       return;
     }
     assertThatAxis(connection, "Sales", "[Gender2].members")
@@ -1875,7 +1875,7 @@ public class BasicQueryTest {
     if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
-    if ( TestUtil.getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery() ) {
+    if ( getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery() ) {
       return;
     }
             /*
@@ -3870,24 +3870,6 @@ public class BasicQueryTest {
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMemberVisibility(Context<?> context) {
     String cubeName = "Sales_MemberVis";
-    /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "  <Measure name=\"Sales Count\" column=\"product_id\" aggregator=\"count\"\n"
-            + "      formatString=\"#,###\"/>\n" + "  <Measure name=\"Customer Count\" column=\"customer_id\"\n"
-            + "      aggregator=\"distinct-count\" formatString=\"#,###\"/>\n" + "  <CalculatedMember\n"
-            + "      name=\"Profit\"\n" + "      dimension=\"Measures\"\n" + "      visible=\"false\"\n"
-            + "      formula=\"[Measures].[Store Sales]-[Measures].[Store Cost]\">\n"
-            + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"$#,##0.00\"/>\n"
-            + "  </CalculatedMember>\n" + "</Cube>", null, null, null, null );
-     */
     CatalogReader scr = context.getConnectionWithDefaultRole().getCatalog().lookupCube( cubeName ).orElseThrow().getCatalogReader( null );
     Member member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Unit Sales" ), true );
     Object visible = member.getPropertyValue( StandardProperty.VISIBLE.getName() );
@@ -3955,31 +3937,6 @@ public class BasicQueryTest {
   void testDimWithoutAll(Context<?> context) {
     // Create a test context with a new ""Sales_DimWithoutAll" cube, and
     // which evaluates expressions against that cube.
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name=\"Sales_DimWithoutAll\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n" + "  <Dimension name=\"Product\" foreignKey=\"product_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" primaryKey=\"product_id\" " + "primaryKeyTable=\"product\">\n"
-            + "      <Join leftKey=\"product_class_id\" " + "rightKey=\"product_class_id\">\n"
-            + "        <Table name=\"product\"/>\n" + "        <Table name=\"product_class\"/>\n" + "      </Join>\n"
-            + "      <Level name=\"Product Family\" table=\"product_class\" " + "column=\"product_family\"\n"
-            + "          uniqueMembers=\"true\"/>\n" + "      <Level name=\"Product Department\" "
-            + "table=\"product_class\" column=\"product_department\"\n" + "          uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Product Category\" table=\"product_class\"" + " column=\"product_category\"\n"
-            + "          uniqueMembers=\"false\"/>\n" + "      <Level name=\"Product Subcategory\" "
-            + "table=\"product_class\" column=\"product_subcategory\"\n" + "          uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Brand Name\" table=\"product\" "
-            + "column=\"brand_name\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Product Name\" table=\"product\" " + "column=\"product_name\"\n"
-            + "          uniqueMembers=\"true\"/>\n" + "    </Hierarchy>\n" + "  </Dimension>\n"
-            + "  <Dimension name=\"Gender\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" primaryKey=\"customer_id\">\n" + "    <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" " + "uniqueMembers=\"true\"/>\n" + "    </Hierarchy>\n"
-            + "  </Dimension>" + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" " + "aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n" + "</Cube>", null, null, null, null );
-    */
     //withCube( "Sales_DimWithoutAll" );
     Connection connection = context.getConnectionWithDefaultRole();
     // the default member of the Gender dimension is the first member
@@ -4127,34 +4084,6 @@ public class BasicQueryTest {
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMultipleConstraintsOnSameColumn(Context<?> context) {
     final String cubeName = "Sales_withCities";
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <Dimension name=\"Cities\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Cities\" primaryKey=\"customer_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"City\" column=\"city\" uniqueMembers=\"false\"/> \n" + "    </Hierarchy>\n"
-            + "  </Dimension>\n" + "  <Dimension name=\"Customers\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" allMemberName=\"All Customers\" primaryKey=\"customer_id\">\n"
-            + "      <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Country\" column=\"country\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"State Province\" column=\"state_province\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"City\" column=\"city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Name\" column=\"fullname\" uniqueMembers=\"true\">\n"
-            + "        <Property name=\"Gender\" column=\"gender\"/>\n"
-            + "        <Property name=\"Marital Status\" column=\"marital_status\"/>\n"
-            + "        <Property name=\"Education\" column=\"education\"/>\n"
-            + "        <Property name=\"Yearly Income\" column=\"yearly_income\"/>\n" + "      </Level>\n"
-            + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Dimension name=\"Gender\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n" + "    <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\"/>\n" + "    </Hierarchy>\n"
-            + "  </Dimension>" + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n" + "</Cube>", null, null, null, null );
-       */
     assertThatQuery(context.getConnectionWithDefaultRole(),"select {\n" + " [Customers].[All Customers].[USA],\n"
         + " [Customers].[All Customers].[USA].[OR],\n" + " [Customers].[All Customers].[USA].[CA],\n"
         + " [Customers].[All Customers].[USA].[CA].[Altadena],\n"
@@ -4206,16 +4135,6 @@ public class BasicQueryTest {
   @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.BasicQueryTestModifier24.class },
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testBadMeasure2(Context<?> context) {
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name=\"SalesWithBadMeasure2\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <Measure name=\"Bad Measure\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\">\n" + "    <MeasureExpression>\n" + "       <SQL dialect=\"generic\">\n"
-            + "         unit_sales\n" + "       </SQL>\n" + "    </MeasureExpression>\n" + "  </Measure>\n"
-            + "</Cube>", null, null, null, null );
-    */
     Throwable throwable = null;
     try {
       assertSimpleQuery(context.getConnectionWithDefaultRole());
@@ -4454,11 +4373,6 @@ public class BasicQueryTest {
   }
 
   private void executeAndCancel(Context<?> context, String queryString, int waitMillis ) {
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema, null, null, null, null, "<UserDefinedFunction name=\"SleepUdf\" className=\""
-            + SleepUdf.class.getName() + "\"/>", null );
-     */
     Connection connection = context.getConnectionWithDefaultRole();
 
     final Query query = connection.parseQuery( queryString );
@@ -4660,11 +4574,6 @@ public class BasicQueryTest {
     // run for at least that long; it will because the query references
     // a Udf that has a 1 ms sleep in it; and there are enough rows
     // in the result that the Udf should execute > 2000 times
-    /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, null, null, null, "<UserDefinedFunction name=\"SleepUdf\" className=\""
-            + SleepUdf.class.getName() + "\"/>", null );
-    */
     String query =
         "WITH\n" + "  MEMBER [Measures].[Sleepy]\n" + "    AS 'SleepUdf([Measures].[Unit Sales])'\n"
             + "SELECT {[Measures].[Sleepy]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
@@ -4858,16 +4767,6 @@ public class BasicQueryTest {
   @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.BasicQueryTestModifier26.class },
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testDefaultMeasureInCube(Context<?> context) {
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name=\"DefaultMeasureTesting\" defaultMeasure=\"Supply Time\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n" + "  <DimensionUsage name=\"Store\" source=\"Store\" "
-            + "foreignKey=\"store_id\"/>\n" + "  <DimensionUsage name=\"Store Type\" source=\"Store Type\" "
-            + "foreignKey=\"store_id\"/>\n" + "  <Measure name=\"Store Invoice\" column=\"store_invoice\" "
-            + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Supply Time\" column=\"supply_time\" "
-            + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
-            + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
-    */
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithDeflaultMeasureFilter =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Supply Time]";
@@ -4878,17 +4777,6 @@ public class BasicQueryTest {
   @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.BasicQueryTestModifier27SupplyTimeError.class },
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testDefaultMeasureInCubeForIncorrectMeasureName(Context<?> context) {
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null,
-            "<Cube name=\"DefaultMeasureTesting\" defaultMeasure=\"Supply Time Error\">\n"
-                + "  <Table name=\"inventory_fact_1997\"/>\n" + "  <DimensionUsage name=\"Store\" source=\"Store\" "
-                + "foreignKey=\"store_id\"/>\n" + "  <DimensionUsage name=\"Store Type\" source=\"Store Type\" "
-                + "foreignKey=\"store_id\"/>\n" + "  <Measure name=\"Store Invoice\" column=\"store_invoice\" "
-                + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Supply Time\" column=\"supply_time\" "
-                + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
-                + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
-       */
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Store Invoice]";
@@ -4899,16 +4787,6 @@ public class BasicQueryTest {
   @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.BasicQueryTestModifier27SupplyTime.class },
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testDefaultMeasureInCubeForCaseSensitivity(Context<?> context) {
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name=\"DefaultMeasureTesting\" defaultMeasure=\"SUPPLY TIME\">\n"
-            + "  <Table name=\"inventory_fact_1997\"/>\n" + "  <DimensionUsage name=\"Store\" source=\"Store\" "
-            + "foreignKey=\"store_id\"/>\n" + "  <DimensionUsage name=\"Store Type\" source=\"Store Type\" "
-            + "foreignKey=\"store_id\"/>\n" + "  <Measure name=\"Store Invoice\" column=\"store_invoice\" "
-            + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Supply Time\" column=\"supply_time\" "
-            + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
-            + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
-       */
 
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
@@ -5330,17 +5208,6 @@ public class BasicQueryTest {
   @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.BasicQueryTestModifier28.class },
       database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
   void testMondrian1432_ZeroAxisSegment(Context<?> context) {
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, "<Cube name='FooBarZerOneAnything'>\n" + "  <Table name='sales_fact_1997'/>\n"
-            + "  <Dimension name='Gender' foreignKey='customer_id'>\n"
-            + "    <Hierarchy hasAll='true' allMemberName='All Gender' primaryKey='customer_id'>\n"
-            + "      <Table name='customer'/>\n"
-            + "      <Level name='Gender' column='gender' uniqueMembers='true'/>\n" + "    </Hierarchy>\n"
-            + "  </Dimension>" + "<Measure name='zero' aggregator='sum'>\n" + "  <MeasureExpression>\n"
-            + "  <SQL dialect='generic'>\n" + "    0" + "  </SQL></MeasureExpression></Measure>" + "</Cube>", null,
-            null, null, null );
-       */
       assertThatQuery( context.getConnectionWithDefaultRole(),"select " + "Crossjoin([Gender].[Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [FooBarZerOneAnything] ")
             .returnsGrid( "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[Gender].[F], [Measures].[zero]}\n"
@@ -5896,13 +5763,13 @@ public class BasicQueryTest {
    * Test case for <a href="http://jira.pentaho.com/browse/MONDRIAN-1925"> MONDRIAN-1925: NameExpression within
    * snowflake dimension causes exception </a>
    *
-   * <p>Disabled by this migration: {@code BasicQueryTestModifier8} needs the {@link Dialect} of the
-   * test connection to build its schema (dialect-specific quoted identifiers in a NameExpression),
+   * <p>Disabled by this migration: this test's schema needs the {@link Dialect} of the
+   * test connection to build itself (dialect-specific quoted identifiers in a NameExpression),
    * but {@code @RolapContextTest}'s catalog composition runs eagerly, before any connection (and
    * therefore any {@code Dialect}) exists - there is no way to thread a live-connection-derived
    * value into catalog construction under the new framework.
    */
-  @Disabled // Modifier8 needs a live-connection Dialect that catalog composition can't supply
+  @Disabled // needs a live-connection Dialect that catalog composition can't supply
     @Test
   void testNameExpressionSnowflake(Context<?> context) {
     Connection connection = context.getConnectionWithDefaultRole();
@@ -6145,6 +6012,15 @@ public class BasicQueryTest {
 
     assertThatQuery( context.getConnectionWithDefaultRole(),mdx)
             .returnsGrid( result );
+  }
+
+  /**
+   * Similar to {@link Runnable}, except classes which implement
+   * <code>ChooseRunnable</code> choose what to do based upon an integer
+   * parameter.
+   */
+  private interface ChooseRunnable {
+    void run(int i);
   }
 
   /**

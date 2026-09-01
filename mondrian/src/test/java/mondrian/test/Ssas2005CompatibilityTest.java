@@ -9,6 +9,7 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -105,7 +106,7 @@ class Ssas2005CompatibilityTest {
 
     private void runQ(Context<?> context, String s) {
         context.getCatalogCache().clear();
-        Result result = TestUtil.executeQuery(context.getConnectionWithDefaultRole(), s);
+        Result result = executeQuery(context.getConnectionWithDefaultRole(), s);
         TestUtil.toString(result);
 //        discard();
     }

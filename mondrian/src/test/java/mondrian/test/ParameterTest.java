@@ -1236,16 +1236,6 @@ class ParameterTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            "<Parameter name=\"prop\" type=\"String\" "
-            + "defaultValue=\" 'foo bar' \" />",
-            null,
-            null,
-            null, null, null);
-        withSchema(context, schema);
-         */
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "ParamRef(\"prop\")").returns("foo bar");
     }
 
@@ -1286,19 +1276,6 @@ class ParameterTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            "<Parameter name=\"foo\" type=\"Numeric\" defaultValue=\"1\" />\n"
-            + "<Parameter name=\"bar\" type=\"Numeric\" defaultValue=\"2\" />\n"
-            + "<Parameter name=\"foo\" type=\"Numeric\" defaultValue=\"3\" />\n",
-            null,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         // Not assertThatExpr: the failure happens while resolving the connection
         // itself (duplicate parameter is caught at schema load), before any MDX
         // runs, so it must be inside the same try/catch as the connection lookup.
@@ -1334,17 +1311,6 @@ class ParameterTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            "<Parameter name=\"foo\" type=\"Bad type\" defaultValue=\"1\" />",
-            null,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "1").throwsMessage(
             "In Schema: In Parameter: "
@@ -1376,17 +1342,6 @@ class ParameterTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            "<Parameter name=\"Product Current Member\" type=\"Member\" defaultValue=\"[Product].DefaultMember.Children(2) \" />",
-            null,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context,schema);
-         */
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "ParamRef(\"Product Current Member\")").throwsMessage(
             "No function matches signature '<Member>.Children(<Numeric Expression>)'");
@@ -1420,17 +1375,6 @@ class ParameterTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            "<Parameter name=\"Customer Current Member\" type=\"Member\" defaultValue=\"[Customers].DefaultMember.Children.Item(2) \" />",
-            null,
-            null,
-            null,
-            null,
-            null);
-        withSchema(context,schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' ParamRef(\"Customer Current Member\").Name '\n"
             + "select {[Measures].[Foo]} on columns\n"

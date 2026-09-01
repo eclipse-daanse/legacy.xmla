@@ -13,11 +13,11 @@
  */
 package org.eclipse.daanse.olap.function.def.order;
 
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
 import static mondrian.olap.fun.FunctionTest.assertAxisCompilesTo;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import java.net.URL;
 import java.util.Map;
@@ -73,40 +73,35 @@ class OrderFunDefTest {
 
         // Depends upon everything EXCEPT [Product], [Measures],
         // [Marital Status], [Gender].
-        String s11 = allHiersExcept(
-            "[Product].[Product]", "[Measures]", "[Marital Status].[Marital Status]", "[Gender].[Gender]" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Order("
                 + " Crossjoin([Gender].[Gender].MEMBERS, [Product].[Product].MEMBERS),"
                 + " ([Measures].[Unit Sales], [Marital Status].[S]),"
-                + " ASC)",
-            s11 );
+                + " ASC)")
+            .dependsOn( hiersExcept(
+                "[Product].[Product]", "[Measures]", "[Marital Status].[Marital Status]", "[Gender].[Gender]" ) );
 
         // Depends upon everything EXCEPT [Product], [Measures],
         // [Marital Status]. Does depend upon [Gender].
-        String s12 = allHiersExcept(
-            "[Product].[Product]", "[Measures]", "[Marital Status].[Marital Status]" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Order("
                 + " Crossjoin({[Gender].[Gender].CurrentMember}, [Product].[Product].MEMBERS),"
                 + " ([Measures].[Unit Sales], [Marital Status].[S]),"
-                + " ASC)",
-            s12 );
+                + " ASC)")
+            .dependsOn( hiersExcept(
+                "[Product].[Product]", "[Measures]", "[Marital Status].[Marital Status]" ) );
 
         // Depends upon everything except [Measures].
-        String s13 = allHiersExcept( "[Measures]" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Order("
                 + "  Crossjoin("
                 + "    [Gender].[Gender].CurrentMember.Children, "
                 + "    [Marital Status].CurrentMember.Children), "
                 + "  [Measures].[Unit Sales], "
-                + "  BDESC)",
-            s13 );
+                + "  BDESC)")
+            .dependsOn( hiersExcept( "[Measures]" ) );
 
-        String s1 = allHiersExcept(
-            "[Measures]", "[Store].[Store]", "[Product].[Product]", "[Time].[Time]" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
             "  Order(\n"
                 + "    CrossJoin(\n"
                 + "      {[Product].[Product].[All Products].[Food].[Eggs],\n"
@@ -116,8 +111,9 @@ class OrderFunDefTest {
                 + "       [Store].[Store].[USA].[CA],\n"
                 + "       [Store].[Store].[USA].[OR]}),\n"
                 + "    ([Time].[Time].[1997].[Q1], [Measures].[Unit Sales]),\n"
-                + "    ASC)",
-            s1 );
+                + "    ASC)")
+            .dependsOn( hiersExcept(
+                "[Measures]", "[Store].[Store]", "[Product].[Product]", "[Time].[Time]" ) );
     }
 
     @Test
@@ -1141,19 +1137,6 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             }
         }
         */
-    /*
-    String baseSchema = TestUtil.getRawSchema(context);
-    String schema = SchemaUtil.getSchema(baseSchema,
-      null,
-      null,
-      "<VirtualCube name=\"Sales vs HR\">\n"
-        + "<VirtualCubeDimension cubeName=\"Sales\" name=\"Customers\"/>\n"
-        + "<VirtualCubeDimension cubeName=\"HR\" name=\"Position\"/>\n"
-        + "<VirtualCubeMeasure cubeName=\"HR\" name=\"[Measures].[Org Salary]\"/>\n"
-        + "</VirtualCube>",
-      null, null, null );
-    TestUtil.withSchema(context, schema);
-     */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  set [CJ] as \n"

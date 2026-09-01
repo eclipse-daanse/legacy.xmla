@@ -133,12 +133,6 @@ class IgnoreUnrelatedDimensionsTest {
     void testAggMemberDefinedOnNonJoiningDimensionWithNonAllDefltMember(Context<?> context)
     {
         // Gender dim to have Gender.F as default member
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Total Sales] AS "
             + "'ValidMeasure(Measures.[Warehouse Sales]) + [Measures].[Unit Sales]',"
@@ -168,12 +162,6 @@ class IgnoreUnrelatedDimensionsTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.IgnoreUnrelatedDimensionsTestModifier1.class },
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testIgnoreUnrelatedDimsOnSlicer(Context<?> context) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
@@ -193,12 +181,6 @@ class IgnoreUnrelatedDimensionsTest {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testIgnoreUnrelatedDimsOnCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
@@ -220,12 +202,6 @@ class IgnoreUnrelatedDimensionsTest {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRelatedAndUnrelatedDimsOnCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
@@ -250,12 +226,6 @@ class IgnoreUnrelatedDimensionsTest {
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testPartiallyRelatedMeasureWithCompoundSlicer(Context<?> context) {
         // MONDRIAN-2072
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, cubeSales3, cubeWarehouseAndSales3, null, null, null);
-        withSchema(context, schema);
-         */
         // Should equal the [Unit Sales] of [Graduate Degree] and
         // [High School Degree] (with default Gender.F),
         //  plus the total [warehouse sales].

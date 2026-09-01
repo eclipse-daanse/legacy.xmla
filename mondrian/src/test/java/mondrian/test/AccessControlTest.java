@@ -25,6 +25,7 @@
  */
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
@@ -263,108 +264,6 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier33.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testRestrictLevelsAnalyzer3283(Context<?> context) {
-        /*
-        String dimensionsDef =
-            "    <Dimension visible=\"true\" foreignKey=\"customer_id\" highCardinality=\"false\" name=\"Customers\">\n"
-            + "      <Hierarchy visible=\"true\" hasAll=\"true\" allMemberName=\"All Customers\" primaryKey=\"customer_id\">\n"
-            + "        <Table name=\"customer\">\n"
-            + "        </Table>\n"
-            + "        <Level name=\"Country\" visible=\"true\" column=\"country\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "        </Level>\n"
-            + "        <Level name=\"State Province\" visible=\"true\" column=\"state_province\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "        </Level>\n"
-            + "        <Level name=\"City\" visible=\"true\" column=\"city\" type=\"String\" uniqueMembers=\"false\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "        </Level>\n"
-            + "        <Level name=\"Name1\" visible=\"true\" column=\"fname\" type=\"String\" uniqueMembers=\"false\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "          <Property name=\"Gender\" column=\"gender\" type=\"String\">\n"
-            + "          </Property>\n"
-            + "          <Property name=\"Marital Status\" column=\"marital_status\" type=\"String\">\n"
-            + "          </Property>\n"
-            + "          <Property name=\"Education\" column=\"education\" type=\"String\">\n"
-            + "          </Property>\n"
-            + "          <Property name=\"Yearly Income\" column=\"yearly_income\" type=\"String\">\n"
-            + "          </Property>\n"
-            + "        </Level>\n"
-            + "        <Level name=\"First Name\" visible=\"true\" column=\"fname\" type=\"String\" uniqueMembers=\"false\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "        </Level>\n"
-            + "      </Hierarchy>\n"
-            + "      <Hierarchy name=\"Gender\" visible=\"true\" hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "        <Table name=\"customer\">\n"
-            + "        </Table>\n"
-            + "        <Level name=\"Gender\" visible=\"true\" column=\"gender\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "          <Annotations>\n"
-            + "            <Annotation name=\"AnalyzerBusinessGroup\">\n"
-            + "              <![CDATA[Customers]]>\n"
-            + "            </Annotation>\n"
-            + "          </Annotations>\n"
-            + "        </Level>\n"
-            + "      </Hierarchy>\n"
-            + "      <Hierarchy name=\"Marital Status\" visible=\"true\" hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "        <Table name=\"customer\">\n"
-            + "        </Table>\n"
-            + "        <Level name=\"Marital Status\" visible=\"true\" column=\"marital_status\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "          <Annotations>\n"
-            + "            <Annotation name=\"AnalyzerBusinessGroup\">\n"
-            + "              <![CDATA[Customers]]>\n"
-            + "            </Annotation>\n"
-            + "          </Annotations>\n"
-            + "        </Level>\n"
-            + "      </Hierarchy>\n"
-            + "    </Dimension>\n"
-            + "  <Dimension visible=\"true\" highCardinality=\"false\" name=\"Store\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy visible=\"true\" hasAll=\"true\" primaryKey=\"store_id\">\n"
-            + "      <Table name=\"store\">\n"
-            + "      </Table>\n"
-            + "      <Level name=\"Store ID\" visible=\"true\" column=\"store_id\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "      </Level>\n"
-            + "      <Level name=\"Store Country\" visible=\"true\" column=\"store_country\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "      </Level>\n"
-            + "      <Level name=\"Store State\" visible=\"true\" column=\"store_state\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "      </Level>\n"
-            + "      <Level name=\"Store City\" visible=\"true\" column=\"store_city\" type=\"String\" uniqueMembers=\"false\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "      </Level>\n"
-            + "      <Level name=\"Store Name\" visible=\"true\" column=\"store_name\" type=\"String\" uniqueMembers=\"true\" levelType=\"Regular\" hideMemberIf=\"Never\">\n"
-            + "        <Property name=\"Store Type\" column=\"store_type\" type=\"String\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Store Manager\" column=\"store_manager\" type=\"String\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Store Sqft\" column=\"store_sqft\" type=\"Numeric\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Grocery Sqft\" column=\"grocery_sqft\" type=\"Numeric\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Frozen Sqft\" column=\"frozen_sqft\" type=\"Numeric\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Meat Sqft\" column=\"meat_sqft\" type=\"Numeric\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Has coffee bar\" column=\"coffee_bar\" type=\"Boolean\">\n"
-            + "        </Property>\n"
-            + "        <Property name=\"Street address\" column=\"store_street_address\" type=\"String\">\n"
-            + "        </Property>\n"
-            + "      </Level>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n";
-        String cubeDef = "<Cube name=\"Sales1\">"
-          + "  <Table name=\"sales_fact_1997\"/>\n"
-          + dimensionsDef
-          + "</Cube>";
-        String baseSchema = TestUtil.getRawSchema(foodMartContext);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, null, cubeDef, null, null,
-            "<Role name=\"MR\">\n"
-            + "  <SchemaGrant access=\"none\">\n"
-            + "    <CubeGrant cube=\"Sales1\" access=\"all\">\n"
-            + "      <HierarchyGrant hierarchy=\"[Store]\" access=\"all\">\n"
-            + "      </HierarchyGrant>\n"
-            + "      <HierarchyGrant hierarchy=\"[Customers]\" access=\"custom\" topLevel=\"[Customers].[State Province]\" bottomLevel=\"[Customers].[City]\">\n"
-            + "\t  </HierarchyGrant>\n"
-            + "    </CubeGrant>\n"
-            + "  </SchemaGrant>\n"
-            + "</Role>\n"
-            + "<Role name=\"DBPentUsers\">\n"
-            + "   <SchemaGrant access=\"none\">\n"
-            + "   </SchemaGrant>\n"
-            + "</Role>");
-         */
         ConnectionProps props =new ConnectionProps(List.of("MR", "DBPentUsers"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty());
         Connection connection = context.getConnection(props);
 
@@ -1240,7 +1139,7 @@ class AccessControlTest {
      * @param mdx MDX query
      */
     private void checkQuery(Connection connection, String mdx) {
-        Result result = TestUtil.executeQuery(connection, mdx);
+        Result result = executeQuery(connection, mdx);
         final CatalogReader schemaReader =
         		connection.getCatalogReader().withLocus();
         for (Axis axis : result.getAxes()) {
@@ -1382,39 +1281,6 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier2.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testUnionRole(Context<?> foodMartContext) {
-    	/*
-    	String baseSchema = TestUtil.getRawSchema(foodMartContext);
-    	String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                "<Role name=\"Role1\">\n"
-                + "  <SchemaGrant access=\"none\">\n"
-                + "    <CubeGrant cube=\"Sales\" access=\"all\">\n"
-                + "      <HierarchyGrant hierarchy=\"[Customers]\" access=\"custom\" rollupPolicy=\"Partial\">\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[CA]\" access=\"all\"/>\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[CA].[San Francisco].[Gladys Evans]\" access=\"none\"/>\n"
-                + "      </HierarchyGrant>\n"
-                + "      <HierarchyGrant hierarchy=\"[Promotion Media]\" access=\"all\"/>\n"
-                + "      <HierarchyGrant hierarchy=\"[Marital Status]\" access=\"none\"/>\n"
-                + "      <HierarchyGrant hierarchy=\"[Gender]\" access=\"none\"/>\n"
-                + "      <HierarchyGrant hierarchy=\"[Store]\" access=\"custom\" rollupPolicy=\"Partial\" topLevel=\"[Store].[Store State]\"/>\n"
-                + "    </CubeGrant>\n"
-                + "    <CubeGrant cube=\"Warehouse\" access=\"all\"/>\n"
-                + "  </SchemaGrant>\n"
-                + "</Role>\n"
-                + "<Role name=\"Role2\">\n"
-                + "  <SchemaGrant access=\"none\">\n"
-                + "    <CubeGrant cube=\"Sales\" access=\"none\">\n"
-                + "      <HierarchyGrant hierarchy=\"[Customers]\" access=\"custom\" rollupPolicy=\"Hidden\">\n"
-                + "        <MemberGrant member=\"[Customers].[USA]\" access=\"all\"/>\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[CA]\" access=\"none\"/>\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[OR]\" access=\"none\"/>\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[OR].[Portland]\" access=\"all\"/>\n"
-                + "      </HierarchyGrant>\n"
-                + "      <HierarchyGrant hierarchy=\"[Store]\" access=\"all\" rollupPolicy=\"Hidden\"/>\n"
-                + "    </CubeGrant>\n"
-                + "  </SchemaGrant>\n"
-                + "</Role>\n");
-        */
         Connection connection;
 
         try {
@@ -2328,7 +2194,7 @@ class AccessControlTest {
     @RolapContextTest(AccessControlBugMondrian622Instance.class)
     void testBugMondrian622(@Roles("Test") Connection connection) {
         final String cubeName = "Sales with multiple customers";
-        TestUtil.executeQuery(connection, "select from [" + cubeName + "]");
+        executeQuery(connection, "select from [" + cubeName + "]");
     }
 
     /**
@@ -2473,7 +2339,7 @@ class AccessControlTest {
     }
 
     private void checkCalcMemberLevel(Connection connection) {
-        Result result = TestUtil.executeQuery(
+        Result result = executeQuery(
     		connection,
             "with member [Store].[USA].[CA].[Foo] as\n"
             + " 1\n"
@@ -3015,7 +2881,7 @@ class AccessControlTest {
             + "Row #0: 4,163\n");
 
 
-        Result result = TestUtil.executeQuery(
+        Result result = executeQuery(
     		connection,
             "with member store.aggCaliforniaOregon as "
             + "'aggregate({ [Store].[USA].[CA], [Store].[USA].[OR]})'"
@@ -3024,7 +2890,7 @@ class AccessControlTest {
         String valueAggMember = result
             .getCell(new int[] {0}).getFormattedValue();
 
-        result = TestUtil.executeQuery(
+        result = executeQuery(
     		connection,
             " select from sales where "
             + "{ [Store].[USA].[CA], [Store].[USA].[OR]}");
@@ -3041,7 +2907,7 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier26.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian1434Sales(@Roles("dev") Connection connection) {
-        TestUtil.executeQuery(
+        executeQuery(
     		connection,
             " select from [Sales] where {[Measures].[Unit Sales]}");
         // test is that there is no exception
@@ -3051,7 +2917,7 @@ class AccessControlTest {
     @RolapContextTest(catalog = { CatalogSupplier.class, SchemaModifiersEmf.AccessControlTestModifier27.class },
             database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
     void testMondrian1434WarehouseAndSales(@Roles("dev") Connection connection) {
-        TestUtil.executeQuery(
+        executeQuery(
     		connection,
             " select from [Warehouse and Sales] where {[Measures].[Store Sales]}");
         // test is that there is no exception

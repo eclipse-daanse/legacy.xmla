@@ -13,9 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.set.stripcalculatedmembers;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -43,9 +43,9 @@ class StripCalculatedMembersFunDefTest {
         assertThatAxis(connection, "Sales", "StripCalculatedMembers({[Gender].Parent})")
             .returns( "" );
 
-        assertSetExprDependsOn(connection,
-            "StripCalculatedMembers([Customers].CurrentMember.Children)",
-            "{[Customers].[Customers]}" );
+        assertThatSetExpr(connection, "Sales",
+            "StripCalculatedMembers([Customers].CurrentMember.Children)")
+            .dependsOn( "[Customers].[Customers]" );
 
         // ----------------------------------------------------
         // Calc members in dimension based on level stripped

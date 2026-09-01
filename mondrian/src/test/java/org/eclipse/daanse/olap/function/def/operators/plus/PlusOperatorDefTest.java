@@ -14,12 +14,12 @@
 package org.eclipse.daanse.olap.function.def.operators.plus;
 
 import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +28,10 @@ class PlusOperatorDefTest {
 
     @Test
     void testPlus(Context<?> context) {
-        assertExprDependsOn(context.getConnectionWithDefaultRole(), "1 + 2", "{}" );
-        String s1 = allHiersExcept( "[Measures]", "[Gender].[Gender]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "([Measures].[Unit Sales], [Gender].[F]) + 2", s1 );
+        FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1 + 2").dependsOn();
+        FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "([Measures].[Unit Sales], [Gender].[F]) + 2")
+            .dependsOn( hiersExcept( "[Measures]", "[Gender].[Gender]" ) );
 
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "1+2").returns( "3" );
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "5 + " + NullNumericExpr).returns( "5" ); // 5 + null --> 5

@@ -13,10 +13,11 @@
  */
 package org.eclipse.daanse.olap.function.def.openingclosingperiod;
 
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
@@ -25,16 +26,14 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTe
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.fun.FunctionTest;
-
 @RolapContextTest(FoodmartTestInstance.class)
 class OpeningClosingPeriodFunDefTest {
 
     @Test
     void testClosingPeriodNoArgs(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertMemberExprDependsOn(connection,
-            "ClosingPeriod()", "{[Time].[Time]}" );
+        assertThatMemberExpr(connection, "Sales",
+            "ClosingPeriod()").dependsOn( "[Time].[Time]" );
         // MSOLAP returns [1997].[Q4], because [Time].CurrentMember =
         // [1997].
         assertThatAxis(connection, "Sales", "ClosingPeriod()").returns( "[Time].[Time].[1997].[Q4]" );
@@ -43,11 +42,11 @@ class OpeningClosingPeriodFunDefTest {
     @Test
     void testClosingPeriodLevel(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertMemberExprDependsOn(connection,
-            "ClosingPeriod([Time].[Year])", "{[Time].[Time]}" );
-        assertMemberExprDependsOn(connection,
-            "([Measures].[Unit Sales], ClosingPeriod([Time].[Month]))",
-            "{[Time].[Time]}" );
+        assertThatMemberExpr(connection, "Sales",
+            "ClosingPeriod([Time].[Year])").dependsOn( "[Time].[Time]" );
+        assertThatMemberExpr(connection, "Sales",
+            "([Measures].[Unit Sales], ClosingPeriod([Time].[Month]))")
+            .dependsOn( "[Time].[Time]" );
 
         assertThatAxis(connection, "Sales", "ClosingPeriod([Year])").returns( "[Time].[Time].[1997]" );
 
@@ -187,20 +186,19 @@ class OpeningClosingPeriodFunDefTest {
     @Test
     void testClosingPeriod(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertMemberExprDependsOn(connection,
-            "ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)",
-            "{[Time].[Time]}" );
+        assertThatMemberExpr(connection, "Sales",
+            "ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)")
+            .dependsOn( "[Time].[Time]" );
 
-        String s1 = FunctionTest.allHiersExcept( "[Measures]" );
-        assertExprDependsOn(connection,
+        assertThatExpr(connection, "Sales",
             "(([Measures].[Store Sales],"
                 + " ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)) - "
                 + "([Measures].[Store Cost],"
-                + " ClosingPeriod([Time].[Time].[Month], [Time].[Time].CurrentMember)))",
-            s1 );
+                + " ClosingPeriod([Time].[Time].[Month], [Time].[Time].CurrentMember)))")
+            .dependsOn( hiersExcept( "[Measures]" ) );
 
-        assertMemberExprDependsOn(connection,
-            "ClosingPeriod([Time].[Month], [Time].[1997].[Q3])", "{}" );
+        assertThatMemberExpr(connection, "Sales",
+            "ClosingPeriod([Time].[Month], [Time].[1997].[Q3])").dependsOn();
 
         assertThatAxis(connection, "Sales",
             "ClosingPeriod([Time].[Year], [Time].[1997].[Q3])").returns( "" );

@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.operators.orx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
@@ -56,7 +57,7 @@ class OrOperatorDefTest {
     @RolapConfig(key = ConfigConstants.MAX_EVAL_DEPTH, value = "3", type = Integer.class)
     void testComplexOrExpr(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
+        switch (getDatabaseProduct(getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
