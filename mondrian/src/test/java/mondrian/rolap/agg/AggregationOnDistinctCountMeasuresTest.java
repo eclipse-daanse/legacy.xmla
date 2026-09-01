@@ -8,6 +8,8 @@
 */
 package mondrian.rolap.agg;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.allMember;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 import static org.opencube.junit5.TestUtil.cubeByName;
-import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 import static org.opencube.junit5.TestUtil.member;
 import static org.opencube.junit5.TestUtil.productMembersPotScrubbersPotsAndPans;
@@ -95,34 +95,6 @@ class AggregationOnDistinctCountMeasuresTest {
     }
 
     private void prepareContext(Context<?> context) {
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            "<VirtualCube name=\"Warehouse and Sales2\" defaultMeasure=\"Store Sales\">\n"
-            + "   <VirtualCubeDimension cubeName=\"Sales\" name=\"Gender\"/>\n"
-            + "   <VirtualCubeDimension name=\"Store\"/>\n"
-            + "   <VirtualCubeDimension name=\"Product\"/>\n"
-            + "   <VirtualCubeDimension cubeName=\"Warehouse\" name=\"Warehouse\"/>\n"
-            + "   <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Store Sales]\"/>\n"
-            + "   <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Customer Count]\"/>\n"
-            + "</VirtualCube>"
-            + "<VirtualCube name=\"Warehouse and Sales3\" defaultMeasure=\"Store Invoice\">\n"
-            + "  <CubeUsages>\n"
-            + "       <CubeUsage cubeName=\"Sales\" ignoreUnrelatedDimensions=\"true\"/>"
-            + "   </CubeUsages>\n"
-            + "   <VirtualCubeDimension cubeName=\"Sales\" name=\"Gender\"/>\n"
-            + "   <VirtualCubeDimension name=\"Store\"/>\n"
-            + "   <VirtualCubeDimension name=\"Product\"/>\n"
-            + "   <VirtualCubeDimension cubeName=\"Warehouse\" name=\"Warehouse\"/>\n"
-            + "   <VirtualCubeMeasure cubeName=\"Sales\" name=\"[Measures].[Customer Count]\"/>\n"
-            + "</VirtualCube>",
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
         // The extra virtual cubes (AggregationOnDistinctCountMeasuresTestModifier)
         // are now applied via the class-level @RolapContextTest catalog instead
         // of withSchemaEmf.
@@ -754,17 +726,6 @@ class AggregationOnDistinctCountMeasuresTest {
           }
       }
       */
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                dimension,
-                cube,
-                null,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-       */
       SqlPattern[] patterns = {
             new SqlPattern(
                 DatabaseProduct.DERBY, necjSqlDerby, necjSqlDerby),
@@ -880,17 +841,6 @@ class AggregationOnDistinctCountMeasuresTest {
           }
       }
       */
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema,
-              dimension,
-                cube,
-                null,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-       */
       String result =
             "Axis #0:\n"
             + "{}\n"
@@ -1007,17 +957,6 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
       }
-      */
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema,
-              dimension,
-                cube,
-                null,
-                null,
-                null,
-                null);
-      TestUtil.withSchema(context, schema);
       */
       String result =
             "Axis #0:\n"
@@ -1852,22 +1791,6 @@ class AggregationOnDistinctCountMeasuresTest {
       }
       */
 
-      /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema,
-                null, null, null, null, null,
-                "<Role name=\"Role1\">\n"
-                + "  <SchemaGrant access=\"all\">\n"
-                + "    <CubeGrant cube=\"Sales\" access=\"all\">\n"
-                + "      <HierarchyGrant hierarchy=\"[Customers]\" access=\"custom\" rollupPolicy=\"partial\">\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[OR]\" access=\"all\"/>\n"
-                + "        <MemberGrant member=\"[Customers].[USA].[WA]\" access=\"all\"/>\n"
-                + "      </HierarchyGrant>\n"
-                + "    </CubeGrant>\n"
-                + "  </SchemaGrant>\n"
-                + "</Role>\n");
-      withSchema(context, schema);
-       */
       Connection connection = context.getConnectionWithDefaultRole();
 
       catalogReader =

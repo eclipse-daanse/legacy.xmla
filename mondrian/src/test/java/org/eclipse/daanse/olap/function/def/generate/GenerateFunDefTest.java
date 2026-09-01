@@ -14,10 +14,10 @@
 package org.eclipse.daanse.olap.function.def.generate;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeAxis;
 
 import java.util.concurrent.CancellationException;
@@ -36,23 +36,23 @@ class GenerateFunDefTest {
 
     @Test
     void testGenerateDepends(Context<?> context) {
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Generate([Product].CurrentMember.Children, Crossjoin({[Product].CurrentMember}, Crossjoin([Store].[Store "
-                + "State].Members, [Store Type].Members)), ALL)",
-            "{[Product].[Product]}" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
+                + "State].Members, [Store Type].Members)), ALL)")
+            .dependsOn( "[Product].[Product]" );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Generate([Product].[All Products].Children, Crossjoin({[Product].CurrentMember}, Crossjoin([Store].[Store "
-                + "State].Members, [Store Type].Members)), ALL)",
-            "{}" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Store].CurrentMember.Children})",
-            "{}" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Gender].CurrentMember})",
-            "{[Gender].[Gender]}" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Gender].[M]})",
-            "{}" );
+                + "State].Members, [Store Type].Members)), ALL)")
+            .dependsOn();
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Store].CurrentMember.Children})")
+            .dependsOn();
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Gender].CurrentMember})")
+            .dependsOn( "[Gender].[Gender]" );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Gender].[M]})")
+            .dependsOn();
     }
 
     @Test

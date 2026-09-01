@@ -30,9 +30,9 @@ import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatEx
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
+import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.TestUtil;
 
 import mondrian.olap.fun.FunctionTest;
 
@@ -41,9 +41,9 @@ public class DimensionsFunctionsTest {
 
 	@Test
 	void testDimensionsNumeric(Context<?> context) {
-		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(2).Name", "{}");
-		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(3).CurrentMember",
-				FunctionTest.allHiers());
+		FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name").dependsOn();
+		FunDependencies.assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember")
+				.dependsOn(FunctionTest.hiersExcept());
 		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name").returns("Store Size in SQFT");
 		// bug 1426134 -- Dimensions(0) throws 'Index '0' out of bounds'
 		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(0).Name").returns("Measures");
@@ -55,9 +55,9 @@ public class DimensionsFunctionsTest {
 
 	@Test
 	void testDimensionsString(Context<?> context) {
-		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").UniqueName", "{}");
-		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").CurrentMember",
-				FunctionTest.allHiers());
+		FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"foo\").UniqueName").dependsOn();
+		FunDependencies.assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"foo\").CurrentMember")
+				.dependsOn(FunctionTest.hiersExcept());
 		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName").returns("[Store].[Store]");
 		// Since Dimensions returns a Hierarchy, can apply Children.
 		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").Children").returns("""
@@ -73,7 +73,8 @@ public class DimensionsFunctionsTest {
 				{Dimensions("Measures").CurrentMember.Hierarchy.CurrentMember},
 				{Dimensions("Product")})""";
 		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", expression).returns("{[Measures].[Unit Sales], [Product].[Product].[All Products]}");
-		TestUtil.assertSetExprDependsOn(context.getConnectionWithDefaultRole(), expression, FunctionTest.allHiers());
+		FunDependencies.assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales", expression)
+				.dependsOn(FunctionTest.hiersExcept());
 	}
 
 }

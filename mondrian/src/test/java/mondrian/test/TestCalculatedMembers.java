@@ -476,32 +476,6 @@ import mondrian.test.PropertiesTest.FoodmartData;
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testBracketInCubeCalcMemberName(Context<?> context) {
         final String cubeName = "Sales_BracketInCubeCalcMemberName";
-        /*
-        String s =
-            "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <Dimension name=\"Gender\" foreignKey=\"customer_id\">\n"
-            + "    <Hierarchy hasAll=\"false\" primaryKey=\"customer_id\">\n"
-            + "    <Table name=\"customer\"/>\n"
-            + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <CalculatedMember\n"
-            + "      name=\"With a [bracket] inside it\"\n"
-            + "      dimension=\"Measures\"\n"
-            + "      visible=\"false\"\n"
-            + "      formula=\"[Measures].[Unit Sales] * 10\">\n"
-            + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" value=\"$#,##0.00\"/>\n"
-            + "  </CalculatedMember>\n"
-            + "</Cube>";
-
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, s, null, null, null, null);
-        withSchema(context, schema);
-         */
         assertQueryThrows(context,
             "select {[Measures].[With a [bracket] inside it]} on columns,\n"
             + " {[Gender].Members} on rows\n"
@@ -682,54 +656,6 @@ import mondrian.test.PropertiesTest.FoodmartData;
     database = FoodmartDatabaseSupplier.class, data = FoodmartData.class)
      void testQuoteInCalcMember(Context<?> context) {
         final String cubeName = "Sales_Bug1410383";
-        /*
-        String s =
-                "<Cube name=\"" + cubeName + "\">\n"
-                + "  <Table name=\"sales_fact_1997\"/>\n"
-                + "  <Dimension name=\"Gender\" foreignKey=\"customer_id\">\n"
-                + "    <Hierarchy hasAll=\"false\" primaryKey=\"customer_id\">\n"
-                + "    <Table name=\"customer\"/>\n"
-                + "      <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\"/>\n"
-                + "    </Hierarchy>\n"
-                + "  </Dimension>\n"
-                + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-                + "      formatString=\"Standard\" visible=\"false\"/>\n"
-                + "  <Measure name=\"Store Cost\" column=\"store_cost\" aggregator=\"sum\"\n"
-                + "      formatString=\"Standard\" visible=\"false\"/>\n"
-                + "  <CalculatedMember\n"
-                + "      name=\"Apos in dq\"\n"
-                + "      dimension=\"Measures\"\n"
-                + "      visible=\"false\"\n"
-                + "      formula=\" &quot;an 'apos' in dq&quot; \" />\n"
-                + "  <CalculatedMember\n"
-                + "      name=\"Dq in dq\"\n"
-                + "      dimension=\"Measures\"\n"
-                + "      visible=\"false\"\n"
-                + "      formula=\" &quot;a &quot;&quot;dq&quot;&quot; in dq&quot; \" />\n"
-                + "  <CalculatedMember\n"
-                + "      name=\"Apos in apos\"\n"
-                + "      dimension=\"Measures\"\n"
-                + "      visible=\"false\"\n"
-                + "      formula=\" &apos;an &apos;&apos;apos&apos;&apos; in apos&apos; \" />\n"
-                + "  <CalculatedMember\n"
-                + "      name=\"Dq in apos\"\n"
-                + "      dimension=\"Measures\"\n"
-                + "      visible=\"false\"\n"
-                + "      formula=\" &apos;a &quot;dq&quot; in apos&apos; \" />\n"
-                + "  <CalculatedMember\n"
-                + "      name=\"Colored Profit\"\n"
-                + "      dimension=\"Measures\"\n"
-                + "      visible=\"false\"\n"
-                + "      formula=\" [Measures].[Store Sales] - [Measures].[Store Cost] \">\n"
-                + "    <CalculatedMemberProperty name=\"FORMAT_STRING\" expression=\"Iif([Measures].[Colored Profit] &lt; 0, '|($#,##0.00)|style=red', '|$#,##0.00|style=green')\"/>\n"
-                + "  </CalculatedMember>\n"
-                + "</Cube>";
-
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null, s, null, null, null, null);
-        withSchema(context, schema);
-        */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Apos in dq], [Measures].[Dq in dq], [Measures].[Apos in apos], [Measures].[Dq in apos], [Measures].[Colored Profit]} on columns,\n"
             + " {[Gender].Members} on rows\n"
@@ -1554,49 +1480,6 @@ import mondrian.test.PropertiesTest.FoodmartData;
             // This test uses old-style [dimension.hierarchy] names.
             return;
         }
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"Store5\"> \n"
-            + "  <Table name=\"store\"/> \n"
-            + "  <!-- We could have used the shared dimension \"Store Type\", but we \n"
-            + "     want to test private dimensions without primary key. --> \n"
-            + "  <Dimension name=\"Store Type\"> \n"
-            + "    <Hierarchy name=\"Store Types Hierarchy\" allMemberName=\"All Store Types Member Name\" hasAll=\"true\"> \n"
-            + "      <Level name=\"Store Type\" column=\"store_type\" uniqueMembers=\"true\"/> \n"
-            + "    </Hierarchy> \n"
-            + "  </Dimension> \n"
-            + "\n"
-            + "  <Dimension name=\"Country\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"customer_id\">\n"
-            + "      <Level name=\"Country\" column=\"store_country\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "\n"
-            + "  <Measure name=\"Store Sqft\" column=\"store_sqft\" aggregator=\"sum\" \n"
-            + "      formatString=\"#,###\"/> \n"
-            + "  <Measure name=\"Grocery Sqft\" column=\"grocery_sqft\" aggregator=\"sum\" \n"
-            + "      formatString=\"#,###\" description=\"Grocery Sqft Description...\"> \n"
-            + "    <Annotations> \n"
-            + "        <Annotation name=\"AnalyzerBusinessGroup\">Numbers</Annotation> \n"
-            + "    </Annotations> \n"
-            + "  </Measure> \n"
-            + "  <CalculatedMember \n"
-            + "      name=\"Constant 1\" description=\"Constant 1 Description...\" \n"
-            + "      dimension=\"Measures\"> \n"
-            + "    <Annotations> \n"
-            + "        <Annotation name=\"AnalyzerBusinessGroup\">Numbers</Annotation> \n"
-            + "    </Annotations> \n"
-            + "    <Formula>1</Formula> \n"
-            + "  </CalculatedMember> \n"
-            + "</Cube> ",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-        */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "With \n"
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Country],[*BASE_MEMBERS_Store Type.Store Types Hierarchy])' \n"

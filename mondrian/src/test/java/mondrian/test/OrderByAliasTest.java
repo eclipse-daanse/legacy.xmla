@@ -9,8 +9,8 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.getDialect;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import java.net.URL;
 import java.util.Map;
 import org.eclipse.daanse.rolap.poc.SqlAssert;

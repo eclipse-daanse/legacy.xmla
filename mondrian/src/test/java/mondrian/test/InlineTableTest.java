@@ -10,8 +10,8 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.DataSlot;
 import org.eclipse.daanse.cwm.model.cwm.objectmodel.instance.InstanceFactory;
@@ -150,48 +150,9 @@ class InlineTableTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <Dimension name=\"Alternative Promotion\" foreignKey=\"promotion_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"promo_id\">\n"
-            + "      <InlineTable alias=\"alt_promotion\">\n"
-            + "        <ColumnDefs>\n"
-            + "          <ColumnDef name=\"promo_id\" type=\"Numeric\"/>\n"
-            + "          <ColumnDef name=\"promo_name\" type=\"String\"/>\n"
-            + "        </ColumnDefs>\n"
-            + "        <Rows>\n"
-            + "          <Row>\n"
-            + "            <Value column=\"promo_id\">0</Value>\n"
-            + "            <Value column=\"promo_name\">Promo0</Value>\n"
-            + "          </Row>\n"
-            + "          <Row>\n"
-            + "            <Value column=\"promo_id\">1</Value>\n"
-            + "            <Value column=\"promo_name\">Promo1</Value>\n"
-            + "          </Row>\n"
-            + "        </Rows>\n"
-            + "      </InlineTable>\n"
-            + "      <Level name=\"Alternative Promotion\" column=\"promo_id\" nameColumn=\"promo_name\" uniqueMembers=\"true\"/> \n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Alternative Promotion].[All Alternative Promotions].children} ON COLUMNS\n"
-            + "from [" + cubeName + "] ",
+            + "from [" + cubeName + "] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -426,51 +387,9 @@ class InlineTableTest {
 
             }
         */
-       /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "  <Dimension name=\"Shared Alternative Promotion\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"promo_id\">\n"
-            + "      <InlineTable alias=\"alt_promotion\">\n"
-            + "        <ColumnDefs>\n"
-            + "          <ColumnDef name=\"promo_id\" type=\"Numeric\"/>\n"
-            + "          <ColumnDef name=\"promo_name\" type=\"String\"/>\n"
-            + "        </ColumnDefs>\n"
-            + "        <Rows>\n"
-            + "          <Row>\n"
-            + "            <Value column=\"promo_id\">0</Value>\n"
-            + "            <Value column=\"promo_name\">First promo</Value>\n"
-            + "          </Row>\n"
-            + "          <Row>\n"
-            + "            <Value column=\"promo_id\">1</Value>\n"
-            + "            <Value column=\"promo_name\">Second promo</Value>\n"
-            + "          </Row>\n"
-            + "        </Rows>\n"
-            + "      </InlineTable>\n"
-            + "      <Level name=\"Alternative Promotion\" column=\"promo_id\" nameColumn=\"promo_name\" uniqueMembers=\"true\"/> \n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "<Cube name=\""
-            + cubeName
-            + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <DimensionUsage name=\"Shared Alternative Promotion\" source=\"Shared Alternative Promotion\" foreignKey=\"promotion_id\"/>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-        */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Shared Alternative Promotion].[All Shared Alternative Promotions].children} ON COLUMNS\n"
-            + "from [" + cubeName + "] ",
+            + "from [" + cubeName + "] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -746,58 +665,9 @@ class InlineTableTest {
 
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <Dimension name=\"Store\" foreignKeyTable=\"store\" foreignKey=\"store_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKeyTable=\"store\" primaryKey=\"store_id\">\n"
-            + "      <Join leftKey=\"store_country\" rightKey=\"nation_name\">\n"
-            + "      <Table name=\"store\"/>\n"
-            + "        <InlineTable alias=\"nation\">\n"
-            + "          <ColumnDefs>\n"
-            + "            <ColumnDef name=\"nation_name\" type=\"String\"/>\n"
-            + "            <ColumnDef name=\"nation_shortcode\" type=\"String\"/>\n"
-            + "          </ColumnDefs>\n"
-            + "          <Rows>\n"
-            + "            <Row>\n"
-            + "              <Value column=\"nation_name\">USA</Value>\n"
-            + "              <Value column=\"nation_shortcode\">US</Value>\n"
-            + "            </Row>\n"
-            + "            <Row>\n"
-            + "              <Value column=\"nation_name\">Mexico</Value>\n"
-            + "              <Value column=\"nation_shortcode\">MX</Value>\n"
-            + "            </Row>\n"
-            + "            <Row>\n"
-            + "              <Value column=\"nation_name\">Canada</Value>\n"
-            + "              <Value column=\"nation_shortcode\">CA</Value>\n"
-            + "            </Row>\n"
-            + "          </Rows>\n"
-            + "        </InlineTable>\n"
-            + "      </Join>\n"
-            + "      <Level name=\"Store Country\" table=\"nation\" column=\"nation_name\" nameColumn=\"nation_shortcode\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Store State\" table=\"store\" column=\"store_state\" uniqueMembers=\"true\"/>\n"
-            + "      <Level name=\"Store City\" table=\"store\" column=\"store_city\" uniqueMembers=\"false\"/>\n"
-            + "      <Level name=\"Store Name\" table=\"store\" column=\"store_name\" uniqueMembers=\"true\"/>\n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-         */
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Store].children} ON COLUMNS\n"
-            + "from [" + cubeName + "] ",
+            + "from [" + cubeName + "] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -1107,45 +977,6 @@ class InlineTableTest {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            "<Cube name=\"" + cubeName + "\">\n"
-            + "  <Table name=\"sales_fact_1997\"/>\n"
-            + "  <DimensionUsage name=\"Time\" source=\"Time\" foreignKey=\"time_id\"/>\n"
-            + "  <Dimension name=\"Alternative Promotion\" foreignKey=\"promotion_id\">\n"
-            + "    <Hierarchy hasAll=\"true\" primaryKey=\"id\">\n"
-            + "        <InlineTable alias=\"inline_promo\">\n"
-            + "          <ColumnDefs>\n"
-            + "            <ColumnDef name=\"id\" type=\"Numeric\"/>\n"
-            + "            <ColumnDef name=\"date\" type=\"Date\"/>\n"
-            + "          </ColumnDefs>\n"
-            + "          <Rows>\n"
-            + "            <Row>\n"
-            + "              <Value column=\"id\">1</Value>\n"
-            + "              <Value column=\"date\">2008-04-29</Value>\n"
-            + "            </Row>\n"
-            + "            <Row>\n"
-            + "              <Value column=\"id\">2</Value>\n"
-            + "              <Value column=\"date\">2007-01-20</Value>\n"
-            + "            </Row>\n"
-            + "          </Rows>\n"
-            + "        </InlineTable>\n"
-            + "      <Level name=\"Alternative Promotion\" column=\"id\" nameColumn=\"date\" uniqueMembers=\"true\"/> \n"
-            + "    </Hierarchy>\n"
-            + "  </Dimension>\n"
-            + "  <Measure name=\"Unit Sales\" column=\"unit_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"Standard\" visible=\"false\"/>\n"
-            + "  <Measure name=\"Store Sales\" column=\"store_sales\" aggregator=\"sum\"\n"
-            + "      formatString=\"#,###.00\"/>\n"
-            + "</Cube>",
-            null,
-            null,
-            null,
-            null);
-        withSchema(context, schema);
-        */
 
         // With grouping sets, mondrian will join fact table to the inline
         // dimension table, them sum to compute the 'all' value. That semi-joins
@@ -1156,9 +987,9 @@ class InlineTableTest {
         if (context.getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
-        assertQueryReturns(context.getConnectionWithDefaultRole(),
+        assertThatQuery(context.getConnectionWithDefaultRole(),
             "select {[Alternative Promotion].Members} ON COLUMNS\n"
-            + "from [" + cubeName + "] ",
+            + "from [" + cubeName + "] ").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

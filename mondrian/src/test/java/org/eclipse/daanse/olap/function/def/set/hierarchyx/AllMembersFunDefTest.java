@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.set.hierarchyx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
@@ -74,7 +75,7 @@ class AllMembersFunDefTest {
 
         // <Dimension>.allmembers applied to a query with calc measures
         // Calc measures are returned
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
+        switch (getDatabaseProduct(getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -110,7 +111,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc measure members from schema and from query
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
+        switch (getDatabaseProduct(getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -174,7 +175,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc member in query and schema not seen
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
+        switch (getDatabaseProduct(getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.
@@ -238,7 +239,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc member in query and schema not seen
-        switch (getDatabaseProduct(TestUtil.getDialect(connection).name())) {
+        switch (getDatabaseProduct(getDialect(connection).name())) {
             case INFOBRIGHT:
                 // Skip this test on Infobright, because [Promotion Sales] is
                 // defined wrong.

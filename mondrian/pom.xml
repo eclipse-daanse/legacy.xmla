@@ -28,7 +28,6 @@
     <maven-failsafe-plugin.argLine>-Duser.language=en -Duser.country=US</maven-failsafe-plugin.argLine>
     <caffeine.version>3.1.2</caffeine.version>
     <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
-    <xmlunit.version>2.9.0</xmlunit.version>
     <editorconfig.skip>true</editorconfig.skip>
     <!-- Which logback configuration the test JVM uses. Override for timing runs:
          -Dlogback.config=${project.basedir}/logback-quiet.xml -->
@@ -231,42 +230,9 @@
     </dependency>
 
     <dependency>
-      <groupId>de.siegmar</groupId>
-      <artifactId>fastcsv</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.tooling.dockerjava</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
-      <version>5.11.0</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.36.0.3</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.xmlunit</groupId>
-      <artifactId>xmlunit-assertj3</artifactId>
-      <version>2.9.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -320,9 +286,7 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- The raw driver stays a direct TEST dependency: the TCK provider
-         instantiates org.duckdb.DuckDBDriver and DataLoaderUtil uses the
-         native DuckDBAppender bulk-load API at compile time. The
+    <!-- The raw driver stays a direct TEST dependency: the
          daanse.jdbc.datasource.duckdb bundle embeds the driver privately
          (exports only its own api packages), so it cannot stand in here.
          duckdb_jdbc ships proper OSGi headers - plain bundle, no embedding
@@ -593,17 +557,6 @@
       <artifactId>org.eclipse.daanse.rolap.testkit.assert</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.18.4</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.docker-java</groupId>
-      <artifactId>docker-java-core</artifactId>
-      <version>3.5.3</version>
     </dependency>
   </dependencies>
   <build>

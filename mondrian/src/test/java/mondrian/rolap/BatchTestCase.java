@@ -11,21 +11,16 @@
 package mondrian.rolap;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
-import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
@@ -43,7 +38,6 @@ import  org.eclipse.daanse.olap.util.Pair;
 import org.eclipse.daanse.rolap.api.element.RolapMember;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.agg.CellRequest;
-import org.eclipse.daanse.rolap.common.agg.GroupingSet;
 import org.eclipse.daanse.rolap.common.cache.HardSmartCache;
 import org.eclipse.daanse.rolap.common.catalog.RolapCatalogReader;
 import org.eclipse.daanse.rolap.common.member.MemberCacheHelper;
@@ -52,14 +46,13 @@ import org.eclipse.daanse.rolap.common.nativize.RolapNative.Listener;
 import org.eclipse.daanse.rolap.common.nativize.RolapNative.NativeEvent;
 import org.eclipse.daanse.rolap.common.nativize.RolapNative.TupleEvent;
 import org.eclipse.daanse.rolap.common.nativize.RolapNativeRegistry;
-import org.eclipse.daanse.rolap.common.result.BatchLoader;
 import org.eclipse.daanse.rolap.common.star.RolapStar;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.element.RolapLevel;
 import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
+import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
 import org.slf4j.LoggerFactory;
 
 import mondrian.enums.DatabaseProduct;
@@ -97,64 +90,6 @@ public class BatchTestCase{
     protected final String cubeNameSales = "Sales";
     protected final String measureUnitSales = "[Measures].[Unit Sales]";
     protected String fieldGender = "gender";
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.BatchBuilder}; this stays as a thin
-     * positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected BatchLoader.Batch createBatch(
-        Connection connection,
-        BatchLoader fbcr,
-        String[] tableNames, String[] fieldNames, String[][] fieldValues,
-        String cubeName, String measure)
-    {
-        return createBatch(
-            connection, fbcr, tableNames, fieldNames, fieldValues, cubeName, measure, null);
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.BatchBuilder}; this stays as a thin
-     * positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected BatchLoader.Batch createBatch(
-        Connection connection,
-        BatchLoader fbcr,
-        String[] tableNames, String[] fieldNames, String[][] fieldValues,
-        String cubeName, String measure, CellRequestConstraint constraint)
-    {
-        CellRequestFixture.BatchBuilder builder =
-            CellRequestFixture.of(connection).batch(fbcr).cube(cubeName).measure(measure);
-        for (int i = 0; i < tableNames.length; i++) {
-            builder.where(tableNames[i], fieldNames[i], fieldValues[i]);
-        }
-        if (constraint != null) {
-            builder.constrain(constraint.delegate);
-        }
-        return builder.build();
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.GroupingSetBuilder}; this stays as a
-     * thin positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected GroupingSet getGroupingSet(
-        Connection connection,
-        final String[] tableNames,
-        final String[] fieldNames,
-        final String[][] fieldValues,
-        final String cubeName,
-        final String measure)
-    {
-        CellRequestFixture.GroupingSetBuilder builder =
-            CellRequestFixture.of(connection).groupingSet().cube(cubeName).measure(measure);
-        for (int i = 0; i < tableNames.length; i++) {
-            builder.where(tableNames[i], fieldNames[i], fieldValues[i]);
-        }
-        return builder.build();
-    }
 
     /**
      * Checks that a given sequence of cell requests results in a
@@ -532,109 +467,6 @@ public class BatchTestCase{
         return s;
     }
 
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
-     * positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected CellRequest createRequest(Connection connection,
-        final String cube, final String measure,
-        final String table, final String column, final String value)
-    {
-        return createRequest(connection,
-            cube, measure,
-            new String[]{table}, new String[]{column}, new String[]{value});
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
-     * positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected CellRequest createRequest(Connection connection,
-        final String cube, final String measureName,
-        final String[] tables, final String[] columns, final String[] values)
-    {
-        return createRequest(connection, cube, measureName, tables, columns, values, null);
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
-     * positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected CellRequest createRequest(Connection connection,
-        final String cube, final String measure,
-        final String table, final String column, final String value,
-        CellRequestConstraint aggConstraint)
-    {
-        return createRequest(connection,
-            cube, measure,
-            new String[]{table}, new String[]{column}, new String[]{value},
-            aggConstraint);
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.RequestBuilder}; this stays as a thin
-     * positional-array wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    protected CellRequest createRequest(Connection connection,
-        final String cube, final String measureName,
-        final String[] tables, final String[] columns, final String[] values,
-        CellRequestConstraint aggConstraint)
-    {
-        CellRequestFixture.RequestBuilder builder =
-            CellRequestFixture.of(connection).request().cube(cube).measure(measureName);
-        for (int i = 0; i < tables.length; i++) {
-            if (tables[i] != null && tables[i].length() > 0) {
-                builder.where(tables[i], columns[i], values[i]);
-            }
-        }
-        if (aggConstraint != null) {
-            builder.constrain(aggConstraint.delegate);
-        }
-        return builder.build();
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.Constraint#yearQuarterMonth}; this
-     * stays as a thin {@code List<String[]>}-to-varargs wrapper so existing call sites keep
-     * compiling.
-     */
-    @Deprecated
-    static CellRequestConstraint makeConstraintYearQuarterMonth(
-        List<String[]> values)
-    {
-        return CellRequestConstraint.wrap(
-            CellRequestFixture.Constraint.yearQuarterMonth(values.toArray(new String[0][])));
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.Constraint#countryState}; this stays
-     * as a thin {@code List<String[]>}-to-varargs wrapper so existing call sites keep compiling.
-     */
-    @Deprecated
-    static CellRequestConstraint makeConstraintCountryState(
-        List<String[]> values)
-    {
-        return CellRequestConstraint.wrap(
-            CellRequestFixture.Constraint.countryState(values.toArray(new String[0][])));
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.Constraint#productFamilyDepartment};
-     * this stays as a thin {@code List<String[]>}-to-varargs wrapper so existing call sites keep
-     * compiling.
-     */
-    @Deprecated
-    static CellRequestConstraint makeConstraintProductFamilyDepartment(
-        List<String[]> values)
-    {
-        return CellRequestConstraint.wrap(
-            CellRequestFixture.Constraint.productFamilyDepartment(values.toArray(new String[0][])));
-    }
-
     void clearAndHardenCache(MemberCacheHelper helper) {
         helper.mapLevelToMembers.setCache(
             new HardSmartCache<Pair<RolapLevel, Object>, List<RolapMember>>());
@@ -941,24 +773,10 @@ public class BatchTestCase{
 
         protected Result run() {
             con.getCacheControl(null).flushSchemaCache();
-            // The limit lives on this connection's own context, so restoring it
-            // afterwards is a courtesy to later queries on the same context
-            // rather than a guard against other tests. Contexts provisioned by
-            // @RolapContextTest are immutable per test (no runtime config
-            // mutation) - callers on that mechanism are expected to already
-            // have the right RESULT_LIMIT via @RolapConfig, so skip the
-            // mutate/restore dance for them instead of failing the cast.
-            Context<?> ctx = con.getContext();
-            if (ctx instanceof TestContextImpl testContext) {
-                int oldLimit = testContext.getConfigValue(
-                    ConfigConstants.RESULT_LIMIT, ConfigConstants.RESULT_LIMIT_DEFAULT_VALUE, Integer.class);
-                try {
-                    testContext.setResultLimit(this.resultLimit);
-                    return runAndCheckRowCount();
-                } finally {
-                    testContext.setResultLimit(oldLimit);
-                }
-            }
+            // Contexts provisioned by @RolapContextTest are immutable per test (no
+            // runtime config mutation), so resultLimit can no longer be pushed onto
+            // the connection's context here - callers are expected to already have
+            // the right RESULT_LIMIT via @RolapConfig.
             return runAndCheckRowCount();
         }
 
@@ -1024,32 +842,6 @@ public class BatchTestCase{
 
         public boolean foundMatch() {
             return foundMatch;
-        }
-    }
-
-    /**
-     * @deprecated Logic moved to {@link CellRequestFixture.Constraint}; this stays as a thin
-     * wrapper around it so existing call sites (which pass this type into {@code createRequest}
-     * / {@code createBatch}) keep compiling.
-     */
-    @Deprecated
-    static class CellRequestConstraint {
-        final CellRequestFixture.Constraint delegate;
-
-        CellRequestConstraint(
-            String[] tables,
-            String[] columns,
-            List<String[]> valueList)
-        {
-            this.delegate = CellRequestFixture.Constraint.of(tables, columns, valueList);
-        }
-
-        private CellRequestConstraint(CellRequestFixture.Constraint delegate) {
-            this.delegate = delegate;
-        }
-
-        static CellRequestConstraint wrap(CellRequestFixture.Constraint delegate) {
-            return new CellRequestConstraint(delegate);
         }
     }
 

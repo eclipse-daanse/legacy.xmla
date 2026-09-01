@@ -13,9 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.nonemptycrossjoinx;
 
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -29,9 +29,9 @@ class NonEmptyCrossJoinFunDefTest {
     void testNonEmptyCrossJoin(Context<?> context) {
         // NonEmptyCrossJoin needs to evaluate measures to find out whether
         // cells are empty, so it implicitly depends upon all dimensions.
-        String s1 = allHiersExcept( "[Store].[Store]" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "NonEmptyCrossJoin([Store].[USA].Children, [Gender].Children)", s1 );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "NonEmptyCrossJoin([Store].[USA].Children, [Gender].Children)")
+            .dependsOn( hiersExcept( "[Store].[Store]" ) );
 
         assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",
             "NonEmptyCrossJoin("

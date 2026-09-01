@@ -24,6 +24,7 @@
 package mondrian.rolap;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueriesReturnSimilarResults;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -271,9 +271,9 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch genderBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build());
             BatchLoader.Batch maritalStatusBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "marital_status", "M"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "marital_status", "M").build());
             ArrayList<BatchLoader.Batch> batchList = new ArrayList<>();
             batchList.add(genderBatch);
             batchList.add(maritalStatusBatch);
@@ -292,12 +292,15 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             List<String[]> compoundMembers = new ArrayList<>();
             compoundMembers.add(new String[] { "USA", "CA" });
             compoundMembers.add(new String[] { "Canada", "BC" });
-            CellRequestConstraint constraint = makeConstraintCountryState(compoundMembers);
+            CellRequestFixture.Constraint constraint =
+                CellRequestFixture.Constraint.countryState(compoundMembers.toArray(new String[0][]));
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch genderBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F", constraint));
-            BatchLoader.Batch maritalStatusBatch = fbcr.new Batch(createRequest(connection, cubeNameSales,
-                    measureUnitSales, "customer", "marital_status", "M", constraint));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales)
+                            .where("customer", "gender", "F").constrain(constraint).build());
+            BatchLoader.Batch maritalStatusBatch = fbcr.new Batch(
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales)
+                            .where("customer", "marital_status", "M").constrain(constraint).build());
             ArrayList<BatchLoader.Batch> batchList = new ArrayList<>();
             batchList.add(genderBatch);
             batchList.add(maritalStatusBatch);
@@ -315,14 +318,15 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch genderBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F")) {
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch other) {
                     return false;
                 }
             };
-            BatchLoader.Batch superBatch = fbcr.new Batch(createRequest(connection, cubeNameSales, measureUnitSales,
-                    new String[0], new String[0], new String[0])) {
+            BatchLoader.Batch superBatch = fbcr.new Batch(
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales)
+                            .build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch batch) {
                     return true;
@@ -345,21 +349,22 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
             final BatchLoader.Batch group1Agg2 = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F")) {
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch batch) {
                     return false;
                 }
             };
             final BatchLoader.Batch group1Agg1 = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F")) {
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "country", "F").build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch batch) {
                     return batch.equals(group1Agg2);
                 }
             };
-            BatchLoader.Batch group1Detailed = fbcr.new Batch(createRequest(connection, cubeNameSales, measureUnitSales,
-                    new String[0], new String[0], new String[0])) {
+            BatchLoader.Batch group1Detailed = fbcr.new Batch(
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales)
+                            .build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch batch) {
                     return batch.equals(group1Agg1);
@@ -367,14 +372,14 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             };
 
             final BatchLoader.Batch group2Agg1 = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "education", "F")) {
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "education", "F").build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch batch) {
                     return false;
                 }
             };
             BatchLoader.Batch group2Detailed = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "yearly_income", "")) {
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "yearly_income", "").build()) {
                 @Override
                 public boolean canBatch(BatchLoader.Batch batch) {
                     return batch.equals(group2Agg1);
@@ -504,9 +509,9 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch batch1 = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "country", "F").build());
             BatchLoader.Batch batch2 = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build());
             Map<AggregationKey, BatchLoader.CompositeBatch> batchGroups = new HashMap<>();
             fbcr.addToCompositeBatch(batchGroups, batch1, batch2);
             assertEquals(1, batchGroups.size());
@@ -525,11 +530,11 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             prepareContext(context);
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch detailedBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "country", "F").build());
             BatchLoader.Batch aggBatch1 = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build());
             BatchLoader.Batch aggBatchAlreadyInComposite = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build());
             Map<AggregationKey, BatchLoader.CompositeBatch> batchGroups = new HashMap<>();
             BatchLoader.CompositeBatch existingCompositeBatch = new BatchLoader.CompositeBatch(detailedBatch);
             existingCompositeBatch.add(aggBatchAlreadyInComposite);
@@ -553,11 +558,11 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch detailedBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "country", "F").build());
             BatchLoader.Batch aggBatchToAddToDetailedBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build());
             BatchLoader.Batch aggBatchAlreadyInComposite = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "city", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "city", "F").build());
             Map<AggregationKey, BatchLoader.CompositeBatch> batchGroups = new HashMap<>();
             BatchLoader.CompositeBatch existingCompositeBatch = new BatchLoader.CompositeBatch(
                     aggBatchToAddToDetailedBatch);
@@ -582,13 +587,13 @@ class FastBatchingCellReaderTest extends BatchTestCase {
             final BatchLoader fbcr = createFbcr(null, salesCube);
             Connection connection = context.getConnectionWithDefaultRole();
             BatchLoader.Batch detailedBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "country", "F").build());
             BatchLoader.Batch aggBatchToAddToDetailedBatch = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "gender", "F").build());
             BatchLoader.Batch aggBatchAlreadyInCompositeOfAgg = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "city", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "city", "F").build());
             BatchLoader.Batch aggBatchAlreadyInCompositeOfDetail = fbcr.new Batch(
-                    createRequest(connection, cubeNameSales, measureUnitSales, "customer", "state_province", "F"));
+                    CellRequestFixture.of(connection).request().cube(cubeNameSales).measure(measureUnitSales).where("customer", "state_province", "F").build());
 
             Map<AggregationKey, BatchLoader.CompositeBatch> batchGroups = new HashMap<>();
             BatchLoader.CompositeBatch existingAggCompositeBatch = new BatchLoader.CompositeBatch(

@@ -26,6 +26,7 @@
 
 package mondrian.rolap;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 import static org.eclipse.daanse.rolap.testkit.assertions.FlushSchemaCacheModifier.flushSchemaCache;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -71,6 +71,7 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.CatalogSup
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartDatabaseSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
+import org.eclipse.daanse.rolap.testkit.assertions.CellRequestFixture;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.AfterEach;
@@ -146,8 +147,8 @@ class TestAggregationManager extends BatchTestCase {
         Connection connection = context.getConnectionWithDefaultRole();
         final FastBatchingCellReader fbcr =
             new FastBatchingCellReader(execution, getCube(connection,"Sales"), aggMgr);
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Unit Sales]", "customer", "gender", "F");
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Unit Sales]").where("customer", "gender", "F").build();
         Object value = aggMgr.getCellFromCache(request);
         assertNull(value); // before load, the cell is not found
         fbcr.recordCellRequest(request);
@@ -165,9 +166,9 @@ class TestAggregationManager extends BatchTestCase {
         final FastBatchingCellReader fbcr =
             new FastBatchingCellReader(execution, getCube(context.getConnectionWithDefaultRole(), "Sales"), aggMgr);
         CellRequest request =
-            createRequest(context.getConnectionWithDefaultRole(),
-                "Sales", "[Measures].[Customer Count]",
-                "customer", "gender", "F");
+            CellRequestFixture.of(context.getConnectionWithDefaultRole()).request()
+                .cube("Sales").measure("[Measures].[Customer Count]")
+                .where("customer", "gender", "F").build();
         Object value = aggMgr.getCellFromCache(request);
         assertNull(value); // before load, the cell is not found
         fbcr.recordCellRequest(request);
@@ -182,33 +183,27 @@ class TestAggregationManager extends BatchTestCase {
     @Test
     void testFemaleCustomerCountWithConstraints(Context<?> context) {
         prepareContext(context);
-        List<String[]> Q1M1 = new ArrayList<> ();
-        Q1M1.add(new String[] {"1997", "Q1", "1"});
-
-        List<String[]> Q2M5 = new ArrayList<> ();
-        Q2M5.add(new String[] {"1997", "Q2", "5"});
-
-        List<String[]> Q1M1Q2M5 = new ArrayList<> ();
-        Q1M1Q2M5.add(new String[] {"1997", "Q1", "1"});
-        Q1M1Q2M5.add(new String[] {"1997", "Q2", "5"});
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 =
-            createRequest(connection,
-                "Sales", "[Measures].[Customer Count]",
-                "customer", "gender", "F",
-                makeConstraintYearQuarterMonth(Q1M1));
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Customer Count]")
+                .where("customer", "gender", "F")
+                .constrain(CellRequestFixture.Constraint.yearQuarterMonth(
+                    new String[] {"1997", "Q1", "1"})).build();
 
         CellRequest request2 =
-            createRequest(connection,
-                "Sales", "[Measures].[Customer Count]",
-                "customer", "gender", "F",
-                makeConstraintYearQuarterMonth(Q2M5));
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Customer Count]")
+                .where("customer", "gender", "F")
+                .constrain(CellRequestFixture.Constraint.yearQuarterMonth(
+                    new String[] {"1997", "Q2", "5"})).build();
 
         CellRequest request3 =
-            createRequest(connection,
-                "Sales", "[Measures].[Customer Count]",
-                "customer", "gender", "F",
-                makeConstraintYearQuarterMonth(Q1M1Q2M5));
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Customer Count]")
+                .where("customer", "gender", "F")
+                .constrain(CellRequestFixture.Constraint.yearQuarterMonth(
+                    new String[] {"1997", "Q1", "1"}, new String[] {"1997", "Q2", "5"})).build();
 
         FastBatchingCellReader fbcr =
             new FastBatchingCellReader(execution, getCube(connection, "Sales"), aggMgr);
@@ -250,8 +245,8 @@ class TestAggregationManager extends BatchTestCase {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Unit Sales]", "customer", "gender", "F");
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Unit Sales]").where("customer", "gender", "F").build();
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -276,8 +271,8 @@ class TestAggregationManager extends BatchTestCase {
     private void _testFemaleUnitSalesSql_withAggs(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Unit Sales]", "customer", "gender", "F");
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Unit Sales]").where("customer", "gender", "F").build();
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -311,23 +306,15 @@ class TestAggregationManager extends BatchTestCase {
         }
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest[] requests = new CellRequest[] {
-            createRequest(connection,
-                "Sales",
-                "[Measures].[Unit Sales]",
-                new String[] {"customer", "store"},
-                new String[] {"gender", "store_state"},
-                new String[] {"F", "CA"}),
-            createRequest(
-                    connection,
-                "Sales", "[Measures].[Store Sales]",
-                new String[] {"customer", "store"},
-                new String[] {"gender", "store_state"},
-                new String[] {"M", "CA"}),
-            createRequest(connection,
-                "Sales", "[Measures].[Unit Sales]",
-                new String[] {"customer", "store"},
-                new String[] {"gender", "store_state"},
-                new String[] {"F", "OR"})};
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Unit Sales]")
+                .where("customer", "gender", "F").where("store", "store_state", "CA").build(),
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Store Sales]")
+                .where("customer", "gender", "M").where("store", "store_state", "CA").build(),
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Unit Sales]")
+                .where("customer", "gender", "F").where("store", "store_state", "OR").build()};
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -361,24 +348,15 @@ class TestAggregationManager extends BatchTestCase {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest[] requests = new CellRequest[] {
-            createRequest(connection,
-                "Sales",
-                "[Measures].[Unit Sales]",
-                new String[] {"customer", "store"},
-                new String[] {"gender", "store_state"},
-                new String[] {"F", "CA"}),
-            createRequest(connection,
-                "Sales",
-                "[Measures].[Store Sales]",
-                new String[] {"customer", "store"},
-                new String[] {"gender", "store_state"},
-                new String[] {"M", "CA"}),
-            createRequest(connection,
-                "Sales",
-                "[Measures].[Unit Sales]",
-                new String[] {"customer", "store"},
-                new String[] {"gender", "store_state"},
-                new String[] {"F", "OR"})};
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Unit Sales]")
+                .where("customer", "gender", "F").where("store", "store_state", "CA").build(),
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Store Sales]")
+                .where("customer", "gender", "M").where("store", "store_state", "CA").build(),
+            CellRequestFixture.of(connection).request()
+                .cube("Sales").measure("[Measures].[Unit Sales]")
+                .where("customer", "gender", "F").where("store", "store_state", "OR").build()};
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -596,12 +574,9 @@ class TestAggregationManager extends BatchTestCase {
     	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Store",
-            "[Measures].[Store Sqft]",
-            "store",
-            "store_type",
-            "Supermarket");
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Store").measure("[Measures].[Store Sqft]")
+            .where("store", "store_type", "Supermarket").build();
 
         String accessMysqlSql =
             "select `store`.`store_type` as `c0`,"
@@ -634,12 +609,9 @@ class TestAggregationManager extends BatchTestCase {
     	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales",
-            "[Measures].[Customer Count]",
-            new String[]{"time_by_day", "time_by_day"},
-            new String[]{"the_year", "quarter"},
-            new String[]{"1997", "Q1"});
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("time_by_day", "the_year", "1997").where("time_by_day", "quarter", "Q1").build();
 
         String accessSql =
             "select"
@@ -695,11 +667,11 @@ class TestAggregationManager extends BatchTestCase {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] { "time_by_day", "time_by_day", "time_by_day" },
-            new String[] { "the_year", "quarter", "month_of_year" },
-            new String[] { "1997", "Q1", "1" });
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("time_by_day", "the_year", "1997")
+            .where("time_by_day", "quarter", "Q1")
+            .where("time_by_day", "month_of_year", "1").build();
 
         String accessSql =
             "select "
@@ -728,11 +700,11 @@ class TestAggregationManager extends BatchTestCase {
         // because we'd need to roll-up the distinct-count measure over
         // "month_of_year".
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] { "time_by_day", "time_by_day", "product_class" },
-            new String[] { "the_year", "quarter", "product_family" },
-            new String[] { "1997", "Q1", "Food" });
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("time_by_day", "the_year", "1997")
+            .where("time_by_day", "quarter", "Q1")
+            .where("product_class", "product_family", "Food").build();
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -818,15 +790,14 @@ class TestAggregationManager extends BatchTestCase {
         // Because [Gender] and [Marital Status] come from the [Customer]
         // table (the same as the distinct-count measure), we can roll up.
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] {
-                "time_by_day", "time_by_day", "time_by_day",
-                "product_class", "product_class", "product_class" },
-            new String[] {
-                "the_year", "quarter", "month_of_year",
-                "product_family", "product_department", "product_category" },
-            new String[] { "1997", "Q1", "1", "Food", "Deli", "Meat" });
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("time_by_day", "the_year", "1997")
+            .where("time_by_day", "quarter", "Q1")
+            .where("time_by_day", "month_of_year", "1")
+            .where("product_class", "product_family", "Food")
+            .where("product_class", "product_department", "Deli")
+            .where("product_class", "product_category", "Meat").build();
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -869,15 +840,15 @@ class TestAggregationManager extends BatchTestCase {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] {
-                "time_by_day", "time_by_day", "time_by_day",
-                "product_class", "product_class", "product_class", "customer" },
-            new String[] {
-                "the_year", "quarter", "month_of_year", "product_family",
-                "product_department", "product_category", "gender" },
-            new String[] { "1997", "Q1", "1", "Food", "Deli", "Meat", "F" });
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("time_by_day", "the_year", "1997")
+            .where("time_by_day", "quarter", "Q1")
+            .where("time_by_day", "month_of_year", "1")
+            .where("product_class", "product_family", "Food")
+            .where("product_class", "product_department", "Deli")
+            .where("product_class", "product_category", "Meat")
+            .where("customer", "gender", "F").build();
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -923,26 +894,19 @@ class TestAggregationManager extends BatchTestCase {
     void testCountDistinctBatchLoading(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
-        List<String[]> compoundMembers = new ArrayList<>();
-        compoundMembers.add(new String[] {"1997", "Q1", "1"});
-        compoundMembers.add(new String[] {"1997", "Q3", "7"});
-
-        CellRequestConstraint aggConstraint =
-            makeConstraintYearQuarterMonth(compoundMembers);
+        CellRequestFixture.Constraint aggConstraint =
+            CellRequestFixture.Constraint.yearQuarterMonth(
+                new String[] {"1997", "Q1", "1"}, new String[] {"1997", "Q3", "7"});
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request1 = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] {"product_class"},
-            new String[] {"product_family"},
-            new String[] {"Food"},
-            aggConstraint);
+        CellRequest request1 = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("product_class", "product_family", "Food")
+            .constrain(aggConstraint).build();
 
-        CellRequest request2 = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] {"product_class"},
-            new String[] {"product_family"},
-            new String[] {"Drink"},
-            aggConstraint);
+        CellRequest request2 = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("product_class", "product_family", "Drink")
+            .constrain(aggConstraint).build();
 
         String mysqlSql =
             "select `product_class`.`product_family` as `c0`, count(distinct `sales_fact_1997`.`customer_id`) as `m0` from `sales_fact_1997` as `sales_fact_1997` join `product` as `product` on `sales_fact_1997`.`product_id` = `product`.`product_id` join `product_class` as `product_class` on `product`.`product_class_id` = `product_class`.`product_class_id` join `time_by_day` as `time_by_day` on `sales_fact_1997`.`time_id` = `time_by_day`.`time_id` where (((`time_by_day`.`the_year`, `time_by_day`.`quarter`, `time_by_day`.`month_of_year`) in ((1997, 'Q1', 1), (1997, 'Q3', 7)))) group by `product_class`.`product_family`";
@@ -1426,17 +1390,6 @@ class TestAggregationManager extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                storeDim1 + storeDim2,
-                salesCube1 + salesCube2,
-                null,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-         */
         // This query causes "store"."store_country" cardinality to be
         // retrieved.
         Connection connection = context.getConnectionWithDefaultRole();
@@ -1487,16 +1440,14 @@ class TestAggregationManager extends BatchTestCase {
         // separate out the compound constraint from the "regular" constraints
         // and Aggregate tables can still be used.
 
-        List<String[]> compoundMembers = new ArrayList<> ();
-        compoundMembers.add(new String[] {"1997", "Q1", "1"});
         Connection connection = context.getConnectionWithDefaultRole();
-        CellRequest request = createRequest(connection,
-            "Sales", "[Measures].[Customer Count]",
-            new String[] { "product_class", "product_class", "product_class" },
-            new String[] {
-                "product_family", "product_department", "product_category" },
-            new String[] { "Food", "Deli", "Meat" },
-            makeConstraintYearQuarterMonth(compoundMembers));
+        CellRequest request = CellRequestFixture.of(connection).request()
+            .cube("Sales").measure("[Measures].[Customer Count]")
+            .where("product_class", "product_family", "Food")
+            .where("product_class", "product_department", "Deli")
+            .where("product_class", "product_category", "Meat")
+            .constrain(CellRequestFixture.Constraint.yearQuarterMonth(
+                new String[] {"1997", "Q1", "1"})).build();
 
         SqlPattern[] patterns = {
             new SqlPattern(
@@ -1696,17 +1647,6 @@ class TestAggregationManager extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null,
-                cube,
-                null,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-         */
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
             + "non empty CrossJoin({[Product].[Food].[Deli].[Meat]},{[Gender].[M]}) on rows "
@@ -2483,12 +2423,6 @@ class TestAggregationManager extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
         final String mdx =
             "select {[Product].[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]";
         final String sqlOracle =
@@ -2958,12 +2892,6 @@ class TestAggregationManager extends BatchTestCase {
             }
         }
         */
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                null, cube, null, null, null, null);
-        withSchema(context, schema);
-         */
 
         final String mdx =
             "select {Crossjoin([Product].[Product].[Product Family].Members, [Store].[Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]";

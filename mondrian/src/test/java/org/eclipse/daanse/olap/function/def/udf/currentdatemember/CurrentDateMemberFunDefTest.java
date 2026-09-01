@@ -47,18 +47,6 @@ class CurrentDateMemberFunDefTest {
     void testCurrentDateMemberUdf(Context<?> context) {
         //TODO: context redesign
         //Assertions.fail("Handle comment , Context<?> redesign nedded");
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-            null,
-            null,
-            null,
-            null,
-            "<UserDefinedFunction name=\"MockCurrentDateMember\" "
-            + "className=\"mondrian.udf.MockCurrentDateMember\" /> ",
-            null);
-        withSchema(context, schema);
-         */
         assertThatQuery(context.getConnectionWithDefaultRole(),
             "SELECT NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, "
             + "NON EMPTY {MockCurrentDateMember([Time].[Time], \"[yyyy]\")} ON ROWS "

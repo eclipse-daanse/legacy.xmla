@@ -22,8 +22,6 @@ import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.fun.FunctionTest;
-
 @RolapContextTest(FoodmartTestInstance.class)
 class LinRegFunDefTest {
 
@@ -168,9 +166,10 @@ class LinRegFunDefTest {
 
     @Test
     void testLinRegIntercept(Context<?> context) {
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "LinRegIntercept([Time].[Month].members,"
-                + " [Measures].[Unit Sales], [Measures].[Store Sales])",
+                + " [Measures].[Unit Sales], [Measures].[Store Sales])")
+            .returns(
             -126.65,
             0.50 );
 
@@ -220,9 +219,10 @@ Intel platforms):
         }
 
         // format does not add '$'
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "LinRegIntercept([Time].[Month].members,"
-                + " 7, [Measures].[Store Sales])",
+                + " 7, [Measures].[Store Sales])")
+            .returns(
             7.00,
             0.01 );
 
@@ -240,9 +240,10 @@ Intel platforms):
 
     @Test
     void testLinRegSlope(Context<?> context) {
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "LinRegSlope([Time].[Month].members,"
-                + " [Measures].[Unit Sales], [Measures].[Store Sales])",
+                + " [Measures].[Unit Sales], [Measures].[Store Sales])")
+            .returns(
             0.4746,
             0.50 );
 
@@ -267,9 +268,10 @@ Intel platforms):
         // ^^^^
         // copy and paste error
 
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "LinRegSlope([Time].[Month].members,"
-                + " 7, [Measures].[Store Sales])",
+                + " 7, [Measures].[Store Sales])")
+            .returns(
             0.00,
             0.01 );
 
@@ -327,10 +329,11 @@ Intel platforms):
         }
 
         // format does not add '$'
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "LinRegPoint([Measures].[Unit Sales],"
                 + " [Time].[Month].members,"
-                + " 7, [Measures].[Store Sales])",
+                + " 7, [Measures].[Store Sales])")
+            .returns(
             7.00,
             0.01 );
 

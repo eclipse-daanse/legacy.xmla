@@ -30,7 +30,6 @@ import mondrian.test.DiffRepository;
  *
  * @author Khanh Vu
  */
-@RolapContextTest(FoodmartTestInstance.class)
 @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "true", type = Boolean.class)
 public class MiscTest extends ClearViewBase {
 
@@ -46,9 +45,8 @@ public class MiscTest extends ClearViewBase {
     /**
      * Runs every diff-repository case except {@code testSolveOrder}, which
      * needs the {@link MiscTestModifier} catalog and runs separately below -
-     * the catalog for a {@code @RolapContextTest}-based test is fixed for the
-     * whole test method, so it can no longer be swapped per test case name
-     * the way {@code getModifier} used to.
+     * a {@code @RolapContextTest}-based test's catalog is fixed for the whole
+     * method, so it can't be swapped per test case name.
      */
     @Override
 	@Test
@@ -60,7 +58,7 @@ public class MiscTest extends ClearViewBase {
             }
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
-            super.runTest(context);
+            runOneTestCase(context);
         }
     }
 
@@ -71,7 +69,7 @@ public class MiscTest extends ClearViewBase {
         DiffRepository diffRepos = getDiffRepos();
         setName("testSolveOrder");
         diffRepos.setCurrentTestCaseName("testSolveOrder");
-        super.runTest(context);
+        runOneTestCase(context);
     }
 
     /** Named bridge onto the FoodMart CSVs (for the data=-Supplier form). */

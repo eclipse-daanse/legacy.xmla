@@ -13,11 +13,11 @@
  */
 package org.eclipse.daanse.olap.function.def.parallelperiod;
 
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
 
 import org.eclipse.daanse.olap.api.Context;
@@ -263,29 +263,28 @@ class ParallelPeriodFunDefTest {
 
     @Test
     void testParallelPeriodDepends(Context<?> context) {
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Time].[Quarter], 2.0)", "{[Time].[Time]}" );
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Time].[Quarter], 2.0, [Time].[Time].[1997].[Q3])", "{}" );
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod()",
-            "{[Time].[Time]}" );
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Product].[Food])", "{[Product].[Product]}" );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParallelPeriod([Time].[Quarter], 2.0)").dependsOn( "[Time].[Time]" );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParallelPeriod([Time].[Quarter], 2.0, [Time].[Time].[1997].[Q3])").dependsOn();
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParallelPeriod()")
+            .dependsOn( "[Time].[Time]" );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParallelPeriod([Product].[Food])").dependsOn( "[Product].[Product]" );
         // [Gender].[M] is used here as a numeric expression!
         // The numeric expression DOES depend upon [Product].
         // The expression as a whole depends upon everything except [Gender].
-        String s1 = allHiersExcept( "[Gender].[Gender]" );
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Product].[Product Family], [Gender].[M], [Product].[Food])",
-            s1 );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParallelPeriod([Product].[Product Family], [Gender].[M], [Product].[Food])")
+            .dependsOn( hiersExcept( "[Gender].[Gender]" ) );
         // As above
-        String s11 = allHiersExcept( "[Gender].[Gender]" );
-        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Product].[Product Family], [Gender].[M])", s11 );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "parallelperiod([Time].[Time].CurrentMember)",
-            "{[Time].[Time]}" );
+        assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "ParallelPeriod([Product].[Product Family], [Gender].[M])")
+            .dependsOn( hiersExcept( "[Gender].[Gender]" ) );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "parallelperiod([Time].[Time].CurrentMember)")
+            .dependsOn( "[Time].[Time]" );
     }
 
     @Test

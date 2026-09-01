@@ -13,11 +13,12 @@
  */
 package org.eclipse.daanse.olap.function.def.hierarchy.member;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -26,8 +27,6 @@ import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTe
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import mondrian.olap.fun.FunctionTest;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class HierarchyCurrentMemberFunDefTest {
@@ -51,27 +50,27 @@ class HierarchyCurrentMemberFunDefTest {
     @Test
     void testCurrentMemberDepends(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertMemberExprDependsOn(connection,
-            "[Gender].CurrentMember",
-            "{[Gender]}" );
+        assertThatMemberExpr(connection, "Sales",
+            "[Gender].CurrentMember")
+            .dependsOn( "[Gender]" );
 
-        assertExprDependsOn(connection,
-            "[Gender].[M].Dimension.Name", "{}" );
+        assertThatExpr(connection, "Sales",
+            "[Gender].[M].Dimension.Name").dependsOn();
         // implicit call to .CurrentMember when dimension is used as a member
         // expression
-        assertMemberExprDependsOn(connection,
-            "[Gender].[M].Dimension",
-            "{[Gender]}" );
+        assertThatMemberExpr(connection, "Sales",
+            "[Gender].[M].Dimension")
+            .dependsOn( "[Gender]" );
 
-        assertMemberExprDependsOn(connection,
-            "[Gender].[M].Dimension.CurrentMember", "{[Gender]}" );
-        assertMemberExprDependsOn(connection,
-            "[Gender].[M].Dimension.CurrentMember.Parent", "{[Gender]}" );
+        assertThatMemberExpr(connection, "Sales",
+            "[Gender].[M].Dimension.CurrentMember").dependsOn( "[Gender]" );
+        assertThatMemberExpr(connection, "Sales",
+            "[Gender].[M].Dimension.CurrentMember.Parent").dependsOn( "[Gender]" );
 
         // [Customers] is short for [Customers].CurrentMember, so
         // depends upon everything
-        assertExprDependsOn(connection,
-            "[Customers]", FunctionTest.allHiers() );
+        assertThatExpr(connection, "Sales",
+            "[Customers]").dependsOn( hiersExcept() );
     }
 
     @Test

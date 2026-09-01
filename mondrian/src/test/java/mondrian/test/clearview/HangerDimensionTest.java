@@ -54,7 +54,7 @@ class HangerDimensionTest extends ClearViewBase {
         for (String name : diffRepos.getTestCaseNames()) {
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
-            super.runTest(context);
+            runOneTestCase(context);
         }
     }
 

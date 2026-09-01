@@ -60,7 +60,7 @@ import mondrian.rolap.SchemaModifiersEmf;
  * @author gjohnson
  */
 @RolapContextTest(FoodmartTestInstance.class)
-public class FunctionTest {//extends FoodMartTestCase {
+public class FunctionTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
   private static final int NUM_EXPECTED_FUNCTIONS = 301;
@@ -895,9 +895,9 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(-12, 3)").returns( "0" );
 
     // can handle non-ints, using the formula MOD(n, d) = n - d * INT(n / d)
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(7.2, 3)", 1.2, 0.0001 );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(7.2, 3.2)", .8, 0.0001 );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "mod(7.2, -3.2)", -2.4, 0.0001 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(7.2, 3)").returns( 1.2, 0.0001 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(7.2, 3.2)").returns( .8, 0.0001 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(7.2, -3.2)").returns( -2.4, 0.0001 );
 
     // per Excel doc "sign of result is same as divisor"
     assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "mod(3, 2)").returns( "1" );
@@ -954,42 +954,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         assertThatExpr(connection, "Sales",
             NullNumericExpr + " " + op + " " + NullNumericExpr).isFalse();
     }
-
-  /**
-   * Executes a scalar expression, and asserts that the result is as expected. For example, <code>assertExprReturns ("1
-   * + 2", "3")</code> should succeed.
-   */
-   public static void assertExprReturns(Connection connection, String expr, String expected ) {
-    String actual = executeExpr(connection, "Sales", expr);
-    assertEquals( expected, actual );
-  }
-
-  /**
-   * Executes a scalar expression, and asserts that the result is within delta of the expected result.
-   *
-   * @param expr     MDX scalar expression
-   * @param expected Expected value
-   * @param delta    Maximum allowed deviation from expected value
-   */
- public static void assertExprReturns(Connection connection,
-    String expr, double expected, double delta ) {
-    Object value = executeExprRaw(connection, "Sales", expr).getValue();
-
-    try {
-      double actual = ( (Number) value ).doubleValue();
-      if ( Double.isNaN( expected ) && Double.isNaN( actual ) ) {
-        return;
-      }
-      assertEquals(
-        expected,
-        actual,
-        delta, "");
-    } catch ( ClassCastException ex ) {
-      String msg = "Actual value \"" + value + "\" is not a number.";
-      throw new AssertionFailedError(
-        msg, Double.toString( expected ), String.valueOf( value ) );
-    }
-  }
 
   /**
    * Compiles a scalar expression, and asserts that the program looks as expected.
@@ -1427,8 +1391,8 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   void testVbaBasic(Context<?> context) {
     // Exp is a simple function: one arg.
     assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "exp(0)").returns( "1" );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(1)", Math.E, 0.00000001 );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "exp(-2)", 1d / ( Math.E * Math.E ), 0.00000001 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "exp(1)").returns( Math.E, 0.00000001 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "exp(-2)").returns( 1d / ( Math.E * Math.E ), 0.00000001 );
 
     }
   @Test
@@ -1478,8 +1442,8 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
 
   @Test
   void testExcelPower(Context<?> context) {
-    assertExprReturns(context.getConnectionWithDefaultRole(), "Power(8, 0.333333)", 2.0, 0.01 );
-    assertExprReturns(context.getConnectionWithDefaultRole(), "Power(-2, 0.5)", Double.NaN, 0.001 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Power(8, 0.333333)").returns( 2.0, 0.01 );
+    assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Power(-2, 0.5)").returns( Double.NaN, 0.001 );
   }
 
   // Comment from the bug: the reason for this is that in AbstractExpCompiler
@@ -2118,11 +2082,13 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   }
 
   /**
-   * Generates a string containing all dimensions except those given. Useful as an argument to {@link
-   * #assertExprDependsOn(String, String)}.
+   * Generates a string containing all dimensions except those given.
    *
    * @return string containing all dimensions except those given
+   * @deprecated use {@link #hiersExcept(String...)} with {@link FunDependencies}'s
+   *             {@code dependsOn(String...)} instead
    */
+  @Deprecated
   public static String allHiersExcept( String... hiers ) {
     for ( String hier : hiers ) {
       assert contains( AllHiers, hier ) : "unknown hierarchy " + hier;
@@ -2150,16 +2116,17 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     return false;
   }
 
+  /** @deprecated use {@link #hiersExcept(String...)} instead */
+  @Deprecated
   public static String allHiers() {
     return allHiersExcept();
   }
 
   /**
-   * Same selection as {@link #allHiersExcept(String...)}, as individual hierarchy names rather
-   * than a joined {@code "{A, B}"} string - what {@link FunDependencies}'s
-   * {@code dependsOn(String...)} takes.
+   * All dimension hierarchies except those given, as individual hierarchy names - what
+   * {@link FunDependencies}'s {@code dependsOn(String...)} takes.
    */
-  private static String[] hiersExcept( String... hiers ) {
+  public static String[] hiersExcept( String... hiers ) {
     for ( String hier : hiers ) {
       assert contains( AllHiers, hier ) : "unknown hierarchy " + hier;
     }

@@ -13,8 +13,8 @@
 package org.eclipse.daanse.rolap.poc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.school.SchoolTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;

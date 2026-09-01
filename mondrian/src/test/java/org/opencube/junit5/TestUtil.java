@@ -20,6 +20,7 @@ package org.opencube.junit5;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,8 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Proxy;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -40,7 +39,6 @@ import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.eclipse.daanse.sql.dialect.api.Dialect;
@@ -48,7 +46,6 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.agg.Segment;
 import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.calc.Calc;
-import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.calc.tuple.TupleList;
 import org.eclipse.daanse.olap.api.catalog.CatalogReader;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -61,7 +58,6 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.execution.Statement;
 import org.eclipse.daanse.olap.api.query.Quoting;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
@@ -77,17 +73,12 @@ import org.eclipse.daanse.olap.execution.ExecutionImpl;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.member.MemberCacheHelper;
 import org.eclipse.daanse.rolap.common.member.SmartMemberReader;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.mapping.model.catalog.Catalog;
-import org.eclipse.daanse.rolap.mapping.model.provider.CatalogMappingSupplier;
-import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
-import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -99,7 +90,6 @@ import org.eclipse.daanse.cwm.model.cwm.foundation.businessinformation.util.Desc
 public class TestUtil {
 
     protected static final String nl = Util.NL;
-	private static final String lineBreak = "\"," + nl + "\"";
 	  /**
 	   * Executes the expression in the context of the cube indicated by
 	   * <code>cubeName</code>, and returns the result as a Cell.
@@ -600,30 +590,6 @@ public class TestUtil {
 		return connection.getCatalog().getWarnings();
 	}
 
-	/**
-	 * Creates a dialect without using a connection.
-	 *
-	 * @param product Database product
-	 * @return dialect of an required persuasion
-	 */
-	public static Dialect getFakeDialect( DatabaseProduct product ) {
-		final DatabaseMetaData metaData =
-				(DatabaseMetaData) Proxy.newProxyInstance(
-						TestUtil.class.getClassLoader(),
-						new Class<?>[] { DatabaseMetaData.class },
-						new DatabaseMetaDataInvocationHandler( product ) );
-		final java.sql.Connection connection =
-				(java.sql.Connection) Proxy.newProxyInstance(
-						TestUtil.class.getClassLoader(),
-						new Class<?>[] { java.sql.Connection.class },
-						new ConnectionInvocationHandler( metaData ) );
-        //TODO Commented by reason context implementation
-		//final Dialect dialect = DialectManager.createDialect( null, connection );
-        final Dialect dialect = null;
-        assert getDatabaseProduct(dialect.name()) == product;
-		return dialect;
-	}
-
 	public static boolean databaseIsValid(Connection connection, String cubeName) {
 		try {
 			if ( cubeName.indexOf( ' ' ) >= 0 ) {
@@ -640,100 +606,6 @@ public class TestUtil {
 		}
 	}
 
-
-	public static class ConnectionInvocationHandler
-			extends DelegatingInvocationHandler {
-		private final DatabaseMetaData metaData;
-
-		ConnectionInvocationHandler( DatabaseMetaData metaData ) {
-			this.metaData = metaData;
-		}
-
-		/**
-		 * Proxy for {@link java.sql.Connection#getMetaData()}.
-		 */
-		public DatabaseMetaData getMetaData() {
-			return metaData;
-		}
-
-		/**
-		 * Proxy for {@link java.sql.Connection#createStatement()}
-		 */
-		public java.sql.Statement createStatement() throws SQLException {
-			throw new SQLException();
-		}
-	}
-
-	// Public only because required for reflection to work.
-	@SuppressWarnings( "UnusedDeclaration" )
-	public static class DatabaseMetaDataInvocationHandler
-			extends DelegatingInvocationHandler {
-		private final DatabaseProduct product;
-
-		DatabaseMetaDataInvocationHandler(
-				DatabaseProduct product ) {
-			this.product = product;
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#supportsResultSetConcurrency(int, int)}.
-		 */
-		public boolean supportsResultSetConcurrency( int type, int concurrency ) {
-			return false;
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#getDatabaseProductName()}.
-		 */
-		public String getDatabaseProductName() {
-			switch ( product ) {
-				case GREENPLUM:
-					return "postgres greenplum";
-				default:
-					return product.name();
-			}
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#getIdentifierQuoteString()}.
-		 */
-		public String getIdentifierQuoteString() {
-			return "\"";
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#getDatabaseProductVersion()}.
-		 */
-		public String getDatabaseProductVersion() {
-			return "1.0";
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#isReadOnly()}.
-		 */
-		public boolean isReadOnly() {
-			return true;
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#getMaxColumnNameLength()}.
-		 */
-		public int getMaxColumnNameLength() {
-			return 30;
-		}
-
-		/**
-		 * Proxy for {@link DatabaseMetaData#getDriverName()}.
-		 */
-		public String getDriverName() {
-			switch ( product ) {
-				case GREENPLUM:
-					return "Mondrian fake dialect for Greenplum";
-				default:
-					return "Mondrian fake dialect";
-			}
-		}
-	}
 
 	/**
 		 * Wrapper around a string that indicates that all line endings have been
@@ -829,17 +701,6 @@ public class TestUtil {
 			assertEquals(expected, actual, message);
 		}
 
-		/**
-		 * Executes an expression and asserts that it returns a given result.
-		 */
-		public static void assertExprReturns(Connection connection, String cubeName, String expression, String expected) {
-			final Cell cell = executeExprRaw(connection, cubeName, expression);
-			if (expected == null) {
-				expected = ""; // null values are formatted as empty string
-			}
-			assertEqualsVerbose(expected, cell.getFormattedValue());
-		}
-
 	    public static void checkThrowable( Throwable throwable, String pattern ) {
 	      if ( throwable == null ) {
 	        fail( "query did not yield an exception" );
@@ -879,22 +740,6 @@ public class TestUtil {
         return resultCube;
     }
 
-
-	public static synchronized void flushSchemaCache(Connection connection) {
-		// it's pointless to flush the schema cache if we
-		// have a handle on the connection object already
-
-		if (connection == null) {
-			return;
-		}
-
-		CacheControl cc = connection.getCacheControl(null);
-
-		if (cc == null) {
-			return;
-		}
-		cc.flushSchemaCache();
-	}
 
 	public static Result executeQuery(Connection connection, String queryString) {
 		return executeQuery(connection, queryString, 300000l);
@@ -1040,31 +885,6 @@ public class TestUtil {
 		}
 	}
 
-	public static org.eclipse.daanse.olap.api.result.CellSet executeOlap4jQuery(Connection connection, String queryString ) throws SQLException {
-	//TODO: may better fix querys then use upgradeQuery
-	  //  queryString = upgradeQuery( queryString );
-
-		assertThat(connection).isNotNull();
-		assertThat(queryString).isNotNull().isNotBlank();
-
-        org.eclipse.daanse.olap.api.execution.Statement stmt = connection.createStatement();
-
-	    assertThat(stmt).isNotNull();
-
-	    final org.eclipse.daanse.olap.api.result.CellSet cellSet = stmt.executeQuery( queryString );
-
-	    assertThat(cellSet).isNotNull();
-
-	    // If we're deep testing, check that we never return the dummy null
-	    // value when cells are null. TestExpDependencies isn't the perfect
-	    // switch to enable this, but it will do for now.
-	    //TODO: activate this for all tests
-	    if ( connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) == 1 ) {
-	      assertCellSetValid( cellSet );
-	    }
-	    return cellSet;
-	  }
-
     public static org.eclipse.daanse.olap.api.result.CellSet executeQueryWithCellSetResult(Connection connection, String queryString ) throws SQLException {
 
         assertThat(connection).isNotNull();
@@ -1087,40 +907,6 @@ public class TestUtil {
         }
         return cellSet;
     }
-
-	/**
-	 * Checks that an actual string matches an expected pattern. If they do not, throws a {@link ComparisonFailure} and
-	 * prints the difference, including the actual string as an easily pasted Java string literal.
-	 */
-	public static void assertMatchesVerbose(
-			Pattern expected,
-			String actual ) {
-		Util.assertPrecondition( expected != null, "expected != null" );
-		if ( expected.matcher( actual ).matches() ) {
-			return;
-		}
-		String s = actual;
-
-		// Convert [string with "quotes" split
-		// across lines]
-		// into ["string with \"quotes\" split" + nl +
-		// "across lines
-		//
-		s = s.replace("\"", "\\\"" );
-		s = LineBreakPattern.matcher( s ).replaceAll( lineBreak );
-		s = TabPattern.matcher( s ).replaceAll( "\\\\t" );
-		s = "\"" + s + "\"";
-		final String spurious = " + " + nl + "\"\"";
-		if ( s.endsWith( spurious ) ) {
-			s = s.substring( 0, s.length() - spurious.length() );
-		}
-		String message =
-				"Expected pattern:" + nl + expected + nl
-						+ "Actual: " + nl + actual + nl
-						+ "Actual java: " + nl + s + nl;
-		//throw new ComparisonFailure( message, expected.pattern(), actual );
-		throw new RuntimeException(message);
-	}
 
     /**
      * Checks that a {@link CellSet} is valid.
@@ -1186,67 +972,6 @@ public class TestUtil {
         };
     }
 
-    static public Dialect getDialect(Connection connection){
-		return connection.getContext().getDialect();
-    }
-
-	public static Member executeSingletonAxis(Connection connection, String expression, String cubeName) {
-		Result result = executeQuery(connection, "select {" + expression + "} on columns from " + cubeName);
-		Axis axis = result.getAxes()[0];
-		switch (axis.getPositions().size()) {
-			case 0:
-				// The mdx "{...}" operator eliminates null members (that is,
-				// members for which member.isNull() is true). So if "expression"
-				// yielded just the null member, the array will be empty.
-				return null;
-			case 1:
-				// Java nulls should never happen during expression evaluation.
-				Position position = axis.getPositions().get(0);
-				Util.assertTrue(position.size() == 1);
-				Member member = position.get(0);
-				Util.assertTrue(member != null);
-				return member;
-			default:
-				throw Util.newInternal(
-						"expression " + expression + " yielded " + axis.getPositions().size() + " positions");
-		}
-	}
-
-	public static void assertExprDependsOn(Connection connection, String expr, String hierList ) {
-		// Construct a query, and mine it for a parsed expression.
-		// Use a fresh connection, because some tests define their own dims.
-		final String queryString =
-				"WITH MEMBER [Measures].[Foo] AS "
-						+ Util.singleQuoteString( expr )
-						+ " SELECT FROM [Sales]";
-		final Query query = connection.parseQuery( queryString );
-		query.resolve();
-		final Formula formula = query.getFormulas()[ 0 ];
-		final Expression expression = formula.getExpression();
-
-		// Build a list of the dimensions which the expression depends upon,
-		// and check that it is as expected.
-		checkDependsOn( query, expression, hierList, true );
-	}
-
-	public static void assertMemberExprDependsOn(Connection connection, String expr, String dimList ) {
-		assertSetExprDependsOn(connection, "{" + expr + "}", dimList );
-	}
-
-	public static void assertSetExprDependsOn(Connection connection, String expr, String dimList ) {
-		// Construct a query, and mine it for a parsed expression.
-		// Use a fresh connection, because some tests define their own dims.
-		final String queryString =
-				"SELECT {" + expr + "} ON COLUMNS FROM [Sales]";
-		final Query query = connection.parseQuery( queryString );
-		query.resolve();
-		final Expression expression = query.getAxes()[ 0 ].getSet();
-
-		// Build a list of the dimensions which the expression depends upon,
-		// and check that it is as expected.
-		checkDependsOn( query, expression, dimList, false );
-	}
-
 	/**
 	 * Executes an expression which yields a boolean result, and asserts that
 	 * the result is the expected one.
@@ -1270,17 +995,15 @@ public class TestUtil {
 	}
 
 	/**
-	 * Whether null members render as the default {@code #null} in this context.
-	 *
-	 * <p>
-	 * The value lives on the Context now, so the answer is per test rather than
-	 * per JVM. Callers that have no Context at hand get the default, which is what
-	 * they saw before any test could change it underneath them.
-	 * </p>
+	 * Whether null members render as the default {@code #null} representation
+	 * in {@code context}, i.e. whether {@code context} has left
+	 * {@link ConfigConstants#NULL_MEMBER_REPRESENTATION} at its default value -
+	 * false for a test that overrides it via {@code @RolapConfig}.
 	 */
 	public static boolean isDefaultNullMemberRepresentation(Context<?> context) {
-		return !(context instanceof TestContextImpl testContext)
-				|| testContext.isDefaultNullMemberRepresentation();
+	    return context.getConfigValue(ConfigConstants.NULL_MEMBER_REPRESENTATION,
+	            ConfigConstants.NULL_MEMBER_REPRESENTATION_DEFAULT_VALUE, String.class)
+	            .equals(ConfigConstants.NULL_MEMBER_REPRESENTATION_DEFAULT_VALUE);
 	}
 
 	public static String compileExpression(Connection connection, String expression, final boolean scalar, String cubeName ) {
@@ -1327,33 +1050,6 @@ public class TestUtil {
 	//	Result result = executeQuery(connection, queryString);
 	//	return result.getCell( new int[] { 0 } );
 	//}
-
-	private static void checkDependsOn(
-			final Query query,
-			final Expression expression,
-			String expectedHierList,
-			final boolean scalar ) {
-		final Calc calc =
-				query.compileExpression(
-						expression,
-						scalar,
-						scalar ? null : ResultStyle.ITERABLE );
-		final List<Hierarchy> hierarchies =
-				query.getCube().getHierarchies();
-		StringBuilder buf = new StringBuilder( "{" );
-		int dependCount = 0;
-		for ( Hierarchy hierarchy : hierarchies ) {
-			if ( calc.dependsOn( hierarchy ) ) {
-				if ( dependCount++ > 0 ) {
-					buf.append( ", " );
-				}
-				buf.append( hierarchy.getUniqueName() );
-			}
-		}
-		buf.append( "}" );
-		String actualHierList = buf.toString();
-		assertEquals( expectedHierList, actualHierList );
-	}
 
 	/**
 	 * Checks that an actual string matches an expected string. Ignores the difference of anonymous class names in
@@ -1451,159 +1147,6 @@ public class TestUtil {
 		return index != -1 ? resultString.substring(index) : resultString;
 	}
 
-	public static int getRowCount(Result result) {
-		return result.getAxes()[result.getAxes().length - 1]
-				.getPositions().size();
-	}
-
-	/**
-	 * Checks that a given MDX query results in a particular SQL statement
-	 * being generated.
-	 *
-	 * @param mdxQuery MDX query
-	 * @param patterns Set of patterns for expected SQL statements
-	 */
-	public static void assertQuerySql(
-			Connection connection,
-			String mdxQuery,
-			SqlPattern[] patterns)
-	{
-		assertQuerySqlOrNot(
-				connection, mdxQuery, patterns, false, false, true);
-	}
-
-	/**
-	 * Checks that a given MDX query does not result in a particular SQL
-	 * statement being generated.
-	 *
-	 * @param mdxQuery MDX query
-	 * @param patterns Set of patterns for expected SQL statements
-	 */
-	public static void assertNoQuerySql(
-			Connection connection,
-			String mdxQuery,
-			SqlPattern[] patterns)
-	{
-		assertQuerySqlOrNot(
-				connection, mdxQuery, patterns, true, false, true);
-	}
-
-
-	/**
-	 * During MDX query parse and execution, checks that the query results
-	 * (or does not result) in a particular SQL statement being generated.
-	 *
-	 * <p>Parses and executes the MDX query once for each SQL
-	 * pattern in the current dialect. If there are multiple patterns, runs the
-	 * MDX query multiple times, and expects to see each SQL statement appear.
-	 * If there are no patterns in this dialect, the test trivially succeeds.
-	 *
-	 * @param connection connection
-	 * @param mdxQuery MDX query
-	 * @param patterns Set of patterns
-	 * @param negative false to assert if SQL is generated;
-	 *                 true to assert if SQL is NOT generated
-	 * @param bypassSchemaCache whether to grab a new connection and bypass the
-	 *        schema cache before parsing the MDX query
-	 * @param clearCache whether to clear cache before executing the MDX query
-	 */
-	public static void assertQuerySqlOrNot(
-			Connection connection,
-			String mdxQuery,
-			SqlPattern[] patterns,
-			boolean negative,
-			boolean bypassSchemaCache,
-			boolean clearCache)
-	{
-		// Run the test once for each pattern in this dialect.
-		// (We could optimize and run it once, collecting multiple queries, and
-		// comparing all queries at the end.)
-		Dialect dialect = getDialect(connection);
-		DatabaseProduct d = getDatabaseProduct(dialect.name());
-		boolean patternFound = false;
-		for (SqlPattern sqlPattern : patterns) {
-			if (!sqlPattern.hasDatabaseProduct(d)) {
-				// If the dialect is not one in the pattern set, skip the
-				// test. If in the end no pattern is located, print a warning
-				// message if required.
-				continue;
-			}
-
-			patternFound = true;
-
-			String sql = sqlPattern.getSql();
-			String trigger = sqlPattern.getTriggerSql();
-
-			sql = dialectize(d, sql);
-			trigger = dialectize(d, trigger);
-
-			// Create a dummy DataSource which will throw a 'bomb' if it is
-			// asked to execute a particular SQL statement, but will otherwise
-			// behave exactly the same as the current DataSource.
-			final TriggerHook hook = new TriggerHook(trigger);
-			RolapUtil.setHook(connection.getContext(), hook);
-			Bomb bomb = null;
-			try {
-				if (bypassSchemaCache) {
-				//	connection =
-				//			testContext.withSchemaPool(false).getConnection();
-				}
-				final Query query = connection.parseQuery(mdxQuery);
-				if (clearCache) {
-					clearCache(connection, (RolapCube)query.getCube());
-				}
-				final Result result = connection.execute(query);
-//				discard(result);
-				bomb = null;
-			} catch (Bomb e) {
-				bomb = e;
-			} catch (RuntimeException e) {
-				// Walk up the exception tree and see if the root cause
-				// was a SQL bomb.
-				bomb = Util.getMatchingCause(e, Bomb.class);
-				if (bomb == null) {
-					throw e;
-				}
-			} finally {
-				RolapUtil.setHook(connection.getContext(), null);
-			}
-			if (negative) {
-				if (bomb != null || hook.foundMatch()) {
-					fail("forbidden query [" + sql + "] detected");
-				}
-			} else {
-				if (bomb == null && !hook.foundMatch()) {
-					StringBuilder actual = new StringBuilder();
-					for (String s : hook.seen()) {
-						actual.append("\n--- PIN-ACTUAL ---\n").append(s);
-					}
-					fail("expected query [" + sql + "] did not occur; statements seen:" + actual);
-				}
-				if (bomb != null) {
-					assertEquals(
-							replaceQuotes(
-									sql.replaceAll("\r\n", "\n")),
-							replaceQuotes(
-									bomb.sql.replaceAll("\r\n", "\n")));
-				}
-			}
-		}
-
-		// Print warning message that no pattern was specified for the current
-		// dialect.
-		if (!patternFound) {
-			String warnDialect =
-					connection.getContext().getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class);
-
-			if (warnDialect.equals(d.toString())) {
-				System.out.println(
-						"[No expected SQL statements found for dialect \""
-								+ dialect.toString()
-								+ "\" and test not run]");
-			}
-		}
-	}
-
 	public static String dialectize(DatabaseProduct d, String sql) {
 		sql = sql.replaceAll("\r\n", "\n");
 		switch (d) {
@@ -1652,12 +1195,6 @@ public class TestUtil {
 		assertEquals("", sw.toString());
 	}
 
-	private static String replaceQuotes(String s) {
-		s = s.replace('`', '\"');
-		s = s.replace('\'', '\"');
-		return s;
-	}
-
 	public static void clearCache(Connection connection, RolapCube cube) {
 		// Clear the cache for the Sales cube, so the query runs as if
 		// for the first time. (TODO: Cleaner way to do this.)
@@ -1687,52 +1224,6 @@ public class TestUtil {
 	public static Member allMember(String dimensionName, Cube salesCube) {
 		Dimension genderDimension = getDimension(dimensionName, salesCube);
 		return genderDimension.getHierarchy().getAllMember();
-	}
-
-	public static CellSet executeOlap4jXmlaQuery(Context<?> context, String queryString )
-			throws SQLException {
-		/*
-		Connection connection = context.getConnection();
-		String schema = getConnectionProperties(connection)
-				.get( RolapConnectionProperties.CatalogContent.name() );
-		if ( schema == null ) {
-			schema = getRawSchema(context);
-		}
-		// TODO:  Need to better handle semicolons in schema content.
-		// Util.parseValue does not appear to allow escaping them.
-		schema = schema.replace( "&quot;", "" ).replace( ";", "" );
-
-		String Jdbc = getConnectionProperties(connection)
-				.get( RolapConnectionProperties.Jdbc.name() );
-
-		String cookie = XmlaOlap4jDriver.nextCookie();
-		Map<String, String> catalogs = new HashMap<String, String>();
-		catalogs.put( "FoodMart", "" );
-		XmlaOlap4jDriver.PROXY_MAP.put(
-				cookie, new MondrianInprocProxy(
-						catalogs,
-						"jdbc:mondrian:Server=http://whatever;"
-								+ "Jdbc=" + Jdbc + ";TestProxyCookie="
-								+ cookie
-								+ ";CatalogContent=" + schema ) );
-		try {
-			Class.forName( "org.olap4j.driver.xmla.XmlaOlap4jDriver" );
-		} catch ( ClassNotFoundException e ) {
-			throw new RuntimeException( "oops", e );
-		}
-		Properties info = new Properties();
-		info.setProperty(
-				XmlaOlap4jDriver.Property.CATALOG.name(), "FoodMart" );
-		java.sql.Connection con = java.sql.DriverManager.getConnection(
-				"jdbc:xmla:Server=http://whatever;Catalog=FoodMart;TestProxyCookie="
-						+ cookie,
-				info );
-		*/
-		Connection connection = context.getConnectionWithDefaultRole();
-		//		con.unwrap( OlapConnection.class );
-
-        org.eclipse.daanse.olap.api.execution.Statement statement = connection.createStatement();
-		return statement.executeQuery( queryString );
 	}
 
 
@@ -1801,103 +1292,6 @@ public class TestUtil {
 
 	public static SqlPattern[] mysqlPattern(String sql) {
 		return sqlPattern(DatabaseProduct.MYSQL, sql);
-	}
-
-	/**
-	 * Checks whether query produces the same results with the native.* props
-	 * enabled as it does with the props disabled
-	 * @param query query to run
-	 * @param message Message to output on test failure
-	 * @param connection Connection
-	 */
-	public static void verifySameNativeAndNot(Connection connection,
-			String query, String message)
-	{
-        ((TestContextImpl)(connection.getContext())).setEnableNativeCrossJoin(true);
-        ((TestContextImpl)(connection.getContext())).setEnableNativeFilter(true);
-        ((TestContextImpl)(connection.getContext())).setEnableNativeNonEmpty(true);
-        ((TestContextImpl)(connection.getContext())).setEnableNativeTopCount(true);
-
-		Result resultNative = executeQuery(connection, query);
-
-        ((TestContextImpl)(connection.getContext())).setEnableNativeCrossJoin(false);
-        ((TestContextImpl)(connection.getContext())).setEnableNativeFilter(false);
-        ((TestContextImpl)(connection.getContext())).setEnableNativeNonEmpty(false);
-        ((TestContextImpl)(connection.getContext())).setEnableNativeTopCount(false);
-
-		Result resultNonNative = executeQuery(connection, query);
-
-		assertEquals(
-				toString(resultNative),
-				toString(resultNonNative),
-				message);
-
-
-	}
-
-/**
-	 * Fake exception to interrupt the test when we see the desired query.
-	 * It is an {@link Error} because we need it to be unchecked
-	 * ({@link Exception} is checked), and we don't want handlers to handle
-	 * it.
-	 */
-	static class Bomb extends Error {
-		final String sql;
-
-		Bomb(final String sql) {
-			this.sql = sql;
-		}
-	}
-
-	private static class TriggerHook implements RolapUtil.ExecuteQueryHook {
-		private final String trigger;
-		private boolean foundMatch = false;
-		private final java.util.List<String> seen = new java.util.ArrayList<>();
-
-		public TriggerHook(String trigger) {
-			this.trigger =
-					trigger
-							.replaceAll("\r\n", "")
-							.replaceAll("\r", "")
-							.replaceAll("\n", "");
-		}
-
-		private boolean matchTrigger(String sql) {
-			if (trigger == null) {
-				return true;
-			}
-			// Cleanup the endlines.
-			sql =
-					sql
-							.replaceAll("\r\n", "")
-							.replaceAll("\r", "")
-							.replaceAll("\n", "");
-			// different versions of mysql drivers use different quoting, so
-			// ignore quotes
-			String s = replaceQuotes(sql);
-			String t = replaceQuotes(trigger);
-			if (s.startsWith(t) && !foundMatch) {
-				foundMatch = true;
-			}
-			return s.startsWith(t);
-		}
-
-		@Override
-		public void onExecuteQuery(String sql) {
-			seen.add(sql);
-			if (matchTrigger(sql)) {
-				throw new Bomb(sql);
-			}
-		}
-
-		public boolean foundMatch() {
-			return foundMatch;
-		}
-
-		/** Diagnostic for a pin that no longer matches: what the engine did emit. */
-		public java.util.List<String> seen() {
-			return seen;
-		}
 	}
 
     public static Optional<Cube> getCubeByNameFromArray(List<Cube> cubes, String name){

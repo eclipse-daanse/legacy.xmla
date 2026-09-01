@@ -13,9 +13,9 @@
  */
 package org.eclipse.daanse.olap.function.def.aggregatex;
 
+import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static mondrian.olap.fun.FunctionTest.allHiersExcept;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 
 
 import org.eclipse.daanse.olap.api.Context;
@@ -29,26 +29,23 @@ class AggregateFunDefTest {
     @Test
     void testAggregateDepends(Context<?> context) {
         // Depends on everything except Measures, Gender
-        String s12 = allHiersExcept("[Measures]", "[Gender].[Gender]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "([Measures].[Unit Sales], [Gender].[F])", s12 );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "([Measures].[Unit Sales], [Gender].[F])")
+            .dependsOn( hiersExcept("[Measures]", "[Gender].[Gender]" ) );
         // Depends on everything except Customers, Measures, Gender
-        String s13 = allHiersExcept( "[Customers].[Customers]", "[Gender].[Gender]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "Aggregate([Customers].Members, ([Measures].[Unit Sales], [Gender].[F]))",
-            s13 );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Aggregate([Customers].Members, ([Measures].[Unit Sales], [Gender].[F]))")
+            .dependsOn( hiersExcept( "[Customers].[Customers]", "[Gender].[Gender]" ) );
         // Depends on everything except Customers
-        String s11 = allHiersExcept( "[Customers].[Customers]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
-            "Aggregate([Customers].Members)",
-            s11 );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "Aggregate([Customers].Members)")
+            .dependsOn( hiersExcept( "[Customers].[Customers]" ) );
         // Depends on the current member of the Product dimension, even though
         // [Product].[All Products] is referenced from the expression.
-        String s1 = allHiersExcept( "[Customers].[Customers]" );
-        assertExprDependsOn(context.getConnectionWithDefaultRole(),
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "Aggregate(Filter([Customers].[City].Members, (([Measures].[Unit Sales] / ([Measures].[Unit Sales], [Product]"
-                + ".[All Products])) > 0.1)))",
-            s1 );
+                + ".[All Products])) > 0.1)))")
+            .dependsOn( hiersExcept( "[Customers].[Customers]" ) );
     }
 
     @Test

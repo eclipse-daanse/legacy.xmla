@@ -13,10 +13,10 @@
  */
 package org.eclipse.daanse.olap.function.def.periodstodate;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
@@ -29,12 +29,12 @@ class PeriodsToDateFunDefTest {
 
     @Test
     void testPeriodsToDate(Context<?> context) {
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "PeriodsToDate()", "{[Time].[Time]}" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "PeriodsToDate([Time].[Year])",
-            "{[Time].[Time]}" );
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
-            "PeriodsToDate([Time].[Year], [Time].[1997].[Q2].[5])", "{}" );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales", "PeriodsToDate()").dependsOn( "[Time].[Time]" );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "PeriodsToDate([Time].[Year])")
+            .dependsOn( "[Time].[Time]" );
+        assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales",
+            "PeriodsToDate([Time].[Year], [Time].[1997].[Q2].[5])").dependsOn();
 
         // two args
         assertThatAxis(context.getConnectionWithDefaultRole(), "Sales",

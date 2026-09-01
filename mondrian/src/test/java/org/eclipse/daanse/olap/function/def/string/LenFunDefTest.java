@@ -13,14 +13,13 @@
  */
 package org.eclipse.daanse.olap.function.def.string;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
-
-import mondrian.olap.fun.FunctionTest;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class LenFunDefTest {
@@ -40,7 +39,7 @@ class LenFunDefTest {
                 + "{[Measures].[Bar]}\n"
                 + "Row #0: 0\n" );
         // same, but inline
-        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(), "len(null)", 0, 0 );
+        assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "len(null)").returns( 0, 0 );
     }
 
 }

@@ -54,11 +54,9 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test for {@link CatalogReader}.
  *
- * <p>Pilot der neuen Testkit-Extension: Kontext/Connections kommen aus der
- * Klassen-Annotation {@code @RolapContextTest} statt aus
- * {@code @ContextSource}-Boilerplate; Rollen deklariert {@code @Roles};
- * der REG1-Katalog-Umbau ist eine {@code catalog}-Komposition an der
- * Methode statt {@code withSchemaEmf} im Testkörper.
+ * <p>Context/connections come from the class-level {@code @RolapContextTest}
+ * annotation; roles are declared via {@code @Roles}; the REG1 catalog rebuild
+ * is a {@code catalog} composition on the test method.
  */
 @RolapContextTest(FoodmartTestInstance.class)
 class RolapCatalogReaderTest {

@@ -10,9 +10,9 @@ package mondrian.rolap;
 
 
 import static org.eclipse.daanse.rolap.mapping.model.provider.util.Expressions.mdx;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.Map;

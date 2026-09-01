@@ -11,9 +11,9 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.net.URL;
 import java.util.Map;
@@ -261,10 +261,10 @@ class RaggedHierarchyTest {
      */
     @Test
     public void testMeasuresVatican(Connection connection) {
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {Descendants([Store].[Vatican])} ON ROWS\n"
-            + "FROM [Sales Ragged]",
+            + "FROM [Sales Ragged]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -281,10 +281,10 @@ class RaggedHierarchyTest {
      */
     @Test
     public void testMeasures(Connection connection) {
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " NON EMPTY {Descendants([Store])} ON ROWS\n"
-            + "FROM [Sales Ragged]",
+            + "FROM [Sales Ragged]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -366,7 +366,7 @@ class RaggedHierarchyTest {
      */
     @Test
     void testNullMember(Connection connection) {
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "With \n"
             + " Set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_Geography]' \n"
             + " Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],Ancestor([Geography].CurrentMember, [Geography].[Country]).OrderKey,BASC,Ancestor([Geography].CurrentMember, [Geography].[State]).OrderKey,BASC,[Geography].CurrentMember.OrderKey,BASC)' \n"
@@ -379,7 +379,7 @@ class RaggedHierarchyTest {
             + " Select \n"
             + " [*BASE_MEMBERS_Measures] on columns, \n"
             + " [*SORTED_ROW_AXIS] on rows \n"
-            + " From [Sales Ragged]",
+            + " From [Sales Ragged]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -462,10 +462,10 @@ class RaggedHierarchyTest {
                     + "    </Hierarchy>\n"
                     + "  </Dimension>"));
          */
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             " select {[Gender4].[Gender].members} "
             + "on COLUMNS "
-            + "from sales",
+            + "from sales").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -493,11 +493,11 @@ class RaggedHierarchyTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
          */
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT\n"
             + "[Measures].[Unit Sales] ON COLUMNS\n"
             + ",FILTER([Store].[Store City].MEMBERS, NOT ISEMPTY ([Measures].[Unit Sales])) ON ROWS\n"
-            + "FROM [Sales Ragged]",
+            + "FROM [Sales Ragged]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
@@ -549,11 +549,11 @@ class RaggedHierarchyTest {
             + "    </Hierarchy>\n"
             + "  </Dimension>"));
          */
-        assertQueryReturns(connection,
+        assertThatQuery(connection,
             "SELECT\n"
             + "[Measures].[Unit Sales] ON COLUMNS\n"
             + ",non empty Crossjoin([Gender].[Gender].[Gender].members, [Store].[Store].[Store City].MEMBERS) ON ROWS\n"
-            + "FROM [Sales Ragged]",
+            + "FROM [Sales Ragged]").returnsGrid(
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"

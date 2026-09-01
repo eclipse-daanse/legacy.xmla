@@ -9,9 +9,9 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.executeQuery;
 
 import java.net.URL;
 import java.util.Arrays;

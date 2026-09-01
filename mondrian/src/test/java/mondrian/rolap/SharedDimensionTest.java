@@ -377,17 +377,6 @@ class SharedDimensionTest  {
         // Schema has two cubes sharing a dimension, and a virtual cube built
         // over these two cubes.
         // Query from the virtual cube.
-        /*
-        String baseSchema = TestUtil.getRawSchema(context);
-        String schema = SchemaUtil.getSchema(baseSchema,
-                sharedDimension,
-                cubeA + "\n" + cubeB,
-                virtualCube,
-                null,
-                null,
-                null);
-        withSchema(context, schema);
-        */
         //withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
 
         assertThatQuery(context.getConnectionWithDefaultRole(), queryVirtualCube).returnsGrid(resultVirtualCube);

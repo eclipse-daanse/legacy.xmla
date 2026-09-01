@@ -11,9 +11,7 @@ package mondrian.test.clearview;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import  org.eclipse.daanse.olap.util.Bug;
-import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapConfig;
-import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
 import mondrian.test.DiffRepository;
@@ -29,7 +27,6 @@ import mondrian.test.DiffRepository;
  *
  * @author Khanh Vu
  */
-@RolapContextTest(FoodmartTestInstance.class)
 @RolapConfig(key = ConfigConstants.EXPAND_NON_NATIVE, value = "true", type = Boolean.class)
 public class SummaryTest extends ClearViewBase {
 
@@ -65,7 +62,7 @@ public class SummaryTest extends ClearViewBase {
                 // Tests give wrong results if native crossjoin is disabled.
                 return;
             }
-            super.runTest(context);
+            runOneTestCase(context);
         }
     }
 }

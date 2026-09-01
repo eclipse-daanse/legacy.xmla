@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 @RolapContextTest(FoodmartTestInstance.class)
 class ConcurrentMdxTest {
     private static final Logger LOGGER =
-        LoggerFactory.getLogger(FoodMartTestCase.class);
+        LoggerFactory.getLogger(ConcurrentMdxTest.class);
 
     static final QueryAndResult[] mdxQueries = new QueryAndResult[]{
         new QueryAndResult(

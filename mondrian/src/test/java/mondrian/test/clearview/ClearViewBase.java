@@ -14,15 +14,18 @@
 package mondrian.test.clearview;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static org.opencube.junit5.TestUtil.getDialect;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.Dialect.getDialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart.FoodmartTestInstance;
 import org.eclipse.daanse.rolap.poc.SqlAssert;
+import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opencube.junit5.TestUtil;
 
 import mondrian.enums.DatabaseProduct;
@@ -45,6 +48,7 @@ import mondrian.test.SqlPattern;
  *
  * @since Jan 25, 2007
  */
+ @RolapContextTest(FoodmartTestInstance.class)
  public abstract class ClearViewBase extends BatchTestCase {
 
     public abstract DiffRepository getDiffRepos();
@@ -64,9 +68,30 @@ import mondrian.test.SqlPattern;
         diffRepos.setCurrentTestCaseName(null);
     }
 
-
-    // implement TestCase
+    /**
+     * Runs every test case in {@link #getDiffRepos()}, in diff-repository
+     * order. Subclasses whose {@code @RolapContextTest}/{@code @RolapConfig}
+     * match this default and whose per-case behavior needs no customization
+     * inherit this directly instead of overriding it. A subclass that needs
+     * different context config, or to skip/special-case individual test
+     * names, overrides this method and calls {@link #runOneTestCase(Context)}
+     * per case (mirroring the loop below) rather than looping over
+     * {@code super.runTest(context)} - that would take the whole suite once
+     * per case, since {@code runTest} is a suite-level driver, not a
+     * single-case executor.
+     */
+    @Test
     protected void runTest(Context<?> context) {
+        DiffRepository diffRepos = getDiffRepos();
+        for (String name : diffRepos.getTestCaseNames()) {
+            setName(name);
+            diffRepos.setCurrentTestCaseName(name);
+            runOneTestCase(context);
+        }
+    }
+
+    /** Runs the single test case current set via {@link #setName}/{@code setCurrentTestCaseName}. */
+    protected void runOneTestCase(Context<?> context) {
             DiffRepository diffRepos = getDiffRepos();
             // add calculated member to a cube if specified in the xml file
             /*

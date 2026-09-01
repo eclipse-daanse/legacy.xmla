@@ -11,6 +11,8 @@
 
 package mondrian.test;
 
+import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
+
 import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.opencube.junit5.TestUtil;
 
 
 
@@ -142,8 +143,8 @@ public class ConcurrentValidatingQueryRunner extends Thread {
                         }
                     }
                     synchronized (lock) {
-                        TestUtil.assertQueryReturns(connection,
-                            mdxQueries[queryIndex].query,
+                        assertThatQuery(connection,
+                            mdxQueries[queryIndex].query).returnsGrid(
                             mdxQueries[queryIndex].result);
                         mSuccessCount++;
                     }
