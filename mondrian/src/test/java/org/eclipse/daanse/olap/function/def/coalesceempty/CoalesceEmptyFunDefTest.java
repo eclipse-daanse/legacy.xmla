@@ -13,8 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.coalesceempty;
 
-import static mondrian.olap.fun.FunctionTest.checkDataResults;
-import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.olap.function.TestResources.checkDataResults;
+import static org.eclipse.daanse.olap.function.TestResources.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatExpr;
 
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;

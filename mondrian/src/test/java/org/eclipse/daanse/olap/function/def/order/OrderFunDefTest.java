@@ -13,8 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.order;
 
-import static mondrian.olap.fun.FunctionTest.assertAxisCompilesTo;
-import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.olap.function.TestResources.assertAxisCompilesTo;
+import static org.eclipse.daanse.olap.function.TestResources.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;

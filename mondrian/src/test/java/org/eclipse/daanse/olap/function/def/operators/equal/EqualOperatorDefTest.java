@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.equal;
 
-import static mondrian.olap.fun.FunctionTest.checkNullOp;
+import static org.eclipse.daanse.olap.function.TestResources.checkNullOp;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;

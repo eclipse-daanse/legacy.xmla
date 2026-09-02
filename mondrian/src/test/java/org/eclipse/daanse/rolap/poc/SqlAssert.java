@@ -14,28 +14,13 @@ package org.eclipse.daanse.rolap.poc;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.daanse.olap.api.cache.CacheControl;
 import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.query.Quoting;
-import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.common.ConfigConstants;
-import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.eclipse.daanse.rolap.common.RolapUtil;
-import org.eclipse.daanse.rolap.common.member.MemberCacheHelper;
-import org.eclipse.daanse.rolap.common.member.SmartMemberReader;
 import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.sql.dialect.api.Dialect;
-import org.opentest4j.AssertionFailedError;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
@@ -46,11 +31,14 @@ import mondrian.test.SqlPattern;
  *
  * <p>
  * Replaces the legacy {@code TestUtil.assertQuerySql} / {@code assertNoQuerySql} /
- * {@code assertQuerySqlOrNot} family: parses and executes {@code mdx} once per pattern whose
- * dialect matches the connection's, and - via a query-execution hook, same trick as the legacy
- * code - interrupts execution the instant a SQL statement's prefix matches the pattern's
- * trigger, then checks whether that (or the absence of that) is what {@link #expectSql} /
- * {@link #expectNoSql} called for.
+ * {@code assertQuerySqlOrNot} family. This class's own job is narrow: resolve {@link SqlPattern} /
+ * {@link DatabaseProduct} dialect bookkeeping - the bit that can't live below this module, since
+ * both types live here in {@code legacy.xmla} - down to one concrete {@code (sql, triggerSql)}
+ * pair per matching-dialect pattern, then hand each pair to
+ * {@link org.eclipse.daanse.rolap.testkit.assertions.SqlAssert} in the testkit module, which does
+ * the actual query-execution-hook/interrupt mechanics and datasource verification. Same split as
+ * {@code CellRequestFixture.RequestSqlAssert} makes for cell-request SQL assertions, and for the
+ * same reason - see that testkit class's javadoc.
  *
  * <p>
  * {@link #verify()} is the terminal call - {@code expectSql}/{@code expectNoSql} only record
@@ -112,22 +100,14 @@ public final class SqlAssert {
         // problems... probably with the dialectize method
         assertEquals(dialectize(connection, actualSql), actualSql);
 
-        String transformedExpectedSql = removeQuotes(dialectize(connection, expectedSql));
-        String transformedActualSql = removeQuotes(actualSql);
+        String dialectizedExpectedSql = dialectize(connection, expectedSql);
         if (ignoreFormatting) {
-            transformedExpectedSql = normalizeWhitespace(transformedExpectedSql);
-            transformedActualSql = normalizeWhitespace(transformedActualSql);
+            org.eclipse.daanse.rolap.testkit.assertions.SqlAssert.assertSqlEqualsIgnoreFormatting(
+                    connection, dialectizedExpectedSql, actualSql, expectedRows);
         } else {
-            transformedExpectedSql = transformedExpectedSql.replaceAll("\r\n", "\n");
-            transformedActualSql = transformedActualSql.replaceAll("\r\n", "\n");
+            org.eclipse.daanse.rolap.testkit.assertions.SqlAssert.assertSqlEquals(
+                    connection, dialectizedExpectedSql, actualSql, expectedRows);
         }
-        assertEquals(transformedExpectedSql, transformedActualSql);
-
-        checkSqlAgainstDatasource(connection, actualSql, expectedRows);
-    }
-
-    private static String normalizeWhitespace(String sql) {
-        return sql.replaceAll("\\s+", " ").trim();
     }
 
     /**
@@ -190,78 +170,23 @@ public final class SqlAssert {
         return sql;
     }
 
-    private static String removeQuotes(String actualSql) {
-        String transformedActualSql = actualSql.replaceAll("`", "");
-        transformedActualSql = transformedActualSql.replaceAll("\"", "");
-        return transformedActualSql;
-    }
-
-    private static void checkSqlAgainstDatasource(Connection connection,
-            String actualSql,
-            int expectedRows) {
-
-        java.sql.Connection jdbcConn = null;
-        java.sql.Statement stmt = null;
-        java.sql.ResultSet rs = null;
-
-        try {
-            jdbcConn = connection.getDataSource().getConnection();
-            stmt = jdbcConn.createStatement();
-
-            if (RolapUtil.SQL_LOGGER.isDebugEnabled()) {
-                StringBuffer sqllog = new StringBuffer();
-                sqllog.append("mondrian.test.TestContext: executing sql [");
-                if (actualSql.indexOf('\n') >= 0) {
-                    // SQL appears to be formatted as multiple lines. Make it
-                    // start on its own line.
-                    sqllog.append("\n");
-                }
-                sqllog.append(actualSql);
-                sqllog.append(']');
-                RolapUtil.SQL_LOGGER.debug(sqllog.toString());
-            }
-
-            long startTime = System.currentTimeMillis();
-            rs = stmt.executeQuery(actualSql);
-            long time = System.currentTimeMillis();
-            final long execMs = time - startTime;
-
-            RolapUtil.SQL_LOGGER.debug(", exec " + execMs + " ms");
-
-            int rows = 0;
-            while (rs.next()) {
-                rows++;
-            }
-
-            assertEquals(expectedRows, rows, "row count");
-        } catch (java.sql.SQLException e) {
-            throw new RuntimeException(
-                    "ERROR in SQL - invalid for database: "
-                            + ""
-                            + "\n" + actualSql,
-                    e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception e1) {
-                // ignore
-            }
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (Exception e1) {
-                // ignore
-            }
-            try {
-                if (jdbcConn != null) {
-                    jdbcConn.close();
-                }
-            } catch (Exception e1) {
-                // ignore
-            }
+    private static String dialectize(DatabaseProduct d, String sql) {
+        sql = sql.replaceAll("\r\n", "\n");
+        switch (d) {
+            case ORACLE:
+                return sql.replaceAll(" =as= ", " ");
+            case GREENPLUM:
+            case POSTGRES:
+            case TERADATA:
+                return sql.replaceAll(" =as= ", " as ");
+            case DERBY:
+                return sql.replaceAll("`", "\"");
+            case ACCESS:
+                return sql.replaceAll(
+                        "ISNULL\\(([^)]*)\\)",
+                        "Iif($1 IS NULL, 1, 0)");
+            default:
+                return sql;
         }
     }
 
@@ -270,11 +195,9 @@ public final class SqlAssert {
         private final Connection connection;
         private final String mdxQuery;
         private boolean bypassSchemaCache;
-        // Defaults to true: the legacy assertQuerySql/assertNoQuerySql convenience wrappers this
-        // class replaces always clear the cache before executing - it's not a flag callers set,
-        // it's baked into the wrapper. Matching that default here avoids a warm cache silently
-        // turning "did the query run this SQL" into "was this SQL ever run, maybe minutes ago".
-        private boolean clearCacheFirst = true;
+        // null = use the testkit delegate's own default (true). Tri-state so bypassSchemaCache()/
+        // clearCacheFirst()/keepCache() calls (or none at all) map onto the delegate one-for-one.
+        private Boolean clearCacheFirst;
         private SqlPattern[] patterns;
         private boolean negative;
 
@@ -296,8 +219,8 @@ public final class SqlAssert {
 
         /**
          * Clears the query's cube's aggregation/member cache before executing, so its SQL runs as
-         * if for the first time. On by default (see field comment); calling this is only ever
-         * needed to undo a prior {@link #keepCache()} on the same builder.
+         * if for the first time. On by default; calling this is only ever needed to undo a prior
+         * {@link #keepCache()} on the same builder.
          */
         public QuerySqlAssert clearCacheFirst() {
             this.clearCacheFirst = true;
@@ -369,54 +292,20 @@ public final class SqlAssert {
             String sql = dialectize(databaseProduct, sqlPattern.getSql());
             String trigger = dialectize(databaseProduct, sqlPattern.getTriggerSql());
 
-            TriggerHook hook = new TriggerHook(trigger);
-            RolapUtil.setHook(connection.getContext(), hook);
-            Bomb bomb = null;
-            try {
-                Query query = connection.parseQuery(mdxQuery);
-                if (clearCacheFirst) {
-                    clearCache(connection, (RolapCube) query.getCube());
-                }
-                connection.execute(query);
-            } catch (Bomb caught) {
-                bomb = caught;
-            } catch (RuntimeException e) {
-                bomb = Util.getMatchingCause(e, Bomb.class);
-                if (bomb == null) {
-                    throw e;
-                }
-            } finally {
-                RolapUtil.setHook(connection.getContext(), null);
+            org.eclipse.daanse.rolap.testkit.assertions.SqlAssert.QuerySqlAssert delegate =
+                    org.eclipse.daanse.rolap.testkit.assertions.SqlAssert.forQuery(connection, mdxQuery);
+            if (bypassSchemaCache) {
+                delegate.bypassSchemaCache();
             }
-
+            if (clearCacheFirst != null) {
+                delegate.clearCacheFirst(clearCacheFirst);
+            }
             if (negative) {
-                if (bomb != null || hook.foundMatch()) {
-                    throw new AssertionFailedError("forbidden query [" + sql + "] detected"
-                            + System.lineSeparator() + "MDX:" + System.lineSeparator() + mdxQuery);
-                }
-                return;
+                delegate.expectNoSql(trigger);
+            } else {
+                delegate.expectSql(sql, trigger);
             }
-
-            if (bomb == null && !hook.foundMatch()) {
-                StringBuilder seen = new StringBuilder();
-                for (String s : hook.seen()) {
-                    seen.append(System.lineSeparator()).append("--- actual ---").append(System.lineSeparator())
-                            .append(s);
-                }
-                throw new AssertionFailedError(
-                        "expected query [" + sql + "] did not occur; statements seen:" + seen
-                                + System.lineSeparator() + "MDX:" + System.lineSeparator() + mdxQuery);
-            }
-            if (bomb != null) {
-                String expected = replaceQuotes(sql.replaceAll("\r\n", "\n"));
-                String actual = replaceQuotes(bomb.sql.replaceAll("\r\n", "\n"));
-                if (!expected.equals(actual)) {
-                    throw new AssertionFailedError(
-                            "SQL did not match pattern" + System.lineSeparator() + "MDX:" + System.lineSeparator()
-                                    + mdxQuery,
-                            expected, actual);
-                }
-            }
+            delegate.verify();
         }
 
         private void warnNoPatternForDialect(Dialect dialect, DatabaseProduct databaseProduct) {
@@ -430,141 +319,8 @@ public final class SqlAssert {
         }
     }
 
-    private static String replaceQuotes(String s) {
-        return s.replace('`', '"').replace('\'', '"');
-    }
-
-    /** Fake exception used to interrupt execution the instant the trigger SQL is seen. */
-    private static final class Bomb extends Error {
-        final String sql;
-
-        Bomb(String sql) {
-            this.sql = sql;
-        }
-    }
-
-    private static final class TriggerHook implements RolapUtil.ExecuteQueryHook {
-
-        private final String trigger;
-        private boolean foundMatch;
-        private final List<String> seen = new java.util.ArrayList<>();
-
-        TriggerHook(String trigger) {
-            this.trigger = trigger.replaceAll("\r\n", "").replaceAll("\r", "").replaceAll("\n", "");
-        }
-
-        private boolean matchTrigger(String sql) {
-            String normalizedSql = sql.replaceAll("\r\n", "").replaceAll("\r", "").replaceAll("\n", "");
-            String s = replaceQuotes(normalizedSql);
-            String t = replaceQuotes(trigger);
-            if (s.startsWith(t) && !foundMatch) {
-                foundMatch = true;
-            }
-            return s.startsWith(t);
-        }
-
-        @Override
-        public void onExecuteQuery(String sql) {
-            seen.add(sql);
-            if (matchTrigger(sql)) {
-                throw new Bomb(sql);
-            }
-        }
-
-        boolean foundMatch() {
-            return foundMatch;
-        }
-
-        List<String> seen() {
-            return seen;
-        }
-    }
-
-    private static String dialectize(DatabaseProduct d, String sql) {
-        sql = sql.replaceAll("\r\n", "\n");
-        switch (d) {
-            case ORACLE:
-                return sql.replaceAll(" =as= ", " ");
-            case GREENPLUM:
-            case POSTGRES:
-            case TERADATA:
-                return sql.replaceAll(" =as= ", " as ");
-            case DERBY:
-                return sql.replaceAll("`", "\"");
-            case ACCESS:
-                return sql.replaceAll(
-                        "ISNULL\\(([^)]*)\\)",
-                        "Iif($1 IS NULL, 1, 0)");
-            default:
-                return sql;
-        }
-    }
-
+    /** Clears {@code cube}'s member/aggregation caches so its next query's SQL runs as if for the first time. */
     public static void clearCache(Connection connection, RolapCube cube) {
-        // Clear the cache for the Sales cube, so the query runs as if
-        // for the first time. (TODO: Cleaner way to do this.)
-        final Cube salesCube =
-                connection.getCatalog().lookupCube(cube.getName()).orElseThrow();
-        RolapHierarchy hierarchy =
-                (RolapHierarchy) salesCube.lookupHierarchy(
-                        new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED),
-                        false);
-        if (hierarchy != null) {
-            SmartMemberReader memberReader =
-                    (SmartMemberReader) hierarchy.getMemberReader();
-            MemberCacheHelper cacheHelper = memberReader.cacheHelper;
-            cacheHelper.mapLevelToMembers.cache.clear();
-            cacheHelper.mapMemberToChildren.cache.clear();
-        }
-        // Flush the cache, to ensure that the query gets executed.
-        cube.clearCachedAggregations(true);
-
-        CacheControl cacheControl = connection.getCacheControl(null);
-        final CacheControl.CellRegion measuresRegion =
-                cacheControl.createMeasuresRegion(cube);
-        cacheControl.flush(measuresRegion);
-        waitForFlush(cacheControl, measuresRegion, cube.getName());
+        org.eclipse.daanse.rolap.testkit.assertions.SqlAssert.clearCache(connection, cube);
     }
-
-    private static void waitForFlush(
-            final CacheControl cacheControl,
-            final CacheControl.CellRegion measuresRegion,
-            final String cubeName)
-    {
-        int i = 100;
-        while (true) {
-            try {
-                Thread.sleep(i);
-            } catch (InterruptedException e) {
-                fail(e.getMessage());
-            }
-            String cacheState = getCacheState(cacheControl, measuresRegion);
-            if (regionIsEmpty(cacheState, cubeName)) {
-                break;
-            }
-            i *= 2;
-            if (i > 6400) {
-                fail(
-                        "Cache didn't flush in sufficient time\nCache Was: \n"
-                                + cacheState);
-                break;
-            }
-        }
-    }
-
-    private static String getCacheState(
-            final CacheControl cacheControl,
-            final CacheControl.CellRegion measuresRegion)
-    {
-        StringWriter out = new StringWriter();
-        cacheControl.printCacheState(new PrintWriter(out), measuresRegion);
-        return out.toString();
-    }
-
-    private static boolean regionIsEmpty(
-            final String cacheState, final String cubeName)
-    {
-        return !cacheState.contains("Cube:[" + cubeName + "]");
-    }
-
 }

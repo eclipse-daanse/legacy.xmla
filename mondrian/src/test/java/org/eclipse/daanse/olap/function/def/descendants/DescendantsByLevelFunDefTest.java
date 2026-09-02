@@ -13,10 +13,10 @@
  */
 package org.eclipse.daanse.olap.function.def.descendants;
 
-import static mondrian.olap.fun.FunctionTest.hierarchized1997;
-import static mondrian.olap.fun.FunctionTest.months;
-import static mondrian.olap.fun.FunctionTest.quarters;
-import static mondrian.olap.fun.FunctionTest.year1997;
+import static org.eclipse.daanse.olap.function.TestResources.hierarchized1997;
+import static org.eclipse.daanse.olap.function.TestResources.months;
+import static org.eclipse.daanse.olap.function.TestResources.quarters;
+import static org.eclipse.daanse.olap.function.TestResources.year1997;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;

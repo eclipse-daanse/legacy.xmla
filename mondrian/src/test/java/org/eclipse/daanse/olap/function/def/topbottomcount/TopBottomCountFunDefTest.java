@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.function.def.topbottomcount;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.olap.function.TestResources.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;

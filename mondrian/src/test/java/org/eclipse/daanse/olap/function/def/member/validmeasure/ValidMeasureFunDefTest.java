@@ -22,7 +22,7 @@ import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.fun.FunctionTest;
+import org.eclipse.daanse.olap.function.TestResources;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class ValidMeasureFunDefTest {
@@ -126,16 +126,16 @@ class ValidMeasureFunDefTest {
         Connection connection = context.getConnectionWithDefaultRole();
         FunDependencies.assertThatExpr(connection, "Sales",
             "ValidMeasure([Measures].[Unit Sales])")
-            .dependsOn( FunctionTest.hiersExcept( "[Measures]" ) );
+            .dependsOn( TestResources.hiersExcept( "[Measures]" ) );
 
         FunDependencies.assertThatExpr(connection, "Sales",
             "ValidMeasure(([Measures].[Unit Sales], [Time].[1997].[Q1]))")
-            .dependsOn( FunctionTest.hiersExcept( "[Measures]", "[Time].[Time]" ) );
+            .dependsOn( TestResources.hiersExcept( "[Measures]", "[Time].[Time]" ) );
 
         FunDependencies.assertThatExpr(connection, "Sales",
             "ValidMeasure(([Measures].[Unit Sales], "
                 + "[Time].[Time].CurrentMember.Parent))")
-            .dependsOn( FunctionTest.hiersExcept( "[Measures]" ) );
+            .dependsOn( TestResources.hiersExcept( "[Measures]" ) );
     }
 
     @Test

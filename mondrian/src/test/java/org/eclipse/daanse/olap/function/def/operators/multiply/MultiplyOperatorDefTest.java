@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.multiply;
 
-import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
+import static org.eclipse.daanse.olap.function.TestResources.NullNumericExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 
