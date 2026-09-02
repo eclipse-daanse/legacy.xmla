@@ -11,13 +11,12 @@
 */
 package mondrian.olap.fun;
 
-import static org.eclipse.daanse.olap.common.Util.assertTrue;
+import static org.eclipse.daanse.olap.function.TestResources.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.Mdx.executeQuery;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,7 +32,6 @@ import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Cell;
-import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.common.ConfigConstants;
 import org.eclipse.daanse.olap.common.Util;
@@ -66,71 +64,6 @@ public class FunctionTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
   private static final int NUM_EXPECTED_FUNCTIONS = 301;
-
-  public static final String[] AllHiers = {
-          "[Measures]",
-          "[Store].[Store]",
-          "[Store Size in SQFT].[Store Size in SQFT]",
-          "[Store Type].[Store Type]",
-          "[Time].[Time]",
-          "[Time].[Weekly]",
-          "[Product].[Product]",
-          "[Promotion Media].[Promotion Media]",
-          "[Promotions].[Promotions]",
-          "[Customers].[Customers]",
-          "[Education Level].[Education Level]",
-          "[Gender].[Gender]",
-          "[Marital Status].[Marital Status]",
-          "[Yearly Income].[Yearly Income]"
-  };
-
-  public static final String months =
-    "[Time].[Time].[1997].[Q1].[1]\n"
-      + "[Time].[Time].[1997].[Q1].[2]\n"
-      + "[Time].[Time].[1997].[Q1].[3]\n"
-      + "[Time].[Time].[1997].[Q2].[4]\n"
-      + "[Time].[Time].[1997].[Q2].[5]\n"
-      + "[Time].[Time].[1997].[Q2].[6]\n"
-      + "[Time].[Time].[1997].[Q3].[7]\n"
-      + "[Time].[Time].[1997].[Q3].[8]\n"
-      + "[Time].[Time].[1997].[Q3].[9]\n"
-      + "[Time].[Time].[1997].[Q4].[10]\n"
-      + "[Time].[Time].[1997].[Q4].[11]\n"
-      + "[Time].[Time].[1997].[Q4].[12]";
-
-  public static final String quarters =
-    "[Time].[Time].[1997].[Q1]\n"
-      + "[Time].[Time].[1997].[Q2]\n"
-      + "[Time].[Time].[1997].[Q3]\n"
-      + "[Time].[Time].[1997].[Q4]";
-
-  public static final String year1997 = "[Time].[Time].[1997]";
-
-  public static final String hierarchized1997 =
-    year1997
-      + "\n"
-      + "[Time].[Time].[1997].[Q1]\n"
-      + "[Time].[Time].[1997].[Q1].[1]\n"
-      + "[Time].[Time].[1997].[Q1].[2]\n"
-      + "[Time].[Time].[1997].[Q1].[3]\n"
-      + "[Time].[Time].[1997].[Q2]\n"
-      + "[Time].[Time].[1997].[Q2].[4]\n"
-      + "[Time].[Time].[1997].[Q2].[5]\n"
-      + "[Time].[Time].[1997].[Q2].[6]\n"
-      + "[Time].[Time].[1997].[Q3]\n"
-      + "[Time].[Time].[1997].[Q3].[7]\n"
-      + "[Time].[Time].[1997].[Q3].[8]\n"
-      + "[Time].[Time].[1997].[Q3].[9]\n"
-      + "[Time].[Time].[1997].[Q4]\n"
-      + "[Time].[Time].[1997].[Q4].[10]\n"
-      + "[Time].[Time].[1997].[Q4].[11]\n"
-      + "[Time].[Time].[1997].[Q4].[12]";
-
-  public static final String NullNumericExpr =
-    " ([Measures].[Unit Sales],"
-      + "   [Customers].[All Customers].[USA].[CA].[Bellflower], "
-      + "   [Product].[All Products].[Drink].[Alcoholic Beverages]."
-      + "[Beer and Wine].[Beer].[Good].[Good Imported Beer])";
 
   private static final String TimeWeekly = "[Time].[Weekly]";
 
@@ -694,36 +627,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "#null" );
   }
 
-  public static void checkDataResults(
-    Double[][] expected,
-    Result result,
-    final double tolerance ) {
-    int[] coords = new int[ 2 ];
-
-    for ( int row = 0; row < expected.length; row++ ) {
-      coords[ 1 ] = row;
-      for ( int col = 0; col < expected[ 0 ].length; col++ ) {
-        coords[ 0 ] = col;
-
-        Cell cell = result.getCell( coords );
-        final Double expectedValue = expected[ row ][ col ];
-        if ( expectedValue == null ) {
-          assertTrue(cell.isNull(),  "Expected null value");
-        } else if ( cell.isNull() ) {
-          fail(
-            "Cell at (" + row + ", " + col
-              + ") was null, but was expecting "
-              + expectedValue );
-        } else {
-          assertEquals(
-            expectedValue,
-            ( (Number) cell.getValue() ).doubleValue(),
-            tolerance, "Incorrect value returned at (" + row + ", " + col + ")" );
-        }
-      }
-    }
-  }
-
   @Test
   void testLevelMemberExpressions(Context<?> context) {
 	context.getCatalogCache().clear();
@@ -944,13 +847,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
       "String(-200, 'x')").throwsMessage( "NegativeArraySizeException" ); // SSAS agrees
   }
 
-    public static void checkNullOp(Connection connection, final String op ) {
-        assertThatExpr(connection, "Sales", " 0 " + op + " " + NullNumericExpr).isFalse();
-        assertThatExpr(connection, "Sales", NullNumericExpr + " " + op + " 0").isFalse();
-        assertThatExpr(connection, "Sales",
-            NullNumericExpr + " " + op + " " + NullNumericExpr).isFalse();
-    }
-
   /**
    * Compiles a scalar expression, and asserts that the program looks as expected.
    */
@@ -976,31 +872,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     }
     assertEquals(stubAnonymousClasses(expectedCalc), stubAnonymousClasses(actualCalc));
   }
-
-  /**
-   * Compiles a set expression, and asserts that the program looks as expected.
-   */
-  public static void assertAxisCompilesTo(Connection connection,
-    String expr,
-    String expectedCalc ) {
-    Query query = connection.parseQuery("SELECT {" + expr + "} ON COLUMNS FROM Sales");
-    Calc calc = query.compileExpression(query.getAxes()[0].getSet(), false, null);
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    new SimpleCalculationProfileWriter(pw).write(calc.getCalculationProfile());
-    pw.flush();
-    final String actualCalc = sw.toString();
-    final int expDeps =
-      connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
-    if ( expDeps > 0 ) {
-      // Don't bother checking the compiled output if we are also
-      // testing dependencies. The compiled code will have extra
-      // 'DependencyTestingCalc' instances embedded in it.
-      return;
-    }
-    assertEquals(stubAnonymousClasses(expectedCalc), stubAnonymousClasses(actualCalc));
-  }
-
 
   @Test
   void testCast(Context<?> context) {
@@ -2090,60 +1961,6 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
     final String errorMessagePattern =
       "Calculated member 'H1 1997' is not supported within a compound predicate";
     assertThatQuery(context.getConnectionWithDefaultRole(), query).throwsMessage( errorMessagePattern );
-  }
-
-  /**
-   * Generates a string containing all dimensions except those given.
-   *
-   * @return string containing all dimensions except those given
-   * @deprecated use {@link #hiersExcept(String...)} with {@link FunDependencies}'s
-   *             {@code dependsOn(String...)} instead
-   */
-  @Deprecated
-  public static String allHiersExcept( String... hiers ) {
-    for ( String hier : hiers ) {
-      assert contains( AllHiers, hier ) : "unknown hierarchy " + hier;
-    }
-    StringBuilder buf = new StringBuilder( "{" );
-    int j = 0;
-    for ( String hier : AllHiers ) {
-      if ( !contains( hiers, hier ) ) {
-        if ( j++ > 0 ) {
-          buf.append( ", " );
-        }
-        buf.append( hier );
-      }
-    }
-    buf.append( "}" );
-    return buf.toString();
-  }
-
-  private static boolean contains( String[] a, String s ) {
-    for ( String anA : a ) {
-      if ( anA.equals( s ) ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /** @deprecated use {@link #hiersExcept(String...)} instead */
-  @Deprecated
-  public static String allHiers() {
-    return allHiersExcept();
-  }
-
-  /**
-   * All dimension hierarchies except those given, as individual hierarchy names - what
-   * {@link FunDependencies}'s {@code dependsOn(String...)} takes.
-   */
-  public static String[] hiersExcept( String... hiers ) {
-    for ( String hier : hiers ) {
-      assert contains( AllHiers, hier ) : "unknown hierarchy " + hier;
-    }
-    return java.util.Arrays.stream( AllHiers )
-      .filter( hier -> !contains( hiers, hier ) )
-      .toArray( String[]::new );
   }
 
   /**

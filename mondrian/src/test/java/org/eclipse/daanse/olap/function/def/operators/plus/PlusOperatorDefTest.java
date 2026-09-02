@@ -13,8 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.operators.plus;
 
-import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
-import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.olap.function.TestResources.NullNumericExpr;
+import static org.eclipse.daanse.olap.function.TestResources.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatExpr;
 
 import org.eclipse.daanse.olap.api.Context;

@@ -34,7 +34,7 @@ import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.fun.FunctionTest;
+import org.eclipse.daanse.olap.function.TestResources;
 
 @RolapContextTest(FoodmartTestInstance.class)
 public class DimensionsFunctionsTest {
@@ -43,7 +43,7 @@ public class DimensionsFunctionsTest {
 	void testDimensionsNumeric(Context<?> context) {
 		FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name").dependsOn();
 		FunDependencies.assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember")
-				.dependsOn(FunctionTest.hiersExcept());
+				.dependsOn(TestResources.hiersExcept());
 		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name").returns("Store Size in SQFT");
 		// bug 1426134 -- Dimensions(0) throws 'Index '0' out of bounds'
 		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(0).Name").returns("Measures");
@@ -57,7 +57,7 @@ public class DimensionsFunctionsTest {
 	void testDimensionsString(Context<?> context) {
 		FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"foo\").UniqueName").dependsOn();
 		FunDependencies.assertThatMemberExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"foo\").CurrentMember")
-				.dependsOn(FunctionTest.hiersExcept());
+				.dependsOn(TestResources.hiersExcept());
 		assertThatExpr(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName").returns("[Store].[Store]");
 		// Since Dimensions returns a Hierarchy, can apply Children.
 		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").Children").returns("""
@@ -74,7 +74,7 @@ public class DimensionsFunctionsTest {
 				{Dimensions("Product")})""";
 		assertThatAxis(context.getConnectionWithDefaultRole(), "Sales", expression).returns("{[Measures].[Unit Sales], [Product].[Product].[All Products]}");
 		FunDependencies.assertThatSetExpr(context.getConnectionWithDefaultRole(), "Sales", expression)
-				.dependsOn(FunctionTest.hiersExcept());
+				.dependsOn(TestResources.hiersExcept());
 	}
 
 }

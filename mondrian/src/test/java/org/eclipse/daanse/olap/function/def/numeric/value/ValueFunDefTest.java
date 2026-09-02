@@ -21,7 +21,7 @@ import org.eclipse.daanse.rolap.testkit.assertions.FunDependencies;
 import org.eclipse.daanse.rolap.testkit.junit.api.RolapContextTest;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.fun.FunctionTest;
+import org.eclipse.daanse.olap.function.TestResources;
 
 @RolapContextTest(FoodmartTestInstance.class)
 class ValueFunDefTest {
@@ -35,7 +35,7 @@ class ValueFunDefTest {
         // Depends upon almost everything.
         FunDependencies.assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",
             "[Measures].[Store Sales].VALUE")
-            .dependsOn( FunctionTest.hiersExcept( "[Measures]" ) );
+            .dependsOn( TestResources.hiersExcept( "[Measures]" ) );
 
         // We do not allow FORMATTED_VALUE.
         assertThatExpr(context.getConnectionWithDefaultRole(), "Sales",

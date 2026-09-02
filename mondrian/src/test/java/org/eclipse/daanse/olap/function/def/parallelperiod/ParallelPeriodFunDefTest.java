@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.parallelperiod;
 
-import static mondrian.olap.fun.FunctionTest.hiersExcept;
+import static org.eclipse.daanse.olap.function.TestResources.hiersExcept;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatMemberExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.FunDependencies.assertThatSetExpr;
 import static org.eclipse.daanse.rolap.testkit.assertions.MdxAssert.assertThatAxis;
